@@ -331,4 +331,48 @@ public class Database {
 	public static int getNumOrganizationsInAlliance(String alliance){
 		return getOrganizations().size();
 	}
+	
+	public static boolean getContext() {
+		
+		try {
+			if (cntx == null || cntx.isClosed() || !cntx.isValid(1)) {
+				if (cntx != null && !cntx.isClosed()) {
+					try {
+						cntx.close();
+					} catch (SQLException e) {
+						System.out.print("Exception caught");
+					}
+					cntx = null;
+				}
+				if ((username.equalsIgnoreCase("")) && (password.equalsIgnoreCase(""))) {
+					cntx = DriverManager.getConnection(dsn);
+				} else
+					cntx = DriverManager.getConnection(dsn, username, password);
+
+				if (cntx == null || cntx.isClosed())
+					return false;
+			}
+
+			return true;
+		} catch (SQLException e) {
+			System.out.print("Error could not Connect to db " + dsn + ": " + e.getMessage());
+		}
+		return false;
+	}
+	
+	
+	  private static void close(Statement s)
+	  {
+	    if (s == null) {
+	      return;
+	    }
+	    try
+	    {
+	      s.close();
+	    }
+	    catch (Exception e)
+	    {
+	      e.printStackTrace();
+	    }
+	  }
 }
