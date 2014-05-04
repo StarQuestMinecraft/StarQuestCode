@@ -110,11 +110,11 @@ public class Database {
 			
 			 s = cntx.prepareStatement("SELECT `orgs` FROM Alliances_Alliance WHERE (`name`) = (?)");
 			s.setString(1, alliance);
-			ResultSet rs = s.execute();
+			ResultSet rs = s.executeQuery();
 			while(rs.next()) {
 				unparsed = rs.getString("orgs");
 			}
-			returnArray = Arrays.asList(unparsed.split("\\s*,\\s*"));
+			returnArray = (ArrayList<String>) Arrays.asList(unparsed.split("\\s*,\\s*"));
 			s.close();
 		} catch (SQLException e) {
 			System.out.print("[CCDB] SQL Error" + e.getMessage());
@@ -134,8 +134,8 @@ public class Database {
 		try {
 			
 			 s = cntx.prepareStatement("SELECT `orgs` FROM Alliances_Alliance WHERE (`name`) = (?)");
-			s.setString(1, alliance);
-			ResultSet rs = s.execute();
+			s.setString(1, organization);
+			ResultSet rs = s.executeQuery();
 			while(rs.next()) {
 				org = rs.getString("orgs");
 			}
@@ -158,11 +158,10 @@ public class Database {
 			
 			 s = cntx.prepareStatement("SELECT `alliance` FROM Alliances_Residents WHERE (`name`) = (?)");
 			s.setString(1, player);
-			ResultSet rs = s.execute();
+			ResultSet rs = s.executeQuery();
 			while(rs.next()) {
 				org = rs.getString("organization");
 			}
-			returnArray = Arrays.asList(unparsed.split("\\s*,\\s*"));
 			s.close();
 		} catch (SQLException e) {
 			System.out.print("[CCDB] SQL Error" + e.getMessage());
@@ -182,7 +181,7 @@ public class Database {
 			
 			 s = cntx.prepareStatement("SELECT `lead-org` FROM Alliances_Alliances WHERE (`name`) = (?)");
 			s.setString(1, alliance);
-			ResultSet rs = s.execute();
+			ResultSet rs = s.executeQuery();
 			while(rs.next()) {
 				org = rs.getString("lead-org");
 			}
@@ -219,7 +218,7 @@ public class Database {
 		if(!getContext()) System.out.println("something is wrong!");
 		PreparedStatement s = null;
 		try {
-			 s = cntx.prepareStatement("UPDATE Alliances_Organization SET (`invite`) = ("") WHERE (name) = ?");
+			 s = cntx.prepareStatement("UPDATE Alliances_Organization SET (`invite`) = NULL WHERE (name) = ?");
 			s.setString(1, invitedOrganization);
 			s.execute();
 			s.close();
@@ -240,7 +239,7 @@ public class Database {
 			
 			 s = cntx.prepareStatement("SELECT `invite` FROM Alliances_Organization WHERE (`name`) = (?)");
 			s.setString(1, organization);
-			ResultSet rs = s.execute();
+			ResultSet rs = s.executeQuery();
 			while(rs.next()) {
 				org = rs.getString("invite");
 			}
@@ -263,7 +262,7 @@ public class Database {
 		try {
 			
 			 s = cntx.prepareStatement("SELECT `name` FROM Alliances_Alliances");
-			ResultSet rs = s.execute();
+			ResultSet rs = s.executeQuery();
 			while(rs.next()) {
 				unparsed = rs.getString("name");
 				returnArray.add(unparsed);
@@ -322,14 +321,43 @@ public class Database {
 		
 	}
 	public static void setPlayerAlliance(String alliance, String player){
-		
+		if(!getContext()) System.out.println("something is wrong!");
+		PreparedStatement s = null;
+		try {
+			 s = cntx.prepareStatement("INSERT INTO Alliances_Residents (?,?)");
+			s.setString(1, player);
+			s.setString(2, alliance);
+			s.execute();
+			s.close();
+		} catch (SQLException e) {
+			System.out.print("[CCDB] SQL Error" + e.getMessage());
+		} catch (Exception e) {
+			System.out.print("[CCDB] SQL Error (Unknown)");
+			e.printStackTrace();
+		} finally {
+			close(s);
+		}
 	}
-	public static void removePlayerAlliance(String alliance, String player){
-		
+	public static void removePlayerAlliance(String player){
+		if(!getContext()) System.out.println("something is wrong!");
+		PreparedStatement s = null;
+		try {
+			 s = cntx.prepareStatement("DELETE FROM Alliances_Residents WHERE `name` = ?");
+			 s.setString(1, player);
+			s.execute();
+			s.close();
+		} catch (SQLException e) {
+			System.out.print("[CCDB] SQL Error" + e.getMessage());
+		} catch (Exception e) {
+			System.out.print("[CCDB] SQL Error (Unknown)");
+			e.printStackTrace();
+		} finally {
+			close(s);
+		}
 	}
 
 	public static int getNumOrganizationsInAlliance(String alliance){
-		return getOrganizations().size();
+		return getOrganizations(alliance).size();
 	}
 	
 	public static boolean getContext() {
