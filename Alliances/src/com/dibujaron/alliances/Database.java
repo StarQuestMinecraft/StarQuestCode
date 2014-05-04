@@ -11,14 +11,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public class Database {
-	public String player;
-	public String server;
-	public String world;
-	public int x, y, z;
 	public static String driverString = "com.mysql.jdbc.Driver";
 	public static String hostname = "localhost";
 	public static String port = "3306";
-	public static String db_name = "towny";
+	public static String db_name = "minecraft";
 	public static String username = "minecraft";
 	public static String password = "R3b!rth!ng";
 	public static Connection cntx = null;

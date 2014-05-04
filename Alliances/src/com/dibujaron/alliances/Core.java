@@ -14,7 +14,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import com.massivecraft.factions.entity.Faction;
 import com.massivecraft.factions.entity.UPlayer;
 
-public class Core extends JavaPlugin{
+public class Core extends JavaPlugin {
 	
 	public static ArrayList<Player> playersAllianceChat = new ArrayList<Player>();
 	
