@@ -12,6 +12,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 
 import org.bukkit.Material;
+import org.bukkit.inventory.ItemStack;
 
 public class Database {
 	public static String driverString = "com.mysql.jdbc.Driver";
@@ -53,15 +54,17 @@ public class Database {
 	}
 	
 	
-	public static HashMap<Material, Double> loadData(){
-		HashMap<Material, Double> itemIndex = new HashMap<Material, Double>();
+	public static HashMap<ItemStack, Double> loadData(){
+		HashMap<ItemStack, Double> itemIndex = new HashMap<ItemStack, Double>();
 		if(!getContext()) System.out.println("something is wrong!");
 		PreparedStatement s = null;
 		try {
 			 s = cntx.prepareStatement("SELECT (`Material`,`Price`) FROM Economy_Prices");
 			 ResultSet rs = s.executeQuery();
 			while(rs.next()) {
-				itemIndex.put(Material.getMaterial(rs.getString("name")), rs.getDouble("Price"));
+				String unparsedName = rs.getString("Material");
+				String[] materialArray = unparsedName.split(":");
+				itemIndex.put(new ItemStack(Material.getMaterial(materialArray[0]), 1, Short.parseShort(materialArray[1])), rs.getDouble("Price"));	
 			}
 			s.close();
 			return itemIndex;
@@ -77,7 +80,7 @@ public class Database {
 	}
 	
 
-	public static void updateStats(final Material material, final double quantity){
+	public static void updateStats(final ItemStack is, final double quantity){
         Runnable task = new Runnable() {
 
             public void run() {
@@ -85,7 +88,7 @@ public class Database {
                 try {
                 	double oldTotalMoney = 0;
                 	double oldTotalQuantity = 0;
-                	double initialPrice = SQShops.itemIndex.get(material);
+                	double initialPrice = SQShops.itemIndex.get(is);
                 	
                 	//First we have to get the old prices in the DB
             		if (!getContext())
@@ -93,7 +96,8 @@ public class Database {
             		PreparedStatement s = null;
             		try {
             			s = cntx.prepareStatement("SELECT (`totalMoney`,`totalQuantity`) FROM Economy_Prices WHERE `Material` = ?");
-            			s.setString(1, material.toString());
+                				s.setString(1, is.getType().toString() + ":" + is.getData().getData());
+
             			ResultSet rs = s.executeQuery();
             				while(rs.next()) {
             					oldTotalMoney = rs.getDouble("totalMoney");
@@ -136,21 +140,21 @@ public class Database {
         new Thread(task, "ServiceThread").start(); 
 	}
 	
-	public static void updateMaterial(final Material material, final double price){
+	public static void updateMaterial(final ItemStack is, final double price){
         Runnable task = new Runnable() {
 
             public void run() {
             	
                 try {
-                	SQShops.itemIndex.remove(material);
-                	SQShops.itemIndex.put(material, price);
+                	SQShops.itemIndex.remove(is);
+                	SQShops.itemIndex.put(is, price);
             		if (!getContext())
             			System.out.println("Context didn't work sucessfully");
             		PreparedStatement s = null;
             		try {
             			s = cntx.prepareStatement("UPDATE Economy_Prices SET `Price` = ? WHERE `Material` = ?");
             			s.setDouble(1, price);
-            			s.setString(2, material.toString());
+            			s.setString(2, is.getType().toString() + ":" + is.getData().getData());
             			s.execute();
             			s.close();
             		} catch (SQLException e) {
