@@ -83,7 +83,7 @@ public class SQShops extends JavaPlugin implements Listener {
 			checkStack.setAmount(1);
 			double price = itemIndex.get(checkStack);
 			Database.updateStats(finalStack, quantity);
-			total = total+price;
+			total = total+(price * quantity);
 		}
 		economy.depositPlayer(player.getName(), total);
 		
