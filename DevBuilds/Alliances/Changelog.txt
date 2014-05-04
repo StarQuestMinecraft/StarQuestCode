@@ -1,2 +1,4 @@
 0.1.0
 - First Build of Alliances
+0.1.1
+- JAR Build without the libs included. File was getting WAY too big.
