@@ -2,4 +2,5 @@ name: SQShops
 version: 0.0.1
 main: us.higashiyama.george.SQShops.SQShops
 commands:
+  ecoreload:
   

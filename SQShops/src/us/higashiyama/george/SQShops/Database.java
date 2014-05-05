@@ -16,7 +16,7 @@ import org.bukkit.inventory.ItemStack;
 
 public class Database {
 	public static String driverString = "com.mysql.jdbc.Driver";
-	public static String hostname = "localhost";
+	public static String hostname = "192.99.20.8";
 	public static String port = "3306";
 	public static String db_name = "minecraft";
 	public static String username = "minecraft";
@@ -28,9 +28,9 @@ public class Database {
 		
 		String Database_table = "CREATE TABLE IF NOT EXISTS Economy_Prices (" 
 				+ "`Material` VARCHAR(32),"
-				+ "`Price` DOUBLE(16),"
-				+ "`totalMoney` DOUBLE(32) DEFAULT 0," 
-				+ "`totalQuantity` DOUBLE(32) DEFAULT 0,"
+				+ "`Price` DOUBLE,"
+				+ "`totalMoney` DOUBLE DEFAULT 0," 
+				+ "`totalQuantity` DOUBLE DEFAULT 0,"
 				+ "PRIMARY KEY (`Material`)" 
 				+ ")";
 
@@ -59,7 +59,7 @@ public class Database {
 		if(!getContext()) System.out.println("something is wrong!");
 		PreparedStatement s = null;
 		try {
-			 s = cntx.prepareStatement("SELECT (`Material`,`Price`) FROM Economy_Prices");
+			 s = cntx.prepareStatement("SELECT * FROM Economy_Prices");
 			 ResultSet rs = s.executeQuery();
 			while(rs.next()) {
 				String unparsedName = rs.getString("Material");
@@ -80,7 +80,7 @@ public class Database {
 	}
 	
 
-	public static void updateStats(final ItemStack is, final double quantity){
+	public static void updateStats(final ItemStack stack, final double quantity){
         Runnable task = new Runnable() {
 
             public void run() {
@@ -88,6 +88,8 @@ public class Database {
                 try {
                 	double oldTotalMoney = 0;
                 	double oldTotalQuantity = 0;
+                	ItemStack is = new ItemStack(stack);
+                	is.setAmount(1);
                 	double initialPrice = SQShops.itemIndex.get(is);
                 	
                 	//First we have to get the old prices in the DB
@@ -95,7 +97,7 @@ public class Database {
             			System.out.println("Context didn't work sucessfully");
             		PreparedStatement s = null;
             		try {
-            			s = cntx.prepareStatement("SELECT (`totalMoney`,`totalQuantity`) FROM Economy_Prices WHERE `Material` = ?");
+            			s = cntx.prepareStatement("SELECT * FROM Economy_Prices WHERE `Material` = ?");
                 				s.setString(1, is.getType().toString() + ":" + is.getData().getData());
 
             			ResultSet rs = s.executeQuery();
@@ -117,9 +119,10 @@ public class Database {
             			System.out.println("Context didn't work sucessfully");
             		PreparedStatement ps = null;
             		try {
-            			ps = cntx.prepareStatement("UPDATE Economy_Prices SET `totalMoney` = ?, `totalQuantity` = ?");
+            			ps = cntx.prepareStatement("UPDATE Economy_Prices SET `totalMoney` = ?, `totalQuantity` = ? WHERE `Material` = ?");
             			ps.setDouble(1, (oldTotalMoney + (quantity * initialPrice)));
             			ps.setDouble(2, (oldTotalQuantity + quantity));
+            			ps.setString(3, is.getType().toString() + ":" + is.getData().getData());
             			ps.execute();
             			ps.close();
             		} catch (SQLException e) {
