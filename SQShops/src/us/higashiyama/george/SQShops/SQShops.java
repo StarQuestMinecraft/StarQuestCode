@@ -46,8 +46,37 @@ public class SQShops extends JavaPlugin implements Listener {
 				sender.sendMessage(ChatColor.AQUA + "Economy Values Reloaded");
 				return true;
 			}
+			if(cmd.getName().equalsIgnoreCase("value")) {
+				ItemStack i = ((Player) sender).getItemInHand();
+				ItemStack checkStack = new ItemStack(i);
+				checkStack.setAmount(1);
+				if(itemIndex.get(checkStack) == null){
+					sender.sendMessage(ChatColor.AQUA + "The item you are holding is not sellable.");
+				} else {
+					sender.sendMessage(ChatColor.AQUA + "Value of item in hand is: " + itemIndex.get(checkStack));
+				}
+				return true;
+			}
+			if(cmd.getName().equalsIgnoreCase("setvalue") || sender.isOp()) {
+				ItemStack i = ((Player) sender).getItemInHand();
+				ItemStack checkStack = new ItemStack(i);
+				checkStack.setAmount(1);
+				if(itemIndex.get(checkStack) == null){
+					sender.sendMessage(ChatColor.AQUA + "The item you are holding is not sellable.");
+					return false;
+				} 
+				if(args.length == 0) {
+					sender.sendMessage(ChatColor.AQUA + "/setvalue <price> | Sets the value of the item in hand");
+					return false;
+				} 
+					Database.updateMaterial(checkStack, Double.parseDouble(args[0]));
+					sender.sendMessage(ChatColor.AQUA + "Price set to: " + args[0]);
+				return true;
+			}
 		
 		}
+		
+		
 		return true;
 	}
 	
