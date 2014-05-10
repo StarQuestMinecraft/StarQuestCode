@@ -1,2 +1,8 @@
 0.0.1
 - First build
+0.1.2
+- Added commands for updating
+- First release build
+0.1.3 
+- Added logging of items to players
+- Changed sign creation from left click to right click
