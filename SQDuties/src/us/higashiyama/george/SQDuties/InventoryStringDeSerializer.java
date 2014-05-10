@@ -3,17 +3,51 @@ package us.higashiyama.george.SQDuties;
 
 
 import java.util.Map;
-import java.util.Map.Entry;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.Server;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 public class InventoryStringDeSerializer
 {
-  public static String InventoryToString(Inventory invInventory)
+  public static String InventoryToString(Inventory invInventory, Player p)
+  {
+    String serialization = invInventory.getSize() + ";";
+    for (int i = 0; i < invInventory.getSize(); i++)
+    {
+      ItemStack is = invInventory.getItem(i);
+      if (is != null)
+      {
+        String serializedItemStack = new String();
+        
+        String isType = String.valueOf(is.getType().getId());
+        serializedItemStack = serializedItemStack + "t@" + isType;
+        if (is.getDurability() != 0)
+        {
+          String isDurability = String.valueOf(is.getDurability());
+          serializedItemStack = serializedItemStack + ":d@" + isDurability;
+        }
+        if (is.getAmount() != 1)
+        {
+          String isAmount = String.valueOf(is.getAmount());
+          serializedItemStack = serializedItemStack + ":a@" + isAmount;
+        }
+        Map<Enchantment, Integer> isEnch = is.getEnchantments();
+        if (isEnch.size() > 0) {
+          for (Map.Entry<Enchantment, Integer> ench : isEnch.entrySet()) {
+            serializedItemStack = serializedItemStack + ":e@" + ((Enchantment)ench.getKey()).getId() + "@" + ench.getValue();
+          }
+        }
+        serialization = serialization + i + "#" + serializedItemStack + ";" + p.getLevel() + "&" + p.getExp();
+      }
+    }
+    return serialization;
+  }
+  
+  public static String ArmorToString(Inventory invInventory)
   {
     String serialization = invInventory.getSize() + ";";
     for (int i = 0; i < invInventory.getSize(); i++)
@@ -47,6 +81,14 @@ public class InventoryStringDeSerializer
     return serialization;
   }
   
+  
+  public static int[] StringToExp(String invString) {
+	    String[] serializedBlocks = invString.split(";");
+	    int level = Integer.parseInt(serializedBlocks[serializedBlocks.length-1].split("&")[0]);
+	    int exp = Integer.parseInt(serializedBlocks[serializedBlocks.length-1].split("&")[1]);
+	    int[] returnExp = {level, exp};
+	    return returnExp;
+  }
   public static Inventory StringToInventory(String invString)
   {
     String[] serializedBlocks = invString.split(";");

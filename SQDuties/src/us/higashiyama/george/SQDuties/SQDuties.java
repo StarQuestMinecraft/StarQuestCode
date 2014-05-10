@@ -62,7 +62,7 @@ public class SQDuties extends JavaPlugin implements Listener {
 		for (int i = 0; i < armor.length; i++) {
 			armorInv.setItem(i, armor[i]);
 		}
-		InvRestoreDB.newKey(p.getName(), InventoryStringDeSerializer.InventoryToString(p.getInventory()), InventoryStringDeSerializer.InventoryToString(armorInv), cause);
+		InvRestoreDB.newKey(p.getName(), InventoryStringDeSerializer.InventoryToString(p.getInventory(), p), InventoryStringDeSerializer.ArmorToString(armorInv), cause);
 
 	}
 	
@@ -74,12 +74,18 @@ public class SQDuties extends JavaPlugin implements Listener {
 		String timestamp = InvRestoreDB.getDateIndex(player, index);
 		Inventory inv = InventoryStringDeSerializer.StringToInventory(InvRestoreDB.getInv(player, timestamp));
 		Inventory armorInv = InventoryStringDeSerializer.StringToInventory(InvRestoreDB.getArmor(player, timestamp));
+		int[] exp = InventoryStringDeSerializer.StringToExp(InvRestoreDB.getInv(player, timestamp));
+		p.setLevel(exp[0]);
+		p.giveExp(exp[1]);
+		
+		
 		ItemStack[] armor = new ItemStack[4];
 		for (int i = 0; i < armor.length; i++) {
 			armor[i] = armorInv.getItem(i);
 		}
 		p.getInventory().setContents(inv.getContents());
 		p.getInventory().setArmorContents(armor);
+		
 	}
 
 	public boolean onCommand(CommandSender sender, Command cmd, String label,
@@ -194,8 +200,8 @@ public class SQDuties extends JavaPlugin implements Listener {
 		}
 		Database.newKey(
 				player,
-				InventoryStringDeSerializer.InventoryToString(p.getInventory()),
-				InventoryStringDeSerializer.InventoryToString(armorInv),
+				InventoryStringDeSerializer.InventoryToString(p.getInventory(), p),
+				InventoryStringDeSerializer.ArmorToString(armorInv),
 				locToString(p.getLocation()));
 	}
 
@@ -206,12 +212,15 @@ public class SQDuties extends JavaPlugin implements Listener {
 				.getInv(player));
 		Inventory armorInv = InventoryStringDeSerializer
 				.StringToInventory(Database.getArmor(player));
+		int[] exp = InventoryStringDeSerializer.StringToExp(Database.getInv(player));
 		ItemStack[] armor = new ItemStack[4];
 		for (int i = 0; i < armor.length; i++) {
 			armor[i] = armorInv.getItem(i);
 		}
 		p.getInventory().setContents(inv.getContents());
 		p.getInventory().setArmorContents(armor);
+		p.setLevel(exp[0]);
+		p.giveExp(exp[1]);
 	}
 
 	public void restoreLoc(String player) {
