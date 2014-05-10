@@ -89,6 +89,7 @@ public class InventoryStringDeSerializer
 	    int[] returnExp = {level, exp};
 	    return returnExp;
   }
+  
   public static Inventory StringToInventory(String invString)
   {
     String[] serializedBlocks = invString.split(";");
