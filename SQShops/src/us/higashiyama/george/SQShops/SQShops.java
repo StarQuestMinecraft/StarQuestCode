@@ -82,7 +82,7 @@ public class SQShops extends JavaPlugin implements Listener {
 	
 	@EventHandler
 	public void onPlayerInteractEvent(PlayerInteractEvent e){
-		if(e.getAction() == Action.LEFT_CLICK_BLOCK && 
+		if(e.getAction() == Action.RIGHT_CLICK_BLOCK && 
 				(((e.getClickedBlock().getType() == Material.SIGN) ||
 				(e.getClickedBlock().getType() == Material.WALL_SIGN) ||
 				(e.getClickedBlock().getType() == Material.SIGN_POST)))
@@ -168,6 +168,7 @@ public class SQShops extends JavaPlugin implements Listener {
 			}
 			double price = itemIndex.get(checkStack);
 			Database.updateStats(finalStack, quantity);
+			LogDatabase.addPurchase(finalStack, quantity, (price*quantity), player.getName());
 			total = total+(price * quantity);
 		}
 		if(total == 0) return;
