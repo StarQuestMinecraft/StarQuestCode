@@ -2,6 +2,9 @@ package us.higashiyama.george.SQDuties;
 
 
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 import org.bukkit.Bukkit;
@@ -41,10 +44,10 @@ public class InventoryStringDeSerializer
             serializedItemStack = serializedItemStack + ":e@" + ((Enchantment)ench.getKey()).getId() + "@" + ench.getValue();
           }
         }
-        serialization = serialization + i + "#" + serializedItemStack + ";" + p.getLevel() + "&" + p.getExp();
+        serialization = serialization + i + "#" + serializedItemStack + ";";
       }
     }
-    return serialization;
+    return serialization  + p.getLevel() + "&" + p.getExp();
   }
   
   public static String ArmorToString(Inventory invInventory)
@@ -82,17 +85,26 @@ public class InventoryStringDeSerializer
   }
   
   
-  public static int[] StringToExp(String invString) {
+  public static double[] StringToExp(String invString) {
 	    String[] serializedBlocks = invString.split(";");
-	    int level = Integer.parseInt(serializedBlocks[serializedBlocks.length-1].split("&")[0]);
-	    int exp = Integer.parseInt(serializedBlocks[serializedBlocks.length-1].split("&")[1]);
-	    int[] returnExp = {level, exp};
+	    double level = Integer.parseInt(serializedBlocks[serializedBlocks.length-1].split("&")[0]);
+	    double exp = Double.parseDouble(serializedBlocks[serializedBlocks.length-1].split("&")[1]);
+	    double[] returnExp = {level, exp};
 	    return returnExp;
   }
   
   public static Inventory StringToInventory(String invString)
   {
-    String[] serializedBlocks = invString.split(";");
+	  
+	ArrayList<String> markup = new ArrayList<String>();
+	List<String> serialized =  Arrays.asList(invString.split(";"));
+	for(String s : serialized) {
+		if(!s.contains("&")) {
+			markup.add(s);
+		}
+	}
+	
+	String[] serializedBlocks= markup.toArray(new String[markup.size()]);
     String invInfo = serializedBlocks[0];
     Inventory deserializedInventory = Bukkit.getServer().createInventory(null, Integer.valueOf(invInfo).intValue());
     for (int i = 1; i < serializedBlocks.length; i++)

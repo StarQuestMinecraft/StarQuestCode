@@ -1,7 +1,6 @@
 package us.higashiyama.george.SQDuties;
 
-import java.io.ByteArrayOutputStream;
-import java.io.DataOutputStream;
+import java.util.ArrayList;
 
 import net.countercraft.movecraft.bungee.BungeePlayerHandler;
 import net.milkbowl.vault.permission.Permission;
@@ -17,7 +16,16 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCreativeEvent;
+import org.bukkit.event.inventory.InventoryOpenEvent;
+import org.bukkit.event.player.AsyncPlayerChatEvent;
+import org.bukkit.event.player.PlayerChangedWorldEvent;
+import org.bukkit.event.player.PlayerCommandPreprocessEvent;
+import org.bukkit.event.player.PlayerDropItemEvent;
+import org.bukkit.event.player.PlayerGameModeChangeEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.RegisteredServiceProvider;
@@ -27,7 +35,7 @@ public class SQDuties extends JavaPlugin implements Listener {
 	BungeePlayerHandler utils;
 	public static Permission permission = null;
 	static SQDuties instance;
-
+	public static ArrayList<Player> creativeCheck = new ArrayList<Player>();
 
 	public void onEnable() {
 		Database.setUp();
@@ -38,6 +46,9 @@ public class SQDuties extends JavaPlugin implements Listener {
 	    this.getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
 	   
 	}
+	
+
+
 
 	private boolean setupPermissions() {
 		RegisteredServiceProvider<Permission> permissionProvider = getServer()
@@ -48,6 +59,83 @@ public class SQDuties extends JavaPlugin implements Listener {
 		return permission != null;
 	}
 
+	
+	
+
+	
+	
+	@EventHandler
+	public void dutyChat(AsyncPlayerChatEvent e) {
+		if(creativeCheck.contains(e.getPlayer())) {
+			CommandSpy.writeString("Chat: " + e.getMessage(), e.getPlayer());
+		}
+	}
+	
+	@EventHandler
+	public void dutyWorldChange(PlayerChangedWorldEvent e) {
+		if(creativeCheck.contains(e.getPlayer())) {
+			CommandSpy.writeString("Changed worlds from " + e.getFrom() + " to " + getServer().getName(), e.getPlayer());
+		}
+	}
+	
+	@EventHandler
+	public void dutyDrop(PlayerDropItemEvent e){
+		if(creativeCheck.contains(e.getPlayer())) {
+			CommandSpy.writeString("Dropped item " + e.getItemDrop().getType().toString() + " at " + locationToString(e.getPlayer().getLocation()), e.getPlayer());
+		}
+	}
+	
+	@EventHandler
+	public void dutyPickup(PlayerPickupItemEvent e){
+		if(creativeCheck.contains(e.getPlayer())) {
+			CommandSpy.writeString("Picked up item " + e.getItem().getType().toString() + " at " + locationToString(e.getPlayer().getLocation()), e.getPlayer());
+		}
+	}
+	
+	@EventHandler
+	public void invOpen(InventoryOpenEvent e){
+		if(creativeCheck.contains(e.getPlayer())) {
+			CommandSpy.writeString("Opened " + e.getInventory().getTitle(), (Player) e.getPlayer());
+		}
+	}
+	
+	@EventHandler
+	public void clickInventory(InventoryClickEvent e) {
+		if(creativeCheck.contains(e.getWhoClicked())) {
+			CommandSpy.writeString(e.getInventory().getName() + "|" + e.getAction() + "|" + e.getCurrentItem(), (Player) e.getWhoClicked());
+		}
+	}
+	
+	@EventHandler
+	public void creativeInventory(InventoryCreativeEvent e) {
+		if(creativeCheck.contains(e.getWhoClicked())) {
+			CommandSpy.writeString("Own Inventory" + e.getAction() + "|" +e.getCurrentItem(), (Player) e.getWhoClicked());
+		}
+	}
+	
+	@EventHandler
+	public void command(PlayerCommandPreprocessEvent e) {
+		if(creativeCheck.contains(e.getPlayer())) {
+			CommandSpy.writeString("Command: " + e.getMessage(), e.getPlayer());
+		}
+	}
+	
+	
+	
+	public static String locationToString(Location l) {
+		String location = ("X: " + Math.round(l.getX()) +
+							" Y: " + Math.round(l.getY()) +
+							" Z: " + Math.round(l.getZ()) +
+							" World: " + l.getWorld().getName()
+				
+				);
+		
+		return location;
+	}
+	
+	
+	
+	
 	@EventHandler
 	public void onPlayerDeath(PlayerDeathEvent e) {
 		Player p = (Player) e.getEntity();
@@ -66,7 +154,18 @@ public class SQDuties extends JavaPlugin implements Listener {
 
 	}
 	
-
+	@EventHandler
+	public void onGamemodeChange(PlayerGameModeChangeEvent e) {
+		if(e.getNewGameMode() == GameMode.CREATIVE) {
+			creativeCheck.add(e.getPlayer());
+			CommandSpy.writeString(e.getPlayer().getName() + " went into creative", e.getPlayer());
+			new CommandSpy(e.getPlayer());
+		} else if(e.getNewGameMode() == GameMode.SURVIVAL) {
+			CommandSpy.writeString(e.getPlayer().getName() + " went into survival", e.getPlayer());
+			if(creativeCheck.contains(e.getPlayer())) creativeCheck.remove(e.getPlayer());
+		}
+		
+	}
 	
 	public void restoreDeathInv(String player, int index) {
 		Player p = getServer().getPlayer(player);
@@ -74,9 +173,9 @@ public class SQDuties extends JavaPlugin implements Listener {
 		String timestamp = InvRestoreDB.getDateIndex(player, index);
 		Inventory inv = InventoryStringDeSerializer.StringToInventory(InvRestoreDB.getInv(player, timestamp));
 		Inventory armorInv = InventoryStringDeSerializer.StringToInventory(InvRestoreDB.getArmor(player, timestamp));
-		int[] exp = InventoryStringDeSerializer.StringToExp(InvRestoreDB.getInv(player, timestamp));
-		p.setLevel(exp[0]);
-		p.giveExp(exp[1]);
+		double[] exp = InventoryStringDeSerializer.StringToExp(InvRestoreDB.getInv(player, timestamp));
+		p.setLevel((int)exp[0]);
+		p.setExp((float)exp[1]);
 		
 		
 		ItemStack[] armor = new ItemStack[4];
@@ -212,15 +311,15 @@ public class SQDuties extends JavaPlugin implements Listener {
 				.getInv(player));
 		Inventory armorInv = InventoryStringDeSerializer
 				.StringToInventory(Database.getArmor(player));
-		int[] exp = InventoryStringDeSerializer.StringToExp(Database.getInv(player));
+		double[] exp = InventoryStringDeSerializer.StringToExp(Database.getInv(player));
 		ItemStack[] armor = new ItemStack[4];
 		for (int i = 0; i < armor.length; i++) {
 			armor[i] = armorInv.getItem(i);
 		}
 		p.getInventory().setContents(inv.getContents());
 		p.getInventory().setArmorContents(armor);
-		p.setLevel(exp[0]);
-		p.giveExp(exp[1]);
+		p.setLevel((int)exp[0]);
+		p.setExp((float)exp[1]);
 	}
 
 	public void restoreLoc(String player) {
@@ -288,4 +387,9 @@ public class SQDuties extends JavaPlugin implements Listener {
 			}
 		}, 5L);
 	}
+	
+	
+	
+	
+	
 }
