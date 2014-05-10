@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/J2SE-1.5"/>
+	<classpathentry kind="lib" path="C:/Users/george/Desktop/bukkit-1.7.2-R0.3-20140116.121953-10.jar" sourcepath="C:/Users/george/Desktop/bukkit-docs">
+		<attributes>
+			<attribute name="javadoc_location" value="http://jd.bukkit.org/rb/apidocs/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="C:/Users/george/Desktop/Vault.jar"/>
+	<classpathentry kind="lib" path="C:/Users/george/Desktop/SQBungeeMovecraft.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

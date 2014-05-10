@@ -1,0 +1,13 @@
+name: SQDuties
+main: us.higashiyama.george.SQDuties.SQDuties
+version: 1.0.0
+depend: [Movecraft, Vault]
+commands:
+   duty:
+      description: enable/disable dutymode!
+      usage: /duty
+   invrestore:
+      description: restore a players invrestore
+      usage: /invrestore
+      aliases: [inventoryrestore, lastdeathrestore, deathrestore, lastinventory, lastinventoryrestore]
+   
