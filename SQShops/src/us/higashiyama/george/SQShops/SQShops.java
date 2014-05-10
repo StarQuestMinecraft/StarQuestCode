@@ -33,6 +33,7 @@ public class SQShops extends JavaPlugin implements Listener {
 	public void onEnable() {
 		setupEconomy();
 		Database.setUp();
+		LogDatabase.setUp();
 		Bukkit.getServer().getPluginManager().registerEvents(this, this);
 		itemIndex = Database.loadData();
 	}

@@ -16,7 +16,7 @@ import org.bukkit.inventory.ItemStack;
 
 public class LogDatabase {
 	public static String driverString = "com.mysql.jdbc.Driver";
-	public static String hostname = "localhost";
+	public static String hostname = "192.99.20.8";
 	public static String port = "3306";
 	public static String db_name = "minecraft";
 	public static String username = "minecraft";
@@ -31,8 +31,7 @@ public class LogDatabase {
 				+ "`material` VARCHAR(32),"
 				+ "`quantity` DOUBLE,"
 				+ "`profit` DOUBLE,"
-				+ "`time` DATETIME," 
-				+ "PRIMARY KEY (`name`)" 
+				+ "`time` DATETIME" 
 				+ ")";
 
 		getContext();
