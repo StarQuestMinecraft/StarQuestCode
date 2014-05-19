@@ -10,4 +10,16 @@ commands:
       description: restore a players invrestore
       usage: /invrestore
       aliases: [inventoryrestore, lastdeathrestore, deathrestore, lastinventory, lastinventoryrestore]
-   
+
+      
+permissions:
+  SQDuties.TrMod:
+    default: false
+  SQDuties.Mod:
+    default: false
+  SQDuties.SrMod:
+    default: false
+  SQDuties.Manager:
+    default: false
+  SQDuties.Developer:
+    default: false
