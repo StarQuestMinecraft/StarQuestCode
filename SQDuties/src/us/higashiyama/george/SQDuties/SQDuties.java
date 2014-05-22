@@ -16,6 +16,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCreativeEvent;
@@ -127,6 +128,14 @@ public class SQDuties extends JavaPlugin implements Listener {
 
 		if (creativeCheck.contains(e.getPlayer())) {
 			CommandSpy.writeString("Command: " + e.getMessage(), e.getPlayer());
+		}
+	}
+
+	@EventHandler
+	public void blockBreak(BlockBreakEvent e) {
+
+		if (creativeCheck.contains(e.getPlayer())) {
+			CommandSpy.writeString("BlockBreak: " + e.getBlock().getType() + " Location: " + locationToString(e.getBlock().getLocation()), e.getPlayer());
 		}
 	}
 
@@ -277,7 +286,8 @@ public class SQDuties extends JavaPlugin implements Listener {
 
 	public void enableDuty(Player p, String group) {
 
-		permission.playerAddGroup(p, group + "_duty");
+		permission.playerAddGroup((String) null, p.getName(), group + "_duty");
+		pex.getPermissionManager().getUser(p.getName());
 		p.setGameMode(GameMode.CREATIVE);
 		saveData(p.getName());
 		p.getInventory().clear();
@@ -292,7 +302,8 @@ public class SQDuties extends JavaPlugin implements Listener {
 
 	public void disableDuty(Player p, String group) {
 
-		permission.playerRemoveGroup(p, group + "_duty");
+		permission.playerRemoveGroup((String) null, p.getName(), group + "_duty");
+		pex.getPermissionManager().getUser(p.getName());
 		p.setGameMode(GameMode.SURVIVAL);
 		p.getInventory().clear();
 		p.getInventory().setArmorContents(null);
@@ -416,7 +427,8 @@ public class SQDuties extends JavaPlugin implements Listener {
 						}
 
 					}
-					permission.playerAddGroup(p, group);
+					permission.playerAddGroup((String) null, p.getName(), group);
+					pex.getPermissionManager().getUser(p.getName());
 					p.sendMessage(ChatColor.AQUA + "Duty Mode Detected");
 					p.setGameMode(GameMode.CREATIVE);
 					p.getInventory().clear();
