@@ -288,6 +288,7 @@ public class SQDuties extends JavaPlugin implements Listener {
 
 		permission.playerAddGroup((String) null, p.getName(), group + "_duty");
 		pex.getPermissionManager().getUser(p.getName());
+		p.getInventory().getHelmet();
 		p.setGameMode(GameMode.CREATIVE);
 		saveData(p.getName());
 		p.getInventory().clear();
