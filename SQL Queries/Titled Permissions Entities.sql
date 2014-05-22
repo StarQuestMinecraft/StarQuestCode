@@ -1,0 +1,1 @@
+SELECT * FROM minecraft.permissions_entity where prefix <> "" or suffix <> "" or name="Developer" or name like "%Sentient%" order by name;

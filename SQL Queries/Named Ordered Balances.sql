@@ -1,0 +1,1 @@
+SELECT * FROM minecraft.cc3_balance as bal join minecraft.cc3_account as acc on bal.username_id=acc.id order by balance desc;
