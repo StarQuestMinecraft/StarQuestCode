@@ -9,5 +9,6 @@
 	</classpathentry>
 	<classpathentry kind="lib" path="C:/Users/george/Desktop/Vault.jar"/>
 	<classpathentry kind="lib" path="C:/Users/george/Desktop/SQBungeeMovecraft.jar"/>
+	<classpathentry kind="lib" path="C:/Users/george/Desktop/PermissionsEx.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

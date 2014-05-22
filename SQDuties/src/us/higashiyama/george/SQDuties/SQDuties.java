@@ -32,12 +32,15 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import ru.tehkode.permissions.bukkit.PermissionsEx;
+
 public class SQDuties extends JavaPlugin implements Listener {
 
 	BungeePlayerHandler utils;
 	public static Permission permission = null;
 	static SQDuties instance;
 	public static ArrayList<Player> creativeCheck = new ArrayList<Player>();
+	public PermissionsEx pex;
 
 	public void onEnable() {
 
@@ -47,13 +50,13 @@ public class SQDuties extends JavaPlugin implements Listener {
 		setupPermissions();
 		instance = this;
 		this.getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
+		pex = (PermissionsEx) getServer().getPluginManager().getPlugin("PermissionsEx");
 
 	}
 
 	private boolean setupPermissions() {
 
-		RegisteredServiceProvider<Permission> permissionProvider = getServer().getServicesManager().getRegistration(
-				Permission.class);
+		RegisteredServiceProvider<Permission> permissionProvider = getServer().getServicesManager().getRegistration(Permission.class);
 		if (permissionProvider != null) {
 			permission = (Permission) permissionProvider.getProvider();
 		}
@@ -72,8 +75,7 @@ public class SQDuties extends JavaPlugin implements Listener {
 	public void dutyWorldChange(PlayerChangedWorldEvent e) {
 
 		if (creativeCheck.contains(e.getPlayer())) {
-			CommandSpy
-					.writeString("Changed worlds from " + e.getFrom() + " to " + getServer().getName(), e.getPlayer());
+			CommandSpy.writeString("Changed worlds from " + e.getFrom() + " to " + getServer().getName(), e.getPlayer());
 		}
 	}
 
@@ -81,8 +83,8 @@ public class SQDuties extends JavaPlugin implements Listener {
 	public void dutyDrop(PlayerDropItemEvent e) {
 
 		if (creativeCheck.contains(e.getPlayer())) {
-			CommandSpy.writeString("Dropped item " + e.getItemDrop().getType().toString() + " at "
-					+ locationToString(e.getPlayer().getLocation()), e.getPlayer());
+			CommandSpy.writeString("Dropped item " + e.getItemDrop().getType().toString() + " at " + locationToString(e.getPlayer().getLocation()),
+					e.getPlayer());
 		}
 	}
 
@@ -90,8 +92,8 @@ public class SQDuties extends JavaPlugin implements Listener {
 	public void dutyPickup(PlayerPickupItemEvent e) {
 
 		if (creativeCheck.contains(e.getPlayer())) {
-			CommandSpy.writeString("Picked up item " + e.getItem().getType().toString() + " at "
-					+ locationToString(e.getPlayer().getLocation()), e.getPlayer());
+			CommandSpy
+					.writeString("Picked up item " + e.getItem().getType().toString() + " at " + locationToString(e.getPlayer().getLocation()), e.getPlayer());
 		}
 	}
 
@@ -99,7 +101,8 @@ public class SQDuties extends JavaPlugin implements Listener {
 	public void invOpen(InventoryOpenEvent e) {
 
 		if (creativeCheck.contains(e.getPlayer())) {
-			CommandSpy.writeString("Opened " + e.getInventory().getTitle(), (Player) e.getPlayer());
+			CommandSpy.writeString("Opened " + e.getInventory().getTitle() + "| Location: " + locationToString(e.getPlayer().getLocation()),
+					(Player) e.getPlayer());
 		}
 	}
 
@@ -107,8 +110,7 @@ public class SQDuties extends JavaPlugin implements Listener {
 	public void clickInventory(InventoryClickEvent e) {
 
 		if (creativeCheck.contains(e.getWhoClicked())) {
-			CommandSpy.writeString(e.getInventory().getName() + "|" + e.getAction() + "|" + e.getCurrentItem(),
-					(Player) e.getWhoClicked());
+			CommandSpy.writeString(e.getInventory().getName() + "|" + e.getAction() + "|" + e.getCurrentItem(), (Player) e.getWhoClicked());
 		}
 	}
 
@@ -116,8 +118,7 @@ public class SQDuties extends JavaPlugin implements Listener {
 	public void creativeInventory(InventoryCreativeEvent e) {
 
 		if (creativeCheck.contains(e.getWhoClicked())) {
-			CommandSpy.writeString("Own Inventory" + e.getAction() + "|" + e.getCurrentItem(),
-					(Player) e.getWhoClicked());
+			CommandSpy.writeString("Own Inventory" + e.getAction() + "|" + e.getCurrentItem(), (Player) e.getWhoClicked());
 		}
 	}
 
@@ -131,8 +132,7 @@ public class SQDuties extends JavaPlugin implements Listener {
 
 	public static String locationToString(Location l) {
 
-		String location = ("X: " + Math.round(l.getX()) + " Y: " + Math.round(l.getY()) + " Z: " + Math.round(l.getZ())
-				+ " World: " + l.getWorld().getName()
+		String location = ("X: " + Math.round(l.getX()) + " Y: " + Math.round(l.getY()) + " Z: " + Math.round(l.getZ()) + " World: " + l.getWorld().getName()
 
 		);
 
@@ -226,6 +226,10 @@ public class SQDuties extends JavaPlugin implements Listener {
 
 			Player p = (Player) sender;
 
+			if (p.isFlying()) {
+				p.sendMessage(ChatColor.RED + "You cannot unduty or duty while flying!");
+			}
+
 			if (p.hasPermission("SQDuties.Developer")) {
 				if (!isInDutymode(p, p.getWorld().getName())) {
 					enableDuty(p, "Developer");
@@ -306,8 +310,8 @@ public class SQDuties extends JavaPlugin implements Listener {
 		for (int i = 0; i < armor.length; i++) {
 			armorInv.setItem(i, armor[i]);
 		}
-		Database.newKey(player, InventoryStringDeSerializer.InventoryToString(p.getInventory(), p),
-				InventoryStringDeSerializer.ArmorToString(armorInv), locToString(p.getLocation()));
+		Database.newKey(player, InventoryStringDeSerializer.InventoryToString(p.getInventory(), p), InventoryStringDeSerializer.ArmorToString(armorInv),
+				locToString(p.getLocation()));
 	}
 
 	public void restoreInv(String player) {
@@ -336,8 +340,8 @@ public class SQDuties extends JavaPlugin implements Listener {
 
 			if (stringToLocation(Database.getLocation(p.getName())) == null) {
 				locString = stringToLocationString(Database.getLocation(p.getName()));
-				BungeePlayerHandler.sendPlayer(p, locString[0], locString[0], Integer.parseInt(locString[1]),
-						Integer.parseInt(locString[2]), Integer.parseInt(locString[3]));
+				BungeePlayerHandler.sendPlayer(p, locString[0], locString[0], Integer.parseInt(locString[1]), Integer.parseInt(locString[2]),
+						Integer.parseInt(locString[3]));
 			} else {
 
 				final Location newLoc = stringToLocation(Database.getLocation(p.getName()));
@@ -352,30 +356,13 @@ public class SQDuties extends JavaPlugin implements Listener {
 
 	public boolean isInDutymode(Player p, String world) {
 
-		if (permission.playerInGroup(world, p.getName(), "TrMod_Duty")) {
-			return true;
-		}
-		if (permission.playerInGroup(world, p.getName(), "Mod_Duty")) {
-			return true;
-		}
-		if (permission.playerInGroup(world, p.getName(), "SrMod_Duty")) {
-			return true;
-		}
-		if (permission.playerInGroup(world, p.getName(), "Manager_Duty")) {
-			return true;
-		}
-		if (permission.playerInGroup(world, p.getName(), "Developer_Duty")) {
-			return true;
-		}
-
-		return false;
+		return Database.hasKey(p.getName());
 
 	}
 
 	public String locToString(Location loc) {
 
-		String str = new String(loc.getWorld().getName() + ";" + loc.getBlockX() + ";" + loc.getBlockY() + ";"
-				+ loc.getBlockZ());
+		String str = new String(loc.getWorld().getName() + ";" + loc.getBlockX() + ";" + loc.getBlockY() + ";" + loc.getBlockZ());
 		return str;
 	}
 
@@ -402,11 +389,35 @@ public class SQDuties extends JavaPlugin implements Listener {
 	public void onPlayerLogin(PlayerJoinEvent event) {
 
 		final Player p = event.getPlayer();
+
 		Bukkit.getScheduler().runTaskLater(this, new Runnable() {
 
 			public void run() {
 
 				if (SQDuties.this.isInDutymode(p, p.getWorld().getName())) {
+					String group = null;
+					String[] groups = permission.getPlayerGroups(p);
+					for (String s : groups) {
+						if (s.contains("Developer")) {
+							group = "Developer_Duty";
+							break;
+						} else if (s.contains("Manager")) {
+							group = "Manager_Duty";
+							break;
+						} else if (s.contains("SrMod")) {
+							group = "SrMod_Duty";
+							break;
+						} else if (s.contains("Mod")) {
+							group = "Mod_Duty";
+							break;
+						} else if (s.contains("TrlMod")) {
+							group = "Tr_Duty";
+							break;
+						}
+
+					}
+					permission.playerAddGroup(p, group);
+					p.sendMessage(ChatColor.AQUA + "Duty Mode Detected");
 					p.setGameMode(GameMode.CREATIVE);
 					p.getInventory().clear();
 				}
