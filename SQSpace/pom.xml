@@ -15,6 +15,10 @@
     <id>sk89q-repo</id>
     <url>http://maven.sk89q.com/repo/</url>
         </repository>
+        <repository>
+        <id>pex-repo</id>
+        <url>http://ci.nixium.com/plugin/repository/everything/</url>
+        </repository>
     </repositories>
     <build>
         <plugins>

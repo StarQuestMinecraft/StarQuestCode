@@ -5,5 +5,5 @@ depend: [WorldEdit, WorldGuard]
 
 permissions:
   SQSpace.nosuffocate:
-    default: true
+    default: op
 
