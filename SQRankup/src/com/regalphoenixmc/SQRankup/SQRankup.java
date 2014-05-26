@@ -7,6 +7,7 @@ import java.util.List;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
 
+import org.apache.commons.lang.WordUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -78,8 +79,8 @@ public class SQRankup extends JavaPlugin implements Listener {
 
 			if (killsFound >= killsRequirement && moneyFound >= moneyRequirement) {
 				getServer().broadcastMessage(ChatColor.RED + sender.getName() + " has ranked up to " + nextRank.toString().toLowerCase() + "!");
-				user.addGroup(nextRank);
-				user.removeGroup(rank);
+				user.addGroup(WordUtils.capitalize(nextRank));
+				user.removeGroup(WordUtils.capitalize(rank));
 				economy.withdrawPlayer(sender.getName(), moneyRequirement);
 				Database.setKills(sender.getName(), killsFound - killsRequirement);
 			} else {
@@ -91,7 +92,7 @@ public class SQRankup extends JavaPlugin implements Listener {
 		if (cmd.getName().equalsIgnoreCase("addapp") && sender.hasPermission("SQRankup.addApplication")) {
 			String rank = getRank(args[0]);
 			String nextRank = getNextRank(rank);
-			PermissionUser user = pex.getUser(getServer().getPlayer(args[1]));
+			PermissionUser user = pex.getUser(getServer().getPlayer(args[0]));
 			if (args.length >= 1) {
 				if (getServer().getOfflinePlayer(args[0]) != null) {
 					getServer().broadcastMessage(ChatColor.RED + args[0] + " has ranked up to settler!");
