@@ -45,15 +45,19 @@ public class SQSpace extends JavaPlugin implements Listener {
 	@EventHandler
 	public void arrowDamager(EntityDamageByEntityEvent e) {
 
+		// Making sure the entity that did the damage was an arrow
 		if (e.getDamager() instanceof Arrow && e.getEntity() instanceof Player) {
 			Entity arrow = e.getDamager();
+			// By now we know it's a Player
 			Player p = (Player) e.getEntity();
+			// Sneaking changes height of the player's head
 			if ((p.isSneaking() && arrow.getLocation().getY() > p.getLocation().getY() + 1.46)
 					|| (!p.isSneaking() && arrow.getLocation().getY() > p.getLocation().getY() + 1.62)) {
-
+				// Replacing their pumpkin with air
 				if (p.getInventory().getHelmet().getType() == Material.PUMPKIN) {
 					p.getInventory().setHelmet(new ItemStack(0));
-					p.getInventory().addItem(new ItemStack(Material.PUMPKIN, 1));
+					// Refunding them the jack o lantern
+					p.getInventory().addItem(new ItemStack(Material.JACK_O_LANTERN, 1));
 					((Player) ((Arrow) arrow).getShooter()).sendMessage(ChatColor.RED + "Headshot!");
 				}
 
