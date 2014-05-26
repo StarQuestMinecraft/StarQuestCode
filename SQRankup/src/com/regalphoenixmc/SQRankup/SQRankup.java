@@ -15,6 +15,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -92,7 +93,7 @@ public class SQRankup extends JavaPlugin implements Listener {
 		if (cmd.getName().equalsIgnoreCase("addapp") && sender.hasPermission("SQRankup.addApplication")) {
 			String rank = getRank(args[0]);
 			String nextRank = getNextRank(rank);
-			PermissionUser user = pex.getUser(getServer().getPlayer(args[0]));
+			PermissionUser user = pex.getUser(args[0]);
 			if (args.length >= 1) {
 				if (getServer().getOfflinePlayer(args[0]) != null) {
 					getServer().broadcastMessage(ChatColor.RED + args[0] + " has ranked up to settler!");
@@ -262,6 +263,12 @@ public class SQRankup extends JavaPlugin implements Listener {
 		}
 
 		return null;
+	}
+
+	@EventHandler
+	public void playerLogin(PlayerLoginEvent e) {
+
+		pex.getUser(e.getPlayer().getName());
 	}
 
 	// Handling economy provider onEnable (Vault)
