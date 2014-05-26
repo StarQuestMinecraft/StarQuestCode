@@ -1,0 +1,2 @@
+SELECT name, material, SUM(quantity) as quantity, SUM(profit) as total FROM minecraft.economy_log GROUP BY name,material ORDER BY total desc;
+SELECT material, SUM(quantity) as quantity, SUM(profit) as total FROM minecraft.economy_log GROUP BY material ORDER BY total desc;

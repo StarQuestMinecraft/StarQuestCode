@@ -2,6 +2,7 @@
 package us.higashiyama.george.SQSpace;
 
 import java.util.ArrayList;
+import java.util.logging.Level;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -9,10 +10,14 @@ import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryType.SlotType;
 import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -22,7 +27,7 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 
 public class SQSpace extends JavaPlugin implements Listener {
 
-	public static ArrayList<Player> Players = new ArrayList();
+	public static ArrayList<Player> Players = new ArrayList<Player>();
 
 	public void onEnable() {
 
@@ -54,19 +59,47 @@ public class SQSpace extends JavaPlugin implements Listener {
 				p.setFlySpeed(0.1F);
 				p.setFallDistance(0.0F);
 			}
-			if ((isInSpace(p)) && (!hasSpaceHelmet(p)) && (!Players.contains(p)) && (p.getGameMode().equals(GameMode.SURVIVAL))) {
-				Players.add(p);
-				p.sendMessage(ChatColor.AQUA + "[Space] " + ChatColor.RED + "You are now Suffocating!");
-				new SuffocationTask(this, p);
-			}
+			checkIfSuffocating(p);
+		}
+	}
+	
+	@EventHandler
+	public void onHelmetChange (final InventoryClickEvent event)
+	{
+		if (event.getSlotType().equals(SlotType.ARMOR) && (103 == event.getSlot()))
+		{
+			checkIfSuffocating((Player) event.getWhoClicked());
 		}
 	}
 
-	public boolean hasSpaceHelmet(Player p) {
-
-		if ((p.getInventory().getHelmet() != null) && (p.getInventory().getHelmet().getType() == Material.PUMPKIN)) {
-			return true;
+	boolean checkIfSuffocating(Player p)
+	{
+		// WARNING:  This check assumes you have already checked that the player is in a "Space" area.
+		//           It is only a Respiration / Perm check
+		boolean suffocating = false;
+		if (!p.hasPermission("SQSpace.nosuffocate") &&
+			!(p.getGameMode().equals(GameMode.CREATIVE)) &&
+			(isInSpace(p)) &&
+			(!hasSpaceHelmet(p)) && 
+			(!Players.contains(p))) 
+		{
+			Players.add(p);
+			p.sendMessage(ChatColor.AQUA + "[Space] " + ChatColor.RED + "You are now Suffocating!");
+			new SuffocationTask(this, p);
+			suffocating = true;
 		}
+		return suffocating;
+	}
+	
+	public boolean hasSpaceHelmet(Player p) {
+		ItemStack helmet = p.getInventory().getHelmet();
+		if ( null != helmet)
+			{
+			// Can breathe in space wearing a Pumpkin (Space Helmet)
+			// Also can breathe in space if helmet has Respiration III
+			if ((helmet.getType() == Material.PUMPKIN) || (3 == helmet.getEnchantmentLevel(Enchantment.OXYGEN)))
+				return true;
+			}		
 		return false;
 	}
 
