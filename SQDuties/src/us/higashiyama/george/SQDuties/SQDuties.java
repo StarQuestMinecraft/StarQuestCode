@@ -38,6 +38,9 @@ import ru.tehkode.permissions.PermissionManager;
 import ru.tehkode.permissions.PermissionUser;
 import ru.tehkode.permissions.bukkit.PermissionsEx;
 
+import com.minecraftdimensions.bungeesuitechat.managers.PlayerManager;
+import com.minecraftdimensions.bungeesuitechat.objects.BSPlayer;
+
 public class SQDuties extends JavaPlugin implements Listener {
 
 	BungeePlayerHandler utils;
@@ -297,11 +300,22 @@ public class SQDuties extends JavaPlugin implements Listener {
 		for (PermissionGroup g : userGroups) {
 			nonDutyGroups.add(g);
 		}
-		if (p.getName().length() <= 14) {
-			p.setPlayerListName(ChatColor.RED + p.getName());
+
+		BSPlayer player = PlayerManager.getPlayer(p);
+
+		String nickname;
+
+		if (player.hasNickname()) {
+			nickname = player.getNickname();
 		} else {
-			p.setPlayerListName(ChatColor.RED + p.getName().substring(0, 14));
+			nickname = p.getName();
 		}
+		if (nickname.length() > 14) {
+			nickname = nickname.substring(0, 14);
+		}
+		String newNickname = "&4" + nickname;
+		PlayerManager.nicknamePlayer(p.getName(), p.getName(), newNickname, true);
+
 		nonDutyGroups.add(pexManager.getGroup(group + "_duty"));
 		PermissionGroup[] newGroups = nonDutyGroups.toArray(new PermissionGroup[nonDutyGroups.size()]);
 		user.setGroups(newGroups);
@@ -329,11 +343,20 @@ public class SQDuties extends JavaPlugin implements Listener {
 			}
 		}
 
-		if (p.getName().length() <= 14) {
-			p.setPlayerListName(ChatColor.GREEN + p.getName());
+		BSPlayer player = PlayerManager.getPlayer(p);
+
+		String nickname;
+
+		if (player.hasNickname()) {
+			nickname = player.getNickname();
 		} else {
-			p.setPlayerListName(ChatColor.GREEN + p.getName().substring(0, 14));
+			nickname = p.getName();
 		}
+		if (nickname.length() > 14) {
+			nickname = nickname.substring(0, 14);
+		}
+		String newNickname = "&a" + nickname;
+		PlayerManager.nicknamePlayer(p.getName(), p.getName(), newNickname, true);
 
 		PermissionGroup[] newGroups = nonDutyGroups.toArray(new PermissionGroup[nonDutyGroups.size()]);
 		user.setGroups(newGroups);
@@ -439,17 +462,22 @@ public class SQDuties extends JavaPlugin implements Listener {
 
 			public void run() {
 
-				if (p.hasPermission("SQDuties.colorname")) {
-					if (p.getName().length() <= 14) {
-						p.setPlayerListName(ChatColor.GREEN + p.getName());
-					} else {
-						String name = p.getName().substring(0, 14);
-						p.setPlayerListName(ChatColor.GREEN + p.getName().substring(0, 14));
-					}
-
-				}
-
 				if (SQDuties.this.isInDutymode(p, p.getWorld().getName())) {
+					BSPlayer player = PlayerManager.getPlayer(p);
+
+					String nickname;
+
+					if (player.hasNickname()) {
+						nickname = player.getNickname();
+					} else {
+						nickname = p.getName();
+					}
+					if (nickname.length() > 14) {
+						nickname = nickname.substring(0, 14);
+					}
+					String newNickname = "&4" + nickname;
+
+					PlayerManager.nicknamePlayer(p.getName(), p.getName(), newNickname, true);
 					PermissionGroup group = null;
 					PermissionGroup[] groups = pexManager.getUser(p.getName()).getGroups();
 					for (PermissionGroup indexGroup : groups) {
@@ -484,6 +512,21 @@ public class SQDuties extends JavaPlugin implements Listener {
 					p.sendMessage(ChatColor.AQUA + "Duty Mode Detected");
 					p.setGameMode(GameMode.CREATIVE);
 					p.getInventory().clear();
+				} else if (p.hasPermission("SQDuties.colorname")) {
+					BSPlayer player = PlayerManager.getPlayer(p);
+
+					String nickname;
+
+					if (player.hasNickname()) {
+						nickname = player.getNickname();
+					} else {
+						nickname = p.getName();
+					}
+					if (nickname.length() > 14) {
+						nickname = nickname.substring(0, 14);
+					}
+					String newNickname = "&a" + nickname;
+					PlayerManager.nicknamePlayer(p.getName(), p.getName(), newNickname, true);
 				}
 			}
 		}, 20L);
