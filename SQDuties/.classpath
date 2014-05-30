@@ -11,5 +11,6 @@
 	<classpathentry kind="lib" path="C:/Users/george/Desktop/SQBungeeMovecraft.jar"/>
 	<classpathentry kind="lib" path="C:/Users/george/Desktop/PermissionsEx.jar"/>
 	<classpathentry kind="lib" path="C:/Users/george/Desktop/BungeeSuiteChat.jar"/>
+	<classpathentry kind="lib" path="libs/SQMovecraft-Bungee.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
