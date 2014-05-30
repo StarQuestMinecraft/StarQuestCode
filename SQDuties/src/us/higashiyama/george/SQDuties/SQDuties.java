@@ -10,6 +10,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -19,6 +20,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCreativeEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
@@ -78,7 +80,7 @@ public class SQDuties extends JavaPlugin implements Listener {
 
 		if (e.getPlayer().hasPermission("commandspy.track")) {
 
-			Runnable task = new CommandSpyFile(e.getPlayer(), "General", ("Chat: " + e.getMessage()));
+			Runnable task = new CommandSpyFile(e.getPlayer().getName(), "General", ("Chat: " + e.getMessage()));
 			new Thread(task, "CommandSpy").start();
 
 		}
@@ -89,7 +91,7 @@ public class SQDuties extends JavaPlugin implements Listener {
 
 		if (e.getPlayer().hasPermission("commandspy.track")) {
 
-			Runnable task = new CommandSpyFile(e.getPlayer(), "General", ("Changed worlds from " + e.getFrom() + " to " + getServer().getName()));
+			Runnable task = new CommandSpyFile(e.getPlayer().getName(), "General", ("Changed worlds from " + e.getFrom() + " to " + getServer().getName()));
 			new Thread(task, "CommandSpy").start();
 		}
 	}
@@ -99,7 +101,7 @@ public class SQDuties extends JavaPlugin implements Listener {
 
 		if (e.getPlayer().hasPermission("commandspy.track")) {
 
-			Runnable task = new CommandSpyFile(e.getPlayer(), "Items", "Dropped item " + e.getItemDrop().getItemStack().getType().toString() + " at "
+			Runnable task = new CommandSpyFile(e.getPlayer().getName(), "Items", "Dropped item " + e.getItemDrop().getItemStack().getType().toString() + " at "
 					+ locationToString(e.getPlayer().getLocation()));
 			new Thread(task, "CommandSpy").start();
 		}
@@ -109,7 +111,7 @@ public class SQDuties extends JavaPlugin implements Listener {
 	public void dutyPickup(PlayerPickupItemEvent e) {
 
 		if (e.getPlayer().hasPermission("commandspy.track")) {
-			Runnable task = new CommandSpyFile(e.getPlayer(), "Items", "Picked up item " + e.getItem().getItemStack().getType().toString() + " at "
+			Runnable task = new CommandSpyFile(e.getPlayer().getName(), "Items", "Picked up item " + e.getItem().getItemStack().getType().toString() + " at "
 					+ locationToString(e.getPlayer().getLocation()));
 			new Thread(task, "CommandSpy").start();
 		}
@@ -119,7 +121,7 @@ public class SQDuties extends JavaPlugin implements Listener {
 	public void invOpen(InventoryOpenEvent e) {
 
 		if (e.getPlayer().hasPermission("commandspy.track")) {
-			Runnable task = new CommandSpyFile((Player) e.getPlayer(), "Inventory", "Opened " + e.getInventory().getTitle() + "| Location: "
+			Runnable task = new CommandSpyFile(((Player) e.getPlayer()).getName(), "Inventory", "Opened " + e.getInventory().getTitle() + "| Location: "
 					+ locationToString(e.getPlayer().getLocation()));
 			new Thread(task, "CommandSpy").start();
 		}
@@ -129,7 +131,7 @@ public class SQDuties extends JavaPlugin implements Listener {
 	public void clickInventory(InventoryClickEvent e) {
 
 		if (e.getWhoClicked().hasPermission("commandspy.track")) {
-			Runnable task = new CommandSpyFile((Player) e.getWhoClicked(), "Inventory", e.getInventory().getName() + "|" + e.getAction() + "|"
+			Runnable task = new CommandSpyFile(((Player) e.getWhoClicked()).getName(), "Inventory", e.getInventory().getName() + "|" + e.getAction() + "|"
 					+ e.getCurrentItem());
 			new Thread(task, "CommandSpy").start();
 		}
@@ -139,7 +141,7 @@ public class SQDuties extends JavaPlugin implements Listener {
 	public void creativeInventory(InventoryCreativeEvent e) {
 
 		if (e.getWhoClicked().hasPermission("commandspy.track")) {
-			Runnable task = new CommandSpyFile((Player) e.getWhoClicked(), "Inventory", "Own Inventory" + e.getAction() + "|" + e.getCurrentItem());
+			Runnable task = new CommandSpyFile(((Player) e.getWhoClicked()).getName(), "Inventory", "Own Inventory" + e.getAction() + "|" + e.getCurrentItem());
 			new Thread(task, "CommandSpy").start();
 		}
 	}
@@ -148,7 +150,7 @@ public class SQDuties extends JavaPlugin implements Listener {
 	public void command(PlayerCommandPreprocessEvent e) {
 
 		if (e.getPlayer().hasPermission("commandspy.track")) {
-			Runnable task = new CommandSpyFile(e.getPlayer(), "General", "Command: " + e.getMessage());
+			Runnable task = new CommandSpyFile(e.getPlayer().getName(), "General", "Command: " + e.getMessage());
 			new Thread(task, "CommandSpy").start();
 		}
 	}
@@ -157,8 +159,13 @@ public class SQDuties extends JavaPlugin implements Listener {
 	public void blockBreak(BlockBreakEvent e) {
 
 		if (e.getPlayer().hasPermission("commandspy.track")) {
-			Runnable task = new CommandSpyFile((Player) e.getPlayer(), "Block", "BlockBreak: " + e.getBlock().getType() + " Location: "
+			Runnable task = new CommandSpyFile(((Player) e.getPlayer()).getName(), "Block", "BlockBreak: " + e.getBlock().getType() + " Location: "
 					+ locationToString(e.getBlock().getLocation()));
+			new Thread(task, "CommandSpy").start();
+		} else if (e.getBlock().getType() == Material.DIAMOND_BLOCK || e.getBlock().getType() == Material.GOLD_BLOCK
+				|| e.getBlock().getType() == Material.EMERALD_BLOCK) {
+			// Adding support for global tracking
+			Runnable task = new CommandSpyFile("Global", "Block", "Broken by " + e.getPlayer().getName() + ": " + e.getBlock().getType());
 			new Thread(task, "CommandSpy").start();
 		}
 	}
@@ -167,10 +174,30 @@ public class SQDuties extends JavaPlugin implements Listener {
 	public void blockPlace(BlockPlaceEvent e) {
 
 		if (e.getPlayer().hasPermission("commandspy.track")) {
-			Runnable task = new CommandSpyFile((Player) e.getPlayer(), "Block", "BlockPlace: " + e.getBlock().getType() + " Location: "
+			Runnable task = new CommandSpyFile(((Player) e.getPlayer()).getName(), "Block", "BlockPlace: " + e.getBlock().getType() + " Location: "
 					+ locationToString(e.getBlock().getLocation()));
 			new Thread(task, "CommandSpy").start();
+		} else if (e.getBlock().getType() == Material.DIAMOND_BLOCK || e.getBlock().getType() == Material.GOLD_BLOCK
+				|| e.getBlock().getType() == Material.EMERALD_BLOCK) {
+			// Adding support for global tracking
+			Runnable task = new CommandSpyFile("Global", "Block", "Placed by " + e.getPlayer().getName() + ": " + e.getBlock().getType());
+			new Thread(task, "CommandSpy").start();
 		}
+	}
+
+	@EventHandler
+	public void craftEvent(CraftItemEvent e) {
+
+		if (e.getWhoClicked().hasPermission("commandspy.track")) {
+			Runnable task = new CommandSpyFile(((Player) e.getWhoClicked()).getName(), "Craft", "Crafted: " + e.getCurrentItem().getType());
+			new Thread(task, "CommandSpy").start();
+		} else if (e.getCurrentItem().getType() == Material.DIAMOND_BLOCK || e.getCurrentItem().getType() == Material.GOLD_BLOCK
+				|| e.getCurrentItem().getType() == Material.EMERALD_BLOCK) {
+			// Adding support for global tracking
+			Runnable task = new CommandSpyFile("Global", "Craft", "Crafted by " + e.getWhoClicked().getName() + ": " + e.getCurrentItem().getType());
+			new Thread(task, "CommandSpy").start();
+		}
+
 	}
 
 	public static String locationToString(Location l) {
@@ -207,10 +234,10 @@ public class SQDuties extends JavaPlugin implements Listener {
 
 		if (e.getPlayer().hasPermission("commandspy.track")) {
 			if (e.getNewGameMode() == GameMode.CREATIVE) {
-				Runnable task = new CommandSpyFile(e.getPlayer(), "General", "Switched to Creative");
+				Runnable task = new CommandSpyFile(e.getPlayer().getName(), "General", "Switched to Creative");
 				new Thread(task, "CommandSpy").start();
 			} else if (e.getNewGameMode() == GameMode.SURVIVAL) {
-				Runnable task = new CommandSpyFile(e.getPlayer(), "General", "Switched to Creative");
+				Runnable task = new CommandSpyFile(e.getPlayer().getName(), "General", "Switched to Creative");
 				new Thread(task, "CommandSpy").start();
 			}
 		}
@@ -341,31 +368,31 @@ public class SQDuties extends JavaPlugin implements Listener {
 	public static void colorOn(Player p) {
 
 		BSPlayer player = PlayerManager.getPlayer(p);
-		String nickname = p.getName();
-		if (player.hasNickname()) {
-			nickname = player.getNickname();
-		} else if (p.getName().length() > 14) {
-			nickname = p.getName().substring(0, 13);
-		}
+		String nickname = player.getNickname();
+		if (null == nickname)
+			nickname = p.getName();
 		nickname = nickname.replace("&4", "");
 		nickname = nickname.replace("&a", "");
+		if (nickname.length() > 14) {
+			nickname = p.getName().substring(0, 13);
+		}
 		String newNickname = "&4" + nickname;
-		PlayerManager.nicknamePlayer(p.getName(), p.getName(), newNickname, true);
+		PlayerManager.nicknamePlayer(p.getName(), p.getName(), newNickname, false);
 	}
 
 	public static void colorOff(Player p) {
 
 		BSPlayer player = PlayerManager.getPlayer(p);
-		String nickname = p.getName();
-		if (player.hasNickname()) {
-			nickname = player.getNickname();
-		} else if (p.getName().length() > 14) {
-			nickname = p.getName().substring(0, 13);
-		}
+		String nickname = player.getNickname();
+		if (null == nickname)
+			nickname = p.getName();
 		nickname = nickname.replace("&4", "");
 		nickname = nickname.replace("&a", "");
+		if (nickname.length() > 14) {
+			nickname = p.getName().substring(0, 13);
+		}
 		String newNickname = "&a" + nickname;
-		PlayerManager.nicknamePlayer(p.getName(), p.getName(), newNickname, true);
+		PlayerManager.nicknamePlayer(p.getName(), p.getName(), newNickname, false);
 	}
 
 	public static SQDuties getSQDuties() {

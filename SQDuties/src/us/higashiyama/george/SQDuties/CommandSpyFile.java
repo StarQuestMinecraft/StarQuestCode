@@ -8,17 +8,15 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import org.bukkit.entity.Player;
-
 public class CommandSpyFile implements Runnable {
 
 	private File file;
 	private String message;
 	public static SimpleDateFormat sdf = new SimpleDateFormat("MM/dd h:mm:ss a");
 
-	public CommandSpyFile(Player p, String type, String message) {
+	public CommandSpyFile(String p, String type, String message) {
 
-		this.file = new File("C:/StarQuest/CommandSpy/" + p.getName() + "/" + type + ".txt");
+		this.file = new File("C:/StarQuest/CommandSpy/" + p + "/" + type + ".txt");
 		this.message = message;
 		if (!this.file.exists()) {
 			try {
