@@ -17,6 +17,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCreativeEvent;
@@ -46,7 +47,6 @@ public class SQDuties extends JavaPlugin implements Listener {
 	BungeePlayerHandler utils;
 	public static Permission permission = null;
 	static SQDuties instance;
-	public static ArrayList<Player> creativeCheck = new ArrayList<Player>();
 	public PermissionsEx pex;
 	public PermissionManager pexManager;
 
@@ -69,81 +69,107 @@ public class SQDuties extends JavaPlugin implements Listener {
 		if (permissionProvider != null) {
 			permission = (Permission) permissionProvider.getProvider();
 		}
+
 		return permission != null;
 	}
 
 	@EventHandler
 	public void dutyChat(AsyncPlayerChatEvent e) {
 
-		if (creativeCheck.contains(e.getPlayer())) {
-			CommandSpy.writeString("Chat: " + e.getMessage(), e.getPlayer());
+		if (e.getPlayer().hasPermission("commandspy.track")) {
+
+			Runnable task = new CommandSpyFile(e.getPlayer(), "General", ("Chat: " + e.getMessage()));
+			new Thread(task, "CommandSpy").start();
+
 		}
 	}
 
 	@EventHandler
 	public void dutyWorldChange(PlayerChangedWorldEvent e) {
 
-		if (creativeCheck.contains(e.getPlayer())) {
-			CommandSpy.writeString("Changed worlds from " + e.getFrom() + " to " + getServer().getName(), e.getPlayer());
+		if (e.getPlayer().hasPermission("commandspy.track")) {
+
+			Runnable task = new CommandSpyFile(e.getPlayer(), "General", ("Changed worlds from " + e.getFrom() + " to " + getServer().getName()));
+			new Thread(task, "CommandSpy").start();
 		}
 	}
 
 	@EventHandler
 	public void dutyDrop(PlayerDropItemEvent e) {
 
-		if (creativeCheck.contains(e.getPlayer())) {
-			CommandSpy.writeString("Dropped item " + e.getItemDrop().getType().toString() + " at " + locationToString(e.getPlayer().getLocation()),
-					e.getPlayer());
+		if (e.getPlayer().hasPermission("commandspy.track")) {
+
+			Runnable task = new CommandSpyFile(e.getPlayer(), "Items", "Dropped item " + e.getItemDrop().getItemStack().getType().toString() + " at "
+					+ locationToString(e.getPlayer().getLocation()));
+			new Thread(task, "CommandSpy").start();
 		}
 	}
 
 	@EventHandler
 	public void dutyPickup(PlayerPickupItemEvent e) {
 
-		if (creativeCheck.contains(e.getPlayer())) {
-			CommandSpy
-					.writeString("Picked up item " + e.getItem().getType().toString() + " at " + locationToString(e.getPlayer().getLocation()), e.getPlayer());
+		if (e.getPlayer().hasPermission("commandspy.track")) {
+			Runnable task = new CommandSpyFile(e.getPlayer(), "Items", "Picked up item " + e.getItem().getItemStack().getType().toString() + " at "
+					+ locationToString(e.getPlayer().getLocation()));
+			new Thread(task, "CommandSpy").start();
 		}
 	}
 
 	@EventHandler
 	public void invOpen(InventoryOpenEvent e) {
 
-		if (creativeCheck.contains(e.getPlayer())) {
-			CommandSpy.writeString("Opened " + e.getInventory().getTitle() + "| Location: " + locationToString(e.getPlayer().getLocation()),
-					(Player) e.getPlayer());
+		if (e.getPlayer().hasPermission("commandspy.track")) {
+			Runnable task = new CommandSpyFile((Player) e.getPlayer(), "Inventory", "Opened " + e.getInventory().getTitle() + "| Location: "
+					+ locationToString(e.getPlayer().getLocation()));
+			new Thread(task, "CommandSpy").start();
 		}
 	}
 
 	@EventHandler
 	public void clickInventory(InventoryClickEvent e) {
 
-		if (creativeCheck.contains(e.getWhoClicked())) {
-			CommandSpy.writeString(e.getInventory().getName() + "|" + e.getAction() + "|" + e.getCurrentItem(), (Player) e.getWhoClicked());
+		if (e.getWhoClicked().hasPermission("commandspy.track")) {
+			Runnable task = new CommandSpyFile((Player) e.getWhoClicked(), "Inventory", e.getInventory().getName() + "|" + e.getAction() + "|"
+					+ e.getCurrentItem());
+			new Thread(task, "CommandSpy").start();
 		}
 	}
 
 	@EventHandler
 	public void creativeInventory(InventoryCreativeEvent e) {
 
-		if (creativeCheck.contains(e.getWhoClicked())) {
-			CommandSpy.writeString("Own Inventory" + e.getAction() + "|" + e.getCurrentItem(), (Player) e.getWhoClicked());
+		if (e.getWhoClicked().hasPermission("commandspy.track")) {
+			Runnable task = new CommandSpyFile((Player) e.getWhoClicked(), "Inventory", "Own Inventory" + e.getAction() + "|" + e.getCurrentItem());
+			new Thread(task, "CommandSpy").start();
 		}
 	}
 
 	@EventHandler
 	public void command(PlayerCommandPreprocessEvent e) {
 
-		if (creativeCheck.contains(e.getPlayer())) {
-			CommandSpy.writeString("Command: " + e.getMessage(), e.getPlayer());
+		if (e.getPlayer().hasPermission("commandspy.track")) {
+			Runnable task = new CommandSpyFile(e.getPlayer(), "General", "Command: " + e.getMessage());
+			new Thread(task, "CommandSpy").start();
 		}
 	}
 
 	@EventHandler
 	public void blockBreak(BlockBreakEvent e) {
 
-		if (creativeCheck.contains(e.getPlayer())) {
-			CommandSpy.writeString("BlockBreak: " + e.getBlock().getType() + " Location: " + locationToString(e.getBlock().getLocation()), e.getPlayer());
+		if (e.getPlayer().hasPermission("commandspy.track")) {
+			Runnable task = new CommandSpyFile((Player) e.getPlayer(), "Block", "BlockBreak: " + e.getBlock().getType() + " Location: "
+					+ locationToString(e.getBlock().getLocation()));
+			new Thread(task, "CommandSpy").start();
+		}
+	}
+
+	@EventHandler
+	public void blockPlace(BlockPlaceEvent e) {
+
+		if (e.getPlayer().hasPermission("commandspy.track")) {
+			Runnable task = new CommandSpyFile((Player) e.getPlayer(), "Block", "BlockPlace: " + e.getBlock().getType() + " Location: "
+					+ locationToString(e.getBlock().getLocation()));
+			new Thread(task, "CommandSpy").start();
 		}
 	}
 
@@ -179,14 +205,14 @@ public class SQDuties extends JavaPlugin implements Listener {
 	@EventHandler
 	public void onGamemodeChange(PlayerGameModeChangeEvent e) {
 
-		if (e.getNewGameMode() == GameMode.CREATIVE) {
-			creativeCheck.add(e.getPlayer());
-			CommandSpy.writeString(e.getPlayer().getName() + " went into creative", e.getPlayer());
-			new CommandSpy(e.getPlayer());
-		} else if (e.getNewGameMode() == GameMode.SURVIVAL) {
-			CommandSpy.writeString(e.getPlayer().getName() + " went into survival", e.getPlayer());
-			if (creativeCheck.contains(e.getPlayer()))
-				creativeCheck.remove(e.getPlayer());
+		if (e.getPlayer().hasPermission("commandspy.track")) {
+			if (e.getNewGameMode() == GameMode.CREATIVE) {
+				Runnable task = new CommandSpyFile(e.getPlayer(), "General", "Switched to Creative");
+				new Thread(task, "CommandSpy").start();
+			} else if (e.getNewGameMode() == GameMode.SURVIVAL) {
+				Runnable task = new CommandSpyFile(e.getPlayer(), "General", "Switched to Creative");
+				new Thread(task, "CommandSpy").start();
+			}
 		}
 
 	}
@@ -300,22 +326,6 @@ public class SQDuties extends JavaPlugin implements Listener {
 		for (PermissionGroup g : userGroups) {
 			nonDutyGroups.add(g);
 		}
-
-		BSPlayer player = PlayerManager.getPlayer(p);
-
-		String nickname;
-
-		if (player.hasNickname()) {
-			nickname = player.getNickname();
-		} else {
-			nickname = p.getName();
-		}
-		if (nickname.length() > 14) {
-			nickname = nickname.substring(0, 14);
-		}
-		String newNickname = "&4" + nickname;
-		PlayerManager.nicknamePlayer(p.getName(), p.getName(), newNickname, true);
-
 		nonDutyGroups.add(pexManager.getGroup(group + "_duty"));
 		PermissionGroup[] newGroups = nonDutyGroups.toArray(new PermissionGroup[nonDutyGroups.size()]);
 		user.setGroups(newGroups);
@@ -325,6 +335,37 @@ public class SQDuties extends JavaPlugin implements Listener {
 		p.getInventory().clear();
 		p.getInventory().setArmorContents(null);
 		p.sendMessage(ChatColor.GREEN + "Dutymode enabled!");
+		colorOn(p);
+	}
+
+	public static void colorOn(Player p) {
+
+		BSPlayer player = PlayerManager.getPlayer(p);
+		String nickname = p.getName();
+		if (player.hasNickname()) {
+			nickname = player.getNickname();
+		} else if (p.getName().length() > 14) {
+			nickname = p.getName().substring(0, 13);
+		}
+		nickname = nickname.replace("&4", "");
+		nickname = nickname.replace("&a", "");
+		String newNickname = "&4" + nickname;
+		PlayerManager.nicknamePlayer(p.getName(), p.getName(), newNickname, true);
+	}
+
+	public static void colorOff(Player p) {
+
+		BSPlayer player = PlayerManager.getPlayer(p);
+		String nickname = p.getName();
+		if (player.hasNickname()) {
+			nickname = player.getNickname();
+		} else if (p.getName().length() > 14) {
+			nickname = p.getName().substring(0, 13);
+		}
+		nickname = nickname.replace("&4", "");
+		nickname = nickname.replace("&a", "");
+		String newNickname = "&a" + nickname;
+		PlayerManager.nicknamePlayer(p.getName(), p.getName(), newNickname, true);
 	}
 
 	public static SQDuties getSQDuties() {
@@ -343,20 +384,7 @@ public class SQDuties extends JavaPlugin implements Listener {
 			}
 		}
 
-		BSPlayer player = PlayerManager.getPlayer(p);
-
-		String nickname;
-
-		if (player.hasNickname()) {
-			nickname = player.getNickname();
-		} else {
-			nickname = p.getName();
-		}
-		if (nickname.length() > 14) {
-			nickname = nickname.substring(0, 14);
-		}
-		String newNickname = "&a" + nickname;
-		PlayerManager.nicknamePlayer(p.getName(), p.getName(), newNickname, true);
+		colorOff(p);
 
 		PermissionGroup[] newGroups = nonDutyGroups.toArray(new PermissionGroup[nonDutyGroups.size()]);
 		user.setGroups(newGroups);
@@ -463,21 +491,7 @@ public class SQDuties extends JavaPlugin implements Listener {
 			public void run() {
 
 				if (SQDuties.this.isInDutymode(p, p.getWorld().getName())) {
-					BSPlayer player = PlayerManager.getPlayer(p);
-
-					String nickname;
-
-					if (player.hasNickname()) {
-						nickname = player.getNickname();
-					} else {
-						nickname = p.getName();
-					}
-					if (nickname.length() > 14) {
-						nickname = nickname.substring(0, 14);
-					}
-					String newNickname = "&4" + nickname;
-
-					PlayerManager.nicknamePlayer(p.getName(), p.getName(), newNickname, true);
+					colorOn(p);
 					PermissionGroup group = null;
 					PermissionGroup[] groups = pexManager.getUser(p.getName()).getGroups();
 					for (PermissionGroup indexGroup : groups) {
@@ -511,22 +525,10 @@ public class SQDuties extends JavaPlugin implements Listener {
 					user.setGroups(newGroups);
 					p.sendMessage(ChatColor.AQUA + "Duty Mode Detected");
 					p.setGameMode(GameMode.CREATIVE);
+					p.getInventory().setArmorContents(null);
 					p.getInventory().clear();
 				} else if (p.hasPermission("SQDuties.colorname")) {
-					BSPlayer player = PlayerManager.getPlayer(p);
-
-					String nickname;
-
-					if (player.hasNickname()) {
-						nickname = player.getNickname();
-					} else {
-						nickname = p.getName();
-					}
-					if (nickname.length() > 14) {
-						nickname = nickname.substring(0, 14);
-					}
-					String newNickname = "&a" + nickname;
-					PlayerManager.nicknamePlayer(p.getName(), p.getName(), newNickname, true);
+					colorOff(p);
 				}
 			}
 		}, 20L);

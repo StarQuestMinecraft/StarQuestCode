@@ -47,7 +47,6 @@ public class SQRankup extends JavaPlugin implements Listener {
 
 		if (cmd.getName().equalsIgnoreCase("rankup") && sender instanceof Player) {
 			Player p = (Player) sender;
-			p.sendMessage(ChatColor.GOLD + "Getting rankup data for you! Please wait.");
 			String rank = getRank(p.getName());
 			String nextRank = getNextRank(rank);
 			PermissionUser user = pex.getUser(p);
@@ -60,7 +59,6 @@ public class SQRankup extends JavaPlugin implements Listener {
 					nextRank = "COLONIST";
 				} else if (args[0].equalsIgnoreCase("Pirate")) {
 					nextRank = "PIRATE";
-					// TODO: townKick(p);
 				} else {
 					sender.sendMessage("You must choose either pirate or colonist. Invalid argument.");
 					return true;
@@ -90,6 +88,7 @@ public class SQRankup extends JavaPlugin implements Listener {
 			}
 			return true;
 		}
+
 		if (cmd.getName().equalsIgnoreCase("addapp") && sender.hasPermission("SQRankup.addApplication")) {
 			String rank = getRank(args[0]);
 			String nextRank = getNextRank(rank);
@@ -237,12 +236,11 @@ public class SQRankup extends JavaPlugin implements Listener {
 
 	public String getRank(String player) {
 
-		for (PermissionGroup group : pexGroups) {
-			for (PermissionUser user : group.getUsers()) {
-				if (user.getName().equalsIgnoreCase(player)) {
-					if (getNextRank(group.getName().toUpperCase()) != null) {
-						return group.getName().toUpperCase();
-					}
+		PermissionGroup[] groups = pex.getUser(player).getGroups();
+		for (PermissionGroup group : groups) {
+			for (String configName : getConfig().getKeys(true)) {
+				if (group.getName().equalsIgnoreCase(configName)) {
+					return group.getName().toUpperCase();
 				}
 			}
 		}
@@ -252,12 +250,11 @@ public class SQRankup extends JavaPlugin implements Listener {
 
 	public PermissionGroup getGroup(String player) {
 
-		for (PermissionGroup group : pexGroups) {
-			for (PermissionUser user : group.getUsers()) {
-				if (user.getName().equalsIgnoreCase(player)) {
-					if (getNextRank(group.getName().toUpperCase()) != null) {
-						return group;
-					}
+		PermissionGroup[] groups = pex.getUser(player).getGroups();
+		for (PermissionGroup group : groups) {
+			for (String configName : getConfig().getKeys(true)) {
+				if (group.getName().equalsIgnoreCase(configName)) {
+					return group;
 				}
 			}
 		}
