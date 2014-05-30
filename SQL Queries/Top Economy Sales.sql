@@ -1,2 +1,3 @@
-SELECT name, material, SUM(quantity) as quantity, SUM(profit) as total FROM minecraft.economy_log GROUP BY name,material ORDER BY total desc;
-SELECT material, SUM(quantity) as quantity, SUM(profit) as total FROM minecraft.economy_log GROUP BY material ORDER BY total desc;
+SELECT name, material, SUM(quantity) as quantity, SUM(profit) as total FROM minecraft.economy_log where material like "%" GROUP BY name,material ORDER BY total desc;
+SELECT material, SUM(quantity) as quantity, SUM(profit) as total FROM minecraft.economy_log WHERE name like "%" GROUP BY material ORDER BY total desc;
+SELECT name, SUM(profit) as total FROM minecraft.economy_log GROUP BY name ORDER BY total desc;

@@ -31,70 +31,48 @@ public class SQSpace extends JavaPlugin implements Listener {
 
 	public static ArrayList<Player> Players = new ArrayList<Player>();
 
-	public void onEnable() {
-
-		getServer().getPluginManager().registerEvents(this, this);
-		new TimeReset(this);
-	}
-
+	@Override
 	public void onDisable() {
 
 	}
 
+	@Override
+	public void onEnable() {
+
+		this.getServer().getPluginManager().registerEvents(this, this);
+		new TimeReset(this);
+	}
+
 	// Adding headshot support
 	@EventHandler
-	public void arrowDamager(EntityDamageByEntityEvent e) {
-
+	public void arrowDamager(EntityDamageByEntityEvent e)
+	{
 		// Making sure the entity that did the damage was an arrow
-		if (e.getDamager() instanceof Arrow && e.getEntity() instanceof Player) {
-			Entity arrow = e.getDamager();
-			// By now we know it's a Player
-			Player p = (Player) e.getEntity();
+		if ((e.getDamager() instanceof Arrow) && (e.getEntity() instanceof Player))
+		{
+			final Entity arrow = e.getDamager();
+			final Player p = (Player) e.getEntity();
 			// Sneaking changes height of the player's head
-			if ((p.isSneaking() && arrow.getLocation().getY() > p.getLocation().getY() + 1.46)
-					|| (!p.isSneaking() && arrow.getLocation().getY() > p.getLocation().getY() + 1.62)) {
+			final double headHeight = (p.isSneaking()) ? 1.46 : 1.62;
+			
+			if (arrow.getLocation().getY() > (p.getLocation().getY() + headHeight))
+			{
 				// Replacing their pumpkin with air
-				if (p.getInventory().getHelmet().getType() == Material.PUMPKIN) {
-					p.getInventory().setHelmet(new ItemStack(0));
+				if (p.getInventory().getHelmet().getType() == Material.PUMPKIN)
+				{
+					p.getInventory().setHelmet(new ItemStack(Material.AIR));
 					// Refunding them the jack o lantern
-					p.getInventory().addItem(new ItemStack(Material.JACK_O_LANTERN, 1));
+					if (p.getInventory().firstEmpty() > -1)
+					{
+						p.getInventory().addItem(new ItemStack(Material.JACK_O_LANTERN, 1));
+					}
+					else
+					{
+						p.getWorld().dropItem(p.getLocation(), new ItemStack(Material.JACK_O_LANTERN, 1));
+					}
 					((Player) ((Arrow) arrow).getShooter()).sendMessage(ChatColor.RED + "Headshot!");
 				}
-
 			}
-		}
-
-	}
-
-	@EventHandler
-	public void onPlayerMove(PlayerMoveEvent event) {
-
-		Player p = event.getPlayer();
-		String planet = p.getLocation().getWorld().getName();
-		if (hasSpaceHelmet(p)) {
-			p.setRemainingAir(p.getMaximumAir());
-		}
-		if ((planet.equals("Defalos")) || (planet.equals("AsteroidBelt")) || (planet.equals("Digitalia")) || (planet.equals("Regalis"))) {
-
-			if ((isInSpace(p)) && (!p.isFlying()) && (p.getGameMode().equals(GameMode.SURVIVAL))) {
-				p.setAllowFlight(true);
-				p.setFlying(true);
-				p.setFlySpeed(0.05F);
-			} else if ((!isInSpace(p)) && (p.isFlying()) && (p.getGameMode().equals(GameMode.SURVIVAL))) {
-				p.setAllowFlight(false);
-				p.setFlying(false);
-				p.setFlySpeed(0.1F);
-				p.setFallDistance(0.0F);
-			}
-			checkIfSuffocating(p);
-		}
-	}
-
-	@EventHandler
-	public void onHelmetChange(final InventoryClickEvent event) {
-
-		if (event.getSlotType().equals(SlotType.ARMOR) && (103 == event.getSlot())) {
-			checkIfSuffocating((Player) event.getWhoClicked());
 		}
 	}
 
@@ -104,7 +82,7 @@ public class SQSpace extends JavaPlugin implements Listener {
 		// is in a "Space" area.
 		// It is only a Respiration / Perm check
 		boolean suffocating = false;
-		if (!p.hasPermission("SQSpace.nosuffocate") && !(p.getGameMode().equals(GameMode.CREATIVE)) && (isInSpace(p)) && (!hasSpaceHelmet(p))
+		if (!p.hasPermission("SQSpace.nosuffocate") && !(p.getGameMode().equals(GameMode.CREATIVE)) && (this.isInSpace(p)) && (!this.hasSpaceHelmet(p))
 				&& (!Players.contains(p))) {
 			Players.add(p);
 			p.sendMessage(ChatColor.AQUA + "[Space] " + ChatColor.RED + "You are now Suffocating!");
@@ -114,9 +92,17 @@ public class SQSpace extends JavaPlugin implements Listener {
 		return suffocating;
 	}
 
+	private WorldGuardPlugin getWorldGuard() {
+
+		final Plugin plugin = this.getServer().getPluginManager().getPlugin("WorldGuard");
+		if ((plugin == null) || (!(plugin instanceof WorldGuardPlugin)))
+			return null;
+		return (WorldGuardPlugin) plugin;
+	}
+
 	public boolean hasSpaceHelmet(Player p) {
 
-		ItemStack helmet = p.getInventory().getHelmet();
+		final ItemStack helmet = p.getInventory().getHelmet();
 		if (null != helmet) {
 			// Can breathe in space wearing a Pumpkin (Space Helmet)
 			// Also can breathe in space if helmet has Respiration III
@@ -128,20 +114,20 @@ public class SQSpace extends JavaPlugin implements Listener {
 
 	public boolean isInSpace(Player p) {
 
-		Location l = p.getLocation();
+		final Location l = p.getLocation();
 		boolean air1 = true;
 		boolean air2 = true;
-		int x = l.getBlockX();
-		int y = l.getBlockY();
-		int z = l.getBlockZ();
-		World w = l.getWorld();
+		final int x = l.getBlockX();
+		final int y = l.getBlockY();
+		final int z = l.getBlockZ();
+		final World w = l.getWorld();
 		int height = 40;
-		if (w.getName().equalsIgnoreCase("Regalis") && isInSpawn(p)) {
+		if (w.getName().equalsIgnoreCase("Regalis") && this.isInSpawn(p)) {
 			height = 130;
 		}
 		for (int i = 0; i < height; i++) {
-			int id1 = w.getBlockTypeIdAt(x, y + i + 1, z);
-			int id2 = w.getBlockTypeIdAt(x, y - i, z);
+			final int id1 = w.getBlockTypeIdAt(x, y + i + 1, z);
+			final int id2 = w.getBlockTypeIdAt(x, y - i, z);
 			if (id1 != 0) {
 				air1 = false;
 			}
@@ -149,29 +135,50 @@ public class SQSpace extends JavaPlugin implements Listener {
 				air2 = false;
 			}
 		}
-		if ((!air1) && (!air2)) {
+		if ((!air1) && (!air2))
 			return false;
-		}
 		return true;
 	}
 
 	public boolean isInSpawn(Player p) {
 
-		ApplicableRegionSet s = getWorldGuard().getRegionManager(Bukkit.getServer().getWorld("Regalis")).getApplicableRegions(p.getLocation());
-		for (ProtectedRegion r : s) {
-			if (r.getId().equals("spawn")) {
+		final ApplicableRegionSet s = this.getWorldGuard().getRegionManager(Bukkit.getServer().getWorld("Regalis")).getApplicableRegions(p.getLocation());
+		for (final ProtectedRegion r : s) {
+			if (r.getId().equals("spawn"))
 				return true;
-			}
 		}
 		return false;
 	}
+	
+	@EventHandler
+	public void onHelmetChange(final InventoryClickEvent event) {
 
-	private WorldGuardPlugin getWorldGuard() {
-
-		Plugin plugin = getServer().getPluginManager().getPlugin("WorldGuard");
-		if ((plugin == null) || (!(plugin instanceof WorldGuardPlugin))) {
-			return null;
+		if (event.getSlotType().equals(SlotType.ARMOR) && (103 == event.getSlot())) {
+			this.checkIfSuffocating((Player) event.getWhoClicked());
 		}
-		return (WorldGuardPlugin) plugin;
+	}
+
+	@EventHandler
+	public void onPlayerMove(PlayerMoveEvent event) {
+
+		final Player p = event.getPlayer();
+		final String planet = p.getLocation().getWorld().getName();
+		if (this.hasSpaceHelmet(p)) {
+			p.setRemainingAir(p.getMaximumAir());
+		}
+		if ((planet.equals("Defalos")) || (planet.equals("AsteroidBelt")) || (planet.equals("Digitalia")) || (planet.equals("Regalis"))) {
+
+			if ((this.isInSpace(p)) && (!p.isFlying()) && (p.getGameMode().equals(GameMode.SURVIVAL))) {
+				p.setAllowFlight(true);
+				p.setFlying(true);
+				p.setFlySpeed(0.05F);
+			} else if ((!this.isInSpace(p)) && (p.isFlying()) && (p.getGameMode().equals(GameMode.SURVIVAL))) {
+				p.setAllowFlight(false);
+				p.setFlying(false);
+				p.setFlySpeed(0.1F);
+				p.setFallDistance(0.0F);
+			}
+			this.checkIfSuffocating(p);
+		}
 	}
 }
