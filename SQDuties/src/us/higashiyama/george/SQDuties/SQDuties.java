@@ -369,15 +369,16 @@ public class SQDuties extends JavaPlugin implements Listener {
 
 		BSPlayer player = PlayerManager.getPlayer(p);
 		String nickname = player.getNickname();
-		if (null == nickname)
+		if (null == nickname) {
 			nickname = p.getName();
-		nickname = nickname.replace("&4", "");
-		nickname = nickname.replace("&a", "");
+		}
+		nickname = nickname.replace("§4", "");
+		nickname = nickname.replace("§a", "");
 		if (nickname.length() > 14) {
-			nickname = p.getName().substring(0, 13);
+			nickname = nickname.substring(0, 13);
 		}
 		String newNickname = "&4" + nickname;
-		PlayerManager.nicknamePlayer(p.getName(), p.getName(), newNickname, false);
+		PlayerManager.nicknamePlayer(p.getName(), p.getName(), newNickname, true);
 	}
 
 	public static void colorOff(Player p) {
@@ -386,13 +387,13 @@ public class SQDuties extends JavaPlugin implements Listener {
 		String nickname = player.getNickname();
 		if (null == nickname)
 			nickname = p.getName();
-		nickname = nickname.replace("&4", "");
-		nickname = nickname.replace("&a", "");
+		nickname = nickname.replace("§4", "");
+		nickname = nickname.replace("§a", "");
 		if (nickname.length() > 14) {
-			nickname = p.getName().substring(0, 13);
+			nickname = nickname.substring(0, 13);
 		}
-		String newNickname = "&a" + nickname;
-		PlayerManager.nicknamePlayer(p.getName(), p.getName(), newNickname, false);
+		String newNickname = "&c" + nickname;
+		PlayerManager.nicknamePlayer(p.getName(), p.getName(), newNickname, true);
 	}
 
 	public static SQDuties getSQDuties() {
