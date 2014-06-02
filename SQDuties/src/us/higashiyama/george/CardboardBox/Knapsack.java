@@ -40,7 +40,7 @@ public class Knapsack implements Serializable {
 	public void unpack(Player p) {
 
 		p.setFoodLevel(this.hunger);
-		p.setHealth(this.health);
+		p.setHealth(20);
 		p.setExp(this.xp);
 		p.setLevel(this.xpLevel);
 		p.addPotionEffects(CardboardPotionEffect.unboxPotions(this.potions));
