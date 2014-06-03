@@ -1,8 +1,16 @@
+
 package com.regalphoenixmc.SQRankup;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.Driver;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 
 public class Database {
+
 	public String player;
 	public String server;
 	public String world;
@@ -17,13 +25,9 @@ public class Database {
 	public static String dsn = ("jdbc:mysql://" + hostname + ":" + port + "/" + db_name);
 
 	public static void setUp() {
-		String Database_table = "CREATE TABLE IF NOT EXISTS RANKUP (" 
-				+ "`name` VARCHAR(32) NOT NULL," 
-				+ "`kills` int(16) DEFAULT 0," 
-				+ "`lastkill` VARCHAR(32) DEFAULT NULL,"
-				+ "`lastkilltime` bigint(18) DEFAULT 0," 
-				+ "PRIMARY KEY (`name`)" 
-				+ ")";
+
+		String Database_table = "CREATE TABLE IF NOT EXISTS RANKUP (" + "`name` VARCHAR(32) NOT NULL," + "`kills` int(16) DEFAULT 0,"
+				+ "`lastkill` VARCHAR(32) DEFAULT NULL," + "`lastkilltime` bigint(18) DEFAULT 0," + "PRIMARY KEY (`name`)" + ")";
 		getContext();
 		try {
 			Driver driver = (Driver) Class.forName(Database.driver).newInstance();
@@ -32,7 +36,7 @@ public class Database {
 			System.out.println("[SQDatabases] Driver error: " + e);
 		}
 		Statement s = null;
-		
+
 		try {
 			s = cntx.createStatement();
 			s.executeUpdate(Database_table);
@@ -47,8 +51,10 @@ public class Database {
 
 	// return 0 if they haven't killed anyone
 	public static int getKills(String player) {
+
 		System.out.print("[Rankup] Getting Kills"); // TODO: Debugging ish
-		if(!getContext()) System.out.println("something is wrong!");
+		if (!getContext())
+			System.out.println("something is wrong!");
 		Statement s = null;
 		try {
 			s = cntx.createStatement();
@@ -70,83 +76,83 @@ public class Database {
 		return 0;
 	}
 
-	public static void setNewKills(String player, int kills) {
+	public static void setNewKills(final String player, final int kills) {
 
-		if(!getContext()) System.out.println("something is wrong!");
-		PreparedStatement s = null;
-			try {
-				s = cntx.prepareStatement("INSERT INTO RANKUP (name, kills, lastkill, lastkilltime) values (?,?,?,?)");
-				s.setString(1, player);
-				s.setInt(2, kills);
-				s.setString(3, "placeholder");
-				s.setDouble(4, 0);
-				s.execute();
-				s.close();
-			} catch (SQLException e) {
-				System.out.print("[SQDatabase] SQL Error" + e.getMessage());
-			} catch (Exception e) {
-				System.out.print("[SQDatabase] SQL Error (Unknown)");
-				e.printStackTrace();
-			} finally {
-				close(s);
+		Runnable task = new Runnable() {
+
+			public void run() {
+
+				if (!getContext())
+					System.out.println("something is wrong!");
+				PreparedStatement s = null;
+				try {
+					s = cntx.prepareStatement("INSERT INTO RANKUP (name, kills, lastkill, lastkilltime) values (?,?,?,?)");
+					s.setString(1, player);
+					s.setInt(2, kills);
+					s.setString(3, "placeholder");
+					s.setDouble(4, 0);
+					s.execute();
+					s.close();
+				} catch (SQLException e) {
+					System.out.print("[SQDatabase] SQL Error" + e.getMessage());
+				} catch (Exception e) {
+					System.out.print("[SQDatabase] SQL Error (Unknown)");
+					e.printStackTrace();
+				} finally {
+					close(s);
+				}
 			}
-			
+		};
+
+		new Thread(task, "DBThread").start();
+
 	}
 
-	public static void setKills(String player, int kills) {
+	public static void setKills(final String player, final int kills) {
 
-		if(!getContext()) System.out.println("something is wrong!");
-		PreparedStatement s = null;
-		try {
-			s = cntx.prepareStatement("UPDATE RANKUP SET kills = ? WHERE NAME = ?");
-			s.setInt(1, kills);
-			s.setString(2, player);
-			s.execute();
-			s.close();
-		} catch (SQLException e) {
-			System.out.print("[SQDatabase] SQL Error" + e.getMessage());
-		} catch (Exception e) {
-			System.out.print("[SQDatabase] SQL Error (Unknown)");
-			e.printStackTrace();
-		} finally {
-			close(s);
-		}
+		Runnable task = new Runnable() {
+
+			public void run() {
+
+				if (!getContext())
+					System.out.println("something is wrong!");
+				PreparedStatement s = null;
+				try {
+					s = cntx.prepareStatement("UPDATE RANKUP SET kills = ? WHERE NAME = ?");
+					s.setInt(1, kills);
+					s.setString(2, player);
+					s.execute();
+					s.close();
+				} catch (SQLException e) {
+					System.out.print("[SQDatabase] SQL Error" + e.getMessage());
+				} catch (Exception e) {
+					System.out.print("[SQDatabase] SQL Error (Unknown)");
+					e.printStackTrace();
+				} finally {
+					close(s);
+				}
+			}
+		};
+
+		new Thread(task, "DBThread").start();
 	}
 
 	// return null if they haven't killed anyone
 
 	public static String getLastKill(String player) {
+
 		System.out.print("[Rankup] Getting Last Kill"); // TODO: Debugging ish
-		if(!getContext()) System.out.println("something is wrong!");
+		if (!getContext())
+			System.out.println("something is wrong!");
 		Statement s = null;
-			try {
-				s = cntx.createStatement();
-				ResultSet rs = s.executeQuery("SELECT lastkill FROM RANKUP WHERE name = " + "\'" + player + "\'");
-
-				while (rs.next()) {
-					String kill = rs.getString("lastkill");
-					return kill;
-				}
-				s.close();
-			} catch (SQLException e) {
-				System.out.print("[SQDatabase] SQL Error" + e.getMessage());
-			} catch (Exception e) {
-				System.out.print("[SQDatabase] SQL Error (Unknown)");
-				e.printStackTrace();
-			} finally {
-				close(s);
-			}
-		return null;
-	}
-
-	public static void setLastKill(String player, String killed) {
-		if(!getContext()) System.out.println("something is wrong!");
-		PreparedStatement s = null;
 		try {
-			s = cntx.prepareStatement("UPDATE RANKUP SET lastkill = ? WHERE NAME = ?");
-			s.setString(1, killed);
-			s.setString(2, player);
-			s.execute();
+			s = cntx.createStatement();
+			ResultSet rs = s.executeQuery("SELECT lastkill FROM RANKUP WHERE name = " + "\'" + player + "\'");
+
+			while (rs.next()) {
+				String kill = rs.getString("lastkill");
+				return kill;
+			}
 			s.close();
 		} catch (SQLException e) {
 			System.out.print("[SQDatabase] SQL Error" + e.getMessage());
@@ -156,13 +162,45 @@ public class Database {
 		} finally {
 			close(s);
 		}
+		return null;
+	}
+
+	public static void setLastKill(final String player, final String killed) {
+
+		Runnable task = new Runnable() {
+
+			public void run() {
+
+				if (!getContext())
+					System.out.println("something is wrong!");
+				PreparedStatement s = null;
+				try {
+					s = cntx.prepareStatement("UPDATE RANKUP SET lastkill = ? WHERE NAME = ?");
+					s.setString(1, killed);
+					s.setString(2, player);
+					s.execute();
+					s.close();
+				} catch (SQLException e) {
+					System.out.print("[SQDatabase] SQL Error" + e.getMessage());
+				} catch (Exception e) {
+					System.out.print("[SQDatabase] SQL Error (Unknown)");
+					e.printStackTrace();
+				} finally {
+					close(s);
+				}
+			}
+		};
+
+		new Thread(task, "DBThread").start();
 	}
 
 	// return 0 if they haven't killed anyone
 	public static double getLastKillTime(String player) {
+
 		System.out.print("[Rankup] Getting Last Kill Time"); // TODO: Debugging
 																// ish
-		if(!getContext()) System.out.println("something is wrong!");
+		if (!getContext())
+			System.out.println("something is wrong!");
 		Statement s = null;
 		try {
 			s = cntx.createStatement();
@@ -184,36 +222,47 @@ public class Database {
 		return 0;
 	}
 
-	public static void setLastKillTime(String player, double time) {
-		if(!getContext()) System.out.println("something is wrong!");
-		PreparedStatement s = null;
-		try {
-			s = cntx.prepareStatement("UPDATE RANKUP SET lastkilltime = ? WHERE NAME = ?");
-			s.setDouble(1, time);
-			s.setString(2, player);
-			s.execute();
-			s.close();
-		} catch (SQLException e) {
-			System.out.print("[SQDatabase] SQL Error" + e.getMessage());
-		} catch (Exception e) {
-			System.out.print("[SQDatabase] SQL Error (Unknown)");
-			e.printStackTrace();
-		} finally {
-			close(s);
-		}
+	public static void setLastKillTime(final String player, final double time) {
+
+		Runnable task = new Runnable() {
+
+			public void run() {
+
+				if (!getContext())
+					System.out.println("something is wrong!");
+				PreparedStatement s = null;
+				try {
+					s = cntx.prepareStatement("UPDATE RANKUP SET lastkilltime = ? WHERE NAME = ?");
+					s.setDouble(1, time);
+					s.setString(2, player);
+					s.execute();
+					s.close();
+				} catch (SQLException e) {
+					System.out.print("[SQDatabase] SQL Error" + e.getMessage());
+				} catch (Exception e) {
+					System.out.print("[SQDatabase] SQL Error (Unknown)");
+					e.printStackTrace();
+				} finally {
+					close(s);
+				}
+			}
+		};
+		new Thread(task, "DBThread").start();
 	}
-	
-	//checks if they are in the DB
+
+	// checks if they are in the DB
 	public static boolean hasKey(String player) {
+
 		System.out.print("[Rankup] Getting Last Kill Time"); // TODO: Debugging
 																// ish
-		if(!getContext()) System.out.println("something is wrong!");
+		if (!getContext())
+			System.out.println("something is wrong!");
 		Statement s = null;
 		try {
 			s = cntx.createStatement();
 			ResultSet rs = s.executeQuery("SELECT * FROM RANKUP WHERE name = " + "\'" + player + "\'");
 
-			if(rs.next()) {
+			if (rs.next()) {
 				s.close();
 				return true;
 			}
@@ -230,11 +279,13 @@ public class Database {
 	}
 
 	// don't bother with these, just helpers for me
-	public static void incrementKills(String player) {
-		setKills(player, getKills(player) + 1);
+	public static void incrementKills(String player, int i) {
+
+		setKills(player, getKills(player) + i);
 	}
 
 	public static void setLastKillTimeToCurrent(String player) {
+
 		setLastKillTime(player, System.currentTimeMillis());
 	}
 
@@ -266,21 +317,18 @@ public class Database {
 		}
 		return false;
 	}
-	
-	  private static void close(Statement s)
-	  {
-	    if (s == null) {
-	      return;
-	    }
-	    try
-	    {
-	      s.close();
-	      cntx.close();
-	    }
-	    catch (Exception e)
-	    {
-	      e.printStackTrace();
-	    }
-	  }
+
+	private static void close(Statement s) {
+
+		if (s == null) {
+			return;
+		}
+		try {
+			s.close();
+			cntx.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 
 }

@@ -138,14 +138,51 @@ public class SQRankup extends JavaPlugin implements Listener {
 			if (!Database.hasKey(name)) {
 				Database.setNewKills(name, 0);
 			}
-			Database.incrementKills(name);
+			Database.incrementKills(name, rankToKills(event.getEntity().getName()));
 			Database.setLastKill(name, event.getEntity().getName());
 			Database.setLastKillTimeToCurrent(name);
-			killer.sendMessage(ChatColor.RED + "This kill was counted in the ranking system.");
+			killer.sendMessage(ChatColor.RED + "This kill was counted in the ranking system as " + rankToKills(name) + ".");
 			return;
 
 		}
 
+	}
+
+	private int rankToKills(String name) {
+
+		int i = 0;
+		PermissionGroup[] groups = pex.getGroups(name);
+		for (PermissionGroup group : groups) {
+			String groupName = group.getName();
+			switch (groupName) {
+				case "refugee":
+					i = -1;
+					break;
+				case "settler":
+					i = 1;
+					break;
+				case "colonist":
+				case "pirate":
+					i = 2;
+					break;
+				case "corsair":
+				case "citizen":
+					i = 3;
+					break;
+				case "buccaneer":
+				case "affluent":
+					i = 4;
+					break;
+				case "warlord":
+				case "tycoon":
+					i = 4;
+					break;
+				default:
+					break;
+
+			}
+		}
+		return i;
 	}
 
 	// method to get the next rank on the rank structure
