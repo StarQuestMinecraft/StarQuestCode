@@ -23,6 +23,9 @@ import ru.tehkode.permissions.PermissionGroup;
 import ru.tehkode.permissions.PermissionManager;
 import ru.tehkode.permissions.PermissionUser;
 import ru.tehkode.permissions.bukkit.PermissionsEx;
+import us.higashiyama.george.RankupUtils.Menu;
+
+import com.gmail.filoghost.chestcommands.components.IconMenu;
 
 public class SQRankup extends JavaPlugin implements Listener {
 
@@ -31,15 +34,23 @@ public class SQRankup extends JavaPlugin implements Listener {
 	public static int index = 0;
 	PermissionManager pex;
 	public static List<PermissionGroup> pexGroups;
+	public static SQRankup instance;
 
 	public void onEnable() {
 
 		saveDefaultConfig();
 		getServer().getPluginManager().registerEvents(this, this);
 		setupEconomy();
-		Database.setUp();
+		instance = this;
+		// Database.setUp();
 		pex = PermissionsEx.getPermissionManager();
 		pexGroups = Arrays.asList(pex.getGroups());
+
+	}
+
+	public static SQRankup instance() {
+
+		return instance;
 	}
 
 	// command
@@ -116,6 +127,13 @@ public class SQRankup extends JavaPlugin implements Listener {
 			}
 			sender.sendMessage("Needs an argument.");
 			return false;
+		}
+
+		if (cmd.getName().equalsIgnoreCase("rankuppurchase")) {
+			Menu m = new Menu("TestMenu", 27);
+			IconMenu menu = m.build();
+			menu.open((Player) sender);
+			return true;
 		}
 		return false;
 

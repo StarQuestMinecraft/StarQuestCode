@@ -1,7 +1,7 @@
 name: SQRankup
 main: com.regalphoenixmc.SQRankup.SQRankup
 version: 1.7.3
-depend: [PermissionsEx]
+#depend: [PermissionsEx]
 commands:
   rankup:
     description: Rank up!
@@ -9,7 +9,7 @@ commands:
   addapp:
     description: Mark a player as applied.
     usage: /addapp <Player>
-  migrate:
+  rankuppurchase:
     description: Be jewish
     usage: Suck many jews
    
