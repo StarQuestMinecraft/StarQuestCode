@@ -163,7 +163,8 @@ public class SQDuties extends JavaPlugin implements Listener {
 		} else if (e.getBlock().getType() == Material.DIAMOND_BLOCK || e.getBlock().getType() == Material.GOLD_BLOCK
 				|| e.getBlock().getType() == Material.EMERALD_BLOCK) {
 			// Adding support for global tracking
-			Runnable task = new CommandSpyFile("Global", "Block", "Broken by " + e.getPlayer().getName() + ": " + e.getBlock().getType());
+			Runnable task = new CommandSpyFile("Global", "Block", "Broken by " + e.getPlayer().getName() + ": " + e.getBlock().getType()
+					+ locationToString(e.getBlock().getLocation()));
 			new Thread(task, "CommandSpy").start();
 		}
 	}
@@ -178,7 +179,8 @@ public class SQDuties extends JavaPlugin implements Listener {
 		} else if (e.getBlock().getType() == Material.DIAMOND_BLOCK || e.getBlock().getType() == Material.GOLD_BLOCK
 				|| e.getBlock().getType() == Material.EMERALD_BLOCK) {
 			// Adding support for global tracking
-			Runnable task = new CommandSpyFile("Global", "Block", "Placed by " + e.getPlayer().getName() + ": " + e.getBlock().getType());
+			Runnable task = new CommandSpyFile("Global", "Block", "Placed by " + e.getPlayer().getName() + ": " + e.getBlock().getType()
+					+ locationToString(e.getBlock().getLocation()));
 			new Thread(task, "CommandSpy").start();
 		}
 	}
