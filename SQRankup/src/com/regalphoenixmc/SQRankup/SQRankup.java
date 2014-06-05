@@ -168,7 +168,7 @@ public class SQRankup extends JavaPlugin implements Listener {
 
 	private int rankToKills(String name) {
 
-		int i = 0;
+		int i = 1;
 		PermissionGroup[] groups = pex.getGroups(name);
 		for (PermissionGroup group : groups) {
 			String groupName = group.getName();
