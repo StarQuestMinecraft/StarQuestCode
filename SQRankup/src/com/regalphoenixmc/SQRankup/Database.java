@@ -49,34 +49,7 @@ public class Database {
 
 	}
 
-	// return 0 if they haven't killed anyone
-	public static int getKills(String player) {
-
-		System.out.print("[Rankup] Getting Kills"); // TODO: Debugging ish
-		if (!getContext())
-			System.out.println("something is wrong!");
-		Statement s = null;
-		try {
-			s = cntx.createStatement();
-			ResultSet rs = s.executeQuery("SELECT kills FROM RANKUP WHERE name = " + "\'" + player + "\'");
-
-			while (rs.next()) {
-				int kills = rs.getInt("kills");
-				return kills;
-			}
-			s.close();
-		} catch (SQLException e) {
-			System.out.print("[SQDatabase] SQL Error" + e.getMessage());
-		} catch (Exception e) {
-			System.out.print("[SQDatabase] SQL Error (Unknown)");
-			e.printStackTrace();
-		} finally {
-			close(s);
-		}
-		return 0;
-	}
-
-	public static void setNewKills(final String player, final int kills) {
+	public static void updateEntry(final String player, final Long lastKillTime, final String killed, final int kills) {
 
 		Runnable task = new Runnable() {
 
@@ -86,11 +59,13 @@ public class Database {
 					System.out.println("something is wrong!");
 				PreparedStatement s = null;
 				try {
-					s = cntx.prepareStatement("INSERT INTO RANKUP (name, kills, lastkill, lastkilltime) values (?,?,?,?)");
-					s.setString(1, player);
+
+					s = cntx.prepareStatement("UPDATE RANKUP SET `lastkill` = ?, `kills` = ?, `lastkilltime` = ? WHERE `name` = ?");
+					s.setString(1, killed);
 					s.setInt(2, kills);
-					s.setString(3, "placeholder");
-					s.setDouble(4, 0);
+					s.setLong(3, lastKillTime);
+					s.setString(4, player);
+					System.out.println(s);
 					s.execute();
 					s.close();
 				} catch (SQLException e) {
@@ -105,10 +80,9 @@ public class Database {
 		};
 
 		new Thread(task, "DBThread").start();
-
 	}
 
-	public static void setKills(final String player, final int kills) {
+	public static void newEntry(final String player, final Long lastKillTime, final String killed, final int kills) {
 
 		Runnable task = new Runnable() {
 
@@ -118,9 +92,12 @@ public class Database {
 					System.out.println("something is wrong!");
 				PreparedStatement s = null;
 				try {
-					s = cntx.prepareStatement("UPDATE RANKUP SET kills = ? WHERE NAME = ?");
-					s.setInt(1, kills);
-					s.setString(2, player);
+					s = cntx.prepareStatement("INSERT INTO RANKUP (`lastkill`,`kills`,`lastkilltime`,`name`) VALUES(?,?,?,?)");
+					s.setString(1, killed);
+					s.setInt(2, kills);
+					s.setLong(3, lastKillTime);
+					s.setString(4, player);
+					System.out.println(s);
 					s.execute();
 					s.close();
 				} catch (SQLException e) {
@@ -137,23 +114,30 @@ public class Database {
 		new Thread(task, "DBThread").start();
 	}
 
-	// return null if they haven't killed anyone
+	// return 0 if they haven't killed anyone
+	public static RankupPlayer getEntry(String player) {
 
-	public static String getLastKill(String player) {
-
-		System.out.print("[Rankup] Getting Last Kill"); // TODO: Debugging ish
+		long lastKillTime = 0;
+		int kills = 0;
+		String lastKill = "";
+		System.out.print("[Rankup] Getting Last Kill Time"); // TODO: Debugging
+																// ish
 		if (!getContext())
 			System.out.println("something is wrong!");
-		Statement s = null;
+		PreparedStatement s = null;
 		try {
-			s = cntx.createStatement();
-			ResultSet rs = s.executeQuery("SELECT lastkill FROM RANKUP WHERE name = " + "\'" + player + "\'");
+			s = cntx.prepareStatement("SELECT `lastkilltime`,`kills`,`lastkill` FROM RANKUP WHERE `name` = ?");
+			s.setString(1, player);
+			System.out.println(s);
+			ResultSet rs = s.executeQuery();
 
 			while (rs.next()) {
-				String kill = rs.getString("lastkill");
-				return kill;
+				lastKillTime = rs.getLong("lastkilltime");
+				kills = rs.getInt("kills");
+				lastKill = rs.getString("lastkill");
 			}
 			s.close();
+			return new RankupPlayer(player, lastKillTime, lastKill, kills);
 		} catch (SQLException e) {
 			System.out.print("[SQDatabase] SQL Error" + e.getMessage());
 		} catch (Exception e) {
@@ -165,102 +149,18 @@ public class Database {
 		return null;
 	}
 
-	public static void setLastKill(final String player, final String killed) {
-
-		Runnable task = new Runnable() {
-
-			public void run() {
-
-				if (!getContext())
-					System.out.println("something is wrong!");
-				PreparedStatement s = null;
-				try {
-					s = cntx.prepareStatement("UPDATE RANKUP SET lastkill = ? WHERE NAME = ?");
-					s.setString(1, killed);
-					s.setString(2, player);
-					s.execute();
-					s.close();
-				} catch (SQLException e) {
-					System.out.print("[SQDatabase] SQL Error" + e.getMessage());
-				} catch (Exception e) {
-					System.out.print("[SQDatabase] SQL Error (Unknown)");
-					e.printStackTrace();
-				} finally {
-					close(s);
-				}
-			}
-		};
-
-		new Thread(task, "DBThread").start();
-	}
-
-	// return 0 if they haven't killed anyone
-	public static double getLastKillTime(String player) {
-
-		System.out.print("[Rankup] Getting Last Kill Time"); // TODO: Debugging
-																// ish
-		if (!getContext())
-			System.out.println("something is wrong!");
-		Statement s = null;
-		try {
-			s = cntx.createStatement();
-			ResultSet rs = s.executeQuery("SELECT lastkilltime FROM RANKUP WHERE name = " + "\'" + player + "\'");
-
-			while (rs.next()) {
-				double kills = rs.getDouble("lastkilltime");
-				return kills;
-			}
-			s.close();
-		} catch (SQLException e) {
-			System.out.print("[SQDatabase] SQL Error" + e.getMessage());
-		} catch (Exception e) {
-			System.out.print("[SQDatabase] SQL Error (Unknown)");
-			e.printStackTrace();
-		} finally {
-			close(s);
-		}
-		return 0;
-	}
-
-	public static void setLastKillTime(final String player, final double time) {
-
-		Runnable task = new Runnable() {
-
-			public void run() {
-
-				if (!getContext())
-					System.out.println("something is wrong!");
-				PreparedStatement s = null;
-				try {
-					s = cntx.prepareStatement("UPDATE RANKUP SET lastkilltime = ? WHERE NAME = ?");
-					s.setDouble(1, time);
-					s.setString(2, player);
-					s.execute();
-					s.close();
-				} catch (SQLException e) {
-					System.out.print("[SQDatabase] SQL Error" + e.getMessage());
-				} catch (Exception e) {
-					System.out.print("[SQDatabase] SQL Error (Unknown)");
-					e.printStackTrace();
-				} finally {
-					close(s);
-				}
-			}
-		};
-		new Thread(task, "DBThread").start();
-	}
-
 	// checks if they are in the DB
 	public static boolean hasKey(String player) {
 
-		System.out.print("[Rankup] Getting Last Kill Time"); // TODO: Debugging
-																// ish
+		System.out.print("[Rankup] Getting Last Kill Time");
+
 		if (!getContext())
 			System.out.println("something is wrong!");
-		Statement s = null;
+		PreparedStatement s = null;
 		try {
-			s = cntx.createStatement();
-			ResultSet rs = s.executeQuery("SELECT * FROM RANKUP WHERE name = " + "\'" + player + "\'");
+			s = cntx.prepareStatement("SELECT * FROM RANKUP WHERE `name` = ?");
+			s.setString(1, player);
+			ResultSet rs = s.executeQuery();
 
 			if (rs.next()) {
 				s.close();
@@ -276,17 +176,6 @@ public class Database {
 			close(s);
 		}
 		return false;
-	}
-
-	// don't bother with these, just helpers for me
-	public static void incrementKills(String player, int i) {
-
-		setKills(player, getKills(player) + i);
-	}
-
-	public static void setLastKillTimeToCurrent(String player) {
-
-		setLastKillTime(player, System.currentTimeMillis());
 	}
 
 	// Connection Setter Method I need

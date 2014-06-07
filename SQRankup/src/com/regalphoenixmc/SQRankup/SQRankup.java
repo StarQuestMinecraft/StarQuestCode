@@ -1,9 +1,6 @@
 
 package com.regalphoenixmc.SQRankup;
 
-import java.util.Arrays;
-import java.util.List;
-
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
 
@@ -11,6 +8,7 @@ import org.apache.commons.lang.WordUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -30,7 +28,6 @@ public class SQRankup extends JavaPlugin implements Listener {
 	public static Economy economy = null;
 	public static int index = 0;
 	PermissionManager pex;
-	public static List<PermissionGroup> pexGroups;
 
 	public void onEnable() {
 
@@ -39,7 +36,6 @@ public class SQRankup extends JavaPlugin implements Listener {
 		setupEconomy();
 		Database.setUp();
 		pex = PermissionsEx.getPermissionManager();
-		pexGroups = Arrays.asList(pex.getGroups());
 	}
 
 	// command
@@ -73,7 +69,8 @@ public class SQRankup extends JavaPlugin implements Listener {
 			int moneyRequirement = getMonetaryCost(nextRank);
 			int killsRequirement = getKillRequirement(nextRank);
 
-			int killsFound = Database.getKills(sender.getName());
+			RankupPlayer entry = Database.getEntry(p.getName());
+			int killsFound = entry.getKills();
 			double moneyFound = economy.getBalance(sender.getName());
 
 			if (killsFound >= killsRequirement && moneyFound >= moneyRequirement) {
@@ -81,7 +78,9 @@ public class SQRankup extends JavaPlugin implements Listener {
 				user.addGroup(WordUtils.capitalize(nextRank));
 				user.removeGroup(WordUtils.capitalize(rank));
 				economy.withdrawPlayer(sender.getName(), moneyRequirement);
-				Database.setKills(sender.getName(), killsFound - killsRequirement);
+				entry = Database.getEntry(p.getName());
+				entry.setKills(killsFound - killsRequirement);
+				entry.saveData();
 			} else {
 				sender.sendMessage("Current money: " + moneyFound + " Required Money: " + moneyRequirement + " Current Kills: " + killsFound
 						+ " Required Kills: " + killsRequirement);
@@ -125,23 +124,32 @@ public class SQRankup extends JavaPlugin implements Listener {
 	@EventHandler
 	public void onPlayerKill(PlayerDeathEvent event) {
 
-		Player killer = event.getEntity().getKiller();
+		Entity killer = event.getEntity().getKiller();
 		if (killer instanceof Player) {
-			String name = killer.getName();
-			String lastKill = Database.getLastKill(name);
-			if (lastKill != null && lastKill.equals(event.getEntity().getName())) {
-				if (System.currentTimeMillis() - Database.getLastKillTime(name) < 180000) {
-					killer.sendMessage("You've already killed this guy in the last half hour. Lay off, dude. This kill wasn't counted.");
-					return;
+			Player p = (Player) killer;
+			RankupPlayer entry;
+
+			// First see if they are in the DB
+			if (!Database.hasKey(p.getName())) {
+				entry = new RankupPlayer(p.getName(), 0, "", 0);
+				entry.saveNew();
+			} else {
+				entry = Database.getEntry(p.getName());
+				String lastKill = entry.getLastKillName();
+				if (lastKill != null && lastKill.equals(event.getEntity().getName())) {
+					if (System.currentTimeMillis() - entry.getLastKillTime() < 180000) {
+						((Player) killer).sendMessage("You've already killed this guy in the last half hour. Lay off, dude. This kill wasn't counted.");
+						return;
+					}
 				}
 			}
-			if (!Database.hasKey(name)) {
-				Database.setNewKills(name, 0);
-			}
-			Database.incrementKills(name, rankToKills(event.getEntity().getName()));
-			Database.setLastKill(name, event.getEntity().getName());
-			Database.setLastKillTimeToCurrent(name);
-			killer.sendMessage(ChatColor.RED + "This kill was counted in the ranking system as " + rankToKills(name) + ".");
+			System.out.println("Kill call: " + rankToKills(((Player) event.getEntity()).getName()));
+			entry.setKills(entry.getKills() + (rankToKills(((Player) event.getEntity()).getName())));
+			entry.setLastKillName(event.getEntity().getName());
+			entry.setLastKillTime(System.currentTimeMillis());
+			entry.saveData();
+			((Player) killer).sendMessage(ChatColor.RED + "This kill was counted in the ranking system as " + rankToKills(event.getEntity().getName())
+					+ ". You have " + entry.getKills() + " kills total.");
 			return;
 
 		}
@@ -150,39 +158,32 @@ public class SQRankup extends JavaPlugin implements Listener {
 
 	private int rankToKills(String name) {
 
-		int i = 0;
-		PermissionGroup[] groups = pex.getGroups(name);
+		PermissionGroup[] groups = pex.getUser(name).getGroups();
 		for (PermissionGroup group : groups) {
-			String groupName = group.getName();
+			String groupName = group.getName().toLowerCase();
 			switch (groupName) {
 				case "refugee":
-					i = -1;
-					break;
+					return -1;
 				case "settler":
-					i = 1;
-					break;
+					return 1;
 				case "colonist":
 				case "pirate":
-					i = 2;
-					break;
+					return 2;
 				case "corsair":
 				case "citizen":
-					i = 3;
-					break;
+					return 3;
 				case "buccaneer":
 				case "affluent":
-					i = 4;
-					break;
+					return 4;
 				case "warlord":
 				case "tycoon":
-					i = 4;
-					break;
+					return 4;
 				default:
-					break;
+					return 0;
 
 			}
 		}
-		return i;
+		return 0;
 	}
 
 	// method to get the next rank on the rank structure
