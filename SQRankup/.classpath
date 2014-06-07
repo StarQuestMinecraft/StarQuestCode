@@ -5,5 +5,6 @@
 	<classpathentry kind="lib" path="libs/bukkit-1.7.2-R0.3-20140116.121953-10.jar"/>
 	<classpathentry kind="lib" path="libs/PermissionsEx.jar" sourcepath="C:/Users/george/Desktop/PermissionsEx.jar"/>
 	<classpathentry kind="lib" path="libs/Vault.jar"/>
+	<classpathentry kind="lib" path="libs/ChestCommands.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
