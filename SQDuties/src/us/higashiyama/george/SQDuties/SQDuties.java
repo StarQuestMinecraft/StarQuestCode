@@ -41,9 +41,6 @@ import ru.tehkode.permissions.PermissionManager;
 import ru.tehkode.permissions.PermissionUser;
 import ru.tehkode.permissions.bukkit.PermissionsEx;
 
-import com.minecraftdimensions.bungeesuitechat.managers.PlayerManager;
-import com.minecraftdimensions.bungeesuitechat.objects.BSPlayer;
-
 public class SQDuties extends JavaPlugin implements Listener {
 
 	BungeePlayerHandler utils;
@@ -364,38 +361,7 @@ public class SQDuties extends JavaPlugin implements Listener {
 		p.getInventory().clear();
 		p.getInventory().setArmorContents(null);
 		p.sendMessage(ChatColor.GREEN + "Dutymode enabled!");
-		colorOn(p);
-	}
 
-	public static void colorOn(Player p) {
-
-		BSPlayer player = PlayerManager.getPlayer(p);
-		String nickname = player.getNickname();
-		if (null == nickname) {
-			nickname = p.getName();
-		}
-		nickname = nickname.replace("§4", "");
-		nickname = nickname.replace("§a", "");
-		if (nickname.length() > 14) {
-			nickname = nickname.substring(0, 13);
-		}
-		String newNickname = "&4" + nickname;
-		PlayerManager.nicknamePlayer(p.getName(), p.getName(), newNickname, true);
-	}
-
-	public static void colorOff(Player p) {
-
-		BSPlayer player = PlayerManager.getPlayer(p);
-		String nickname = player.getNickname();
-		if (null == nickname)
-			nickname = p.getName();
-		nickname = nickname.replace("§4", "");
-		nickname = nickname.replace("§a", "");
-		if (nickname.length() > 14) {
-			nickname = nickname.substring(0, 13);
-		}
-		String newNickname = "&c" + nickname;
-		PlayerManager.nicknamePlayer(p.getName(), p.getName(), newNickname, true);
 	}
 
 	public static SQDuties getSQDuties() {
@@ -413,8 +379,6 @@ public class SQDuties extends JavaPlugin implements Listener {
 				nonDutyGroups.add(g);
 			}
 		}
-
-		colorOff(p);
 
 		PermissionGroup[] newGroups = nonDutyGroups.toArray(new PermissionGroup[nonDutyGroups.size()]);
 		user.setGroups(newGroups);
@@ -521,7 +485,6 @@ public class SQDuties extends JavaPlugin implements Listener {
 			public void run() {
 
 				if (SQDuties.this.isInDutymode(p, p.getWorld().getName())) {
-					colorOn(p);
 					PermissionGroup group = null;
 					PermissionGroup[] groups = pexManager.getUser(p.getName()).getGroups();
 					for (PermissionGroup indexGroup : groups) {
@@ -557,8 +520,6 @@ public class SQDuties extends JavaPlugin implements Listener {
 					p.setGameMode(GameMode.CREATIVE);
 					p.getInventory().setArmorContents(null);
 					p.getInventory().clear();
-				} else if (p.hasPermission("SQDuties.colorname")) {
-					colorOff(p);
 				}
 			}
 		}, 20L);
