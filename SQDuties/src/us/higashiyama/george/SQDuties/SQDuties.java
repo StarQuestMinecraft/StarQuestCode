@@ -40,7 +40,9 @@ import ru.tehkode.permissions.PermissionGroup;
 import ru.tehkode.permissions.PermissionManager;
 import ru.tehkode.permissions.PermissionUser;
 import ru.tehkode.permissions.bukkit.PermissionsEx;
-import us.higashiyama.george.CardboardBox.Knapsack;
+
+import com.minecraftdimensions.bungeesuitechat.managers.PlayerManager;
+import com.minecraftdimensions.bungeesuitechat.objects.BSPlayer;
 
 public class SQDuties extends JavaPlugin implements Listener {
 
@@ -224,7 +226,8 @@ public class SQDuties extends JavaPlugin implements Listener {
 		for (int i = 0; i < armor.length; i++) {
 			armorInv.setItem(i, armor[i]);
 		}
-		InvRestoreDB.newKey(p.getName(), new Knapsack(p), cause);
+		InvRestoreDB.newKey(p.getName(), InventoryStringDeSerializer.InventoryToString(p.getInventory(), p),
+				InventoryStringDeSerializer.ArmorToString(armorInv), cause);
 
 	}
 
@@ -248,8 +251,18 @@ public class SQDuties extends JavaPlugin implements Listener {
 		Player p = getServer().getPlayer(player);
 		System.out.println("restoring inv");
 		String timestamp = InvRestoreDB.getDateIndex(player, index);
-		Knapsack k = InvRestoreDB.getInv(player, timestamp);
-		k.unpack(p);
+		Inventory inv = InventoryStringDeSerializer.StringToInventory(InvRestoreDB.getInv(player, timestamp));
+		Inventory armorInv = InventoryStringDeSerializer.StringToInventory(InvRestoreDB.getArmor(player, timestamp));
+		double[] exp = InventoryStringDeSerializer.StringToExp(InvRestoreDB.getInv(player, timestamp));
+		p.setLevel((int) exp[0]);
+		p.setExp((float) exp[1]);
+
+		ItemStack[] armor = new ItemStack[4];
+		for (int i = 0; i < armor.length; i++) {
+			armor[i] = armorInv.getItem(i);
+		}
+		p.getInventory().setContents(inv.getContents());
+		p.getInventory().setArmorContents(armor);
 
 	}
 
@@ -351,30 +364,40 @@ public class SQDuties extends JavaPlugin implements Listener {
 		p.getInventory().clear();
 		p.getInventory().setArmorContents(null);
 		p.sendMessage(ChatColor.GREEN + "Dutymode enabled!");
-
+		colorOn(p);
 	}
 
-	/*
-	 * public static void colorOn(Player p) {
-	 * 
-	 * BSPlayer player = PlayerManager.getPlayer(p); String nickname =
-	 * player.getNickname(); if (null == nickname) { nickname = p.getName(); }
-	 * nickname = nickname.replace("§4", ""); nickname = nickname.replace("§a",
-	 * ""); if (nickname.length() > 14) { nickname = nickname.substring(0, 13);
-	 * } String newNickname = "&4" + nickname;
-	 * PlayerManager.nicknamePlayer(p.getName(), p.getName(), newNickname,
-	 * true); }
-	 * 
-	 * public static void colorOff(Player p) {
-	 * 
-	 * BSPlayer player = PlayerManager.getPlayer(p); String nickname =
-	 * player.getNickname(); if (null == nickname) nickname = p.getName();
-	 * nickname = nickname.replace("§4", ""); nickname = nickname.replace("§a",
-	 * ""); if (nickname.length() > 14) { nickname = nickname.substring(0, 13);
-	 * } String newNickname = "&c" + nickname;
-	 * PlayerManager.nicknamePlayer(p.getName(), p.getName(), newNickname,
-	 * true); }
-	 */
+	public static void colorOn(Player p) {
+
+		BSPlayer player = PlayerManager.getPlayer(p);
+		String nickname = player.getNickname();
+		if (null == nickname) {
+			nickname = p.getName();
+		}
+		nickname = nickname.replace("§4", "");
+		nickname = nickname.replace("§a", "");
+		if (nickname.length() > 14) {
+			nickname = nickname.substring(0, 13);
+		}
+		String newNickname = "&4" + nickname;
+		PlayerManager.nicknamePlayer(p.getName(), p.getName(), newNickname, true);
+	}
+
+	public static void colorOff(Player p) {
+
+		BSPlayer player = PlayerManager.getPlayer(p);
+		String nickname = player.getNickname();
+		if (null == nickname)
+			nickname = p.getName();
+		nickname = nickname.replace("§4", "");
+		nickname = nickname.replace("§a", "");
+		if (nickname.length() > 14) {
+			nickname = nickname.substring(0, 13);
+		}
+		String newNickname = "&c" + nickname;
+		PlayerManager.nicknamePlayer(p.getName(), p.getName(), newNickname, true);
+	}
+
 	public static SQDuties getSQDuties() {
 
 		return instance;
@@ -390,6 +413,8 @@ public class SQDuties extends JavaPlugin implements Listener {
 				nonDutyGroups.add(g);
 			}
 		}
+
+		colorOff(p);
 
 		PermissionGroup[] newGroups = nonDutyGroups.toArray(new PermissionGroup[nonDutyGroups.size()]);
 		user.setGroups(newGroups);
@@ -496,7 +521,7 @@ public class SQDuties extends JavaPlugin implements Listener {
 			public void run() {
 
 				if (SQDuties.this.isInDutymode(p, p.getWorld().getName())) {
-
+					colorOn(p);
 					PermissionGroup group = null;
 					PermissionGroup[] groups = pexManager.getUser(p.getName()).getGroups();
 					for (PermissionGroup indexGroup : groups) {
@@ -533,10 +558,10 @@ public class SQDuties extends JavaPlugin implements Listener {
 					p.getInventory().setArmorContents(null);
 					p.getInventory().clear();
 				} else if (p.hasPermission("SQDuties.colorname")) {
-
+					colorOff(p);
 				}
 			}
-		}, 5L);
+		}, 20L);
 	}
 
 }

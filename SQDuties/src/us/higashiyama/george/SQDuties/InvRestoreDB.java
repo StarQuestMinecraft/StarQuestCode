@@ -1,4 +1,3 @@
-
 package us.higashiyama.george.SQDuties;
 
 import java.sql.Connection;
@@ -10,10 +9,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 
-import us.higashiyama.george.CardboardBox.Knapsack;
-
 public class InvRestoreDB {
-
 	public static String driverString = "com.mysql.jdbc.Driver";
 	public static String hostname = "192.99.20.8";
 	public static String port = "3306";
@@ -24,14 +20,13 @@ public class InvRestoreDB {
 	public static String dsn = ("jdbc:mysql://" + hostname + ":" + port + "/" + db_name);
 
 	public static void setUp() {
-
-		//@formatting:off
-		String Database_table = "CREATE TABLE IF NOT EXISTS InventoryRestore (" 
-		+ "`name` VARCHAR(32) NOT NULL," 
-				+ "`inventory` VARBINARY(MAX),"
-				+ "`time` DATETIME," + "`cause` LONGTEXT" + ")";
+		String Database_table = "CREATE TABLE IF NOT EXISTS InventoryRestore ("
+				+ "`name` VARCHAR(32) NOT NULL," + "`inventory` LONGTEXT,"
+				+ "`armor` LONGTEXT," 
+				+ "`time` DATETIME,"
+				+ "`cause` LONGTEXT"
+				+ ")";
 		getContext();
-		//@formatting:on
 		try {
 			Driver driver = (Driver) Class.forName(driverString).newInstance();
 			DriverManager.registerDriver(driver);
@@ -52,8 +47,8 @@ public class InvRestoreDB {
 
 	}
 
-	public static Knapsack getInv(String name, String datetime) {
-
+	public static String getInv(String name, String datetime) {
+		
 		if (!getContext())
 			System.out.println("Context didn't work sucessfully");
 		PreparedStatement s = null;
@@ -63,7 +58,7 @@ public class InvRestoreDB {
 			s.setString(2, datetime);
 			ResultSet rs = s.executeQuery();
 			while (rs.next()) {
-				return (Knapsack) rs.getObject("inventory");
+				return rs.getString("inventory");
 			}
 			s.close();
 
@@ -79,41 +74,66 @@ public class InvRestoreDB {
 
 	}
 
-	public static void trimRow(final String datetime) {
-
-		Runnable task = new Runnable() {
-
-			public void run() {
-
-				try {
-					if (!getContext())
-						System.out.println("Context didn't work sucessfully");
-					PreparedStatement s = null;
-					try {
-						s = cntx.prepareStatement("DELETE FROM InventoryRestore WHERE `time` = ?");
-						s.setString(1, datetime);
-						s.execute();
-						s.close();
-
-					} catch (SQLException e) {
-						System.out.print("[CCDB] SQL Error" + e.getMessage());
-					} catch (Exception e) {
-						System.out.print("[CCDB] SQL Error (Unknown)");
-						e.printStackTrace();
-					} finally {
-						close(s);
-					}
-				} catch (Exception ex) {
-					// handle error which cannot be thrown back
-				}
+	public static String getArmor(String name, String datetime) {
+		if (!getContext())
+			System.out.println("Context didn't work sucessfully");
+		PreparedStatement s = null;
+		try {
+			s = cntx.prepareStatement("SELECT `armor` FROM InventoryRestore WHERE `name` = ? && `time` = ?");
+			s.setString(1, name);
+			s.setString(2, datetime);
+			ResultSet rs = s.executeQuery();
+			while (rs.next()) {
+				return rs.getString("armor");
 			}
-		};
-		new Thread(task, "ServiceThread").start();
+			s.close();
+
+		} catch (SQLException e) {
+			System.out.print("[CCDB] SQL Error" + e.getMessage());
+		} catch (Exception e) {
+			System.out.print("[CCDB] SQL Error (Unknown)");
+			e.printStackTrace();
+		} finally {
+			close(s);
+		}
+		return null;
 
 	}
+	
+	public static void trimRow(final String datetime) {
+        Runnable task = new Runnable() {
 
+            public void run() {
+                try {
+            		if (!getContext())
+            			System.out.println("Context didn't work sucessfully");
+            		PreparedStatement s = null;
+            		try {
+            			s = cntx.prepareStatement("DELETE FROM InventoryRestore WHERE `time` = ?");
+            			s.setString(1, datetime);
+            			s.execute();
+            			s.close();
+
+            		} catch (SQLException e) {
+            			System.out.print("[CCDB] SQL Error" + e.getMessage());
+            		} catch (Exception e) {
+            			System.out.print("[CCDB] SQL Error (Unknown)");
+            			e.printStackTrace();
+            		} finally {
+            			close(s);
+            		}
+                } catch (Exception ex) {
+                    //handle error which cannot be thrown back
+                }
+            }
+        };
+        new Thread(task, "ServiceThread").start(); 
+
+
+
+	}
+	
 	public static ArrayList<String> getDeaths(String name) {
-
 		System.out.println("GETTING DEATHS");
 		ArrayList<String> returnArray = new ArrayList<String>();
 		if (!getContext())
@@ -144,9 +164,8 @@ public class InvRestoreDB {
 		return null;
 
 	}
-
+	
 	public static String getDateIndex(String name, int index) {
-
 		int counter = 1;
 		if (!getContext())
 			System.out.println("Context didn't work sucessfully");
@@ -178,85 +197,82 @@ public class InvRestoreDB {
 
 	}
 
-	public static void newKey(final String name, final Knapsack knap, final String cause) {
+	public static void newKey(final String name, final String inv, final String armor, final String cause) {
+        Runnable task = new Runnable() {
 
-		Runnable task = new Runnable() {
+            public void run() {
+                try {
+            		if (!getContext())
+            			System.out.println("Context didn't work sucessfully");
+            		PreparedStatement s = null;
+            		try {
+            			s = cntx.prepareStatement("INSERT INTO InventoryRestore VALUES (?,?,?,NOW(),?)");
+            			s.setString(1, name);
+            			s.setString(2, inv);
+            			s.setString(3, armor);
+            			s.setString(4, cause);
+            			s.execute();
+            			s.close();
 
-			public void run() {
+            		} catch (SQLException e) {
+            			System.out.print("[CCDB] SQL Error" + e.getMessage());
+            		} catch (Exception e) {
+            			System.out.print("[CCDB] SQL Error (Unknown)");
+            			e.printStackTrace();
+            		} finally {
+            			trimKey(name);
+            			close(s);
+            		}
+                } catch (Exception ex) {
+                    //handle error which cannot be thrown back
+                }
+            }
+        };
+        new Thread(task, "ServiceThread").start(); 
 
-				try {
-					if (!getContext())
-						System.out.println("Context didn't work sucessfully");
-					PreparedStatement s = null;
-					try {
-						s = cntx.prepareStatement("INSERT INTO InventoryRestore VALUES (?,?,NOW(),?)");
-						s.setString(1, name);
-						s.setObject(2, knap);
-						s.setString(3, cause);
-						s.execute();
-						s.close();
-
-					} catch (SQLException e) {
-						System.out.print("[CCDB] SQL Error" + e.getMessage());
-					} catch (Exception e) {
-						System.out.print("[CCDB] SQL Error (Unknown)");
-						e.printStackTrace();
-					} finally {
-						trimKey(name);
-						close(s);
-					}
-				} catch (Exception ex) {
-					// handle error which cannot be thrown back
-				}
-			}
-		};
-		new Thread(task, "ServiceThread").start();
 
 	}
 
 	public static void trimKey(final String name) {
+		  Runnable task = new Runnable() {
+	            public void run() {
+	                try {
+	                	System.out.println("Trimming");
+	            		int counter = 1;
+	            		if (!getContext())
+	            			System.out.println("Context didn't work sucessfully");
+	            		PreparedStatement s = null;
+	            		try {
+	            			s = cntx.prepareStatement("SELECT * FROM InventoryRestore WHERE `name` = ? ORDER BY InventoryRestore.time DESC");
+	            			s.setString(1, name);
+	            			ResultSet rs = s.executeQuery();
+	            			while (rs.next()) {
+	            				if (counter <= 5) {
+	            					System.out.println(counter);
+	            				} else {
+	            					System.out.println("deleting row");
+	            					trimRow(rs.getString("time"));
+	            					
+	            				}
+	            				counter++;
+	            			}
+	            			s.close();
 
-		Runnable task = new Runnable() {
-
-			public void run() {
-
-				try {
-					System.out.println("Trimming");
-					int counter = 1;
-					if (!getContext())
-						System.out.println("Context didn't work sucessfully");
-					PreparedStatement s = null;
-					try {
-						s = cntx.prepareStatement("SELECT * FROM InventoryRestore WHERE `name` = ? ORDER BY InventoryRestore.time DESC");
-						s.setString(1, name);
-						ResultSet rs = s.executeQuery();
-						while (rs.next()) {
-							if (counter <= 5) {
-								System.out.println(counter);
-							} else {
-								System.out.println("deleting row");
-								trimRow(rs.getString("time"));
-
-							}
-							counter++;
-						}
-						s.close();
-
-					} catch (SQLException e) {
-						System.out.print("[CCDB] SQL Error" + e.getMessage());
-					} catch (Exception e) {
-						System.out.print("[CCDB] SQL Error (Unknown)");
-						e.printStackTrace();
-					} finally {
-						close(s);
-					}
-				} catch (Exception ex) {
-					// handle error which cannot be thrown back
-				}
-			}
-		};
-		new Thread(task, "ServiceThread").start();
-
+	            		} catch (SQLException e) {
+	            			System.out.print("[CCDB] SQL Error" + e.getMessage());
+	            		} catch (Exception e) {
+	            			System.out.print("[CCDB] SQL Error (Unknown)");
+	            			e.printStackTrace();
+	            		} finally {
+	            			close(s);
+	            		}
+	                } catch (Exception ex) {
+	                    //handle error which cannot be thrown back
+	                }
+	            }
+	        };
+	        new Thread(task, "ServiceThread").start(); 
+		
 	}
 
 	public static boolean getContext() {
@@ -271,7 +287,8 @@ public class InvRestoreDB {
 					}
 					cntx = null;
 				}
-				if ((username.equalsIgnoreCase("")) && (password.equalsIgnoreCase(""))) {
+				if ((username.equalsIgnoreCase(""))
+						&& (password.equalsIgnoreCase(""))) {
 					cntx = DriverManager.getConnection(dsn);
 				} else
 					cntx = DriverManager.getConnection(dsn, username, password);
@@ -282,13 +299,13 @@ public class InvRestoreDB {
 
 			return true;
 		} catch (SQLException e) {
-			System.out.print("Error could not Connect to db " + dsn + ": " + e.getMessage());
+			System.out.print("Error could not Connect to db " + dsn + ": "
+					+ e.getMessage());
 		}
 		return false;
 	}
 
 	private static void close(Statement s) {
-
 		if (s == null) {
 			return;
 		}
