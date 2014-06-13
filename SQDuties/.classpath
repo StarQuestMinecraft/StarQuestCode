@@ -15,8 +15,5 @@
 	<classpathentry kind="lib" path="libs/commons-pool2-2.2.jar"/>
 	<classpathentry kind="lib" path="libs/mysql-connector-java-5.1.18-bin.jar"/>
 	<classpathentry kind="lib" path="C:/Users/george/Desktop/LocalServer/plugins/SQMovecraftBungee.jar"/>
-	<classpathentry kind="lib" path="libs/bukkit-1.7.2-R0.3-20140116.121953-10.jar"/>
-	<classpathentry kind="lib" path="libs/PermissionsEx.jar"/>
-	<classpathentry kind="lib" path="libs/SQMovecraft-Bungee.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
