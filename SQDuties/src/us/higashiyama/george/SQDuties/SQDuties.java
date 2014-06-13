@@ -1,10 +1,7 @@
 
-package us.higashiyama.george.SQDuties;
-
 import java.util.ArrayList;
 
 import net.countercraft.movecraft.bungee.BungeePlayerHandler;
-import net.milkbowl.vault.permission.Permission;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -33,18 +30,20 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import ru.tehkode.permissions.PermissionGroup;
 import ru.tehkode.permissions.PermissionManager;
 import ru.tehkode.permissions.PermissionUser;
 import ru.tehkode.permissions.bukkit.PermissionsEx;
+import us.higashiyama.george.SQDuties.CommandSpyFile;
+import us.higashiyama.george.SQDuties.Database;
+import us.higashiyama.george.SQDuties.InvRestoreDB;
+import us.higashiyama.george.SQDuties.InventoryStringDeSerializer;
 
 public class SQDuties extends JavaPlugin implements Listener {
 
 	BungeePlayerHandler utils;
-	public static Permission permission = null;
 	static SQDuties instance;
 	public PermissionsEx pex;
 	public PermissionManager pexManager;
@@ -54,22 +53,11 @@ public class SQDuties extends JavaPlugin implements Listener {
 		Database.setUp();
 		InvRestoreDB.setUp();
 		Bukkit.getServer().getPluginManager().registerEvents(this, this);
-		setupPermissions();
 		instance = this;
 		this.getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
 		pex = (PermissionsEx) getServer().getPluginManager().getPlugin("PermissionsEx");
 		pexManager = pex.getPermissionManager();
 
-	}
-
-	private boolean setupPermissions() {
-
-		RegisteredServiceProvider<Permission> permissionProvider = getServer().getServicesManager().getRegistration(Permission.class);
-		if (permissionProvider != null) {
-			permission = (Permission) permissionProvider.getProvider();
-		}
-
-		return permission != null;
 	}
 
 	@EventHandler
