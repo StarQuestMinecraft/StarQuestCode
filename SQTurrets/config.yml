@@ -1,0 +1,13 @@
+shipturret:
+  permission: 'turret.shipturret'
+  cooldown: 1000
+  ammo:
+    id: 7
+    quantity: 5
+  basematerials:
+    - 35
+    - 23
+  topmaterials:
+    - 20
+
+   

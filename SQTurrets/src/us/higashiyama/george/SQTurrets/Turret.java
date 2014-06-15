@@ -1,13 +1,18 @@
 
 package us.higashiyama.george.SQTurrets;
 
+import java.util.ArrayList;
+
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.Dispenser;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
 
 public abstract class Turret {
 
@@ -17,14 +22,29 @@ public abstract class Turret {
 	private String permission;
 	// Number of milliseconds between shots
 	private long cooldown;
+	// An ItemStack of required Ammo from a container defined
+	private ItemStack ammo;
+	// Acceptable materials for the base block
+	private ArrayList<Material> baseMaterials = new ArrayList<Material>();
+	// Acceptable materials for the top block
+	private ArrayList<Material> topMaterials = new ArrayList<Material>();
+
 	// Number of current ms. Don't touch this value. It should only get modified
-	// from the shoot method
+	// from the fire method
 	private long currentCooldown = 0;
 
 	/*
 	 * Shoot method will have to be overwritten for all new turret classes
 	 */
 	public void shoot(Player p) {
+
+	}
+
+	/*
+	 * Advanced shoot method will have to be overwritten for all new turret
+	 * classes that have an extended version of a turret that takes ammo
+	 */
+	public void shootAdvanced(Player p) {
 
 	}
 
@@ -37,7 +57,16 @@ public abstract class Turret {
 		if (this.isInCooldown(p))
 			return;
 
-		this.shoot(p);
+		if (this.isAdvanced(p)) {
+			// Returning true here will take the ammo
+			if (!this.hasAmmo(p)) {
+				System.out.println("NO AMMOS");
+				return;
+			}
+			this.shootAdvanced(p);
+		} else {
+			this.shoot(p);
+		}
 		this.setCurrentCooldown(System.currentTimeMillis() + this.getCooldown());
 
 	}
@@ -120,19 +149,59 @@ public abstract class Turret {
 		}
 	}
 
-	public static boolean detectTurret(Sign turretSign) {
+	public static boolean detectTurret(Sign turretSign, Turret t) {
+
+		System.out.println("Iteration");
 
 		BlockFace dir = DirectionUtils.getSignDirection(turretSign.getBlock());
 		Block oneInFront = turretSign.getBlock().getRelative(dir);
 		Block aboveThat = oneInFront.getRelative(BlockFace.UP);
 		Block oneMoreUp = aboveThat.getRelative(BlockFace.UP);
-		System.out.println(oneInFront.getType());
 		System.out.println(aboveThat.getType());
+		System.out.println(t.getTopMaterials().toString());
 		System.out.println(oneMoreUp.getType());
-		if ((aboveThat.getType() == Material.SPONGE) && (oneMoreUp.getType() == Material.GLASS)) {
+		if ((aboveThat.getType() == Material.SPONGE) && (t.getTopMaterials().contains(oneMoreUp.getType()))) {
 			return true;
 		}
 		return false;
+	}
+
+	/*
+	 * Returns whether this turret has an ammo taking version
+	 */
+	public boolean isAdvanced(Player p) {
+
+		Block b = p.getLocation().getBlock().getRelative(BlockFace.DOWN);
+		System.out.println(b.getType());
+		if (b.getType() == Material.DISPENSER && this.getBaseMaterials().contains(Material.DISPENSER)) {
+			System.out.println("True");
+			return true;
+		} else {
+			return false;
+		}
+
+	}
+
+	/*
+	 * Returns whether the turret has ammo. It will also take the ammo it finds.
+	 */
+	private boolean hasAmmo(Player p) {
+
+		// This method is called after we already know that it is an advanced
+		// turret
+		Block b = p.getLocation().getBlock().getRelative(BlockFace.DOWN);
+		if (b.getType() != Material.DISPENSER)
+			return false;
+		Dispenser d = (Dispenser) b.getState();
+		Inventory i = d.getInventory();
+		if (i.containsAtLeast(this.getAmmo(), 1)) {
+			i.removeItem(this.getAmmo());
+			return true;
+		} else {
+			p.sendMessage(ChatColor.RED + "Out of Ammo!");
+			return false;
+		}
+
 	}
 
 	/*
@@ -152,6 +221,22 @@ public abstract class Turret {
 			return true;
 		}
 		return false;
+	}
+
+	@Override
+	public String toString() {
+
+		String a = this.name;
+		String b = this.permission;
+		String c = "" + this.cooldown;
+		String d = this.ammo.toString();
+		String e = "";
+		String f = "";
+		for (Material p : this.baseMaterials)
+			e += p.toString() + ", ";
+		for (Material p : this.topMaterials)
+			f += p.toString() + ", ";
+		return a + " " + b + " " + c + " " + d + " " + e + " " + f;
 	}
 
 	public String getName() {
@@ -192,6 +277,36 @@ public abstract class Turret {
 	public void setCurrentCooldown(long currentCooldown) {
 
 		this.currentCooldown = currentCooldown;
+	}
+
+	public ItemStack getAmmo() {
+
+		return ammo;
+	}
+
+	public void setAmmo(ItemStack ammo) {
+
+		this.ammo = ammo;
+	}
+
+	public ArrayList<Material> getBaseMaterials() {
+
+		return baseMaterials;
+	}
+
+	public void setBaseMaterials(ArrayList<Material> baseMaterials) {
+
+		this.baseMaterials = baseMaterials;
+	}
+
+	public ArrayList<Material> getTopMaterials() {
+
+		return topMaterials;
+	}
+
+	public void setTopMaterials(ArrayList<Material> topMaterials) {
+
+		this.topMaterials = topMaterials;
 	}
 
 }

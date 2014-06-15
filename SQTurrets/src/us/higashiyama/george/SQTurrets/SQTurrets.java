@@ -4,6 +4,7 @@ package us.higashiyama.george.SQTurrets;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -18,11 +19,11 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import us.higashiyama.george.SQTurrets.Turrets.APTurret;
-import us.higashiyama.george.SQTurrets.Turrets.ShipTurret;
 import us.higashiyama.george.SQTurrets.Utils.AntiGravityTask;
+import us.higashiyama.george.SQTurrets.Utils.TurretManager;
 
 public class SQTurrets extends JavaPlugin implements Listener {
 
@@ -33,22 +34,51 @@ public class SQTurrets extends JavaPlugin implements Listener {
 	public void onEnable() {
 
 		instance = this;
-		// Define a new turret type
-		ShipTurret shipTurret = new ShipTurret();
-		shipTurret.setName("shipturret");
-		shipTurret.setPermission("turret.shipturret");
-		shipTurret.setCooldown(2000L);
+		instance.saveDefaultConfig();
+		TurretManager.loadTurrets();
+		for (String name : TurretManager.turrets.keySet()) {
+			System.out.println("Welcome to the jungle");
+			System.out.println(name);
+			Turret turret = null;
+			try {
 
-		APTurret apTurret = new APTurret();
-		apTurret.setName("apturret");
-		apTurret.setPermission("turret.apturret");
-		apTurret.setCooldown(1000L);
-		// Add the type to the registered types
-		turretTypes.add(shipTurret);
-		turretTypes.add(apTurret);
+				turret = (Turret) TurretManager.turrets.get(name).newInstance();
+				turret.setName(name);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			Turret t = loadTurret(turret);
+			System.out.println(t.toString());
+			turretTypes.add(t);
+
+		}
+
 		new AntiGravityTask();
 
 		getServer().getPluginManager().registerEvents(this, this);
+	}
+
+	private static Turret loadTurret(Turret t) {
+
+		String name = t.getName().toLowerCase();
+		t.setPermission(instance.getConfig().getString(name + ".permission"));
+		t.setCooldown(instance.getConfig().getLong(name + ".cooldown"));
+		t.setAmmo(new ItemStack(instance.getConfig().getInt(name + ".ammo.id"), instance.getConfig().getInt(name + ".ammo.quantity")));
+		List<Integer> base = instance.getConfig().getIntegerList(name + ".basematerials");
+		ArrayList<Material> baseMaterials = new ArrayList<Material>();
+		for (int sId : base) {
+			baseMaterials.add(Material.getMaterial(sId));
+		}
+
+		List<Integer> top = instance.getConfig().getIntegerList(name + ".topmaterials");
+		ArrayList<Material> topMaterials = new ArrayList<Material>();
+		for (int sId : top) {
+			topMaterials.add(Material.getMaterial(sId));
+		}
+
+		t.setBaseMaterials(baseMaterials);
+		t.setTopMaterials(topMaterials);
+		return t;
 	}
 
 	@EventHandler
@@ -71,9 +101,10 @@ public class SQTurrets extends JavaPlugin implements Listener {
 			// Checking an existing turret construction so the player can enter
 			// a turret
 			for (Turret t : turretTypes) {
+				System.out.println("Iterationz");
 				if ((s.getLine(0).equalsIgnoreCase(ChatColor.BLUE + t.getName().toUpperCase())) && (s.getLine(1).equals(ChatColor.GREEN + "UNOCCUPIED"))) {
 					// if the construction is a turret
-					if (Turret.detectTurret(s)) {
+					if (Turret.detectTurret(s, t)) {
 						if (event.getPlayer().getItemInHand().getType() == Material.WATCH) {
 							// Class object will the sub-class of the specific
 							// turret
@@ -100,6 +131,9 @@ public class SQTurrets extends JavaPlugin implements Listener {
 							turret.setName(t.getName());
 							turret.setPermission(t.getPermission());
 							turret.setCooldown(t.getCooldown());
+							turret.setAmmo(t.getAmmo());
+							turret.setBaseMaterials(t.getBaseMaterials());
+							turret.setTopMaterials(t.getTopMaterials());
 
 							turret.enter(event.getPlayer(), event.getClickedBlock());
 							continue;
