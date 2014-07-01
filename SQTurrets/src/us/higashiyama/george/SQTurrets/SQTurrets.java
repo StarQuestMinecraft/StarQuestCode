@@ -10,6 +10,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Sign;
+import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -30,6 +31,7 @@ public class SQTurrets extends JavaPlugin implements Listener {
 	public static HashMap<Player, Turret> userMap = new HashMap<Player, Turret>();
 	public static ArrayList<Turret> turretTypes = new ArrayList<Turret>();
 	public static SQTurrets instance;
+	public static ArrayList<Arrow> arrowList = new ArrayList<Arrow>();
 
 	public void onEnable() {
 
