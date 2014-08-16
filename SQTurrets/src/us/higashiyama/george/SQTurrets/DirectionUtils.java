@@ -1,11 +1,72 @@
 
 package us.higashiyama.george.SQTurrets;
 
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.Sign;
+import org.bukkit.entity.Player;
 
 public class DirectionUtils {
+
+	public static boolean playerOffsetLocation(Player p, Sign s) {
+
+		int px = p.getLocation().getBlockX();
+
+		int pz = p.getLocation().getBlockZ();
+		if (px == ((int) s.getLocation().getX())) {
+
+			if (((int) p.getLocation().getY()) == ((int) s.getLocation().getY()) || ((int) p.getLocation().getY() + 1) == ((int) s.getLocation().getY())) {
+				if (pz == ((int) s.getLocation().getZ())) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	public static double[] playerOffsetTeleport(Player p, Block b) {
+
+		Location pLoc = p.getLocation();
+		Location bLoc = b.getLocation();
+		BlockFace rbf = null;
+		BlockFace[] signFaces = { BlockFace.WEST, BlockFace.EAST, BlockFace.NORTH, BlockFace.SOUTH };
+		for (BlockFace bf : signFaces) {
+			if (b.getRelative(bf).getType() == Material.WALL_SIGN) {
+				rbf = bf;
+			}
+		}
+		double x = 0;
+		double z = 0;
+		switch (rbf) {
+			case EAST:
+				x += 1;
+				break;
+			case NORTH:
+				z -= 1;
+				break;
+			case SOUTH:
+				z += 1;
+				break;
+			case WEST:
+				x -= 1;
+				break;
+
+		}
+		double[] returnArray = { x, z };
+		return returnArray;
+
+	}
+
+	public static Location locationFromSign(Player p, Block b) {
+
+		Sign s = (Sign) b.getState();
+		String[] unparsed = s.getLine(3).split(",");
+		return new Location(p.getWorld(), s.getX() - Double.parseDouble(unparsed[0]), s.getY() - Double.parseDouble(unparsed[1]), s.getZ()
+				- Double.parseDouble(unparsed[2]));
+
+	}
 
 	public static BlockFace getSignDirection(Block sign) {
 

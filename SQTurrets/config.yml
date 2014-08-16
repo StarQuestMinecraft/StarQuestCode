@@ -1,13 +1,23 @@
-shipturret:
-  permission: 'turret.shipturret'
-  cooldown: 1000
-  ammo:
-    id: 7
-    quantity: 5
-  basematerials:
-    - 35
-    - 23
-  topmaterials:
-    - 20
-
+turrets:
+  shipturret:
+    permission: 'turret.shipturret'
+    cooldown: 2000
+    ammo:
+      id: 7
+      quantity: 5
+    basematerials:
+      - 35
+      - 23
+    topmaterials:
+      - 20   
+    ammo:
+      - gunpowder
+    projectile: Arrow
+    velocity: 2
+      
+ammos:
+  gunpowder:
+    id: 289
+    fire: true
+    velocity: 3
    

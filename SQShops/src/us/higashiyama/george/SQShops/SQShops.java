@@ -59,7 +59,7 @@ public class SQShops extends JavaPlugin implements Listener {
 				}
 				return true;
 			}
-			if (cmd.getName().equalsIgnoreCase("setvalue") || sender.hasPermission("SQShops.edit")) {
+			if (cmd.getName().equalsIgnoreCase("setvalue") && sender.hasPermission("SQShops.edit")) {
 				ItemStack i = ((Player) sender).getItemInHand();
 				ItemStack checkStack = new ItemStack(i);
 				checkStack.setAmount(1);

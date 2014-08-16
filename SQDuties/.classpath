@@ -2,18 +2,8 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/J2SE-1.5"/>
-	<classpathentry kind="lib" path="C:/Users/george/Desktop/bukkit-1.7.2-R0.3-20140116.121953-10.jar" sourcepath="C:/Users/george/Desktop/bukkit-docs">
-		<attributes>
-			<attribute name="javadoc_location" value="http://jd.bukkit.org/rb/apidocs/"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="C:/Users/george/Desktop/Vault.jar"/>
-	<classpathentry kind="lib" path="C:/Users/george/Desktop/PermissionsEx.jar"/>
-	<classpathentry kind="lib" path="C:/Users/george/Desktop/BungeeSuiteChat.jar"/>
-	<classpathentry kind="lib" path="libs/commons-dbcp2-2.0.1.jar"/>
-	<classpathentry kind="lib" path="libs/commons-logging-1.1.3.jar"/>
-	<classpathentry kind="lib" path="libs/commons-pool2-2.2.jar"/>
-	<classpathentry kind="lib" path="libs/mysql-connector-java-5.1.18-bin.jar"/>
-	<classpathentry kind="lib" path="C:/Users/george/Desktop/LocalServer/plugins/SQMovecraftBungee.jar"/>
+	<classpathentry kind="lib" path="C:/Program Files (x86)/eclipse/deps/bukkit.jar"/>
+	<classpathentry kind="lib" path="C:/Program Files (x86)/eclipse/deps/SQBungeeMovecraft.jar"/>
+	<classpathentry kind="lib" path="C:/Program Files (x86)/eclipse/deps/Vault-1.4.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

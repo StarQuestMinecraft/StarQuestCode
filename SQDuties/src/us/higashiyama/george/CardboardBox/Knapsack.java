@@ -5,6 +5,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.bukkit.entity.Damageable;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
@@ -28,7 +29,7 @@ public class Knapsack implements Serializable {
 	public Knapsack(Player p) {
 
 		this.hunger = p.getFoodLevel();
-		this.health = p.getHealth();
+		this.health = ((Damageable) p).getHealth();
 		this.xp = p.getExp();
 		this.xpLevel = p.getLevel();
 		this.potions = CardboardPotionEffect.boxPotions(p.getActivePotionEffects());

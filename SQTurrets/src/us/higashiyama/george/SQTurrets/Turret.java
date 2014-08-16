@@ -6,15 +6,29 @@ import java.util.ArrayList;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Dispenser;
 import org.bukkit.block.Sign;
+import org.bukkit.entity.Arrow;
+import org.bukkit.entity.Egg;
+import org.bukkit.entity.EnderPearl;
+import org.bukkit.entity.Fireball;
+import org.bukkit.entity.Fish;
+import org.bukkit.entity.LargeFireball;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
+import org.bukkit.entity.SmallFireball;
+import org.bukkit.entity.Snowball;
+import org.bukkit.entity.ThrownExpBottle;
+import org.bukkit.entity.ThrownPotion;
+import org.bukkit.entity.WitherSkull;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemStack;
+import org.bukkit.projectiles.ProjectileSource;
+import org.bukkit.util.Vector;
 
-public abstract class Turret {
+public class Turret {
 
 	// Name of the turret type (The name on the sign)
 	private String name;
@@ -22,30 +36,87 @@ public abstract class Turret {
 	private String permission;
 	// Number of milliseconds between shots
 	private long cooldown;
-	// An ItemStack of required Ammo from a container defined
-	private ItemStack ammo;
 	// Acceptable materials for the base block
 	private ArrayList<Material> baseMaterials = new ArrayList<Material>();
 	// Acceptable materials for the top block
 	private ArrayList<Material> topMaterials = new ArrayList<Material>();
+	/*
+	 * Projectile to shoot ( Arrow, Egg, EnderPearl, Fireball, Fish,
+	 * LargeFireball, SmallFireball, Snowball, ThrownExpBottle, ThrownPotion,
+	 * WitherSkull)
+	 */
+	private Class<? extends Projectile> projectileClass;
+
+	private String projectileString;
+	// velocity to shoot the projectile
+	private double velocity;
+	// Arraylist of acceptable ammos
+	private ArrayList<Ammo> ammos = new ArrayList<Ammo>();
 
 	// Number of current ms. Don't touch this value. It should only get modified
 	// from the fire method
 	private long currentCooldown = 0;
 
-	/*
-	 * Shoot method will have to be overwritten for all new turret classes
-	 */
-	public void shoot(Player p) {
+	public Turret() {
 
+	}
+
+	public void shoot(final Player p) {
+
+		// First create a vector
+		Vector v = new Vector(velocity, velocity, velocity);
+		Vector pVec = p.getLocation().getDirection();
+		Vector finalVec = new Vector(v.getX() * pVec.getX(), v.getY() * pVec.getY(), v.getZ() * pVec.getZ());
+
+		Location eye = p.getEyeLocation();
+		Location oneUp = eye.add(0.0D, 1.0D, 0.0D);
+		Location loc = oneUp.toVector().add(p.getLocation().getDirection().multiply(2))
+				.toLocation(p.getWorld(), p.getLocation().getYaw(), p.getLocation().getPitch());
+
+		// then launch the projectile
+		Projectile proj = p.getWorld().spawn(loc, this.projectileClass);
+		// launchProjectile(this.projectileClass, finalVec);
+		// finally, set the shooter
+		proj.setVelocity(finalVec);
+		proj.setShooter((ProjectileSource) p);
+		SQTurrets.liveProjectiles.add(p);
+		// play sounds
+		p.getWorld().playSound(p.getLocation(), Sound.SHOOT_ARROW, 2.0F, 1.0F);
 	}
 
 	/*
 	 * Advanced shoot method will have to be overwritten for all new turret
 	 * classes that have an extended version of a turret that takes ammo
 	 */
-	public void shootAdvanced(Player p) {
+	public void shootAdvanced(final Player p) {
 
+		// Very first, we have to see what ammo the player is using
+		Ammo a = getLoadedAmmo(p);
+		if (a == null) {
+			return;
+		}
+
+		// create a vector for the initial projectile
+		Vector v = new Vector(this.velocity, this.velocity, this.velocity);
+
+		// Now create a vector for the advanced version modifier
+		Vector vMod = new Vector(a.getVelocity(), a.getVelocity(), a.getVelocity());
+		Vector pVec = p.getLocation().getDirection();
+		Vector finalV = pVec.multiply(v.multiply(vMod));
+
+		// then launch the projectile
+		Projectile proj = p.launchProjectile(this.projectileClass, finalV);
+
+		// Ammo specific settings
+
+		if (a.isFire() == true) {
+			proj.setFireTicks(Integer.MAX_VALUE);
+		}
+
+		// finally, set the shooter
+		proj.setShooter(p);
+		// play sounds
+		p.getWorld().playSound(p.getLocation(), Sound.SHOOT_ARROW, 0.5F, 1.0F);
 	}
 
 	/*
@@ -60,7 +131,7 @@ public abstract class Turret {
 		if (this.isAdvanced(p)) {
 			// Returning true here will take the ammo
 			if (!this.hasAmmo(p)) {
-				System.out.println("NO AMMOS");
+				p.sendMessage(ChatColor.RED + "Out of recognized Ammo!");
 				return;
 			}
 			this.shootAdvanced(p);
@@ -74,93 +145,62 @@ public abstract class Turret {
 	/*
 	 * Don't override the enter and exit methods (for now)
 	 */
-	public void enter(Player p, Block turretSign) {
+	public static void enter(Player p, Block turretSign) {
 
 		// Update the turret sign
-		((Sign) turretSign.getState()).setLine(1, ChatColor.RED + "OCCUPIED");
-		((Sign) turretSign.getState()).setLine(2, p.getName());
-		((Sign) turretSign.getState()).update();
-
 		p.sendMessage(ChatColor.RED + "You entered a turret! Right click while holding a ship controller to exit the turret, left click it to fire.");
 		BlockFace forward = DirectionUtils.getSignDirection(turretSign);
 		Location l = turretSign.getRelative(forward).getRelative(BlockFace.UP).getLocation();
 		Location target = new Location(l.getWorld(), l.getX() + 0.5D, l.getY(), l.getZ() + 0.5D);
 		target.getBlock().setType(Material.GLOWSTONE);
 		p.teleport(target);
-		SQTurrets.userMap.put(p, this);
 	}
 
 	public void exit(Player p) {
 
-		Block myBlock = p.getLocation().getBlock();
-		Block signAttatchBlock = myBlock.getRelative(BlockFace.DOWN);
-		for (Turret t : SQTurrets.turretTypes) {
-			if (signAttatchBlock.getRelative(0, 0, 1).getType() == Material.WALL_SIGN) {
-				Sign s = (Sign) signAttatchBlock.getRelative(0, 0, 1).getState();
-				if (s.getLine(0).equals(ChatColor.BLUE + t.getName().toUpperCase())) {
-					processTeleportLeave(p, s);
+		Block b = p.getLocation().getBlock().getRelative(BlockFace.DOWN);
+		BlockFace blockFace = BlockFace.WEST;
+		BlockFace[] signFaces = { BlockFace.WEST, BlockFace.EAST, BlockFace.NORTH, BlockFace.SOUTH };
+		for (BlockFace bf : signFaces) {
+			for (Turret t : SQTurrets.turretTypes) {
+				if ((b.getRelative(bf).getType() == Material.WALL_SIGN)
+						&& ((Sign) b.getRelative(bf).getState()).getLine(0).equalsIgnoreCase(ChatColor.BLUE + t.getName())) {
+					blockFace = bf;
+
 				}
-			} else if (signAttatchBlock.getRelative(0, 0, -1).getType() == Material.WALL_SIGN) {
-				Sign s = (Sign) signAttatchBlock.getRelative(0, 0, -1).getState();
-				if (s.getLine(0).equals(ChatColor.BLUE + t.getName().toUpperCase())) {
-					processTeleportLeave(p, s);
-				}
-			} else if (signAttatchBlock.getRelative(1, 0, 0).getType() == Material.WALL_SIGN) {
-				Sign s = (Sign) signAttatchBlock.getRelative(1, 0, 0).getState();
-				if (s.getLine(0).equals(ChatColor.BLUE + t.getName().toUpperCase())) {
-					processTeleportLeave(p, s);
-				}
-			} else if (signAttatchBlock.getRelative(-1, 0, 0).getType() == Material.WALL_SIGN) {
-				Sign s = (Sign) signAttatchBlock.getRelative(-1, 0, 0).getState();
-				if (s.getLine(0).equals(ChatColor.BLUE + t.getName().toUpperCase())) {
-					processTeleportLeave(p, s);
-				}
-			} else {
-				processTeleportLeave(p, null);
 			}
 		}
-		myBlock.setType(Material.SPONGE);
-	}
+		Sign s = (Sign) b.getRelative(blockFace).getState();
 
-	private void processTeleportLeave(Player p, Sign s) {
-
-		Location tbl;
-		// If the sign is null, then we assume the turret is broken
-		if ((s == null)
-				|| ((s.getBlock().getRelative(BlockFace.DOWN).getRelative(BlockFace.DOWN).getType() == Material.AIR) && (s.getBlock()
-						.getRelative(BlockFace.DOWN).getType() == Material.AIR))) {
-			tbl = p.getLocation().getBlock().getRelative(0, 2, 0).getLocation();
-			p.sendMessage(ChatColor.RED + "Your turret seems to be broken, so we put you out on top of it.");
-		} else {
-			// We assume the turret is not broken
-			if ((s.getBlock().getRelative(BlockFace.DOWN).getRelative(BlockFace.DOWN).getType() != Material.AIR)
-					&& (s.getBlock().getRelative(BlockFace.DOWN).getType() == Material.AIR)) {
-				tbl = s.getBlock().getRelative(BlockFace.DOWN).getLocation();
-			} else {
-				tbl = s.getBlock().getLocation();
-			}
+		int yMod;
+		try {
+			yMod = Integer.parseInt(s.getLine(3));
+		} catch (NumberFormatException e) {
+			System.out.println(e);
+			yMod = 0;
 		}
-		p.teleport(new Location(tbl.getWorld(), tbl.getX() + 0.5D, tbl.getY(), tbl.getZ() + 0.5D));
-		SQTurrets.userMap.remove(p);
+		Block baseBlock = p.getLocation().getBlock().getRelative(BlockFace.DOWN);
+		Location base = p.getLocation().getBlock().getRelative(BlockFace.DOWN).getRelative(blockFace).getLocation();
+		double[] xz = DirectionUtils.playerOffsetTeleport(p, baseBlock);
+		System.out.println(yMod);
+		System.out.println(xz[0]);
+		System.out.println(xz[1]);
+		p.teleport(new Location(p.getLocation().getWorld(), p.getLocation().getX() + xz[0], base.getY() - yMod, p.getLocation().getZ() + xz[1]));
 		if (s != null) {
 			s.setLine(1, ChatColor.GREEN + "UNOCCUPIED");
 			s.setLine(2, "");
-			s.update();
+			s.setLine(3, "");
+			s.update(true);
 		}
 	}
 
 	public static boolean detectTurret(Sign turretSign, Turret t) {
 
-		System.out.println("Iteration");
-
 		BlockFace dir = DirectionUtils.getSignDirection(turretSign.getBlock());
 		Block oneInFront = turretSign.getBlock().getRelative(dir);
 		Block aboveThat = oneInFront.getRelative(BlockFace.UP);
 		Block oneMoreUp = aboveThat.getRelative(BlockFace.UP);
-		System.out.println(aboveThat.getType());
-		System.out.println(t.getTopMaterials().toString());
-		System.out.println(oneMoreUp.getType());
-		if ((aboveThat.getType() == Material.SPONGE) && (t.getTopMaterials().contains(oneMoreUp.getType()))) {
+		if (((aboveThat.getType() == Material.SPONGE) || (aboveThat.getType() == Material.GLOWSTONE)) && (t.getTopMaterials().contains(oneMoreUp.getType()))) {
 			return true;
 		}
 		return false;
@@ -172,9 +212,7 @@ public abstract class Turret {
 	public boolean isAdvanced(Player p) {
 
 		Block b = p.getLocation().getBlock().getRelative(BlockFace.DOWN);
-		System.out.println(b.getType());
 		if (b.getType() == Material.DISPENSER && this.getBaseMaterials().contains(Material.DISPENSER)) {
-			System.out.println("True");
 			return true;
 		} else {
 			return false;
@@ -194,13 +232,30 @@ public abstract class Turret {
 			return false;
 		Dispenser d = (Dispenser) b.getState();
 		Inventory i = d.getInventory();
-		if (i.containsAtLeast(this.getAmmo(), 1)) {
-			i.removeItem(this.getAmmo());
-			return true;
-		} else {
-			p.sendMessage(ChatColor.RED + "Out of Ammo!");
-			return false;
+		for (Ammo ammo : this.getAmmos()) {
+			if (i.containsAtLeast(ammo.getItem(), 1)) {
+				i.removeItem(ammo.getItem());
+				return true;
+
+			}
 		}
+		return false;
+
+	}
+
+	private Ammo getLoadedAmmo(Player p) {
+
+		// This method returns the ammo type we are using
+		Block b = p.getLocation().getBlock().getRelative(BlockFace.DOWN);
+		Dispenser d = (Dispenser) b.getState();
+		Inventory i = d.getInventory();
+		for (Ammo ammo : this.getAmmos()) {
+			if (i.containsAtLeast(ammo.getItem(), 1)) {
+				return ammo;
+
+			}
+		}
+		return null;
 
 	}
 
@@ -210,12 +265,9 @@ public abstract class Turret {
 	public boolean isInCooldown(Player p) {
 
 		if (this.getCurrentCooldown() == 0) {
-			System.out.println("In 0 check");
 			this.setCurrentCooldown(System.currentTimeMillis());
 			return false;
 		}
-		System.out.println(this.getCurrentCooldown());
-		System.out.println(System.currentTimeMillis());
 		if ((this.getCurrentCooldown()) > System.currentTimeMillis()) {
 			p.sendMessage(ChatColor.RED + "Turret is in cooldown");
 			return true;
@@ -229,7 +281,7 @@ public abstract class Turret {
 		String a = this.name;
 		String b = this.permission;
 		String c = "" + this.cooldown;
-		String d = this.ammo.toString();
+		String d = this.ammos.toString();
 		String e = "";
 		String f = "";
 		for (Material p : this.baseMaterials)
@@ -279,16 +331,6 @@ public abstract class Turret {
 		this.currentCooldown = currentCooldown;
 	}
 
-	public ItemStack getAmmo() {
-
-		return ammo;
-	}
-
-	public void setAmmo(ItemStack ammo) {
-
-		this.ammo = ammo;
-	}
-
 	public ArrayList<Material> getBaseMaterials() {
 
 		return baseMaterials;
@@ -307,6 +349,72 @@ public abstract class Turret {
 	public void setTopMaterials(ArrayList<Material> topMaterials) {
 
 		this.topMaterials = topMaterials;
+	}
+
+	public double getVelocity() {
+
+		return velocity;
+	}
+
+	public void setVelocity(double velocity) {
+
+		this.velocity = velocity;
+	}
+
+	public ArrayList<Ammo> getAmmos() {
+
+		return ammos;
+	}
+
+	public void setAmmos(ArrayList<Ammo> ammos) {
+
+		this.ammos = ammos;
+	}
+
+	public String getProjectileString() {
+
+		return projectileString;
+	}
+
+	public void setProjectileString(String projectileString) {
+
+		this.projectileString = projectileString;
+		switch (this.projectileString.toUpperCase()) {
+			case "ARROW":
+				this.projectileClass = Arrow.class;
+				break;
+			case "EGG":
+				this.projectileClass = Egg.class;
+				break;
+			case "ENDERPEARL":
+				this.projectileClass = EnderPearl.class;
+				break;
+			case "FIREBALL":
+				this.projectileClass = Fireball.class;
+				break;
+			case "FISH":
+				this.projectileClass = Fish.class;
+				break;
+			case "LARGEFIREBALL":
+				this.projectileClass = LargeFireball.class;
+				break;
+			case "SMALLFIREBALL":
+				this.projectileClass = SmallFireball.class;
+				break;
+			case "SNOWBALL":
+				this.projectileClass = Snowball.class;
+				break;
+			case "THROWNEXPBOTTLE":
+				this.projectileClass = ThrownExpBottle.class;
+				break;
+			case "THROWNPOTION":
+				this.projectileClass = ThrownPotion.class;
+				break;
+			case "WITHERSKULL":
+				this.projectileClass = WitherSkull.class;
+				break;
+		}
+
 	}
 
 }

@@ -1,8 +1,6 @@
 
 package us.higashiyama.george.SQDuties;
 
-import java.util.ArrayList;
-
 import net.countercraft.movecraft.bungee.BungeePlayerHandler;
 import net.milkbowl.vault.permission.Permission;
 
@@ -14,6 +12,7 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Damageable;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -36,29 +35,21 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import ru.tehkode.permissions.PermissionGroup;
-import ru.tehkode.permissions.PermissionManager;
-import ru.tehkode.permissions.PermissionUser;
-import ru.tehkode.permissions.bukkit.PermissionsEx;
-
 public class SQDuties extends JavaPlugin implements Listener {
 
 	BungeePlayerHandler utils;
 	public static Permission permission = null;
 	static SQDuties instance;
-	public PermissionsEx pex;
-	public PermissionManager pexManager;
 
 	public void onEnable() {
 
 		Database.setUp();
 		InvRestoreDB.setUp();
+		// Database.alterTables();
 		Bukkit.getServer().getPluginManager().registerEvents(this, this);
 		setupPermissions();
 		instance = this;
 		this.getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
-		pex = (PermissionsEx) getServer().getPluginManager().getPlugin("PermissionsEx");
-		pexManager = pex.getPermissionManager();
 
 	}
 
@@ -292,11 +283,28 @@ public class SQDuties extends JavaPlugin implements Listener {
 				}
 
 			}
+			/*
+						if (cmd.getName().equalsIgnoreCase("dutiesTransfer") && sender.hasPermission("transfer")) {
+							List<String> players = Database.getAllPlayers();
+							List<OfflinePlayer> offlinePlayers = new ArrayList<OfflinePlayer>();
 
+							for (String ps : players) {
+								offlinePlayers.add(getServer().getOfflinePlayer(ps));
+							}
+
+							for (int i = 0; i < offlinePlayers.size(); i++) {
+								Database.transferPlayer(offlinePlayers.get(i), players.get(i));
+							}
+
+							sender.sendMessage("Done");
+
+						}
+			*/
 			Player p = (Player) sender;
 
 			if (p.isFlying()) {
 				p.sendMessage(ChatColor.RED + "You cannot unduty or duty while flying!");
+				return true;
 			}
 
 			if (p.hasPermission("SQDuties.Developer")) {
@@ -346,15 +354,7 @@ public class SQDuties extends JavaPlugin implements Listener {
 
 	public void enableDuty(Player p, String group) {
 
-		PermissionUser user = pexManager.getUser(p.getName());
-		PermissionGroup[] userGroups = user.getGroups();
-		ArrayList<PermissionGroup> nonDutyGroups = new ArrayList<PermissionGroup>();
-		for (PermissionGroup g : userGroups) {
-			nonDutyGroups.add(g);
-		}
-		nonDutyGroups.add(pexManager.getGroup(group + "_duty"));
-		PermissionGroup[] newGroups = nonDutyGroups.toArray(new PermissionGroup[nonDutyGroups.size()]);
-		user.setGroups(newGroups);
+		permission.playerAddGroup(p, group + "_duty");
 		p.getInventory().getHelmet();
 		p.setGameMode(GameMode.CREATIVE);
 		saveData(p.getName());
@@ -371,19 +371,9 @@ public class SQDuties extends JavaPlugin implements Listener {
 
 	public void disableDuty(Player p, String group) {
 
-		PermissionUser user = pexManager.getUser(p.getName());
-		PermissionGroup[] userGroups = user.getGroups();
-		ArrayList<PermissionGroup> nonDutyGroups = new ArrayList<PermissionGroup>();
-		for (PermissionGroup g : userGroups) {
-			if (!g.getName().contains("duty")) {
-				nonDutyGroups.add(g);
-			}
-		}
-
-		PermissionGroup[] newGroups = nonDutyGroups.toArray(new PermissionGroup[nonDutyGroups.size()]);
-		user.setGroups(newGroups);
-		pex.getPermissionManager().getUser(p.getName());
+		permission.playerRemoveGroup(p, group + "_duty");
 		p.setGameMode(GameMode.SURVIVAL);
+		((Damageable) p).setHealth(20F);
 		p.getInventory().clear();
 		p.getInventory().setArmorContents(null);
 		restoreInv(p.getName());
@@ -400,7 +390,7 @@ public class SQDuties extends JavaPlugin implements Listener {
 		for (int i = 0; i < armor.length; i++) {
 			armorInv.setItem(i, armor[i]);
 		}
-		Database.newKey(player, InventoryStringDeSerializer.InventoryToString(p.getInventory(), p), InventoryStringDeSerializer.ArmorToString(armorInv),
+		Database.newKey(p.getName(), InventoryStringDeSerializer.InventoryToString(p.getInventory(), p), InventoryStringDeSerializer.ArmorToString(armorInv),
 				locToString(p.getLocation()));
 	}
 
@@ -408,9 +398,9 @@ public class SQDuties extends JavaPlugin implements Listener {
 
 		Player p = getServer().getPlayer(player);
 		System.out.println("restoring inv");
-		Inventory inv = InventoryStringDeSerializer.StringToInventory(Database.getInv(player));
-		Inventory armorInv = InventoryStringDeSerializer.StringToInventory(Database.getArmor(player));
-		double[] exp = InventoryStringDeSerializer.StringToExp(Database.getInv(player));
+		Inventory inv = InventoryStringDeSerializer.StringToInventory(Database.getInv(p.getName()));
+		Inventory armorInv = InventoryStringDeSerializer.StringToInventory(Database.getArmor(p.getName()));
+		double[] exp = InventoryStringDeSerializer.StringToExp(Database.getInv(p.getName()));
 		ItemStack[] armor = new ItemStack[4];
 		for (int i = 0; i < armor.length; i++) {
 			armor[i] = armorInv.getItem(i);
@@ -485,38 +475,28 @@ public class SQDuties extends JavaPlugin implements Listener {
 			public void run() {
 
 				if (SQDuties.this.isInDutymode(p, p.getWorld().getName())) {
-					PermissionGroup group = null;
-					PermissionGroup[] groups = pexManager.getUser(p.getName()).getGroups();
-					for (PermissionGroup indexGroup : groups) {
-						String s = indexGroup.getName();
+					String[] playerGroups = permission.getPlayerGroups(p);
+					String group = null;
+					for (String s : playerGroups) {
 						if (s.contains("Developer")) {
-							group = pexManager.getGroup("Developer_Duty");
+							group = "Developer_Duty";
 							break;
 						} else if (s.contains("Manager")) {
-							group = pexManager.getGroup("Manager_Duty");
+							group = "Manager_Duty";
 							break;
 						} else if (s.contains("SrMod")) {
-							group = pexManager.getGroup("SrMod_Duty");
+							group = "SrMod_Duty";
 							break;
 						} else if (s.contains("Mod")) {
-							group = pexManager.getGroup("Mod_Duty");
+							group = "Mod_Duty";
 							break;
 						} else if (s.contains("TrlMod")) {
-							group = pexManager.getGroup("Tr_Duty");
+							group = "Tr_Duty";
 							break;
 						}
 
 					}
-					PermissionUser user = pexManager.getUser(p.getName());
-					PermissionGroup[] userGroups = user.getGroups();
-					ArrayList<PermissionGroup> nonDutyGroups = new ArrayList<PermissionGroup>();
-					for (PermissionGroup g : userGroups) {
-						nonDutyGroups.add(g);
-					}
-					nonDutyGroups.add(group);
-					PermissionGroup[] newGroups = nonDutyGroups.toArray(new PermissionGroup[nonDutyGroups.size()]);
-					user.setGroups(newGroups);
-					p.sendMessage(ChatColor.AQUA + "Duty Mode Detected");
+					permission.playerAddGroup(p, group);
 					p.setGameMode(GameMode.CREATIVE);
 					p.getInventory().setArmorContents(null);
 					p.getInventory().clear();

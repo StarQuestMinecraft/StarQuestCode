@@ -1,14 +1,13 @@
 
 package com.regalphoenixmc.SQRankup;
 
-import java.util.List;
-
 import net.milkbowl.vault.VaultEco;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
 
-import org.apache.commons.lang.WordUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
@@ -19,18 +18,10 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import ru.tehkode.permissions.PermissionGroup;
-import ru.tehkode.permissions.PermissionManager;
-import ru.tehkode.permissions.PermissionUser;
-import ru.tehkode.permissions.PermissionsUserData;
-import ru.tehkode.permissions.backends.PermissionBackend;
-import ru.tehkode.permissions.bukkit.PermissionsEx;
-
 public class SQRankup extends JavaPlugin implements Listener {
 
 	public static Permission permission = null;
 	public static Economy economy = null;
-	public static PermissionManager pex;
 	public static SQRankup instance;
 	public static VaultEco vaultEco;
 
@@ -39,9 +30,10 @@ public class SQRankup extends JavaPlugin implements Listener {
 		saveDefaultConfig();
 		getServer().getPluginManager().registerEvents(this, this);
 		setupEconomy();
+		setupPermissions();
 		instance = this;
 		Database.setUp();
-		pex = PermissionsEx.getPermissionManager();
+
 	}
 
 	public static SQRankup instance() {
@@ -53,9 +45,12 @@ public class SQRankup extends JavaPlugin implements Listener {
 
 		if ((cmd.getName().equalsIgnoreCase("rankup")) && ((sender instanceof Player))) {
 			Player p = (Player) sender;
-			PermissionUser user = pex.getUser(p);
-			String rank = getRank(p.getName());
+			String rank = getRank(p);
 			String nextRank = getNextRank(rank);
+			if (nextRank == null) {
+				p.sendMessage(ChatColor.RED + "You are unable to rank up.");
+				return true;
+			}
 			if (rank.equalsIgnoreCase("SETTLER")) {
 				if (args.length == 0) {
 					sender.sendMessage(ChatColor.RED + " You need to choose a rank path! do /rankup Pirate or /rankup Colonist");
@@ -82,8 +77,8 @@ public class SQRankup extends JavaPlugin implements Listener {
 			double moneyFound = economy.getBalance(p);
 			if ((killsFound >= killsRequirement) && (moneyFound >= moneyRequirement)) {
 				getServer().broadcastMessage(ChatColor.RED + sender.getName() + " has ranked up to " + nextRank.toString().toLowerCase() + "!");
-				user.addGroup(WordUtils.capitalize(nextRank));
-				user.removeGroup(WordUtils.capitalize(rank));
+				permission.playerAddGroup(p, nextRank);
+				permission.playerRemoveGroup(p, rank);
 				economy.withdrawPlayer(p, moneyRequirement);
 				entry = Database.getEntry(p.getName());
 				entry.setKills(killsFound - killsRequirement);
@@ -94,10 +89,27 @@ public class SQRankup extends JavaPlugin implements Listener {
 			}
 			return true;
 		}
+		/*
+				if (cmd.getName().equalsIgnoreCase("rankupTransfer") && sender.hasPermission("transfer")) {
+					List<String> players = Database.getAllPlayers();
+					List<OfflinePlayer> offlinePlayers = new ArrayList<OfflinePlayer>();
+
+					for (String ps : players) {
+
+						offlinePlayers.add(getServer().getOfflinePlayer(ps));
+					}
+
+					for (int i = 0; i < offlinePlayers.size(); i++) {
+						Database.transferPlayer(offlinePlayers.get(i), players.get(i));
+					}
+
+					sender.sendMessage("Done");
+
+				}
+		*/
 		if ((cmd.getName().equalsIgnoreCase("addapp")) && (sender.hasPermission("SQRankup.addApplication"))) {
-			String rank = getRank(args[0]);
+			String rank = getRank(getServer().getOfflinePlayer(args[0]));
 			String nextRank = getNextRank(rank);
-			PermissionUser user = pex.getUser(args[0]);
 			if (args.length >= 1) {
 				getServer().broadcastMessage(ChatColor.RED + args[0] + " has ranked up to settler!");
 				getServer().broadcastMessage(
@@ -106,10 +118,10 @@ public class SQRankup extends JavaPlugin implements Listener {
 				getServer().broadcastMessage(
 						ChatColor.RED + "Visit " + ChatColor.BLUE + "http://tinyurl.com/starquestapps" + ChatColor.RED + " to apply for Settler rank!");
 
-				user.addGroup(nextRank);
-				user.removeGroup(rank);
+				permission.playerAddGroup(null, getServer().getOfflinePlayer(args[0]), nextRank);
+				permission.playerRemoveGroup(null, getServer().getOfflinePlayer(args[0]), rank);
 				if (args.length >= 2) {
-					economy.depositPlayer(args[1], 10000.0D);
+					Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "money give " + args[1] + " 10000");
 					getServer().broadcastMessage(
 							ChatColor.GOLD + args[1] + ChatColor.RED + " brought " + args[0] + " to the server and earned 10000 for doing so!");
 				}
@@ -139,8 +151,8 @@ public class SQRankup extends JavaPlugin implements Listener {
 					return;
 				}
 			}
-			System.out.println("Kill call: " + rankToKills(event.getEntity().getName()));
-			entry.setKills(entry.getKills() + rankToKills(event.getEntity().getName()));
+			System.out.println("Kill call: " + rankToKills(((Player) event.getEntity()).getName()));
+			entry.setKills(entry.getKills() + rankToKills(((Player) event.getEntity()).getName()));
 			entry.setLastKillName(event.getEntity().getName());
 			entry.setLastKillTime(System.currentTimeMillis());
 			entry.saveData();
@@ -153,13 +165,11 @@ public class SQRankup extends JavaPlugin implements Listener {
 	private int rankToKills(String name) {
 
 		int i = 1;
-		PermissionBackend backend = pex.getBackend();
-		PermissionsUserData data = backend.getUserData(name);
-		List<String> userGroups = data.getParents(null);
-		for (String group : userGroups) {
-			switch (group.toLowerCase()) {
+		String[] groups = permission.getPlayerGroups(null, getServer().getOfflinePlayer(name));
+		for (String p : groups) {
+			switch (p.toLowerCase()) {
 				case "refugee":
-					i = -1;
+					i = -3;
 					break;
 				case "settler":
 					i = 1;
@@ -191,7 +201,7 @@ public class SQRankup extends JavaPlugin implements Listener {
 	// method to get the next rank on the rank structure
 	public String getNextRank(String rank) {
 
-		switch (rank) {
+		switch (rank.toUpperCase()) {
 			case "REFUGEE":
 				return "SETTLER";
 			case "SETTLER":
@@ -220,7 +230,7 @@ public class SQRankup extends JavaPlugin implements Listener {
 	// method for getting monetary cost of rankup
 	public int getMonetaryCost(String rank) {
 
-		switch (rank) {
+		switch (rank.toUpperCase()) {
 			case "REFUGEE":
 				return getConfig().getInt("refugee.cost");
 			case "SETTLER":
@@ -248,7 +258,7 @@ public class SQRankup extends JavaPlugin implements Listener {
 
 	public int getKillRequirement(String rank) {
 
-		switch (rank) {
+		switch (rank.toUpperCase()) {
 			case "REFUGEE":
 				return getConfig().getInt("refugee.kills");
 			case "SETTLER":
@@ -274,13 +284,12 @@ public class SQRankup extends JavaPlugin implements Listener {
 		}
 	}
 
-	public String getRank(String player) {
+	public String getRank(Player player) {
 
-		PermissionUser user = pex.getUser(player);
-		List<PermissionGroup> userGroups = user.getParents();
-		for (PermissionGroup p : userGroups) {
+		String[] allGroups = permission.getPlayerGroups(player);
+		for (String p : allGroups) {
 			for (String configName : getConfig().getKeys(true)) {
-				if (p.getName().equalsIgnoreCase(configName)) {
+				if (p.equalsIgnoreCase(configName)) {
 					return configName;
 				}
 			}
@@ -290,19 +299,19 @@ public class SQRankup extends JavaPlugin implements Listener {
 
 	}
 
-	public PermissionGroup getGroup(String player) {
+	public String getRank(OfflinePlayer player) {
 
-		PermissionUser user = pex.getUser(player);
-		List<PermissionGroup> userGroups = user.getParents();
-		for (PermissionGroup p : userGroups) {
+		String[] allGroups = permission.getPlayerGroups(null, player);
+		for (String p : allGroups) {
 			for (String configName : getConfig().getKeys(true)) {
-				if (p.getName().equalsIgnoreCase(configName)) {
-					return p;
+				if (p.equalsIgnoreCase(configName)) {
+					return configName;
 				}
 			}
 
 		}
 		return null;
+
 	}
 
 	private boolean setupEconomy() {
@@ -313,4 +322,14 @@ public class SQRankup extends JavaPlugin implements Listener {
 		}
 		return economy != null;
 	}
+
+	private boolean setupPermissions() {
+
+		RegisteredServiceProvider<Permission> permissionProvider = getServer().getServicesManager().getRegistration(Permission.class);
+		if (permissionProvider != null) {
+			permission = (Permission) permissionProvider.getProvider();
+		}
+		return permission != null;
+	}
+
 }

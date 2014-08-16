@@ -1,6 +1,7 @@
 name: SQDuties
 main: us.higashiyama.george.SQDuties.SQDuties
 version: 1.0.0
+softdepend: [PermissionsEx]
 depend: [Movecraft, Vault]
 commands:
    duty:
@@ -10,6 +11,7 @@ commands:
       description: restore a players invrestore
       usage: /invrestore
       aliases: [inventoryrestore, lastdeathrestore, deathrestore, lastinventory, lastinventoryrestore]
+   dutiestransfer:
 
       
 permissions:
