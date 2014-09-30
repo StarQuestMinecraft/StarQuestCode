@@ -8,7 +8,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
 import java.util.UUID;
 
 import us.higashiyama.george.SQTrading.Utils.TransactionType;
@@ -275,13 +274,13 @@ public class Database {
 
 	}
 
-	public static ArrayList<TradingOffer> getTradingOffers(TradingStation ts) {
+	public static TradingOffer getTradingOffer(TradingStation ts, int id) {
 
 		if (!getContext())
 			System.out.println("Context didn't work sucessfully");
 		PreparedStatement s = null;
 		try {
-			ArrayList<TradingOffer> offers = new ArrayList<TradingOffer>();
+			TradingOffer offer = null;
 			s = cntx.prepareStatement("SELECT * FROM SQTrading_Offers WHERE `TradingStation` = ?");
 			s.setString(1, ts.getName());
 			ResultSet rs = s.executeQuery();
@@ -294,11 +293,11 @@ public class Database {
 					tt = TransactionType.SELL;
 				}
 
-				offers.add(new TradingOffer(rs.getString("TradingStation"), tt, UUID.fromString(rs.getString("UUID")), rs.getString("material"), rs
-						.getInt("quantity"), (short) rs.getInt("data"), rs.getDouble("price")));
+				offer = new TradingOffer(rs.getString("TradingStation"), tt, UUID.fromString(rs.getString("UUID")), rs.getString("material"),
+						rs.getInt("quantity"), (short) rs.getInt("data"), rs.getDouble("price"));
 			}
 			s.close();
-			return offers;
+			return offer;
 
 		} catch (SQLException e) {
 			System.out.print("[CCDB] SQL Error" + e.getMessage());

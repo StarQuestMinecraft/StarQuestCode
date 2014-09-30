@@ -1,8 +1,6 @@
 
 package us.higashiyama.george.SQTrading;
 
-import java.util.ArrayList;
-
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
 
@@ -25,7 +23,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import us.higashiyama.george.SQTrading.Utils.IconMenu;
 import us.higashiyama.george.SQTrading.Utils.InventoryUtil;
 import us.higashiyama.george.SQTrading.Utils.TransactionType;
 
@@ -48,6 +45,37 @@ public class TradingCore extends JavaPlugin implements Listener {
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 
 		if ((sender instanceof Player)) {
+			Player p = (Player) sender;
+			if (cmd.getName().equalsIgnoreCase("trade")) {
+
+				if (args.length == 0) {
+					p.sendMessage(ChatColor.RED + "/trade <id> | Trade for an ID while at a trading station.");
+					return false;
+				}
+
+				TradingStation ts = Database.getTradingStation(p.getEyeLocation().getBlockX(), p.getEyeLocation().getBlockY(), p.getEyeLocation().getBlockZ(),
+						p.getEyeLocation().getWorld().getName(), Bukkit.getServerName());
+				if (ts == null) {
+					p.sendMessage(ChatColor.RED + "You are not at a Trading Station");
+					return true;
+				} else {
+					int id = 0;
+					try {
+
+						id = Integer.parseInt(args[0]);
+					} catch (NumberFormatException e) {
+						p.sendMessage(ChatColor.RED + "Number format IDs accepted only");
+						return true;
+					}
+
+					TradingOffer to = Database.getTradingOffer(ts, id);
+					if (to == null) {
+						p.sendMessage(ChatColor.RED + "No such offer exists at the current trading station");
+						return false;
+					}
+					trade(p, ts, to);
+				}
+			}
 
 		}
 
@@ -99,9 +127,9 @@ public class TradingCore extends JavaPlugin implements Listener {
 			s.update(true);
 		} else if (line.equals(SIGN_IDENTIFIER)) {
 
-			openGUI(p,
-					Database.getTradingStation(s.getLocation().getBlockX(), s.getLocation().getBlockY(), s.getLocation().getBlockZ(), s.getLocation()
-							.getWorld().getName(), Bukkit.getServerName()));
+			TradingStation ts = Database.getTradingStation(s.getLocation().getBlockX(), s.getLocation().getBlockY(), s.getLocation().getBlockZ(), s
+					.getLocation().getWorld().getName(), Bukkit.getServerName());
+
 		}
 	}
 
@@ -111,109 +139,7 @@ public class TradingCore extends JavaPlugin implements Listener {
 		String line = s.getLine(0);
 		if (line.equals(SIGN_IDENTIFIER)) {
 
-			trade(p,
-					new TradingStation(s.getLine(1), s.getLocation().getBlockX(), s.getLocation().getBlockY(), s.getLocation().getBlockZ(), s.getLocation()
-							.getWorld().getName(), Bukkit.getServerName()),
-					Database.getTradingOffers(
-							new TradingStation(s.getLine(1), s.getLocation().getBlockX(), s.getLocation().getBlockY(), s.getLocation().getBlockZ(), s
-									.getLocation().getWorld().getName(), Bukkit.getServerName())).get(0));
 		}
-	}
-
-	private void openCollectionGUI(final Player p, TradingStation tradingStation) {
-
-		/*
-					final IconMenu menu = new IconMenu("Trading Station", 27, new IconMenu.OptionClickEventHandler() {
-
-						public void onOptionClick(IconMenu.OptionClickEvent event) {
-
-							event.setWillDestroy(true);
-
-							int overflowCheck = 0;
-
-							int airSlots = 0;
-
-							for (ItemStack i : p.getInventory()) {
-								if (i == null)
-									airSlots++;
-							}
-
-							ArrayList<ItemStack> items = new ArrayList<ItemStack>();
-							CompletedTransaction ct = trans.get(event.getPosition());
-							if (ct.getPlayerUUID() == p.getUniqueId() && overflowCheck < airSlots) {
-								overflowCheck += Math.ceil(ct.getAmount() / 64);
-								items.add(ct.getItemStack());
-
-							}
-
-							Inventory pi = p.getInventory();
-							pi.addItem(items.toArray(new ItemStack[items.size()]));
-
-						}
-					}, instance);
-
-					for (int i = 0; i < trans.size(); i++) {
-						menu.setOption(i, trans.get(i).getItemStack(), ChatColor.GOLD + "" + trans.get(i).getAmount());
-					}
-					menu.open(p);
-		*/
-	}
-
-	private static void openGUI(final Player p, final TradingStation ts) {
-
-		final IconMenu menu = new IconMenu("Trading Station", 27, new IconMenu.OptionClickEventHandler() {
-
-			public void onOptionClick(IconMenu.OptionClickEvent event) {
-
-				event.setWillDestroy(true);
-
-				switch (event.getPosition()) {
-					case 0:
-						instance.getServer().getScheduler().scheduleSyncDelayedTask(instance, new Runnable() {
-
-							public void run() {
-
-								openOffersMenu(p, ts);
-							}
-						}, 2L);
-						break;
-					case 9:
-						break;
-					default:
-						break;
-				}
-
-			}
-		}, instance);
-
-		menu.setOption(0, new ItemStack(Material.EMERALD, 1), ChatColor.GOLD + "See Avalible Offers");
-		menu.setOption(9, new ItemStack(Material.DIAMOND, 1), ChatColor.GOLD + "Gather Items");
-		menu.open(p);
-	}
-
-	private static void openOffersMenu(final Player p, final TradingStation ts) {
-
-		final ArrayList<TradingOffer> offers = Database.getTradingOffers(ts);
-
-		final IconMenu menu = new IconMenu("Offers", 54, new IconMenu.OptionClickEventHandler() {
-
-			public void onOptionClick(IconMenu.OptionClickEvent event) {
-
-				event.setWillDestroy(true);
-
-				trade(p, ts, offers.get(event.getPosition()));
-
-			}
-		}, instance);
-
-		int i = 0;
-		for (TradingOffer to : offers) {
-			menu.setOption(i, new ItemStack(Material.getMaterial(to.getMaterial()), to.getQuantity(), to.getData()), ChatColor.GOLD + "" + to.getPrice() + "|"
-					+ ChatColor.LIGHT_PURPLE + to.getQuantity());
-			i++;
-		}
-		menu.open(p);
-
 	}
 
 	private static void trade(Player p, TradingStation ts, TradingOffer to) {
