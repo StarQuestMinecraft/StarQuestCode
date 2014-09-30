@@ -7,6 +7,7 @@ public class RankupPlayer {
 	private long lastKillTime;
 	private String lastKillName;
 	private int kills;
+	private int asyncKills;
 
 	public RankupPlayer(String name, long lastKillTime, String lastKillName, int kills) {
 
@@ -14,6 +15,7 @@ public class RankupPlayer {
 		this.lastKillTime = lastKillTime;
 		this.lastKillName = lastKillName;
 		this.kills = kills;
+		this.asyncKills = 0;
 	}
 
 	public String getName() {
@@ -58,11 +60,27 @@ public class RankupPlayer {
 
 	public void saveData() {
 
-		Database.updateEntry(this.name, Long.valueOf(this.lastKillTime), this.lastKillName, this.kills);
+		System.out.println("Saving data");
+		if (this.asyncKills != 0) {
+			System.out.println("Async kills ain't 0");
+			Database.addKills(this.name, this.asyncKills);
+		}
+		Database.updateEntry(this.name, Long.valueOf(this.lastKillTime), this.lastKillName);
+
 	}
 
 	public void saveNew() {
 
 		Database.newEntry(this.name, Long.valueOf(this.lastKillTime), this.lastKillName, this.kills);
+	}
+
+	public int getAsyncKills() {
+
+		return asyncKills;
+	}
+
+	public void setAsyncKills(int asyncKills) {
+
+		this.asyncKills = asyncKills;
 	}
 }

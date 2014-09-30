@@ -2,8 +2,8 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7"/>
-	<classpathentry kind="lib" path="C:/Program Files (x86)/eclipse/deps/Vault-1.4.1.jar"/>
 	<classpathentry kind="lib" path="libs/ChestCommands.jar"/>
-	<classpathentry kind="lib" path="C:/Program Files (x86)/eclipse/deps/spigot-1.7.10-R0.1-SNAPSHOT.jar"/>
+	<classpathentry kind="lib" path="C:/Program Files (x86)/Eclipse/deps/spigot.jar"/>
+	<classpathentry kind="lib" path="C:/Program Files (x86)/Eclipse/deps/Vault.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

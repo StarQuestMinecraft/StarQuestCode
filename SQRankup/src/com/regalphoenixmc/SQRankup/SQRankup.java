@@ -1,20 +1,33 @@
 
 package com.regalphoenixmc.SQRankup;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
 import net.milkbowl.vault.VaultEco;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.block.Sign;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerLoginEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -24,6 +37,10 @@ public class SQRankup extends JavaPlugin implements Listener {
 	public static Economy economy = null;
 	public static SQRankup instance;
 	public static VaultEco vaultEco;
+	public static int MULTIPLIER = 1;
+	public static FileConfiguration config;
+	public static ArrayList<Perk> perks = new ArrayList<Perk>();
+	public static HashMap<Player, Perk> confirmationMap = new HashMap<Player, Perk>();
 
 	public void onEnable() {
 
@@ -32,8 +49,93 @@ public class SQRankup extends JavaPlugin implements Listener {
 		setupEconomy();
 		setupPermissions();
 		instance = this;
+		config = instance.getConfig();
 		Database.setUp();
+		MULTIPLIER = instance.getConfig().getInt("multiplier");
+		new NotifierTask().runTaskTimer(instance, 12000, 12000);
+		loadPerks();
 
+	}
+
+	private void loadPerks() {
+
+		for (String name : config.getConfigurationSection("perks").getKeys(false)) {
+			String alias = config.getString("perks." + name + ".name");
+			List<String> permissions = config.getStringList("perks." + name + ".permissions");
+			List<String> requiredPerms = config.getStringList("perks." + name + ".requiredperms");
+			List<String> commands = config.getStringList("perks." + name + ".commands");
+			perks.add(new Perk(alias, permissions, requiredPerms, commands));
+
+		}
+
+		System.out.println(perks.get(0));
+
+	}
+
+	@EventHandler
+	public void interact(PlayerInteractEvent e) {
+
+		if ((e.getAction() == Action.RIGHT_CLICK_BLOCK) && (e.getClickedBlock().getType() == Material.WALL_SIGN)) {
+
+			Sign s = (Sign) e.getClickedBlock().getState();
+			if (s.getLine(0).equals(ChatColor.RED + "Perk Shop")) {
+				Player player = e.getPlayer();
+				Perk perk = null;
+				for (Perk p : perks) {
+					if (p.getAlias().equalsIgnoreCase(s.getLine(1))) {
+						perk = p;
+					}
+				}
+
+				if (perk == null) {
+					e.getPlayer().sendMessage("Perk Unrecognized");
+					return;
+				} else {
+					// If they are unconfirmed
+					if (confirmationMap.get(player) == null) {
+						player.sendMessage(ChatColor.RED + "Are you sure you want to purchase " + perk.getAlias() + " for " + s.getLine(2) + " and "
+								+ s.getLine(3) + " ?");
+						// Opening handshake
+						confirmationMap.put(player, perk);
+						return;
+					} else {
+						// If the perk is the same
+						if (confirmationMap.get(player).equals(perk)) {
+
+							double money = Double.parseDouble((s.getLine(3)).replace("C", ""));
+							int kills = Integer.parseInt((s.getLine(2)).replace(" Kills", ""));
+							RankupPlayer rp = perk.canPurchase(player, money, kills, perk);
+							if (rp == null) {
+								confirmationMap.remove(player);
+								return;
+							} else {
+								perk.purchase(player, rp, money, kills, perk);
+							}
+
+							confirmationMap.remove(player);
+						} else {
+							// if the perk is different
+							player.sendMessage(ChatColor.RED + "Transaction Cancelled.");
+							confirmationMap.remove(player);
+							return;
+						}
+					}
+				}
+			} else if (s.getLine(0).equalsIgnoreCase("[perkshop]") && e.getPlayer().hasPermission("rankup.perkshop")) {
+
+				s.setLine(0, ChatColor.RED + "Perk Shop");
+				s.update(true);
+			}
+
+		}
+
+	}
+
+	public void logout(PlayerQuitEvent e) {
+
+		if (confirmationMap.get(e.getPlayer()) != null) {
+			confirmationMap.remove(e.getPlayer());
+		}
 	}
 
 	public static SQRankup instance() {
@@ -42,6 +144,23 @@ public class SQRankup extends JavaPlugin implements Listener {
 	}
 
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
+
+		if (cmd.getName().equalsIgnoreCase("rankuprefresh") && sender.hasPermission("SQRankup.refresh")) {
+			config = YamlConfiguration.loadConfiguration(new File(getDataFolder(), "config.yml"));
+			refresh();
+			perks.clear();
+			loadPerks();
+			sender.sendMessage("Rankup Multiplier Refreshed");
+			return true;
+		}
+
+		if (cmd.getName().equalsIgnoreCase("rankupmultiplier") && sender.hasPermission("SQRankup.multiplier")) {
+			MULTIPLIER = Integer.parseInt(args[0]);
+			instance.getConfig().set("multiplier", MULTIPLIER);
+			saveConfig();
+			sender.sendMessage("Rankup Multiplier set to " + MULTIPLIER + " by " + args[1]);
+			return true;
+		}
 
 		if ((cmd.getName().equalsIgnoreCase("rankup")) && ((sender instanceof Player))) {
 			Player p = (Player) sender;
@@ -89,24 +208,7 @@ public class SQRankup extends JavaPlugin implements Listener {
 			}
 			return true;
 		}
-		/*
-				if (cmd.getName().equalsIgnoreCase("rankupTransfer") && sender.hasPermission("transfer")) {
-					List<String> players = Database.getAllPlayers();
-					List<OfflinePlayer> offlinePlayers = new ArrayList<OfflinePlayer>();
 
-					for (String ps : players) {
-
-						offlinePlayers.add(getServer().getOfflinePlayer(ps));
-					}
-
-					for (int i = 0; i < offlinePlayers.size(); i++) {
-						Database.transferPlayer(offlinePlayers.get(i), players.get(i));
-					}
-
-					sender.sendMessage("Done");
-
-				}
-		*/
 		if ((cmd.getName().equalsIgnoreCase("addapp")) && (sender.hasPermission("SQRankup.addApplication"))) {
 			String rank = getRank(getServer().getOfflinePlayer(args[0]));
 			String nextRank = getNextRank(rank);
@@ -134,6 +236,19 @@ public class SQRankup extends JavaPlugin implements Listener {
 	}
 
 	@EventHandler
+	public void login(PlayerLoginEvent e) {
+
+		if (MULTIPLIER != 1) {
+			e.getPlayer().sendMessage(ChatColor.GOLD + "Hey " + e.getPlayer().getName() + "! There's a x" + MULTIPLIER + " multiplier on all kills!!");
+		}
+	}
+
+	public static void refresh() {
+
+		MULTIPLIER = instance.getConfig().getInt("multiplier");
+	}
+
+	@EventHandler
 	public void onPlayerKill(PlayerDeathEvent event) {
 
 		Entity killer = event.getEntity().getKiller();
@@ -151,13 +266,21 @@ public class SQRankup extends JavaPlugin implements Listener {
 					return;
 				}
 			}
-			System.out.println("Kill call: " + rankToKills(((Player) event.getEntity()).getName()));
-			entry.setKills(entry.getKills() + rankToKills(((Player) event.getEntity()).getName()));
+			entry.setAsyncKills(rankToKills(((Player) event.getEntity()).getName()));
 			entry.setLastKillName(event.getEntity().getName());
 			entry.setLastKillTime(System.currentTimeMillis());
 			entry.saveData();
-			((Player) killer).sendMessage(ChatColor.RED + "This kill was counted in the ranking system as " + rankToKills(event.getEntity().getName())
-					+ ". You have " + entry.getKills() + " kills total.");
+			if (MULTIPLIER == 1) {
+				((Player) killer).sendMessage(ChatColor.RED + "This kill was counted in the ranking system as "
+						+ rankToKills(((Player) event.getEntity()).getName()) + ". You have " + entry.getKills()
+						+ rankToKills(((Player) event.getEntity()).getName() + " kills total."));
+			} else {
+				((Player) killer).sendMessage(ChatColor.RED
+						+ "This kill was counted in the ranking system as "
+						+ rankToKills(((Player) event.getEntity()).getName() + "because of an active kill booster! You have " + entry.getKills()
+								+ rankToKills(((Player) event.getEntity()).getName()) + " kills total."));
+			}
+
 			return;
 		}
 	}
@@ -195,7 +318,8 @@ public class SQRankup extends JavaPlugin implements Listener {
 
 			}
 		}
-		return i;
+
+		return i * MULTIPLIER;
 	}
 
 	// method to get the next rank on the rank structure
@@ -312,6 +436,13 @@ public class SQRankup extends JavaPlugin implements Listener {
 		}
 		return null;
 
+	}
+
+	public static void dispatchCommands(List<String> commands) {
+
+		for (String c : commands) {
+			Bukkit.dispatchCommand(Bukkit.getConsoleSender(), c);
+		}
 	}
 
 	private boolean setupEconomy() {

@@ -1,0 +1,5 @@
+name: SQTrading
+main: us.higashiyama.george.SQTrading.TradingCore
+version: 1.7.3
+depend: [Vault]
+   

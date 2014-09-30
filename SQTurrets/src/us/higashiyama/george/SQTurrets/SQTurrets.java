@@ -1,72 +1,89 @@
 
 package us.higashiyama.george.SQTurrets;
 
+import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
+import net.countercraft.movecraft.utils.EMPUtils;
+
 import org.bukkit.ChatColor;
+import org.bukkit.Color;
+import org.bukkit.FireworkEffect;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Sign;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Egg;
+import org.bukkit.entity.Firework;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
+import org.bukkit.entity.Snowball;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.plugin.java.JavaPlugin;
-
-import us.higashiyama.george.SQTurrets.Utils.AntiGravityTask;
 
 public class SQTurrets extends JavaPlugin implements Listener {
 
+	public static HashMap<Player, Long> cooldownMap = new HashMap<Player, Long>();
 	public static ArrayList<Turret> turretTypes = new ArrayList<Turret>();
 	public static ArrayList<Ammo> ammoTypes = new ArrayList<Ammo>();
 	public static SQTurrets instance;
-	public static ArrayList<Player> liveProjectiles = new ArrayList<Player>();
+	public static ArrayList<Projectile> liveProjectiles = new ArrayList<Projectile>();
+	public static ArrayList<Projectile> liveEMP = new ArrayList<Projectile>();
+	public static ArrayList<Projectile> eggs = new ArrayList<Projectile>();
+	public static FileConfiguration config;
 
 	public void onEnable() {
 
 		instance = this;
 		instance.saveDefaultConfig();
+		config = instance.getConfig();
 		loadAmmos();
 		loadTurrets();
-		new AntiGravityTask();
 		getServer().getPluginManager().registerEvents(this, this);
 
 	}
 
 	private static void loadAmmos() {
 
-		for (String name : instance.getConfig().getConfigurationSection("ammos").getKeys(false)) {
+		for (String name : config.getConfigurationSection("ammos").getKeys(false)) {
 			Ammo a = new Ammo();
 			a.setName(name);
-			a.setItem(new ItemStack(instance.getConfig().getInt("ammos." + name + ".id"), 1));
-			a.setFire(instance.getConfig().getBoolean("ammos." + name + ".fire"));
-			a.setVelocity(instance.getConfig().getDouble("ammos." + name + ".velocity"));
+			a.setItem(new ItemStack(config.getInt("ammos." + name + ".id"), config.getInt("ammos." + name + ".quantity")));
+			a.setFire(config.getBoolean("ammos." + name + ".fire"));
+			a.setVelocity(config.getDouble("ammos." + name + ".velocity"));
 			ammoTypes.add(a);
 		}
 	}
 
 	private static void loadTurrets() {
 
-		for (String name : instance.getConfig().getConfigurationSection("turrets").getKeys(false)) {
+		for (String name : config.getConfigurationSection("turrets").getKeys(false)) {
 			Turret t = new Turret();
 			t.setName(name);
-			t.setPermission(instance.getConfig().getString("turrets." + name + ".permission"));
-			t.setCooldown(instance.getConfig().getLong("turrets." + name + ".cooldown"));
-			List<Integer> base = instance.getConfig().getIntegerList("turrets." + name + ".basematerials");
+			t.setPermission(config.getString("turrets." + name + ".permission"));
+			t.setCooldown(config.getLong("turrets." + name + ".cooldown"));
+			List<Integer> base = config.getIntegerList("turrets." + name + ".basematerials");
 			ArrayList<Material> baseMaterials = new ArrayList<Material>();
 			for (int sId : base) {
 				baseMaterials.add(Material.getMaterial(sId));
 			}
-			List<Integer> top = instance.getConfig().getIntegerList("turrets." + name + ".topmaterials");
+			List<Integer> top = config.getIntegerList("turrets." + name + ".topmaterials");
 			ArrayList<Material> topMaterials = new ArrayList<Material>();
 			for (int sId : top) {
 				topMaterials.add(Material.getMaterial(sId));
@@ -74,7 +91,7 @@ public class SQTurrets extends JavaPlugin implements Listener {
 			t.setBaseMaterials(baseMaterials);
 			t.setTopMaterials(topMaterials);
 			ArrayList<Ammo> turretAmmo = new ArrayList<Ammo>();
-			List<String> turretAmmoStrings = instance.getConfig().getStringList("turrets." + name + ".ammo");
+			List<String> turretAmmoStrings = config.getStringList("turrets." + name + ".ammo");
 			for (Ammo a : ammoTypes) {
 				for (String s : turretAmmoStrings) {
 					if (a.getName().equalsIgnoreCase(s)) {
@@ -82,10 +99,85 @@ public class SQTurrets extends JavaPlugin implements Listener {
 					}
 				}
 			}
-			t.setProjectileString(instance.getConfig().getString("turrets." + name + ".projectile"));
+			t.setProjectileString(config.getString("turrets." + name + ".projectile"));
 			t.setAmmos(turretAmmo);
-			t.setVelocity(instance.getConfig().getDouble("turrets." + name + ".velocity"));
+			t.setVelocity(config.getDouble("turrets." + name + ".velocity"));
 			turretTypes.add(t);
+		}
+	}
+
+	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
+
+		if (cmd.getName().equalsIgnoreCase("turretsreload") && sender.hasPermission("SQTurrets.reload")) {
+			config = YamlConfiguration.loadConfiguration(new File(getDataFolder(), "config.yml"));
+			turretTypes.clear();
+			ammoTypes.clear();
+			loadAmmos();
+			loadTurrets();
+			sender.sendMessage("Turrets Reloaded");
+
+			return true;
+		}
+
+		if (cmd.getName().equalsIgnoreCase("turretlist")) {
+			String turrets = "";
+			for (Turret t : turretTypes) {
+				if (sender.hasPermission(t.getPermission())) {
+					turrets += t.getName() + " ";
+				}
+			}
+			sender.sendMessage("Turrets you have permission for: " + turrets);
+			return true;
+		}
+
+		return false;
+
+	}
+
+	@EventHandler
+	public void eggBreak(ProjectileHitEvent e) {
+
+		if (e.getEntity() instanceof Egg && eggs.contains(e.getEntity())) {
+			Location l = e.getEntity().getLocation();
+			// 2.3 = explosion POWER
+			e.getEntity().getWorld().createExplosion(l.getX(), l.getY(), l.getZ(), 2.3F, false, true);
+
+			Firework f = (Firework) e.getEntity().getWorld().spawn(e.getEntity().getLocation(), Firework.class);
+			List<Color> colors = new ArrayList<Color>();
+			colors.add(Color.RED);
+			colors.add(Color.YELLOW);
+			colors.add(Color.ORANGE);
+			FireworkMeta fm = f.getFireworkMeta();
+			fm.clearEffects();
+			fm.setPower(1);
+			fm.addEffect(FireworkEffect.builder().with(FireworkEffect.Type.BALL_LARGE).withColor(colors).withFade().flicker(true).trail(true).build());
+			f.setFireworkMeta(fm);
+			f.detonate();
+
+		}
+
+		if (e.getEntity() instanceof Snowball && liveEMP.contains(e.getEntity())) {
+			Location l = e.getEntity().getLocation();
+			EMPUtils.detonateEMP(l.getBlock().getRelative(yawToFace(l.getYaw(), false)));
+			Firework f = (Firework) e.getEntity().getWorld().spawn(e.getEntity().getLocation(), Firework.class);
+			List<Color> colors = new ArrayList<Color>();
+			colors.add(Color.BLUE);
+			colors.add(Color.GREEN);
+			colors.add(Color.WHITE);
+			FireworkMeta fm = f.getFireworkMeta();
+			fm.clearEffects();
+			fm.setPower(1);
+			fm.addEffect(FireworkEffect.builder().with(FireworkEffect.Type.BALL_LARGE).withColor(colors).withFade().flicker(true).trail(true).build());
+			f.setFireworkMeta(fm);
+			f.detonate();
+		}
+
+		if (eggs.contains(e.getEntity())) {
+			eggs.remove(e.getEntity());
+		}
+
+		if (liveEMP.contains(e.getEntity())) {
+			liveEMP.remove(e.getEntity());
 		}
 	}
 
@@ -190,16 +282,6 @@ public class SQTurrets extends JavaPlugin implements Listener {
 		}
 	}
 
-	@EventHandler
-	public void onPlayerLeave(PlayerQuitEvent event) {
-
-		if ((event.getPlayer().getItemInHand().getType() == Material.WATCH) && (isInTurret(event.getPlayer()))) {
-			// detectTurretType(event.getPlayer()).exit(event.getPlayer());
-			// TODO:
-			return;
-		}
-	}
-
 	public static Turret detectTurretType(Player p) {
 
 		// First find the sign that is a turret sign??
@@ -256,6 +338,19 @@ public class SQTurrets extends JavaPlugin implements Listener {
 		}
 
 		return true;
+	}
+
+	private static BlockFace yawToFace(float yaw, boolean useSubCardinalDirections) {
+
+		BlockFace[] axis = { BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST };
+		BlockFace[] radial = { BlockFace.NORTH, BlockFace.NORTH_EAST, BlockFace.EAST, BlockFace.SOUTH_EAST, BlockFace.SOUTH, BlockFace.SOUTH_WEST,
+				BlockFace.WEST, BlockFace.NORTH_WEST };
+
+		if (useSubCardinalDirections) {
+			return radial[Math.round(yaw / 45f) & 0x7];
+		} else {
+			return axis[Math.round(yaw / 90f) & 0x3];
+		}
 	}
 
 	public static SQTurrets getInstance() {

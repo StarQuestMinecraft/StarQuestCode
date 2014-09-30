@@ -1,6 +1,7 @@
 
 package com.regalphoenixmc.SQRankup;
 
+import java.lang.reflect.Method;
 import java.sql.Connection;
 import java.sql.Driver;
 import java.sql.DriverManager;
@@ -8,6 +9,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 
 public class Database {
 
@@ -43,7 +45,63 @@ public class Database {
 		}
 	}
 
-	public static void updateEntry(final String player, final Long lastKillTime, final String killed, final int kills) {
+	public static void asyncQuery(final PreparedStatement ps, final ArrayList<Method> methods) {
+
+		Runnable task = new Runnable() {
+
+			public void run() {
+
+				if (!Database.getContext()) {
+					System.out.println("Database context could not be found.");
+				}
+				try {
+					ps.execute();
+				} catch (SQLException e) {
+					System.out.print("[SQDatabase] SQL Error" + e.getMessage());
+				} catch (Exception e) {
+					System.out.print("[SQDatabase] SQL Error (Unknown)");
+					e.printStackTrace();
+				} finally {
+					Database.close(ps);
+				}
+			}
+
+		};
+		new Thread(task, "DBThread").start();
+
+	}
+
+	public static ResultSet query(PreparedStatement ps) {
+
+		if (!Database.getContext()) {
+			System.out.println("Database context could not be found.");
+		}
+		try {
+			ResultSet rs = ps.executeQuery();
+			return rs;
+		} catch (SQLException e) {
+			System.out.print("[SQDatabase] SQL Error" + e.getMessage());
+		} catch (Exception e) {
+			System.out.print("[SQDatabase] SQL Error (Unknown)");
+			e.printStackTrace();
+		} finally {
+			Database.close(ps);
+		}
+		return null;
+
+	}
+
+	public static void addKills(final String player, final int kills) {
+
+		// PreparedStatement s =
+		// Database.cntx.prepareStatement("UPDATE RANKUP SET `kills` = (`kills` + ?) WHERE `name` = ?");
+		// s.setInt(1, kills);
+		// s.setString(2, player);
+		// asyncQuery(s);
+
+	}
+
+	public static void updateEntry(final String player, final Long lastKillTime, final String killed) {
 
 		Runnable task = new Runnable() {
 
@@ -54,11 +112,10 @@ public class Database {
 				}
 				PreparedStatement s = null;
 				try {
-					s = Database.cntx.prepareStatement("UPDATE RANKUP SET `lastkill` = ?, `kills` = ?, `lastkilltime` = ? WHERE `name` = ?");
+					s = Database.cntx.prepareStatement("UPDATE RANKUP SET `lastkill` = ?,  `lastkilltime` = ? WHERE `name` = ?");
 					s.setString(1, killed);
-					s.setInt(2, kills);
-					s.setLong(3, lastKillTime.longValue());
-					s.setString(4, player);
+					s.setLong(2, lastKillTime.longValue());
+					s.setString(3, player);
 					System.out.println(s);
 					s.execute();
 					s.close();

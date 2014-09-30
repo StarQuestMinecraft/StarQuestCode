@@ -28,3 +28,4 @@ buccaneer:
 warlord:
     cost: 0
     kills: 160
+multiplier: 1

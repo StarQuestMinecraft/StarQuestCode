@@ -53,10 +53,6 @@ public class Turret {
 	// Arraylist of acceptable ammos
 	private ArrayList<Ammo> ammos = new ArrayList<Ammo>();
 
-	// Number of current ms. Don't touch this value. It should only get modified
-	// from the fire method
-	private long currentCooldown = 0;
-
 	public Turret() {
 
 	}
@@ -78,8 +74,19 @@ public class Turret {
 		// launchProjectile(this.projectileClass, finalVec);
 		// finally, set the shooter
 		proj.setVelocity(finalVec);
-		proj.setShooter((ProjectileSource) p);
-		SQTurrets.liveProjectiles.add(p);
+		if (!(proj instanceof Egg) || !(proj instanceof Snowball)) {
+			proj.setShooter((ProjectileSource) p);
+		}
+
+		// SQTurrets.liveProjectiles.add(proj);
+		if (proj instanceof Egg) {
+			SQTurrets.eggs.add(proj);
+		}
+
+		if (proj instanceof Snowball) {
+			SQTurrets.liveEMP.add(proj);
+		}
+
 		// play sounds
 		p.getWorld().playSound(p.getLocation(), Sound.SHOOT_ARROW, 2.0F, 1.0F);
 	}
@@ -105,16 +112,35 @@ public class Turret {
 		Vector finalV = pVec.multiply(v.multiply(vMod));
 
 		// then launch the projectile
-		Projectile proj = p.launchProjectile(this.projectileClass, finalV);
+		Location eye = p.getEyeLocation();
+		Location oneUp = eye.add(0.0D, 1.0D, 0.0D);
+		Location loc = oneUp.toVector().add(p.getLocation().getDirection().multiply(2))
+				.toLocation(p.getWorld(), p.getLocation().getYaw(), p.getLocation().getPitch());
+
+		// then launch the projectile
+		Projectile proj = p.getWorld().spawn(loc, this.projectileClass);
+
+		proj.setVelocity(finalV);
+
+		if (proj instanceof Egg) {
+			SQTurrets.eggs.add(proj);
+		}
+
+		if (proj instanceof Snowball) {
+			SQTurrets.liveEMP.add(proj);
+		}
+
+		if (!(proj instanceof Egg) || !(proj instanceof Snowball)) {
+			proj.setShooter((ProjectileSource) p);
+		}
+		// SQTurrets.liveProjectiles.add(proj);
 
 		// Ammo specific settings
 
-		if (a.isFire() == true) {
+		if (a.isFire()) {
 			proj.setFireTicks(Integer.MAX_VALUE);
 		}
 
-		// finally, set the shooter
-		proj.setShooter(p);
 		// play sounds
 		p.getWorld().playSound(p.getLocation(), Sound.SHOOT_ARROW, 0.5F, 1.0F);
 	}
@@ -124,6 +150,13 @@ public class Turret {
 	 * overwritten
 	 */
 	public void fire(Player p) {
+
+		if (!p.hasPermission(this.permission)) {
+
+			p.sendMessage(ChatColor.RED + "You don't have permission to use this turret type!");
+			return;
+
+		}
 
 		if (this.isInCooldown(p))
 			return;
@@ -138,8 +171,30 @@ public class Turret {
 		} else {
 			this.shoot(p);
 		}
-		this.setCurrentCooldown(System.currentTimeMillis() + this.getCooldown());
 
+		if (SQTurrets.cooldownMap.get(p) != null) {
+			SQTurrets.cooldownMap.remove(p);
+			SQTurrets.cooldownMap.put(p, (System.currentTimeMillis()));
+		}
+
+	}
+
+	/*
+	 * Returns whether a shooting player is in cooldown
+	 */
+	public boolean isInCooldown(Player p) {
+
+		if (SQTurrets.cooldownMap.get(p) == null) {
+
+			SQTurrets.cooldownMap.put(p, (System.currentTimeMillis()));
+			return false;
+		}
+
+		if ((SQTurrets.cooldownMap.get(p) + this.getCooldown()) > System.currentTimeMillis()) {
+			p.sendMessage(ChatColor.RED + "Turret is in cooldown");
+			return true;
+		}
+		return false;
 	}
 
 	/*
@@ -151,7 +206,7 @@ public class Turret {
 		p.sendMessage(ChatColor.RED + "You entered a turret! Right click while holding a ship controller to exit the turret, left click it to fire.");
 		BlockFace forward = DirectionUtils.getSignDirection(turretSign);
 		Location l = turretSign.getRelative(forward).getRelative(BlockFace.UP).getLocation();
-		Location target = new Location(l.getWorld(), l.getX() + 0.5D, l.getY(), l.getZ() + 0.5D);
+		Location target = new Location(l.getWorld(), l.getX() + 0.5D, l.getY(), l.getZ() + 0.5D, p.getLocation().getPitch(), p.getLocation().getYaw());
 		target.getBlock().setType(Material.GLOWSTONE);
 		p.teleport(target);
 	}
@@ -182,9 +237,9 @@ public class Turret {
 		Block baseBlock = p.getLocation().getBlock().getRelative(BlockFace.DOWN);
 		Location base = p.getLocation().getBlock().getRelative(BlockFace.DOWN).getRelative(blockFace).getLocation();
 		double[] xz = DirectionUtils.playerOffsetTeleport(p, baseBlock);
-		System.out.println(yMod);
-		System.out.println(xz[0]);
-		System.out.println(xz[1]);
+		if (p.getLocation().getBlock().getType() == Material.GLOWSTONE) {
+			p.getLocation().getBlock().setType(Material.SPONGE);
+		}
 		p.teleport(new Location(p.getLocation().getWorld(), p.getLocation().getX() + xz[0], base.getY() - yMod, p.getLocation().getZ() + xz[1]));
 		if (s != null) {
 			s.setLine(1, ChatColor.GREEN + "UNOCCUPIED");
@@ -200,7 +255,8 @@ public class Turret {
 		Block oneInFront = turretSign.getBlock().getRelative(dir);
 		Block aboveThat = oneInFront.getRelative(BlockFace.UP);
 		Block oneMoreUp = aboveThat.getRelative(BlockFace.UP);
-		if (((aboveThat.getType() == Material.SPONGE) || (aboveThat.getType() == Material.GLOWSTONE)) && (t.getTopMaterials().contains(oneMoreUp.getType()))) {
+		if (((aboveThat.getType() == Material.SPONGE) || (aboveThat.getType() == Material.GLOWSTONE))
+				&& (t.getTopMaterials().contains(oneMoreUp.getType()) && (t.getBaseMaterials().contains(oneInFront.getType())))) {
 			return true;
 		}
 		return false;
@@ -233,8 +289,9 @@ public class Turret {
 		Dispenser d = (Dispenser) b.getState();
 		Inventory i = d.getInventory();
 		for (Ammo ammo : this.getAmmos()) {
-			if (i.containsAtLeast(ammo.getItem(), 1)) {
+			if (i.containsAtLeast(ammo.getItem(), ammo.getItem().getAmount())) {
 				i.removeItem(ammo.getItem());
+
 				return true;
 
 			}
@@ -257,22 +314,6 @@ public class Turret {
 		}
 		return null;
 
-	}
-
-	/*
-	 * Returns whether a shooting player is in cooldown
-	 */
-	public boolean isInCooldown(Player p) {
-
-		if (this.getCurrentCooldown() == 0) {
-			this.setCurrentCooldown(System.currentTimeMillis());
-			return false;
-		}
-		if ((this.getCurrentCooldown()) > System.currentTimeMillis()) {
-			p.sendMessage(ChatColor.RED + "Turret is in cooldown");
-			return true;
-		}
-		return false;
 	}
 
 	@Override
@@ -319,16 +360,6 @@ public class Turret {
 	public void setCooldown(long cooldown) {
 
 		this.cooldown = cooldown;
-	}
-
-	public long getCurrentCooldown() {
-
-		return currentCooldown;
-	}
-
-	public void setCurrentCooldown(long currentCooldown) {
-
-		this.currentCooldown = currentCooldown;
 	}
 
 	public ArrayList<Material> getBaseMaterials() {

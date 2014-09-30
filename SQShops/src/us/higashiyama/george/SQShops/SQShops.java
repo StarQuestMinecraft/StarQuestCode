@@ -20,6 +20,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.RegisteredServiceProvider;
@@ -27,21 +28,41 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 public class SQShops extends JavaPlugin implements Listener {
 
+	public static SQShops instance;
 	public static HashMap<ItemStack, Double> itemIndex = new HashMap<ItemStack, Double>();
 	public static Economy economy = null;
+	public static double MULTIPLIER = 1;
 
 	public void onEnable() {
 
+		instance = this;
+		saveDefaultConfig();
 		setupEconomy();
 		Database.setUp();
 		LogDatabase.setUp();
 		Bukkit.getServer().getPluginManager().registerEvents(this, this);
 		itemIndex = Database.loadData();
+		MULTIPLIER = instance.getConfig().getInt("multiplier");
+		new NotifierTask().runTaskTimer(instance, 12000, 12000);
 	}
 
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 
 		if ((sender instanceof Player)) {
+			if (cmd.getName().equalsIgnoreCase("ecorefresh") && sender.hasPermission("SQShops.refresh")) {
+				refresh();
+				sender.sendMessage("Economy Multiplier Refreshed");
+				return true;
+			}
+			if (cmd.getName().equalsIgnoreCase("ecomultiplier") && sender.hasPermission("SQShops.multiplier")) {
+				MULTIPLIER = Double.parseDouble(args[0]);
+				instance.getConfig().set("multiplier", MULTIPLIER);
+				saveConfig();
+				if (MULTIPLIER != 1) {
+					sender.sendMessage("Economy Multiplier set to " + MULTIPLIER + " by " + args[1]);
+				}
+				return true;
+			}
 			if (cmd.getName().equalsIgnoreCase("ecoreload") && sender.hasPermission("SQShops.reload")) {
 				itemIndex.clear();
 				itemIndex = Database.loadData();
@@ -79,6 +100,14 @@ public class SQShops extends JavaPlugin implements Listener {
 		}
 
 		return true;
+	}
+
+	@EventHandler
+	public void login(PlayerLoginEvent e) {
+
+		if (MULTIPLIER != 1) {
+			e.getPlayer().sendMessage(ChatColor.GOLD + "Hey " + e.getPlayer().getName() + "! There's a x" + MULTIPLIER + " multiplier on all sales at spawn!");
+		}
 	}
 
 	@EventHandler
@@ -168,8 +197,13 @@ public class SQShops extends JavaPlugin implements Listener {
 		if (total == 0)
 			return;
 
-		economy.depositPlayer(player.getName(), total);
-		player.sendMessage(ChatColor.AQUA + "You earned " + roundTwoDecimals(total) + " from selling items.");
+		economy.depositPlayer(player.getName(), total * MULTIPLIER);
+		if (MULTIPLIER == 1) {
+			player.sendMessage(ChatColor.AQUA + "You earned " + roundTwoDecimals(total) + " from selling items.");
+		} else {
+			player.sendMessage(ChatColor.AQUA + "You earned " + roundTwoDecimals(total) + " from selling items with an active economy booster!");
+		}
+
 		i.clear();
 		for (ItemStack leftover : leftovers) {
 			i.addItem(leftover);
@@ -191,6 +225,11 @@ public class SQShops extends JavaPlugin implements Listener {
 
 		DecimalFormat twoDForm = new DecimalFormat("#.##");
 		return Double.valueOf(twoDForm.format(d));
+	}
+
+	public static void refresh() {
+
+		MULTIPLIER = instance.getConfig().getInt("multiplier");
 	}
 
 }

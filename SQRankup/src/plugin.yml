@@ -10,6 +10,10 @@ commands:
   addapp:
     description: Mark a player as applied.
     usage: /addapp <Player>
-  rankuppurchase:
-  rankupTransfer:
+  rankuprefresh:
+    description: Refresh Rankup Multiplier
+  rankupmultiplier:
+    description: Set a kill multiplier
+    usage: /rankupmultiplier <int>
+    
    

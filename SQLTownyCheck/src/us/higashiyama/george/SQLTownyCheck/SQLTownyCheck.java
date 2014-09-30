@@ -27,7 +27,7 @@ public class SQLTownyCheck extends JavaPlugin implements Listener {
 		String command = e.getMessage().replace("/", "");
 		ArrayList<String> args = new ArrayList<String>(Arrays.asList(command.split(" ")));
 
-		if (args.size() < 2) {
+		if (args.size() < 3) {
 			return;
 		}
 
@@ -38,9 +38,9 @@ public class SQLTownyCheck extends JavaPlugin implements Listener {
 				return;
 			}
 
-			if (!canJoinTown(getServer().getPlayer(args.get(2)))) {
-				Bukkit.getPlayer(args.get(2)).sendMessage(
-						ChatColor.AQUA + "You cannot be invited to a town. You are already in one or do not have permissions.");
+			Player potential = Bukkit.getPlayer(args.get(2));
+			if (!canJoinTown(potential)) {
+				potential.sendMessage(ChatColor.AQUA + "You cannot be invited to a town. You are already in one or do not have permissions.");
 				e.getPlayer().sendMessage(ChatColor.AQUA + "That user is already in a town. If this is a mistake please contact a dev");
 				e.setCancelled(true);
 				return;
