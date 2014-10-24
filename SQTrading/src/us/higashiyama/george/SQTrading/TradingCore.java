@@ -1,15 +1,14 @@
 
 package us.higashiyama.george.SQTrading;
 
+import java.util.ArrayList;
+
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.block.BlockFace;
-import org.bukkit.block.Chest;
 import org.bukkit.block.Sign;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -40,55 +39,226 @@ public class TradingCore extends JavaPlugin implements Listener {
 		setupPermissions();
 		setupEconomy();
 		Database.setUp();
+
 	}
 
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 
 		if ((sender instanceof Player)) {
 			Player p = (Player) sender;
-			if (cmd.getName().equalsIgnoreCase("trade")) {
 
-				if (args.length == 0) {
-					p.sendMessage(ChatColor.RED + "/trade <id> | Trade for an ID while at a trading station.");
+			if (cmd.getName().equalsIgnoreCase("createoffer")) {
+
+				if (args.length < 3) {
+					p.sendMessage(ChatColor.RED + "/createoffer <buy/sell> <item> <data> <amount> <price> <station>| Create an offer at a trading station.");
 					return false;
 				}
 
-				TradingStation ts = Database.getTradingStation(p.getEyeLocation().getBlockX(), p.getEyeLocation().getBlockY(), p.getEyeLocation().getBlockZ(),
-						p.getEyeLocation().getWorld().getName(), Bukkit.getServerName());
-				if (ts == null) {
-					p.sendMessage(ChatColor.RED + "You are not at a Trading Station");
-					return true;
-				} else {
-					int id = 0;
-					try {
+				if (args[0].equalsIgnoreCase("buy")) {
 
-						id = Integer.parseInt(args[0]);
-					} catch (NumberFormatException e) {
-						p.sendMessage(ChatColor.RED + "Number format IDs accepted only");
+					parseBuyOffer(p, args);
+
+				} else if (args[0].equalsIgnoreCase("sell")) { // If sell
+
+					TradingStation ts = Database.getTradingStation(p.getEyeLocation().getBlockX(), p.getEyeLocation().getBlockY(), p.getEyeLocation()
+							.getBlockZ(), p.getEyeLocation().getWorld().getName(), Bukkit.getServerName());
+
+					if (ts == null) {
+						p.sendMessage(ChatColor.RED + "You are not at a Trading Station");
 						return true;
-					}
+					} else {
 
-					TradingOffer to = Database.getTradingOffer(ts, id);
-					if (to == null) {
-						p.sendMessage(ChatColor.RED + "No such offer exists at the current trading station");
+						parseSellOffer(p, args, ts);
+
+					}
+				} else {
+					p.sendMessage(ChatColor.RED + "Offer must be either 'buy' or 'sell'");
+					return false;
+				}
+
+				if (cmd.getName().equalsIgnoreCase("trade")) {
+
+					if (args.length == 0) {
+						p.sendMessage(ChatColor.RED + "/trade <id> | Trade for an ID while at a trading station.");
 						return false;
 					}
-					trade(p, ts, to);
+
+					TradingStation ts = Database.getTradingStation(p.getEyeLocation().getBlockX(), p.getEyeLocation().getBlockY(), p.getEyeLocation()
+							.getBlockZ(), p.getEyeLocation().getWorld().getName(), Bukkit.getServerName());
+					if (ts == null) {
+						p.sendMessage(ChatColor.RED + "You are not at a Trading Station");
+						return true;
+					} else {
+						int id = 0;
+						try {
+
+							id = Integer.parseInt(args[0]);
+						} catch (NumberFormatException e) {
+							p.sendMessage(ChatColor.RED + "Number format IDs accepted only");
+							return true;
+						}
+
+						TradingOffer to = Database.getSellOffer(ts, id);
+						if (to == null) {
+							p.sendMessage(ChatColor.RED + "No such offer exists at the current trading station");
+							return false;
+						}
+						trade(p, ts, to);
+						return false;
+					}
 				}
+
+				if (cmd.getName().equalsIgnoreCase("collect")) {
+
+					TradingStation ts = Database.getTradingStation(p.getEyeLocation().getBlockX(), p.getEyeLocation().getBlockY(), p.getEyeLocation()
+							.getBlockZ(), p.getEyeLocation().getWorld().getName(), Bukkit.getServerName());
+					if (ts == null) {
+						p.sendMessage(ChatColor.RED + "You are not at a Trading Station");
+						return true;
+					} else {
+
+						CompletedTransaction ct = Database.getRandomTransaction(p, ts);
+						if (ct == null) {
+							p.sendMessage(ChatColor.RED + "Nothing Left To Collect");
+							return false;
+						}
+						giveItems(p, ct);
+						return false;
+					}
+				}
+
 			}
 
+			return false;
+		}
+		return false;
+	}
+
+	private void parseBuyOffer(Player p, String[] args) {
+
+		// format(s)
+		// createoffer buy item data amount price station
+		// createoffer buy hand amount price station
+
+		if (args[1].equalsIgnoreCase("hand")) {
+
+			TradingStation ts = Database.getTradingStationByName(args[4]);
+			if (ts == null) {
+				p.sendMessage(ChatColor.RED + "No Trading Station with that name.");
+				return;
+			}
+			double price = 0;
+			try {
+				price = Integer.parseInt(args[3]);
+			} catch (NumberFormatException e) {
+				p.sendMessage("Please specify a number price.");
+				return;
+			}
+
+			int amount = 0;
+			try {
+				amount = Integer.parseInt(args[2]);
+			} catch (NumberFormatException e) {
+				p.sendMessage("Please specify a number quantity.");
+				return;
+			}
+			ItemStack is = p.getItemInHand();
+			Database.addOffer(ts.getName(), TransactionType.SELL, p.getUniqueId(), is.getType().name(), amount, (short) is.getDurability(), price);
+		} else {
+
+			TradingStation ts = Database.getTradingStationByName(args[5]);
+			if (ts == null) {
+				p.sendMessage(ChatColor.RED + "No Trading Station with that name.");
+				return;
+			}
+
+			String item = args[1];
+			int id = 0;
+
+			try {
+				id = Integer.parseInt(item);
+			} catch (NumberFormatException e) {
+
+			}
+
+			double price = 0;
+			try {
+				price = Integer.parseInt(args[4]);
+			} catch (NumberFormatException e) {
+				p.sendMessage("Please specify a number price.");
+				return;
+			}
+
+			int amount = 0;
+			try {
+				amount = Integer.parseInt(args[3]);
+			} catch (NumberFormatException e) {
+				p.sendMessage("Please specify a number quantity.");
+				return;
+			}
+
+			int data = 0;
+			try {
+				data = Integer.parseInt(args[2]);
+			} catch (NumberFormatException e) {
+				p.sendMessage("Please specify a number data.");
+				return;
+			}
+			if (Material.getMaterial(item) == null) {
+				p.sendMessage("No such item exists with that name.");
+				return;
+			}
+
+			Material m = Material.matchMaterial(item);
+			Database.addOffer(ts.getName(), TransactionType.SELL, p.getUniqueId(), m.name(), amount, (short) data, price);
 		}
 
-		return false;
+	}
+
+	private void parseSellOffer(Player p, String[] args, TradingStation ts) {
+
+		// format: /createoffer sell amount price
+		double price = 0;
+		try {
+			price = Integer.parseInt(args[2]);
+		} catch (NumberFormatException e) {
+			p.sendMessage("Please specify a number price.");
+			return;
+		}
+
+		int amount = 0;
+		try {
+			amount = Integer.parseInt(args[1]);
+		} catch (NumberFormatException e) {
+			p.sendMessage("Please specify a number quantity.");
+			return;
+		}
+
+		// We assume they have the item since it's in their hand
+		ItemStack is = p.getItemInHand();
+
+		if (is.getType() == Material.AIR) {
+			p.sendMessage(ChatColor.RED + "You really think someone would buy air!?");
+			return;
+		}
+
+		if (p.getInventory().containsAtLeast(is, amount)) {
+
+			Database.addOffer(ts.getName(), TransactionType.BUY, p.getUniqueId(), is.getType().name(), amount, (short) is.getDurability(), price);
+
+			p.getInventory().remove(is);
+			p.sendMessage(ChatColor.GREEN + "You sucessfully made an offer!");
+
+		} else {
+			p.sendMessage(ChatColor.RED + "You don't have enough items to make that offer");
+			return;
+		}
 
 	}
 
 	@EventHandler
 	public void onPlayerInteract(PlayerInteractEvent event) {
 
-		if (event.getPlayer().isSneaking()) {
-			Database.addOffer("yolo", TransactionType.SELL, event.getPlayer().getUniqueId(), "WOOL", 150, (short) 5, 15);
-		}
 		if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
 			Material t = event.getClickedBlock().getType();
 			if (t == Material.WALL_SIGN || t == Material.SIGN_POST) {
@@ -127,9 +297,6 @@ public class TradingCore extends JavaPlugin implements Listener {
 			s.update(true);
 		} else if (line.equals(SIGN_IDENTIFIER)) {
 
-			TradingStation ts = Database.getTradingStation(s.getLocation().getBlockX(), s.getLocation().getBlockY(), s.getLocation().getBlockZ(), s
-					.getLocation().getWorld().getName(), Bukkit.getServerName());
-
 		}
 	}
 
@@ -142,56 +309,86 @@ public class TradingCore extends JavaPlugin implements Listener {
 		}
 	}
 
+	private static void giveItems(Player p, CompletedTransaction ct) {
+
+		ArrayList<ItemStack> items = new ArrayList<ItemStack>();
+
+		int overflowCheck = 0;
+
+		int airSlots = 0;
+
+		for (ItemStack i : p.getInventory()) {
+			if (i == null)
+				airSlots++;
+		}
+
+		if (ct.getPlayerUUID() == p.getUniqueId() && overflowCheck < airSlots) {
+			overflowCheck += Math.ceil(ct.getAmount() / 64);
+			items.add(ct.getItemStack());
+			Database.clearTransaction(ct);
+
+		} else {
+			int totalAmount = ct.getAmount();
+			int roomFor = airSlots * Material.getMaterial(ct.getMaterialName()).getMaxStackSize();
+			ct.setAmount(totalAmount - roomFor);
+			CompletedTransaction semiCT = ct.copy();
+			semiCT.setAmount(roomFor);
+			items.add(semiCT.getItemStack());
+			Database.progressTransaction(ct);
+
+		}
+
+		Inventory pi = p.getInventory();
+		pi.addItem(items.toArray(new ItemStack[items.size()]));
+
+	}
+
 	private static void trade(Player p, TradingStation ts, TradingOffer to) {
 
-		Location tsl = ts.getLocation();
-		if (tsl.getBlock().getRelative(BlockFace.DOWN).getType() != Material.CHEST) {
-			p.sendMessage(ChatColor.RED + "There must be a chest below the sign");
-			return;
-		}
+		if (to.getTradingType() == TransactionType.SELL) {
+			int quantity = to.getQuantity();
 
-		int quantity = to.getQuantity();
+			Inventory ci = p.getInventory();
 
-		Chest c = (Chest) tsl.getBlock().getRelative(BlockFace.DOWN).getState();
-		Inventory ci = c.getInventory();
-
-		int amountInChest = 0;
-		for (ItemStack ciis : ci.getContents()) {
-			if (ciis == null)
-				continue;
-			if (ciis.getType() == to.getItemStack().getType() && ciis.getDurability() == to.getItemStack().getDurability()) {
-				amountInChest += ciis.getAmount();
+			int amountInChest = 0;
+			for (ItemStack ciis : ci.getContents()) {
+				if (ciis == null)
+					continue;
+				if (ciis.getType() == to.getItemStack().getType() && ciis.getDurability() == to.getItemStack().getDurability()) {
+					amountInChest += ciis.getAmount();
+				}
 			}
+
+			if (amountInChest >= quantity)
+				amountInChest = quantity;
+			if (economy.getBalance(instance.getServer().getOfflinePlayer(to.getPlayerUUID())) < amountInChest * to.getPrice()) {
+				p.sendMessage(ChatColor.RED + "Selling player could not afford to buy your product.");
+				return;
+			}
+
+			InventoryUtil.removeInventoryItems(ci, to.getItemStack().getType(), amountInChest);
+			int modQuantity = (to.getQuantity() - amountInChest);
+
+			economy.depositPlayer(p, amountInChest * to.getPrice());
+			economy.withdrawPlayer(instance.getServer().getOfflinePlayer(to.getPlayerUUID()), amountInChest * to.getPrice());
+
+			if (modQuantity <= 0) {
+				CompletedTransaction ct = new CompletedTransaction(to.getPlayerUUID(), to.getMaterial(), to.getData(), to.getQuantity(), ts.getName());
+
+				Database.finishOffer(to); // Deleting offer
+				System.out.println("Deleting");
+				Database.addCompletedTransaction(ct); // Add a transaction
+			} else {
+				Database.progressOffer(to, modQuantity); // keep the offer,
+															// add
+															// a
+															// incomplet
+															// transaction
+			}
+
+			p.sendMessage(ChatColor.GREEN + "You made " + amountInChest * to.getPrice() + " from selling " + amountInChest + " units of "
+					+ to.getItemStack().getType().toString());
 		}
-
-		if (amountInChest >= quantity)
-			amountInChest = quantity;
-		if (economy.getBalance(instance.getServer().getOfflinePlayer(to.getPlayerUUID())) < amountInChest * to.getPrice()) {
-			p.sendMessage(ChatColor.RED + "Selling player could not afford to buy your product.");
-			return;
-		}
-
-		InventoryUtil.removeInventoryItems(ci, to.getItemStack().getType(), amountInChest);
-		int modQuantity = (to.getQuantity() - amountInChest);
-
-		economy.depositPlayer(p, amountInChest * to.getPrice());
-		economy.withdrawPlayer(instance.getServer().getOfflinePlayer(to.getPlayerUUID()), amountInChest * to.getPrice());
-
-		if (modQuantity <= 0) {
-			CompletedTransaction ct = new CompletedTransaction(to.getPlayerUUID(), to.getMaterial(), to.getData(), to.getQuantity(), ts.getName());
-
-			Database.finishOffer(to); // Deleting offer
-			System.out.println("Deleting");
-			Database.addCompletedTransaction(ct); // Add a transaction
-		} else {
-			System.out.println("MOD: " + modQuantity);
-			System.out.println("QUANT: " + quantity);
-			// Database.progressOffer(to, ); // keep the offer, add a incomplete
-			// transaction
-		}
-
-		p.sendMessage(ChatColor.GREEN + "You made " + amountInChest * to.getPrice() + " from selling " + amountInChest + " units of "
-				+ to.getItemStack().getType().toString());
 
 	}
 

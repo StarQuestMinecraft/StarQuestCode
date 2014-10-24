@@ -13,6 +13,7 @@ public class CompletedTransaction {
 	private short data;
 	private int amount;
 	private String tradeStation;
+	private int id;
 
 	public CompletedTransaction(UUID p, String itype, short data, int amount, String ts) {
 
@@ -23,9 +24,24 @@ public class CompletedTransaction {
 		this.tradeStation = ts;
 	}
 
+	public CompletedTransaction(UUID p, String itype, short data, int amount, String ts, int id) {
+
+		this.playerUUID = p;
+		this.materialName = itype;
+		this.data = data;
+		this.amount = amount;
+		this.tradeStation = ts;
+		this.id = id;
+	}
+
 	public ItemStack getItemStack() {
 
 		return new ItemStack(Material.getMaterial(this.getMaterialName()), this.getAmount(), this.getData());
+	}
+
+	public CompletedTransaction copy() {
+
+		return new CompletedTransaction(this.playerUUID, this.materialName, this.data, this.amount, this.tradeStation, this.id);
 	}
 
 	public UUID getPlayerUUID() {
@@ -76,6 +92,16 @@ public class CompletedTransaction {
 	public void setTradeStation(String tradeStation) {
 
 		this.tradeStation = tradeStation;
+	}
+
+	public int getId() {
+
+		return id;
+	}
+
+	public void setId(int id) {
+
+		this.id = id;
 	}
 
 }

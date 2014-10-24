@@ -30,6 +30,7 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 public class SQSpace extends JavaPlugin implements Listener {
 
 	public static ArrayList<Player> Players = new ArrayList<Player>();
+	public static SQSpace instance;
 
 	@Override
 	public void onDisable() {
@@ -39,35 +40,30 @@ public class SQSpace extends JavaPlugin implements Listener {
 	@Override
 	public void onEnable() {
 
+		instance = this;
 		this.getServer().getPluginManager().registerEvents(this, this);
 		new TimeReset(this);
 	}
 
 	// Adding headshot support
 	@EventHandler
-	public void arrowDamager(EntityDamageByEntityEvent e)
-	{
+	public void arrowDamager(EntityDamageByEntityEvent e) {
+
 		// Making sure the entity that did the damage was an arrow
-		if ((e.getDamager() instanceof Arrow) && (e.getEntity() instanceof Player))
-		{
+		if ((e.getDamager() instanceof Arrow) && (e.getEntity() instanceof Player)) {
 			final Entity arrow = e.getDamager();
 			final Player p = (Player) e.getEntity();
 			// Sneaking changes height of the player's head
 			final double headHeight = (p.isSneaking()) ? 1.46 : 1.62;
-			
-			if (arrow.getLocation().getY() > (p.getLocation().getY() + headHeight))
-			{
+
+			if (arrow.getLocation().getY() > (p.getLocation().getY() + headHeight)) {
 				// Replacing their pumpkin with air
-				if (p.getInventory().getHelmet().getType() == Material.PUMPKIN)
-				{
+				if (p.getInventory().getHelmet().getType() == Material.PUMPKIN) {
 					p.getInventory().setHelmet(new ItemStack(Material.AIR));
 					// Refunding them the jack o lantern
-					if (p.getInventory().firstEmpty() > -1)
-					{
+					if (p.getInventory().firstEmpty() > -1) {
 						p.getInventory().addItem(new ItemStack(Material.JACK_O_LANTERN, 1));
-					}
-					else
-					{
+					} else {
 						p.getWorld().dropItem(p.getLocation(), new ItemStack(Material.JACK_O_LANTERN, 1));
 					}
 					((Player) ((Arrow) arrow).getShooter()).sendMessage(ChatColor.RED + "Headshot!");
@@ -112,9 +108,9 @@ public class SQSpace extends JavaPlugin implements Listener {
 		return false;
 	}
 
-	public boolean isInSpace(Player p) {
+	public static boolean isInSpace(Entity e) {
 
-		final Location l = p.getLocation();
+		final Location l = e.getLocation();
 		boolean air1 = true;
 		boolean air2 = true;
 		final int x = l.getBlockX();
@@ -122,7 +118,7 @@ public class SQSpace extends JavaPlugin implements Listener {
 		final int z = l.getBlockZ();
 		final World w = l.getWorld();
 		int height = 40;
-		if (w.getName().equalsIgnoreCase("Regalis") && this.isInSpawn(p)) {
+		if (w.getName().equalsIgnoreCase("Regalis") && isInSpawn(e)) {
 			height = 130;
 		}
 		for (int i = 0; i < height; i++) {
@@ -140,16 +136,19 @@ public class SQSpace extends JavaPlugin implements Listener {
 		return true;
 	}
 
-	public boolean isInSpawn(Player p) {
+	public static boolean isInSpawn(Entity e) {
 
-		final ApplicableRegionSet s = this.getWorldGuard().getRegionManager(Bukkit.getServer().getWorld("Regalis")).getApplicableRegions(p.getLocation());
+		if (!(e instanceof Player))
+			return false;
+
+		final ApplicableRegionSet s = instance.getWorldGuard().getRegionManager(Bukkit.getServer().getWorld("Regalis")).getApplicableRegions(e.getLocation());
 		for (final ProtectedRegion r : s) {
 			if (r.getId().equals("spawn"))
 				return true;
 		}
 		return false;
 	}
-	
+
 	@EventHandler
 	public void onHelmetChange(final InventoryClickEvent event) {
 

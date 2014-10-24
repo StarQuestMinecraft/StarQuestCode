@@ -10,6 +10,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.UUID;
 
+import org.bukkit.entity.Player;
+
 import us.higashiyama.george.SQTrading.Utils.TransactionType;
 
 public class Database {
@@ -19,11 +21,11 @@ public class Database {
 	public String world;
 	public int x, y, z;
 	public static String driverString = "com.mysql.jdbc.Driver";
-	public static String hostname = "192.99.20.8";
+	public static String hostname = "localhost";
 	public static String port = "3306";
 	public static String db_name = "minecraft";
-	public static String username = "minecraft";
-	public static String password = "R3b!rth!ng";
+	public static String username = "root";
+	public static String password = "masumoto";
 	public static Connection cntx = null;
 	public static String dsn = ("jdbc:mysql://" + hostname + ":" + port + "/" + db_name);
 
@@ -32,11 +34,13 @@ public class Database {
 		//@formatting:off
 		String TransactionTable = "CREATE TABLE IF NOT EXISTS SQTrading_Transactions"
 				+ " ("
+				+ "`id` MEDIUMINT(8) UNSIGNED NOT NULL AUTO_INCREMENT,"
 				+ " `TradingStation` VARCHAR(32),"
 				+ " `Material` VARCHAR(32),"
 				+ " `Quantity` INT,"
 				+ " `Data` INT,"
-				+ " `UUID` VARCHAR(64)"
+				+ " `UUID` VARCHAR(64),"
+				+ " PRIMARY KEY (`id`)"
 				+ ")";
 		
 		String OffersTable = "CREATE TABLE IF NOT EXISTS SQTrading_Offers"
@@ -96,14 +100,8 @@ public class Database {
 						System.out.println("Context didn't work sucessfully");
 					PreparedStatement s = null;
 					try {
-						s = cntx.prepareStatement("DELETE FROM SQTrading_Offers WHERE `TradingStation` = ? AND `type` = ? AND `Material` = ? AND `Quantity` = ? AND `Data` = ? AND `Price` = ?");
-						s.setString(1, to.getTradingStation());
-						s.setString(2, to.getTradingType().toString());
-						s.setString(3, to.getMaterial());
-						s.setInt(4, to.getQuantity());
-						s.setInt(5, to.getData());
-						s.setDouble(6, to.getQuantity());
-
+						s = cntx.prepareStatement("DELETE FROM SQTrading_Offers WHERE `id` = ?");
+						s.setInt(1, to.getId());
 						s.execute();
 						s.close();
 
@@ -121,6 +119,35 @@ public class Database {
 			}
 		};
 		new Thread(task, "ServiceThread").start();
+
+	}
+
+	public static TradingStation getTradingStationByName(String name) {
+
+		if (!getContext())
+			System.out.println("Context didn't work sucessfully");
+		PreparedStatement s = null;
+		try {
+			TradingStation ts = null;
+			s = cntx.prepareStatement("SELECT * FROM SQTrading_TradingStations WHERE `name` = ?");
+			s.setString(1, name);
+			ResultSet rs = s.executeQuery();
+			while (rs.next()) {
+				ts = new TradingStation(rs.getString("name"), rs.getInt("x"), rs.getInt("y"), rs.getInt("z"), rs.getString("world"), rs.getString("server"));
+			}
+			s.close();
+			return ts;
+
+		} catch (SQLException e) {
+			System.out.print("[CCDB] SQL Error GET" + e.getMessage());
+		} catch (Exception e) {
+			System.out.print("[CCDB] SQL Error (Unknown)");
+			e.printStackTrace();
+		} finally {
+			close(s);
+		}
+
+		return null;
 
 	}
 
@@ -274,7 +301,7 @@ public class Database {
 
 	}
 
-	public static TradingOffer getTradingOffer(TradingStation ts, int id) {
+	public static TradingOffer getSellOffer(TradingStation ts, int id) {
 
 		if (!getContext())
 			System.out.println("Context didn't work sucessfully");
@@ -290,14 +317,75 @@ public class Database {
 					tt = TransactionType.BUY;
 
 				} else {
-					tt = TransactionType.SELL;
+					continue;
 				}
 
 				offer = new TradingOffer(rs.getString("TradingStation"), tt, UUID.fromString(rs.getString("UUID")), rs.getString("material"),
-						rs.getInt("quantity"), (short) rs.getInt("data"), rs.getDouble("price"));
+						rs.getInt("quantity"), (short) rs.getInt("data"), rs.getDouble("price"), id);
 			}
 			s.close();
 			return offer;
+
+		} catch (SQLException e) {
+			System.out.print("[CCDB] SQL Error" + e.getMessage());
+		} catch (Exception e) {
+			System.out.print("[CCDB] SQL Error (Unknown)");
+			e.printStackTrace();
+		} finally {
+			close(s);
+		}
+
+		return null;
+	}
+
+	public static void clearTransaction(final CompletedTransaction ct) {
+
+		Runnable task = new Runnable() {
+
+			public void run() {
+
+				try {
+					if (!getContext())
+						System.out.println("Context didn't work sucessfully");
+					PreparedStatement s = null;
+					try {
+						s = cntx.prepareStatement("DELETE FROM SQTrading_Transactions WHERE `id` = ?");
+						s.setInt(1, ct.getId());
+						s.execute();
+						s.close();
+
+					} catch (SQLException e) {
+						System.out.print("[CCDB] ADD SQL Error " + e.getMessage());
+					} catch (Exception e) {
+						System.out.print("[CCDB] SQL Error (Unknown)");
+						e.printStackTrace();
+					} finally {
+						close(s);
+					}
+				} catch (Exception ex) {
+					// handle error which cannot be thrown back
+				}
+			}
+		};
+		new Thread(task, "ServiceThread").start();
+	}
+
+	public static CompletedTransaction getRandomTransaction(Player p, TradingStation ts) {
+
+		if (!getContext())
+			System.out.println("Context didn't work sucessfully");
+		PreparedStatement s = null;
+		try {
+			CompletedTransaction ct = null;
+			s = cntx.prepareStatement("SELECT * FROM SQTrading_Transactions WHERE `uuid` = ?");
+			s.setString(1, p.getUniqueId().toString());
+			ResultSet rs = s.executeQuery();
+			while (rs.next()) {
+				ct = new CompletedTransaction(p.getUniqueId(), rs.getString("material"), (short) rs.getInt("data"), rs.getInt("Quantity"),
+						rs.getString("TradingStation"), rs.getInt("id"));
+			}
+			s.close();
+			return ct;
 
 		} catch (SQLException e) {
 			System.out.print("[CCDB] SQL Error" + e.getMessage());
@@ -376,6 +464,77 @@ public class Database {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+
+	public static void progressTransaction(final CompletedTransaction ct) {
+
+		Runnable task = new Runnable() {
+
+			public void run() {
+
+				try {
+					if (!getContext())
+						System.out.println("Context didn't work sucessfully");
+					PreparedStatement s = null;
+					try {
+
+						s = cntx.prepareStatement("UPDATE SQTrading_Transactions SET `quantity` = ? WHERE `id` = ?");
+						s.setInt(1, ct.getAmount());
+						s.setDouble(2, ct.getId());
+						s.execute();
+						s.close();
+
+					} catch (SQLException e) {
+						System.out.print("[CCDB] SQL Error          " + e.getMessage());
+					} catch (Exception e) {
+						System.out.print("[CCDB] SQL Error (Unknown)");
+						e.printStackTrace();
+					} finally {
+						close(s);
+					}
+				} catch (Exception ex) {
+					// handle error which cannot be thrown back
+				}
+			}
+		};
+		new Thread(task, "ServiceThread").start();
+
+	}
+
+	public static void progressOffer(final TradingOffer to, final int modQuantity) {
+
+		Runnable task = new Runnable() {
+
+			public void run() {
+
+				try {
+					if (!getContext())
+						System.out.println("Context didn't work sucessfully");
+					PreparedStatement s = null;
+					try {
+
+						s = cntx.prepareStatement("UPDATE SQTrading_Offers SET `quantity` = ?, `price` = ? WHERE `id` = ?");
+						s.setInt(1, modQuantity);
+						s.setDouble(2, to.getPrice());
+						s.setInt(3, to.getId());
+						s.execute();
+						s.close();
+
+					} catch (SQLException e) {
+						System.out.print("[CCDB] SQL Error          " + e.getMessage());
+					} catch (Exception e) {
+						System.out.print("[CCDB] SQL Error (Unknown)");
+						e.printStackTrace();
+					} finally {
+						close(s);
+					}
+				} catch (Exception ex) {
+					// handle error which cannot be thrown back
+				}
+			}
+		};
+		new Thread(task, "ServiceThread").start();
+
 	}
 
 }

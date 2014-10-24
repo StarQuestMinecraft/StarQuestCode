@@ -75,7 +75,7 @@ public class Perk {
 		rp.setAsyncKills(kills * -1);
 		rp.saveData();
 		for (String perm : perk.getPermissions()) {
-			SQRankup.permission.playerAdd(player, perm);
+			SQRankup.permission.playerAdd(null, player, perm);
 		}
 
 		SQRankup.dispatchCommands(perk.getCommands());

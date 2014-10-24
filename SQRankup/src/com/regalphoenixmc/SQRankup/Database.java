@@ -93,12 +93,31 @@ public class Database {
 
 	public static void addKills(final String player, final int kills) {
 
-		// PreparedStatement s =
-		// Database.cntx.prepareStatement("UPDATE RANKUP SET `kills` = (`kills` + ?) WHERE `name` = ?");
-		// s.setInt(1, kills);
-		// s.setString(2, player);
-		// asyncQuery(s);
+		Runnable task = new Runnable() {
 
+			public void run() {
+
+				if (!Database.getContext()) {
+					System.out.println("something is wrong!");
+				}
+				PreparedStatement s = null;
+				try {
+					s = Database.cntx.prepareStatement("UPDATE RANKUP SET `kills` = (`kills` + ?) WHERE `name` = ?");
+					s.setInt(1, kills);
+					s.setString(2, player);
+					s.execute();
+					s.close();
+				} catch (SQLException e) {
+					System.out.print("[SQDatabase] SQL Error" + e.getMessage());
+				} catch (Exception e) {
+					System.out.print("[SQDatabase] SQL Error (Unknown)");
+					e.printStackTrace();
+				} finally {
+					Database.close(s);
+				}
+			}
+		};
+		new Thread(task, "DBThread").start();
 	}
 
 	public static void updateEntry(final String player, final Long lastKillTime, final String killed) {

@@ -17,8 +17,9 @@ public class TradingOffer {
 	private int quantity;
 	private short data;
 	private double price;
+	private int id;
 
-	public TradingOffer(String tradingStation, TransactionType tradingType, UUID playerUUID, String material, int quantity, short data, double price) {
+	public TradingOffer(String tradingStation, TransactionType tradingType, UUID playerUUID, String material, int quantity, short data, double price, int id) {
 
 		this.tradingStation = tradingStation;
 		this.tradingType = tradingType;
@@ -27,6 +28,7 @@ public class TradingOffer {
 		this.quantity = quantity;
 		this.data = data;
 		this.price = price;
+		this.setId(id);
 	}
 
 	public ItemStack getItemStack() {
@@ -102,6 +104,16 @@ public class TradingOffer {
 	public void setPrice(double price) {
 
 		this.price = price;
+	}
+
+	public int getId() {
+
+		return id;
+	}
+
+	public void setId(int id) {
+
+		this.id = id;
 	}
 
 }

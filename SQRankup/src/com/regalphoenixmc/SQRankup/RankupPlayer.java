@@ -67,6 +67,8 @@ public class RankupPlayer {
 		}
 		Database.updateEntry(this.name, Long.valueOf(this.lastKillTime), this.lastKillName);
 
+		this.kills = this.kills + this.asyncKills;
+
 	}
 
 	public void saveNew() {

@@ -251,6 +251,8 @@ public class SQRankup extends JavaPlugin implements Listener {
 	@EventHandler
 	public void onPlayerKill(PlayerDeathEvent event) {
 
+		if (event.getEntity().getKiller() == event.getEntity())
+			return;
 		Entity killer = event.getEntity().getKiller();
 		if ((killer instanceof Player)) {
 			Player p = (Player) killer;
@@ -272,13 +274,13 @@ public class SQRankup extends JavaPlugin implements Listener {
 			entry.saveData();
 			if (MULTIPLIER == 1) {
 				((Player) killer).sendMessage(ChatColor.RED + "This kill was counted in the ranking system as "
-						+ rankToKills(((Player) event.getEntity()).getName()) + ". You have " + entry.getKills()
-						+ rankToKills(((Player) event.getEntity()).getName() + " kills total."));
+						+ rankToKills(((Player) event.getEntity()).getName()) + ". You have "
+						+ (entry.getKills() + rankToKills(((Player) event.getEntity()).getName()) + " kills total."));
 			} else {
 				((Player) killer).sendMessage(ChatColor.RED
 						+ "This kill was counted in the ranking system as "
-						+ rankToKills(((Player) event.getEntity()).getName() + "because of an active kill booster! You have " + entry.getKills()
-								+ rankToKills(((Player) event.getEntity()).getName()) + " kills total."));
+						+ rankToKills(((Player) event.getEntity()).getName() + "because of an active kill booster! You have "
+								+ (entry.getKills() + rankToKills(((Player) event.getEntity()).getName())) + " kills total."));
 			}
 
 			return;
