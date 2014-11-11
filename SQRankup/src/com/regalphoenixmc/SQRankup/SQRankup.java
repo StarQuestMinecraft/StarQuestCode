@@ -54,7 +54,31 @@ public class SQRankup extends JavaPlugin implements Listener {
 		MULTIPLIER = instance.getConfig().getInt("multiplier");
 		new NotifierTask().runTaskTimer(instance, 12000, 12000);
 		loadPerks();
+		Database.cleanUp();
 
+	}
+
+	@EventHandler
+	public void playerLogin(PlayerLoginEvent e) {
+
+		// Checks to make sure all purchased perms are credited
+		List<Perk> perks = Database.getRedeemedPlayerPerks(e.getPlayer());
+		for (Perk p : perks) {
+			List<String> perms = p.getPermissions();
+			for (String perm : perms) {
+				if (!e.getPlayer().hasPermission(perm)) {
+					permission.playerAdd(null, e.getPlayer(), perm);
+				}
+			}
+		}
+
+		List<Perk> unredeemed = Database.getUnredeemedPlayerPerks(e.getPlayer());
+		if (unredeemed.size() > 0) {
+			e.getPlayer().sendMessage(ChatColor.AQUA + "You have the following unredeemed perks: ");
+			for (Perk p : unredeemed) {
+				System.out.println(ChatColor.GOLD + "     " + p.getAlias());
+			}
+		}
 	}
 
 	private void loadPerks() {
@@ -64,11 +88,11 @@ public class SQRankup extends JavaPlugin implements Listener {
 			List<String> permissions = config.getStringList("perks." + name + ".permissions");
 			List<String> requiredPerms = config.getStringList("perks." + name + ".requiredperms");
 			List<String> commands = config.getStringList("perks." + name + ".commands");
-			perks.add(new Perk(alias, permissions, requiredPerms, commands));
+			List<String> addG = config.getStringList("perks." + name + ".addGroups");
+			List<String> remG = config.getStringList("perks." + name + ".removeGroups");
+			perks.add(new Perk(alias, permissions, requiredPerms, commands, addG, remG));
 
 		}
-
-		System.out.println(perks.get(0));
 
 	}
 
@@ -109,7 +133,7 @@ public class SQRankup extends JavaPlugin implements Listener {
 								confirmationMap.remove(player);
 								return;
 							} else {
-								perk.purchase(player, rp, money, kills, perk);
+								perk.purchase(player, rp, money, kills);
 							}
 
 							confirmationMap.remove(player);
@@ -145,6 +169,211 @@ public class SQRankup extends JavaPlugin implements Listener {
 
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 
+		if (cmd.getName().equalsIgnoreCase("perktraderemove")) {
+			if (!(sender instanceof Player))
+				return true;
+			Player p = (Player) sender;
+			int id = 0;
+			try {
+				id = Integer.parseInt(args[0]);
+			} catch (NumberFormatException e) {
+				sender.sendMessage(ChatColor.AQUA + "Must specify a number ID of the offer");
+				return true;
+			}
+
+			Currency currency = Database.removeOffer(id, p);
+
+			if (currency == null) {
+				sender.sendMessage(ChatColor.AQUA + "No offer with id: " + id + " in the database that you are allowed to delete");
+				return true;
+			}
+			if (currency instanceof Credits) {
+				currency.purchase((Player) sender, Database.getEntry(((Player) sender).getName()), 0, 0);
+			}
+
+			if (currency instanceof Perk) {
+				((Perk) currency).queuePurchase((Player) sender);
+			}
+			sender.sendMessage(ChatColor.AQUA + "Perk removed and recredited.");
+		}
+		if (cmd.getName().equalsIgnoreCase("perktrade")) {
+			if (!(sender instanceof Player))
+				return true;
+			// format of command
+			// perktrade <wants> <has> <expiry> <player>
+
+			if (args.length < 1 || args.length > 4) {
+				return false;
+			}
+
+			// for making the transaction
+			if (args.length == 1) {
+				int id = 0;
+				try {
+					id = Integer.parseInt(args[0]);
+				} catch (NumberFormatException e) {
+					sender.sendMessage(ChatColor.AQUA + "Must specify a number ID of the offer");
+					return true;
+				}
+				Currency currency = Database.getOffer(id, (Player) sender);
+
+				if (currency == null) {
+					sender.sendMessage(ChatColor.AQUA + "No offer with id: " + id + " in the database that you are allowed to redeem at this time");
+					return true;
+				}
+				if (currency instanceof Credits) {
+					currency.purchase((Player) sender, Database.getEntry(((Player) sender).getName()), 0, 0);
+				}
+
+				if (currency instanceof Perk) {
+					((Perk) currency).queuePurchase((Player) sender);
+				}
+				sender.sendMessage(ChatColor.AQUA + "Transaction credited.");
+				Database.deleteOffer(id);
+				return true;
+			}
+
+			Currency want = null;
+			Currency has = null;
+			int hours = 0;
+
+			try {
+				double credits = Double.parseDouble(args[0]);
+				want = new Credits(credits);
+			} catch (NumberFormatException e) {
+				for (Perk p : perks) {
+					if (p.getAlias().equalsIgnoreCase(args[0])) {
+						want = p;
+						break;
+					}
+
+				}
+			}
+
+			if (want == null) {
+				sender.sendMessage(ChatColor.AQUA + "No perk exists with the name: " + args[0]);
+				return true;
+			}
+
+			try {
+				double credits = Double.parseDouble(args[1]);
+				has = new Credits(credits);
+			} catch (NumberFormatException e) {
+				for (Perk p : perks) {
+					if (p.getAlias().equalsIgnoreCase(args[1])) {
+						has = p;
+						break;
+					}
+
+				}
+			}
+
+			if (has == null) {
+				sender.sendMessage(ChatColor.AQUA + "No perk exists with the name: " + args[0]);
+				return true;
+			}
+
+			try {
+				hours = Integer.parseInt(args[2]);
+			} catch (NumberFormatException e) {
+				sender.sendMessage(ChatColor.AQUA + "Expiry time must be a whole integer");
+				return true;
+			}
+
+			Player player = null;
+			if (args.length > 3) {
+				player = Bukkit.getPlayer(args[4]);
+				if (player == null) {
+					sender.sendMessage(ChatColor.AQUA + "No such player exists");
+					return true;
+				}
+			}
+
+			boolean hasPerk = false;
+			if (has instanceof Credits) {
+				if (economy.getBalance((Player) sender) < ((Credits) has).getCredits()) {
+					sender.sendMessage(ChatColor.AQUA + "Not enough credits to make the offer");
+					return true;
+				} else {
+					economy.withdrawPlayer((Player) sender, ((Credits) has).getCredits());
+					hasPerk = true;
+				}
+
+			}
+
+			if (has instanceof Perk) {
+				List<Perk> perks = Database.getUnredeemedPlayerPerks((Player) sender);
+				for (Perk p : perks) {
+					if (p.getAlias().equalsIgnoreCase(((Perk) has).getAlias())) {
+						hasPerk = true;
+						Database.removePerk((Player) sender, p);
+						break;
+					}
+				}
+			}
+
+			if (!hasPerk) {
+				sender.sendMessage(ChatColor.AQUA + "You don't own the perk you want to trade");
+				return true;
+			}
+
+			Database.openOffer((Player) sender, player, want, has, hours * 3600000);
+
+			sender.sendMessage(ChatColor.AQUA + "Offer created!");
+
+			return true;
+		}
+
+		if (cmd.getName().equalsIgnoreCase("perkredeem")) {
+			if (!(sender instanceof Player))
+				return true;
+
+			Player p = (Player) sender;
+			if (args.length == 1) {
+				List<Perk> unredeemed = Database.getUnredeemedPlayerPerks(p);
+				for (Perk perk : unredeemed) {
+					if (perk.getAlias().equalsIgnoreCase(args[0])) {
+						perk.purchase(p, Database.getEntry(p.getName()), 0, 0);
+						break;
+					}
+				}
+			} else if (args.length == 0) {
+				List<Perk> unredeemed = Database.getUnredeemedPlayerPerks(p);
+				if (unredeemed.size() > 0) {
+					p.sendMessage(ChatColor.AQUA + "You have the following unredeemed perks: ");
+					for (Perk perk : unredeemed) {
+						p.sendMessage(ChatColor.GOLD + "     " + perk.getAlias());
+					}
+				} else {
+					p.sendMessage(ChatColor.AQUA + "You have no perks to redeem");
+				}
+			}
+			return true;
+
+		}
+
+		if (cmd.getName().equalsIgnoreCase("perkadd") && sender.hasPermission("SQRankup.perkadd")) {
+			if (args.length == 2) {
+				String perk = args[0];
+				for (Perk p : perks) {
+					if (p.getAlias().equalsIgnoreCase(perk)) {
+
+						Player player = Bukkit.getPlayer(args[1]);
+						RankupPlayer rp = p.canPurchase(player, 0, 0, p);
+						if (rp != null) {
+
+							// Give the player the perk, but leave it unredeemed
+							p.queuePurchase(player);
+						}
+
+					}
+				}
+				return true;
+			} else {
+				return false;
+			}
+		}
+
 		if (cmd.getName().equalsIgnoreCase("rankuprefresh") && sender.hasPermission("SQRankup.refresh")) {
 			config = YamlConfiguration.loadConfiguration(new File(getDataFolder(), "config.yml"));
 			refresh();
@@ -158,7 +387,11 @@ public class SQRankup extends JavaPlugin implements Listener {
 			MULTIPLIER = Integer.parseInt(args[0]);
 			instance.getConfig().set("multiplier", MULTIPLIER);
 			saveConfig();
-			sender.sendMessage("Rankup Multiplier set to " + MULTIPLIER + " by " + args[1]);
+			String suffix = "";
+			if (args.length > 1) {
+				suffix += " by " + args[1];
+			}
+			sender.sendMessage("Rankup Multiplier set to " + MULTIPLIER + suffix);
 			return true;
 		}
 
@@ -232,6 +465,42 @@ public class SQRankup extends JavaPlugin implements Listener {
 			sender.sendMessage("Needs an argument.");
 			return false;
 		}
+
+		if ((cmd.getName().equalsIgnoreCase("modifykills")) && (sender.hasPermission("SQRankup.setKills"))) {
+
+			if (args.length < 2) {
+				sender.sendMessage("/modifykills <player> <new amount>");
+				sender.sendMessage("/modifykills <player> +<amount to add>");
+				sender.sendMessage("/modifykills <player> -<amount to subtract>");
+				return true;
+			}
+			String amount;
+
+			if (args[1].contains("+")) {
+				amount = args[1].replace("+", "");
+			} else if (args[1].contains("-")) {
+				amount = args[1].replace("+", "");
+			} else {
+				amount = args[1];
+			}
+
+			int parsedAmount = Integer.parseInt(amount);
+
+			Database.addKills(args[0], parsedAmount);
+
+			sender.sendMessage(args[0] + " now has " + Database.getEntry(args[0]).getKills() + " kills.");
+		}
+
+		if ((cmd.getName().equalsIgnoreCase("viewkills")) && (sender.hasPermission("SQRankup.viewKills"))) {
+
+			if (args.length < 1) {
+				sender.sendMessage("/viewkills <player>");
+				return true;
+			}
+
+			sender.sendMessage(args[0] + "  has " + Database.getEntry(args[0]).getKills() + " kills.");
+		}
+
 		return false;
 	}
 
@@ -274,13 +543,12 @@ public class SQRankup extends JavaPlugin implements Listener {
 			entry.saveData();
 			if (MULTIPLIER == 1) {
 				((Player) killer).sendMessage(ChatColor.RED + "This kill was counted in the ranking system as "
-						+ rankToKills(((Player) event.getEntity()).getName()) + ". You have "
-						+ (entry.getKills() + rankToKills(((Player) event.getEntity()).getName()) + " kills total."));
+						+ rankToKills(((Player) event.getEntity()).getName()) + ". You have " + entry.getKills() + " kills total.");
 			} else {
 				((Player) killer).sendMessage(ChatColor.RED
 						+ "This kill was counted in the ranking system as "
-						+ rankToKills(((Player) event.getEntity()).getName() + "because of an active kill booster! You have "
-								+ (entry.getKills() + rankToKills(((Player) event.getEntity()).getName())) + " kills total."));
+						+ rankToKills(((Player) event.getEntity()).getName() + "because of an active kill booster! You have " + entry.getKills()
+								+ " kills total."));
 			}
 
 			return;
@@ -440,10 +708,11 @@ public class SQRankup extends JavaPlugin implements Listener {
 
 	}
 
-	public static void dispatchCommands(List<String> commands) {
+	public static void dispatchCommands(List<String> commands, Player p) {
 
 		for (String c : commands) {
-			Bukkit.dispatchCommand(Bukkit.getConsoleSender(), c);
+			String command = c.replace("{name}", p.getName());
+			Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
 		}
 	}
 

@@ -302,54 +302,58 @@ public class SQDuties extends JavaPlugin implements Listener {
 			*/
 			Player p = (Player) sender;
 
-			if (p.isFlying()) {
-				p.sendMessage(ChatColor.RED + "You cannot unduty or duty while flying!");
-				return true;
-			}
+			if (cmd.getName().equalsIgnoreCase("duty")) {
 
-			if (p.hasPermission("SQDuties.Developer")) {
-				if (!isInDutymode(p, p.getWorld().getName())) {
-					enableDuty(p, "Developer");
+				if (p.isFlying()) {
+					p.sendMessage(ChatColor.RED + "You cannot unduty or duty while flying!");
 					return true;
 				}
-				disableDuty(p, "Developer");
-				return true;
-			}
-			if (p.hasPermission("SQDuties.Manager")) {
-				if (!isInDutymode(p, p.getWorld().getName())) {
-					enableDuty(p, "Manager");
-					return true;
-				}
-				disableDuty(p, "Manager");
-				return true;
-			}
-			if (p.hasPermission("SQDuties.Srmod")) {
-				if (!isInDutymode(p, p.getWorld().getName())) {
-					enableDuty(p, "SrMod");
-					return true;
-				}
-				disableDuty(p, "SrMod");
-				return true;
-			}
-			if (p.hasPermission("SQDuties.Mod")) {
-				if (!isInDutymode(p, p.getWorld().getName())) {
-					enableDuty(p, "Mod");
-					return true;
-				}
-				disableDuty(p, "Mod");
-				return true;
-			}
-			if (p.hasPermission("SQDuties.Trmod")) {
-				if (!isInDutymode(p, p.getWorld().getName())) {
-					enableDuty(p, "TrMod");
-					return true;
-				}
-				disableDuty(p, "TrMod");
-				return true;
-			}
 
+				if (p.hasPermission("SQDuties.Developer")) {
+					if (!isInDutymode(p, p.getWorld().getName())) {
+						enableDuty(p, "Developer");
+						return true;
+					}
+					disableDuty(p, "Developer");
+					return true;
+				}
+				if (p.hasPermission("SQDuties.Manager")) {
+					if (!isInDutymode(p, p.getWorld().getName())) {
+						enableDuty(p, "Manager");
+						return true;
+					}
+					disableDuty(p, "Manager");
+					return true;
+				}
+				if (p.hasPermission("SQDuties.Srmod")) {
+					if (!isInDutymode(p, p.getWorld().getName())) {
+						enableDuty(p, "SrMod");
+						return true;
+					}
+					disableDuty(p, "SrMod");
+					return true;
+				}
+				if (p.hasPermission("SQDuties.Mod")) {
+					if (!isInDutymode(p, p.getWorld().getName())) {
+						enableDuty(p, "Mod");
+						return true;
+					}
+					disableDuty(p, "Mod");
+					return true;
+				}
+				if (p.hasPermission("SQDuties.Trmod")) {
+					if (!isInDutymode(p, p.getWorld().getName())) {
+						enableDuty(p, "TrMod");
+						return true;
+					}
+					disableDuty(p, "TrMod");
+					return true;
+				}
+
+			}
+			return true;
 		}
-		return true;
+		return false;
 	}
 
 	public void enableDuty(Player p, String group) {

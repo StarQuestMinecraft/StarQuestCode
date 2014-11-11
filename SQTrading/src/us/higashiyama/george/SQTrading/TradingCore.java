@@ -2,6 +2,7 @@
 package us.higashiyama.george.SQTrading;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
@@ -31,6 +32,7 @@ public class TradingCore extends JavaPlugin implements Listener {
 	public static Permission permission;
 	public static Economy economy;
 	private static final String SIGN_IDENTIFIER = ChatColor.DARK_AQUA + "Trade Station";
+	public static HashMap<String, int[]> itemNames = new HashMap<String, int[]>();
 
 	public void onEnable() {
 
@@ -39,7 +41,25 @@ public class TradingCore extends JavaPlugin implements Listener {
 		setupPermissions();
 		setupEconomy();
 		Database.setUp();
+		loadItemNames();
 
+	}
+
+	private void loadItemNames() {
+
+		for (String s : instance.getConfig().getStringList("values")) {
+			String[] unparsed = s.split(",");
+			int[] parsed = { Integer.parseInt(unparsed[1]), Integer.parseInt(unparsed[2]) };
+			itemNames.put(unparsed[0], parsed);
+		}
+
+	}
+
+	private boolean itemExists(String s) {
+
+		if (itemNames.keySet().contains(s.toLowerCase()))
+			return true;
+		return false;
 	}
 
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
@@ -137,7 +157,7 @@ public class TradingCore extends JavaPlugin implements Listener {
 	private void parseBuyOffer(Player p, String[] args) {
 
 		// format(s)
-		// createoffer buy item data amount price station
+		// createoffer buy item amount price station
 		// createoffer buy hand amount price station
 
 		if (args[1].equalsIgnoreCase("hand")) {
@@ -166,7 +186,7 @@ public class TradingCore extends JavaPlugin implements Listener {
 			Database.addOffer(ts.getName(), TransactionType.SELL, p.getUniqueId(), is.getType().name(), amount, (short) is.getDurability(), price);
 		} else {
 
-			TradingStation ts = Database.getTradingStationByName(args[5]);
+			TradingStation ts = Database.getTradingStationByName(args[4]);
 			if (ts == null) {
 				p.sendMessage(ChatColor.RED + "No Trading Station with that name.");
 				return;
@@ -183,7 +203,7 @@ public class TradingCore extends JavaPlugin implements Listener {
 
 			double price = 0;
 			try {
-				price = Integer.parseInt(args[4]);
+				price = Integer.parseInt(args[3]);
 			} catch (NumberFormatException e) {
 				p.sendMessage("Please specify a number price.");
 				return;
@@ -191,26 +211,19 @@ public class TradingCore extends JavaPlugin implements Listener {
 
 			int amount = 0;
 			try {
-				amount = Integer.parseInt(args[3]);
+				amount = Integer.parseInt(args[2]);
 			} catch (NumberFormatException e) {
 				p.sendMessage("Please specify a number quantity.");
 				return;
 			}
 
-			int data = 0;
-			try {
-				data = Integer.parseInt(args[2]);
-			} catch (NumberFormatException e) {
-				p.sendMessage("Please specify a number data.");
-				return;
-			}
-			if (Material.getMaterial(item) == null) {
+			if (itemExists(item)) {
 				p.sendMessage("No such item exists with that name.");
 				return;
 			}
 
-			Material m = Material.matchMaterial(item);
-			Database.addOffer(ts.getName(), TransactionType.SELL, p.getUniqueId(), m.name(), amount, (short) data, price);
+			Material m = Material.getMaterial(itemNames.get(item.toLowerCase())[1]);
+			Database.addOffer(ts.getName(), TransactionType.SELL, p.getUniqueId(), m.name(), amount, (short) itemNames.get(item.toLowerCase())[2], price);
 		}
 
 	}
