@@ -1,0 +1,12 @@
+name: WorldRestore
+main: com.dibujaron.worldrestore.Core
+version: 1.0.0
+commands:
+    WorldRestore:
+        aliases: []
+        usage: /worldrestore <from> <to>
+    deleteoldwgs:
+        aliases: [deleteoldwg]
+        usage: /deleteoldwgs
+softdepend: [Towny, WorldGuard, Factions, Essentials]
+
