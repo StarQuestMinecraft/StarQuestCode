@@ -1,0 +1,7 @@
+name: IngameIDE
+main: com.dibujaron.ingameide.IngameIDE
+version: 1.0.0
+commands:
+    java:
+        description: edit java ingame.
+        usage: /java <command>
