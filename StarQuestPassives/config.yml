@@ -1,0 +1,18 @@
+#Config file for betterPassives by dibujaron
+#Originally developed for Erecia.net roleplay server
+
+cowNames:
+    - Cow
+
+
+pigNames:
+    - Pig
+
+chickenNames:
+    - Emu
+
+wolfNames:
+    - Wolf
+
+sheepNames:
+    - Sheep
