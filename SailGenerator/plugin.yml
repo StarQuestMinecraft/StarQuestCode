@@ -1,0 +1,7 @@
+name: SailGenerator
+main: net.countercraft.movecraft.sail.Driver
+version: 0.2.0
+commands:
+    spawnsail:
+        description: generate a sail!
+        usage: blah
