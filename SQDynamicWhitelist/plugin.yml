@@ -1,0 +1,4 @@
+name: SQDynamicWhitelist
+main: com.starquestmineraft.dynamicwhitelist.Whitelister
+version: 1.0.0
+
