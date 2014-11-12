@@ -1,0 +1,7 @@
+#FirstJoinAnnounce by Dibujaron, written for madrealms, yadadaydda
+
+#The message variable. Put %name% wherever you want their name to be. I imagine you figured that out.
+
+messageElse: "Please welcome %name% to StarQuest!"
+
+messageJoiner: "Welcome to StarQuest, %name%!"
