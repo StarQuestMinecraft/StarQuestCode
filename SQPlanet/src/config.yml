@@ -1,0 +1,42 @@
+### SQPlanet ###
+#
+# Custom Settings for mobs, trees, and customizations per
+# world and biome
+#
+
+##------------------------##
+# BetterEnchanting Options
+
+allowBookSplitting: true
+allowDisenchanting: true
+
+
+##---------------------##
+# BetterRecipes Options
+
+# Jerky is "beef" from "Rotten Flesh", "Rotten Flesh", "Sugar"
+allowJerky: true
+
+# Whether Rotten Flesh can be smelted into Leather
+allowFleshSmelt: true
+
+
+##---------------------------------##
+# BetterPassives and BetterHostiles
+# Global / World / Biome spawning settings
+
+Global:
+  defaultHostile: false
+  defaultPassive: false
+  defaultAmbient: true
+  
+  Emera:
+    ZOMBIE:
+      spawn: true
+      custom:
+        - spiritBlock
+        
+    PIG:
+      spawn: true
+      name: Hog
+  
