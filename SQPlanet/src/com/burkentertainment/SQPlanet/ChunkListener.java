@@ -1,4 +1,4 @@
-//package com.burkentertainment.SQPlanet;
+package com.burkentertainment.SQPlanet;
 //
 //import java.util.Collections;
 //import java.util.List;
@@ -13,19 +13,19 @@
 //import org.bukkit.entity.LivingEntity;
 //import org.bukkit.event.EventHandler;
 //import org.bukkit.event.EventPriority;
-//import org.bukkit.event.Listener;
+import org.bukkit.event.Listener;
 //import org.bukkit.event.world.ChunkLoadEvent;
 //import org.bukkit.event.world.ChunkUnloadEvent;
 //import org.bukkit.util.Vector;
 //
-//public class ChunkListener implements Listener{
-//	
-//	SQPlanetPlugin p;
-//	
-//	ChunkListener(SQPlanetPlugin plugin){
-//		p = plugin;
-//	}
-//	
+public class ChunkListener implements Listener{
+	
+	SQPlanetPlugin p;
+	
+	ChunkListener(SQPlanetPlugin plugin){
+		p = plugin;
+	}
+	
 //	@EventHandler(priority = EventPriority.HIGH)
 //	public void onChunkUnload(ChunkUnloadEvent event){
 //		
@@ -104,4 +104,4 @@
 //		}
 //	}
 //
-//}
+}

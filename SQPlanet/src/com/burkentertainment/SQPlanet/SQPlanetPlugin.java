@@ -6,7 +6,7 @@ public class SQPlanetPlugin extends JavaPlugin {
 
 	public void onLoad() {
 		try {
-			saveDefaultConfig();
+            saveDefaultConfig();
 		}
 		catch (Exception e){
 			e.printStackTrace();
@@ -15,11 +15,14 @@ public class SQPlanetPlugin extends JavaPlugin {
 	
 	public void onEnable() {
 		try {
-			BetterRecipes.addAllRecipes(getConfig());
+			PlanetSettings.getInstance().loadSettings(getConfig());
 			
+			BetterRecipes.addAllRecipes(getConfig());
+
+			this.getCommand("SQPlanet").setExecutor(new SQPlanetCommand(this));
 			// Event Listeners
+			getServer().getPluginManager().registerEvents(new EntityListener(this), this);
 			//getServer().getPluginManager().registerEvents(new PlayerListener(this), this);
-			//getServer().getPluginManager().registerEvents(new EntityListener(this), this);
 			//getServer().getPluginManager().registerEvents(new ChunkListener(this), this);
 	
 		}
@@ -52,4 +55,5 @@ public class SQPlanetPlugin extends JavaPlugin {
 //		Location location3 = new Location (location2.getWorld(), location2.getX(), location2.getY() - 1, location2.getZ());
 //		return location3.getBlock();
 //	}
+	
 }

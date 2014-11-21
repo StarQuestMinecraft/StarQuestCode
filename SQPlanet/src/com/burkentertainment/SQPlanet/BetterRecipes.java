@@ -37,23 +37,30 @@ public class BetterRecipes {
 			
 			// Check if this Recipe is one of the ones we are responsible for
 			// First, Furnace Recipes
-			if (recipe instanceof FurnaceRecipe) {
-				if ((Material.LEATHER == recipe.getResult().getType()) &&
-					(Material.ROTTEN_FLESH == ((FurnaceRecipe) recipe).getInput().getType())){
-						iter.remove();
-				}
-			}
-			
-			// Check for our Shapeless Recipes
-			if (recipe instanceof ShapelessRecipe) {
-				if (Material.RAW_BEEF == recipe.getResult().getType()) {
-					List<ItemStack> ingredients = ((ShapelessRecipe) recipe).getIngredientList();
-					if (3 == ingredients.size() &&
-						ingredients.contains(new ItemStack(Material.ROTTEN_FLESH)) &&
-						ingredients.contains(new ItemStack(Material.SUGAR))) {
-						iter.remove();
+			try {
+				if (recipe instanceof FurnaceRecipe) {
+					if ((Material.LEATHER == recipe.getResult().getType()) &&
+						(Material.ROTTEN_FLESH == ((FurnaceRecipe) recipe).getInput().getType())){
+							iter.remove();
 					}
 				}
+				
+				// Check for our Shapeless Recipes
+				if (recipe instanceof ShapelessRecipe) {
+					if (Material.RAW_BEEF == recipe.getResult().getType()) {
+						List<ItemStack> ingredients = ((ShapelessRecipe) recipe).getIngredientList();
+						if (3 == ingredients.size() &&
+							ingredients.contains(new ItemStack(Material.ROTTEN_FLESH)) &&
+							ingredients.contains(new ItemStack(Material.SUGAR))) {
+							iter.remove();
+						}
+					}
+				}
+			}
+			catch (NullPointerException e) {
+				System.out.print("[ERROR]: Failed to process Recipe iterator");
+				e.printStackTrace();
+				// Don't rethrow, attempt recovery
 			}
 		}
 	}
