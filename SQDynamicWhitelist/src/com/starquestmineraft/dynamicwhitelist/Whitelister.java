@@ -53,7 +53,7 @@ public class Whitelister extends Plugin implements Listener{
 			
 			if(!d.hasPlayedBefore(u)){
 				d.registerNewPlayer(u);
-				d.addPremiumTime(u, 48);
+				d.addPremiumTime(u, 168);
 				System.out.println("New player joined!");
 				sendDelayedMessage(u, "Welcome to StarQuest! As a new player, you recieve 48 hours of Priority Access!" );
 				sendDelayedMessage(u, "visit http://starquestminecraft.buycraft.net to subscribe to Priority Access!");
