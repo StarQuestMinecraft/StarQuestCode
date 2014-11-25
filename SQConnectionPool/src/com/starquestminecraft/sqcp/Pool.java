@@ -2,9 +2,11 @@ package com.starquestminecraft.sqcp;
 
 import java.sql.Connection;
 
+import org.bukkit.plugin.java.JavaPlugin;
+
 import com.mchange.v2.c3p0.ComboPooledDataSource;
 
-public class Pool {
+public class Pool extends JavaPlugin{
 	
 	private static final int POOL_SIZE = 3;
 	public static String driver = "com.mysql.jdbc.Driver";
@@ -41,7 +43,7 @@ public class Pool {
 	 * 
 	 */
 	
-	public void onLoad() {
+	public void onEnable() {
 		ComboPooledDataSource cpds = new ComboPooledDataSource();
 		try {
 			cpds.setDriverClass(driver);
