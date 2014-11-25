@@ -17,25 +17,30 @@ public class Pool extends JavaPlugin {
 	public static String dsn = ("jdbc:mysql://" + hostname + ":" + port + "/" + db_name);
 	public static int totalChecks = 0;
 
-	private static SharedConnection[] connections;
-
+	//private static SharedConnection[] connections;
+	private static Connection c;
+	
 	public void onEnable() {
-		connections = new SharedConnection[3];
+		//connections = new SharedConnection[3];
 
 		try {
 			Driver driver = (Driver) Class.forName(Pool.driver).newInstance();
 			DriverManager.registerDriver(driver);
-			for (int i = 0; i < connections.length; i++) {
+			/*for (int i = 0; i < connections.length; i++) {
 				Connection c = DriverManager.getConnection(dsn, username, password);
 				connections[i] = new SharedConnection(c);
-			}
+			}*/
+			c = DriverManager.getConnection(dsn, username, password);
 
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 
-	public static SharedConnection checkOutConnection() {
+	public static Connection grab(){
+		return c;
+	}
+	/*public static SharedConnection checkOutConnection() {
 		totalChecks++;
 		for (SharedConnection s : connections) {
 			if (!s.isInUse()) {
@@ -50,5 +55,5 @@ public class Pool extends JavaPlugin {
 
 	public static void returnConnection(SharedConnection c) {
 		c.release();
-	}
+	}*/
 }

@@ -85,14 +85,21 @@ public class LocketteVault extends JavaPlugin implements Listener{
 		if(dir == null) return false;
 		Block front = block.getRelative(dir);
 		if(front.getType() == Material.CHEST || front.getType() == Material.DROPPER || front.getType() == Material.DISPENSER || front.getType() == Material.FURNACE) return false;
-		Block frontdown = front.getRelative(BlockFace.DOWN);
 		
+		Block frontdown = front.getRelative(BlockFace.DOWN);
 		if(frontdown.getType()  == Material.IRON_DOOR_BLOCK || frontdown.getType() == Material.WOODEN_DOOR){
 			return true;
 		}
+		
 		if(front.getType() == Material.IRON_DOOR_BLOCK || front.getType() == Material.WOODEN_DOOR){
 			return true;
 		}
+		
+		Block frontup = front.getRelative(BlockFace.UP);
+		if(frontup.getType()  == Material.IRON_DOOR_BLOCK || frontup.getType() == Material.WOODEN_DOOR){
+			return true;
+		}
+		
 		return false;
 	}
 	

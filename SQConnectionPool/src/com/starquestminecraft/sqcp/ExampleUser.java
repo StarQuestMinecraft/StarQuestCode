@@ -2,13 +2,13 @@ package com.starquestminecraft.sqcp;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 
 public class ExampleUser {
 	
-	public static void neverCalled(String name){
-		SharedConnection c = Pool.checkOutConnection();
-		Connection cntx = c.getConnection();
+	public static void neverCalled(String name) throws SQLException{
+		Connection cntx = Pool.grab();
 		Statement s = null;
 		try {
 			s = cntx.createStatement();
@@ -21,7 +21,7 @@ public class ExampleUser {
 			System.out.print("[SQBedSpawn] SQL Error (Unknown)");
 			e.printStackTrace();
 		} finally {
-			Pool.returnConnection(c);
+			s.close();
 		}
 	}
 }
