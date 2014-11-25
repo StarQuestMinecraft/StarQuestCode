@@ -22,6 +22,7 @@ public class ExampleUser {
 			e.printStackTrace();
 		} finally {
 			s.close();
+			Pool.returnConnection(cntx);
 		}
 	}
 }

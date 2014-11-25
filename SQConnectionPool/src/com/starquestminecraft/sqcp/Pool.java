@@ -3,6 +3,7 @@ package com.starquestminecraft.sqcp;
 import java.sql.Connection;
 import java.sql.Driver;
 import java.sql.DriverManager;
+import java.sql.SQLException;
 
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -18,7 +19,6 @@ public class Pool extends JavaPlugin {
 	public static int totalChecks = 0;
 
 	//private static SharedConnection[] connections;
-	private static Connection c;
 	
 	public void onEnable() {
 		//connections = new SharedConnection[3];
@@ -30,30 +30,27 @@ public class Pool extends JavaPlugin {
 				Connection c = DriverManager.getConnection(dsn, username, password);
 				connections[i] = new SharedConnection(c);
 			}*/
-			c = DriverManager.getConnection(dsn, username, password);
-
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 
 	public static Connection grab(){
+		Connection c = null;
+		try {
+			c = DriverManager.getConnection(dsn, username, password);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		return c;
 	}
-	/*public static SharedConnection checkOutConnection() {
-		totalChecks++;
-		for (SharedConnection s : connections) {
-			if (!s.isInUse()) {
-				s.acquire();
-				return s;
-			}
-		}
-		//if none of them are available, get one of them. With this setup, it will pick a different one each time.
-		connections[totalChecks % 3].acquire();
-		return connections[totalChecks % 3];
-	}
 
-	public static void returnConnection(SharedConnection c) {
-		c.release();
-	}*/
+	public static void returnConnection(Connection c) {
+		try {
+			c.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
 }
