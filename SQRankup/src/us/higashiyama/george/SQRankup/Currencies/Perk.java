@@ -1,5 +1,5 @@
 
-package com.regalphoenixmc.SQRankup;
+package us.higashiyama.george.SQRankup.Currencies;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -7,6 +7,10 @@ import java.util.List;
 
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
+
+import com.regalphoenixmc.SQRankup.Database;
+import com.regalphoenixmc.SQRankup.RankupPlayer;
+import com.regalphoenixmc.SQRankup.SQRankup;
 
 public class Perk extends Currency implements Serializable {
 

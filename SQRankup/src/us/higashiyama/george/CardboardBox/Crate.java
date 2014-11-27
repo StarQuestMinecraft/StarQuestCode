@@ -13,9 +13,10 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
-import com.regalphoenixmc.SQRankup.Currency;
+import us.higashiyama.george.SQRankup.Currencies.Currency;
+import us.higashiyama.george.SQRankup.Currencies.Perk;
+
 import com.regalphoenixmc.SQRankup.Database;
-import com.regalphoenixmc.SQRankup.Perk;
 import com.regalphoenixmc.SQRankup.RankupPlayer;
 
 public class Crate extends Currency implements Serializable {

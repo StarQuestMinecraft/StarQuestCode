@@ -35,6 +35,9 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import us.higashiyama.george.CardboardBox.CardboardBox;
 import us.higashiyama.george.CardboardBox.Crate;
+import us.higashiyama.george.SQRankup.Currencies.Credits;
+import us.higashiyama.george.SQRankup.Currencies.Currency;
+import us.higashiyama.george.SQRankup.Currencies.Perk;
 
 public class SQRankup extends JavaPlugin implements Listener {
 

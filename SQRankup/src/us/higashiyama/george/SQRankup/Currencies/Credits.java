@@ -1,10 +1,14 @@
 
-package com.regalphoenixmc.SQRankup;
+package us.higashiyama.george.SQRankup.Currencies;
 
 import java.io.Serializable;
 
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
+
+import com.regalphoenixmc.SQRankup.Database;
+import com.regalphoenixmc.SQRankup.RankupPlayer;
+import com.regalphoenixmc.SQRankup.SQRankup;
 
 public class Credits extends Currency implements Serializable {
 
