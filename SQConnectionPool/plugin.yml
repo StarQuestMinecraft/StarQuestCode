@@ -1,0 +1,4 @@
+name: SQConnectionPool
+version: 1.0.0
+main: com.starquestminecraft.sqcp.Pool
+database: false

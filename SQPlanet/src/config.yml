@@ -1,0 +1,89 @@
+### SQPlanet ###
+#
+# Custom Settings for mobs, trees, and customizations per
+# world and biome
+#
+
+##---------------------##
+# BetterRecipes Options
+
+# Jerky is "beef" from "Rotten Flesh", "Rotten Flesh", "Sugar"
+allowJerky: true
+
+# Whether Rotten Flesh can be smelted into Leather
+allowFleshSmelt: true
+
+
+##---------------------------------##
+# BetterPassives and BetterHostiles
+# Global / World / Biome spawning settings
+#
+# Creatures should be listed using CreatureType
+#   http://jd.bukkit.org/rb/doxygen/da/d7e/enumorg_1_1bukkit_1_1entity_1_1CreatureType.html
+# Biomes should be listed by Biome Enum
+#   http://jd.bukkit.org/rb/apidocs/org/bukkit/block/Biome.html
+#
+# 'default' settings are applied first, then 'Global', then World, then Biome
+# 'spawn' settings for entered mobs without a "spawn" tag are assumed to be the opposite of the default
+# If the 'default' 'spawn' is true, listing a mob will remove, if the 'default' is false, listing it will add it
+
+# Turn off default spawn
+# Customize mobs with functions
+# Over crowding detection
+# Over crowding tweaks
+# Tree growths
+# Special farming drops
+
+default:
+  Creature:
+    spawn: false
+
+Global:
+ - 
+
+Emera:
+  Creature:
+   - ZOMBIE:
+     name: Spirit
+     weight: 19
+     modify:
+      - General.NoEquipment
+      - General.BlockHead
+      - General.Invisible
+         
+   - ZOMBIE:
+     name: Enraged Spirit
+     modify:
+      - General.NoEquipment
+      - General.BlockHead
+      - General.EnchantedSword
+      - General.Invisible
+         
+   - PIG:
+     weight: 2
+     name: Boar
+     
+   - PIG:
+     name: Sow
+     
+   - CHICKEN:
+     weight: 3
+     name: Rhea
+
+Biome:
+ - FLOWER_FOREST:
+   Creature:
+     - CAVE_SPIDER:
+       weight: 80
+       name: Crab Spider
+       modify:
+         - General.FlowerOnSpawn
+  
+Kelakaria:
+  Creature:
+   - CHICKEN:
+     name: Emu
+     modify:
+       - General.FlowerOnSpawn
+   
+  Tree:
