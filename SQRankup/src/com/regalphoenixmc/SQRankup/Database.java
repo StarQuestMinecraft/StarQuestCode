@@ -14,8 +14,16 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
+
+import us.higashiyama.george.CardboardBox.Crate;
+import us.higashiyama.george.SQRankup.Currencies.Credits;
+import us.higashiyama.george.SQRankup.Currencies.Currency;
+import us.higashiyama.george.SQRankup.Currencies.Perk;
 
 public class Database {
 
@@ -32,7 +40,7 @@ public class Database {
 
 		String Database_table = "CREATE TABLE IF NOT EXISTS RANKUP (`name` VARCHAR(32) NOT NULL,`kills` int(16) DEFAULT 0,`lastkill` VARCHAR(32) DEFAULT NULL,`lastkilltime` bigint(18) DEFAULT 0,PRIMARY KEY (`name`))";
 		String Database_perks = "CREATE TABLE IF NOT EXISTS perks (`uuid` VARCHAR(64), `perkname` VARCHAR(32), `perk` BLOB, `redeemed` BOOLEAN)";
-		String Database_escrow = "CREATE TABLE IF NOT EXISTS escrow (`id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY, `uuid` VARCHAR(64), `wants` BLOB, `wantsname` VARCHAR(32), `has` BLOB, `hasname` VARCHAR(32), `from` VARCHAR(64), `time` LONG)";
+		String Database_escrow = "CREATE TABLE IF NOT EXISTS escrow (`id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY, `uuid` VARCHAR(64), `wants` BLOB, `wantsname` LONGTEXT, `has` BLOB, `hasname` LONGTEXT, `from` VARCHAR(64), `time` LONG)";
 		getContext();
 		try {
 			Driver driver = (Driver) Class.forName(driverString).newInstance();
@@ -52,6 +60,34 @@ public class Database {
 		} finally {
 			close(s);
 		}
+	}
+
+	public static void showPrivateOffers(Player p) {
+
+		if (!Database.getContext()) {
+			System.out.println("something is wrong!");
+		}
+		PreparedStatement s = null;
+		try {
+
+			s = Database.cntx.prepareStatement("SELECT * FROM escrow WHERE `from` LIKE ?");
+			s.setString(1, p.getName());
+			ResultSet rs = s.executeQuery();
+
+			while (rs.next()) {
+				p.sendMessage(ChatColor.AQUA + "   Offer ID: " + rs.getInt("id") + " | " + Bukkit.getOfflinePlayer(UUID.fromString(rs.getString("uuid")))
+						+ " wants " + rs.getString("wantsname") + " for " + rs.getString("hasname"));
+			}
+			s.close();
+		} catch (SQLException e) {
+			System.out.print("[SQDatabase] SQL Error" + e.getMessage());
+		} catch (Exception e) {
+			System.out.print("[SQDatabase] SQL Error (Unknown)");
+			e.printStackTrace();
+		} finally {
+			Database.close(s);
+		}
+
 	}
 
 	public static Currency removeOffer(int id, Player p) {
@@ -75,8 +111,10 @@ public class Database {
 				Currency c = null;
 				if (name.split(" ").length == 2 && name.split(" ")[1].equals("credits")) {
 					c = (Credits) ois.readObject();
-				} else {
+				} else if (SQRankup.isPerk(name)) {
 					c = (Perk) ois.readObject();
+				} else {
+					c = (Crate) ois.readObject();
 				}
 				Database.deleteOffer(id);
 
@@ -161,8 +199,9 @@ public class Database {
 		}
 		PreparedStatement s = null;
 		try {
+
 			s = Database.cntx
-					.prepareStatement("SELECT * FROM escrow WHERE `id` = ? AND `player` LIKE ? AND round(unix_timestamp() * 1000 + MICROSECOND(sysdate(6)) / 1000) < `time`");
+					.prepareStatement("SELECT * FROM escrow WHERE `id` = ? AND (`from` LIKE ? || `from` = \"\") AND round(unix_timestamp() * 1000 + MICROSECOND(sysdate(6)) / 1000) < `time`");
 			s.setInt(1, id);
 			s.setString(2, p.getName());
 			ResultSet rs = s.executeQuery();
@@ -175,8 +214,10 @@ public class Database {
 				Currency c = null;
 				if (name.split(" ").length == 2 && name.split(" ")[1].equals("credits")) {
 					c = (Credits) ois.readObject();
-				} else {
+				} else if (SQRankup.isPerk(name)) {
 					c = (Perk) ois.readObject();
+				} else {
+					c = (Crate) ois.readObject();
 				}
 
 				return c;

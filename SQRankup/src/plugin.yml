@@ -24,5 +24,11 @@ commands:
   perktrade:
     description: Create an offer for a perk
     usage: /perktrade <want> <have> <hour expiry> <player (Optional)> || /perktrade <id>
+  perktraderemove:
+    description: Remove an offer
+    usage: /perktraderemove <id>
+  perktradeoffers:
+    description: Show all private perk offers
+    usage: /perktradeoffers
     
    

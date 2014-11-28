@@ -14,6 +14,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -28,8 +29,15 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import us.higashiyama.george.CardboardBox.CardboardBox;
+import us.higashiyama.george.CardboardBox.Crate;
+import us.higashiyama.george.SQRankup.Currencies.Credits;
+import us.higashiyama.george.SQRankup.Currencies.Currency;
+import us.higashiyama.george.SQRankup.Currencies.Perk;
 
 public class SQRankup extends JavaPlugin implements Listener {
 
@@ -41,6 +49,7 @@ public class SQRankup extends JavaPlugin implements Listener {
 	public static FileConfiguration config;
 	public static ArrayList<Perk> perks = new ArrayList<Perk>();
 	public static HashMap<Player, Perk> confirmationMap = new HashMap<Player, Perk>();
+	public static HashMap<String, int[]> itemNames = new HashMap<String, int[]>();
 
 	public void onEnable() {
 
@@ -55,7 +64,7 @@ public class SQRankup extends JavaPlugin implements Listener {
 		new NotifierTask().runTaskTimer(instance, 12000, 12000);
 		loadPerks();
 		Database.cleanUp();
-
+		loadItemNames();
 	}
 
 	@EventHandler
@@ -167,7 +176,63 @@ public class SQRankup extends JavaPlugin implements Listener {
 		return instance;
 	}
 
+	public static Currency parseItemInput(Player player) {
+
+		Block b = player.getTargetBlock(null, 100);
+		if (b.getType() == (Material.SIGN) || b.getType() == (Material.WALL_SIGN)) {
+			// safecast
+			Sign s = (Sign) player.getTargetBlock(null, 100).getState();
+
+			int quantity;
+			try {
+				quantity = Integer.parseInt(s.getLine(1));
+			} catch (NumberFormatException ex) {
+				player.sendMessage(ChatColor.AQUA + "Must specify a whole number quantity on line 2 of the sign");
+				return null;
+			}
+			String name = s.getLine(0);
+
+			ArrayList<ItemStack> stackList = new ArrayList<ItemStack>();
+			for (String testName : itemNames.keySet()) {
+				if (testName.equalsIgnoreCase(name)) {
+
+					int stacks = getStackData(quantity)[0];
+					int remaining = getStackData(quantity)[1];
+
+					while (stacks > 0) {
+						ItemStack is = new ItemStack(Material.getMaterial(itemNames.get(testName)[0]), stacks * 64, (byte) itemNames.get(testName)[1]);
+						stackList.add(is);
+						stacks--;
+					}
+					ItemStack is = new ItemStack(Material.getMaterial(itemNames.get(testName)[0]), remaining, (byte) itemNames.get(testName)[1]);
+
+					stackList.add(is);
+				}
+			}
+
+			ArrayList<CardboardBox> cbList = new ArrayList<CardboardBox>();
+			for (ItemStack tis : stackList) {
+				cbList.add(new CardboardBox(tis));
+			}
+
+			Crate c = new Crate(cbList);
+			return c;
+
+		}
+		return null;
+	}
+
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
+
+		if (cmd.getName().equalsIgnoreCase("perktradeoffers")) {
+			if (!(sender instanceof Player))
+				return true;
+			Player p = (Player) sender;
+			p.sendMessage(ChatColor.GOLD + "Private Offers: ");
+			Database.showPrivateOffers(p);
+			return true;
+
+		}
 
 		if (cmd.getName().equalsIgnoreCase("perktraderemove")) {
 			if (!(sender instanceof Player))
@@ -193,6 +258,10 @@ public class SQRankup extends JavaPlugin implements Listener {
 
 			if (currency instanceof Perk) {
 				((Perk) currency).queuePurchase((Player) sender);
+			}
+
+			if (currency instanceof Crate) {
+				currency.purchase((Player) sender, Database.getEntry(((Player) sender).getName()), 0, 0);
 			}
 			sender.sendMessage(ChatColor.AQUA + "Perk removed and recredited.");
 		}
@@ -228,6 +297,10 @@ public class SQRankup extends JavaPlugin implements Listener {
 				if (currency instanceof Perk) {
 					((Perk) currency).queuePurchase((Player) sender);
 				}
+
+				if (currency instanceof Crate) {
+					currency.purchase((Player) sender, Database.getEntry(((Player) sender).getName()), 0, 0);
+				}
 				sender.sendMessage(ChatColor.AQUA + "Transaction credited.");
 				Database.deleteOffer(id);
 				return true;
@@ -248,6 +321,15 @@ public class SQRankup extends JavaPlugin implements Listener {
 					}
 
 				}
+
+				if (args[0].equalsIgnoreCase("inventory")) {
+					want = new Crate(((Player) sender).getInventory());
+				}
+
+				if (args[0].equalsIgnoreCase("item")) {
+					want = parseItemInput((Player) sender);
+				}
+
 			}
 
 			if (want == null) {
@@ -266,6 +348,13 @@ public class SQRankup extends JavaPlugin implements Listener {
 					}
 
 				}
+				if (args[1].equalsIgnoreCase("inventory")) {
+					has = new Crate(((Player) sender).getInventory());
+				}
+			}
+
+			if (args[1].equalsIgnoreCase("item")) {
+				has = parseItemInput((Player) sender);
 			}
 
 			if (has == null) {
@@ -310,6 +399,17 @@ public class SQRankup extends JavaPlugin implements Listener {
 						break;
 					}
 				}
+			}
+
+			if (has instanceof Crate) {
+				// We know at this point that the player has the items
+
+				hasPerk = true;
+				Crate c = (Crate) has;
+				for (CardboardBox cb : c.getBoxes()) {
+					((Player) sender).getInventory().remove(cb.unbox());
+				}
+
 			}
 
 			if (!hasPerk) {
@@ -732,6 +832,45 @@ public class SQRankup extends JavaPlugin implements Listener {
 			permission = (Permission) permissionProvider.getProvider();
 		}
 		return permission != null;
+	}
+
+	public static boolean isPerk(String name) {
+
+		for (Perk p : perks) {
+			if (p.getAlias().equalsIgnoreCase(name)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private void loadItemNames() {
+
+		for (String s : instance.getConfig().getStringList("values")) {
+			String[] unparsed = s.split(",");
+			int[] parsed = { Integer.parseInt(unparsed[1]), Integer.parseInt(unparsed[2]) };
+			itemNames.put(unparsed[0], parsed);
+		}
+
+	}
+
+	private boolean itemExists(String s) {
+
+		if (itemNames.keySet().contains(s.toLowerCase()))
+			return true;
+		return false;
+	}
+
+	// returns array = {full stacks, number in second stack}
+	public static int[] getStackData(int i) {
+
+		// downcasts acts as Math.floor
+		int fullstacks = (int) (i % 64);
+		int remaining = i - (fullstacks * 64);
+
+		int[] retArray = { fullstacks, remaining };
+		return retArray;
+
 	}
 
 }

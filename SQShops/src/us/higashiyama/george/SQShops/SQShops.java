@@ -4,6 +4,9 @@ package us.higashiyama.george.SQShops;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import net.milkbowl.vault.economy.Economy;
 
@@ -30,6 +33,7 @@ public class SQShops extends JavaPlugin implements Listener {
 
 	public static SQShops instance;
 	public static HashMap<ItemStack, Double> itemIndex = new HashMap<ItemStack, Double>();
+	public static Set<ItemStack> blacklist = new HashSet<ItemStack>();
 	public static Economy economy = null;
 	public static double MULTIPLIER = 1;
 
@@ -42,6 +46,10 @@ public class SQShops extends JavaPlugin implements Listener {
 		LogDatabase.setUp();
 		Bukkit.getServer().getPluginManager().registerEvents(this, this);
 		itemIndex = Database.loadData();
+		List<String> itemBlackList = getConfig().getStringList("blacklist");
+		for (String s : itemBlackList) {
+			blacklist.add(new ItemStack(Material.matchMaterial(s), 1));
+		}
 		MULTIPLIER = instance.getConfig().getInt("multiplier");
 		new NotifierTask().runTaskTimer(instance, 12000, 12000);
 	}
@@ -182,6 +190,12 @@ public class SQShops extends JavaPlugin implements Listener {
 		for (ItemStack finalStack : i.getContents()) {
 			if (finalStack == null)
 				continue;
+
+			for (ItemStack is : blacklist) {
+				if (is.getType() == finalStack.getType()) {
+					continue;
+				}
+			}
 			double quantity = finalStack.getAmount();
 			ItemStack checkStack = new ItemStack(finalStack);
 			checkStack.setAmount(1);
