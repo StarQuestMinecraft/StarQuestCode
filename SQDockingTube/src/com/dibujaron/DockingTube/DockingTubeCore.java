@@ -1,5 +1,9 @@
 package com.dibujaron.DockingTube;
 
+import net.countercraft.movecraft.craft.Craft;
+import net.countercraft.movecraft.craft.CraftManager;
+import net.countercraft.movecraft.utils.MathUtils;
+
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -27,9 +31,26 @@ public class DockingTubeCore extends JavaPlugin implements Listener{
 					return;
 				}
 				if (sign.getLine(0).equalsIgnoreCase(ChatColor.AQUA + "DOCKING TUBE")){
-					new DockingTube(sign, event.getPlayer());
+					if(isPartOfShip(sign.getBlock())){
+						event.getPlayer().sendMessage("You cannot toggle the docking tube while the ship is active!");
+						return;
+					} else {
+						new DockingTube(sign, event.getPlayer());
+					}
 				}
 			}
 		}
+	}
+	
+	private boolean isPartOfShip(Block sign){
+		Craft[] crafts = CraftManager.getInstance().getCraftsInWorld(sign.getWorld());
+		if(crafts != null){
+			for(Craft c : crafts){
+				if(MathUtils.playerIsWithinBoundingPolygon(c.getHitBox(), c.getMinX(), c.getMinZ(), MathUtils.bukkit2MovecraftLoc(sign.getLocation()))){
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 }

@@ -632,7 +632,7 @@ public class SQRankup extends JavaPlugin implements Listener {
 			} else {
 				entry = Database.getEntry(p.getName());
 				String lastKill = entry.getLastKillName();
-				if ((lastKill != null) && (lastKill.equals(event.getEntity().getName())) && (System.currentTimeMillis() - entry.getLastKillTime() < 180000.0D)) {
+				if ((lastKill != null) && (lastKill.equals(event.getEntity().getName())) && (System.currentTimeMillis() - entry.getLastKillTime() < 1800000)) {
 					((Player) killer).sendMessage("You've already killed this guy in the last half hour. Lay off, dude. This kill wasn't counted.");
 					return;
 				}

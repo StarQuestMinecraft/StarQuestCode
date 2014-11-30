@@ -45,6 +45,53 @@ public class Pool extends JavaPlugin {
 		}
 		return c;
 	}
+	
+		/*
+		 * Plugins that should use this API
+		 * 
+		 * - SQShops
+		 * - SQRankup
+		 * - SQDuties
+		 * - SQBungeeMovecraft
+		 * - Redeem
+		 * 
+		 * Pre-pool stats:
+		 * 12 connections * (12 planets + 3 space + 1 limbo + 1 belt) = 204 cntx
+		 * 12 connections * (10 planets + 3 space + 1 limbo) = 168 cntx
+		 * 
+		 * Post-pool stats (assuming max pool size of 3):
+		 * 8 connections * (12 planets + 3 space + 1 limbo + 1 belt) = 136 cntx
+		 * 8 connections * (10 planets + 3 space + 1 limbo) = 120 cntx
+		 * 
+		 * Maximum servers with this pool: 25
+		 * 1 limbo + 1 belt + 5 space + 18 planets
+		 * 
+		 * Limbo
+		 * Regalis:
+		 * - Bol
+		 * - Bosk
+		 * - Kel
+		 * - Quav
+		 * Defalos:
+		 * - Acu
+		 * - Em
+		 * - Krys
+		 * - (Drak)
+		 * Digitalia:
+		 * - Ceha
+		 * - Iff
+		 * - Val
+		 * - (Inaris)
+		 * - (Belt)
+		 * (Madreos):
+		 * - (Uradine)
+		 * - (Grallion)
+		 * - (Rastafar)
+		 * (Erecos):
+		 * - (1)
+		 * - (2)
+		 * - (3)
+		 */
 
 	public static void returnConnection(Connection c) {
 		try {
