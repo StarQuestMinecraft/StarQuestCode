@@ -20,7 +20,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
-import us.higashiyama.george.CardboardBox.Crate;
+import us.higashiyama.george.SQRankup.Currencies.Crate;
 import us.higashiyama.george.SQRankup.Currencies.Credits;
 import us.higashiyama.george.SQRankup.Currencies.Currency;
 import us.higashiyama.george.SQRankup.Currencies.Perk;
@@ -201,22 +201,26 @@ public class Database {
 		try {
 
 			s = Database.cntx
-					.prepareStatement("SELECT * FROM escrow WHERE `id` = ? AND (`from` LIKE ? || `from` = \"\") AND round(unix_timestamp() * 1000 + MICROSECOND(sysdate(6)) / 1000) < `time`");
+					.prepareStatement("SELECT * FROM escrow WHERE `id` = ? AND (`from` LIKE ? || `from` = \"\") AND round(unix_timestamp() * 1000 + MICROSECOND(sysdate(6)) / 1000) > `time`");
 			s.setInt(1, id);
 			s.setString(2, p.getName());
 			ResultSet rs = s.executeQuery();
 
 			while (rs.next()) {
-				String name = rs.getString("wantsname");
-				byte[] unparsedPerk = (byte[]) rs.getObject("wants");
+				String name = rs.getString("hasname");
+				byte[] unparsedPerk = (byte[]) rs.getObject("has");
 				ByteArrayInputStream baip = new ByteArrayInputStream(unparsedPerk);
 				ObjectInputStream ois = new ObjectInputStream(baip);
 				Currency c = null;
+
 				if (name.split(" ").length == 2 && name.split(" ")[1].equals("credits")) {
+					System.out.println("credits");
 					c = (Credits) ois.readObject();
 				} else if (SQRankup.isPerk(name)) {
+					System.out.println("perk");
 					c = (Perk) ois.readObject();
 				} else {
+					System.out.println("crate");
 					c = (Crate) ois.readObject();
 				}
 
@@ -287,9 +291,9 @@ public class Database {
 		new Thread(task, "DBThread").start();
 	}
 
-	public static List<Perk> getUnredeemedPlayerPerks(Player player) {
+	public static List<Currency> getUnredeemedPlayerPerks(Player player) {
 
-		List<Perk> perks = new ArrayList<Perk>();
+		List<Currency> perks = new ArrayList<Currency>();
 		if (!Database.getContext()) {
 			System.out.println("something is wrong!");
 		}
@@ -303,7 +307,7 @@ public class Database {
 				byte[] unparsedPerk = (byte[]) rs.getObject("perk");
 				ByteArrayInputStream baip = new ByteArrayInputStream(unparsedPerk);
 				ObjectInputStream ois = new ObjectInputStream(baip);
-				Perk p = (Perk) ois.readObject();
+				Currency p = (Currency) ois.readObject();
 				perks.add(p);
 			}
 			s.close();
@@ -353,7 +357,7 @@ public class Database {
 
 	}
 
-	public static void addPerk(final Player player, final Perk perk, final boolean status) {
+	public static void addPerk(final Player player, final Currency perk, final boolean status) {
 
 		Runnable task = new Runnable() {
 

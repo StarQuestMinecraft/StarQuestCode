@@ -11,6 +11,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
 import us.higashiyama.george.CardboardBox.Utils.CardboardPotionEffect;
+import us.higashiyama.george.SQRankup.Currencies.Crate;
 
 public class Knapsack implements Serializable {
 

@@ -34,7 +34,7 @@ import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import us.higashiyama.george.CardboardBox.CardboardBox;
-import us.higashiyama.george.CardboardBox.Crate;
+import us.higashiyama.george.SQRankup.Currencies.Crate;
 import us.higashiyama.george.SQRankup.Currencies.Credits;
 import us.higashiyama.george.SQRankup.Currencies.Currency;
 import us.higashiyama.george.SQRankup.Currencies.Perk;
@@ -81,10 +81,11 @@ public class SQRankup extends JavaPlugin implements Listener {
 			}
 		}
 
-		List<Perk> unredeemed = Database.getUnredeemedPlayerPerks(e.getPlayer());
-		if (unredeemed.size() > 0) {
+		List<Currency> unredeemed = Database.getUnredeemedPlayerPerks(e.getPlayer());
+
+		if (unredeemed != null && unredeemed.size() > 0) {
 			e.getPlayer().sendMessage(ChatColor.AQUA + "You have the following unredeemed perks: ");
-			for (Perk p : unredeemed) {
+			for (Currency p : unredeemed) {
 				System.out.println(ChatColor.GOLD + "     " + p.getAlias());
 			}
 		}
@@ -284,25 +285,43 @@ public class SQRankup extends JavaPlugin implements Listener {
 					sender.sendMessage(ChatColor.AQUA + "Must specify a number ID of the offer");
 					return true;
 				}
+				System.out.println("getting currency");
 				Currency currency = Database.getOffer(id, (Player) sender);
-
+				System.out.println(currency);
 				if (currency == null) {
 					sender.sendMessage(ChatColor.AQUA + "No offer with id: " + id + " in the database that you are allowed to redeem at this time");
 					return true;
 				}
+
+				// If the player is at the node
+				if (currency.buildLocation() != null) {
+					if (!currency.buildLocation().equals(((Player) sender).getLocation())) {
+						sender.sendMessage(ChatColor.RED + "You are not at the designated trading node for this offer");
+						return true;
+					}
+				}
+
 				if (currency instanceof Credits) {
 					currency.purchase((Player) sender, Database.getEntry(((Player) sender).getName()), 0, 0);
 				}
 
 				if (currency instanceof Perk) {
+					System.out.println("perk");
 					((Perk) currency).queuePurchase((Player) sender);
 				}
 
 				if (currency instanceof Crate) {
-					currency.purchase((Player) sender, Database.getEntry(((Player) sender).getName()), 0, 0);
+					System.out.println("Crate");
+					((Crate) currency).queuePurchase((Player) sender);
 				}
 				sender.sendMessage(ChatColor.AQUA + "Transaction credited.");
+				System.out.println("Deleting");
 				Database.deleteOffer(id);
+				return true;
+			}
+
+			if (args.length < 3) {
+				sender.sendMessage(ChatColor.RED + "You left out an argument");
 				return true;
 			}
 
@@ -391,11 +410,11 @@ public class SQRankup extends JavaPlugin implements Listener {
 			}
 
 			if (has instanceof Perk) {
-				List<Perk> perks = Database.getUnredeemedPlayerPerks((Player) sender);
-				for (Perk p : perks) {
-					if (p.getAlias().equalsIgnoreCase(((Perk) has).getAlias())) {
+				List<Currency> perks = Database.getUnredeemedPlayerPerks((Player) sender);
+				for (Currency p : perks) {
+					if ((p instanceof Perk) && p.getAlias().equalsIgnoreCase(((Perk) has).getAlias())) {
 						hasPerk = true;
-						Database.removePerk((Player) sender, p);
+						Database.removePerk((Player) sender, (Perk) p);
 						break;
 					}
 				}
@@ -430,18 +449,18 @@ public class SQRankup extends JavaPlugin implements Listener {
 
 			Player p = (Player) sender;
 			if (args.length == 1) {
-				List<Perk> unredeemed = Database.getUnredeemedPlayerPerks(p);
-				for (Perk perk : unredeemed) {
+				List<Currency> unredeemed = Database.getUnredeemedPlayerPerks(p);
+				for (Currency perk : unredeemed) {
 					if (perk.getAlias().equalsIgnoreCase(args[0])) {
 						perk.purchase(p, Database.getEntry(p.getName()), 0, 0);
 						break;
 					}
 				}
 			} else if (args.length == 0) {
-				List<Perk> unredeemed = Database.getUnredeemedPlayerPerks(p);
+				List<Currency> unredeemed = Database.getUnredeemedPlayerPerks(p);
 				if (unredeemed.size() > 0) {
 					p.sendMessage(ChatColor.AQUA + "You have the following unredeemed perks: ");
-					for (Perk perk : unredeemed) {
+					for (Currency perk : unredeemed) {
 						p.sendMessage(ChatColor.GOLD + "     " + perk.getAlias());
 					}
 				} else {
@@ -579,7 +598,7 @@ public class SQRankup extends JavaPlugin implements Listener {
 			if (args[1].contains("+")) {
 				amount = args[1].replace("+", "");
 			} else if (args[1].contains("-")) {
-				amount = args[1].replace("+", "");
+				amount = args[1].replace("-", "");
 			} else {
 				amount = args[1];
 			}

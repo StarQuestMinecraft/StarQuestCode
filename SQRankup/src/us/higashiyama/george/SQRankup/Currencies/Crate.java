@@ -1,5 +1,5 @@
 
-package us.higashiyama.george.CardboardBox;
+package us.higashiyama.george.SQRankup.Currencies;
 
 /*
  * This class is a Crate that can hold as many cardboard boxes as needed.
@@ -9,12 +9,12 @@ package us.higashiyama.george.CardboardBox;
 import java.io.Serializable;
 import java.util.ArrayList;
 
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
-import us.higashiyama.george.SQRankup.Currencies.Currency;
-import us.higashiyama.george.SQRankup.Currencies.Perk;
+import us.higashiyama.george.CardboardBox.CardboardBox;
 
 import com.regalphoenixmc.SQRankup.Database;
 import com.regalphoenixmc.SQRankup.RankupPlayer;
@@ -33,6 +33,11 @@ public class Crate extends Currency implements Serializable {
 
 	@Override
 	public RankupPlayer canPurchase(Player player, double money, int kills, Perk perk) {
+
+		if (this.buildLocation() != null && !(this.buildLocation().equals(player.getLocation()))) {
+			player.sendMessage(ChatColor.RED + "You must be at the trading node specified with this offer.");
+			return null;
+		}
 
 		for (CardboardBox cb : storage) {
 			ItemStack is = cb.unbox();
@@ -57,6 +62,12 @@ public class Crate extends Currency implements Serializable {
 			}
 
 		}
+
+	}
+
+	public void queuePurchase(Player player) {
+
+		Database.addPerk(player, this, false);
 
 	}
 

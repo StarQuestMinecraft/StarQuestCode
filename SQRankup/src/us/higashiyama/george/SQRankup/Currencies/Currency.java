@@ -1,6 +1,8 @@
 
 package us.higashiyama.george.SQRankup.Currencies;
 
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import com.regalphoenixmc.SQRankup.RankupPlayer;
@@ -32,5 +34,14 @@ public abstract class Currency {
 	public void setNode(TradingNode node) {
 
 		this.node = node;
+	}
+
+	public Location buildLocation() {
+
+		if (node == null) {
+			return null;
+		} else {
+			return new Location(Bukkit.getWorld(node.getWorld()), node.getX(), node.getY(), node.getZ());
+		}
 	}
 }

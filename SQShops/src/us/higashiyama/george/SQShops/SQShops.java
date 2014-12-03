@@ -33,7 +33,7 @@ public class SQShops extends JavaPlugin implements Listener {
 
 	public static SQShops instance;
 	public static HashMap<ItemStack, Double> itemIndex = new HashMap<ItemStack, Double>();
-	public static Set<ItemStack> blacklist = new HashSet<ItemStack>();
+	public static Set<ItemStack> blacklist;
 	public static Economy economy = null;
 	public static double MULTIPLIER = 1;
 
@@ -46,9 +46,12 @@ public class SQShops extends JavaPlugin implements Listener {
 		LogDatabase.setUp();
 		Bukkit.getServer().getPluginManager().registerEvents(this, this);
 		itemIndex = Database.loadData();
+		blacklist = new HashSet<ItemStack>();
 		List<String> itemBlackList = getConfig().getStringList("blacklist");
 		for (String s : itemBlackList) {
-			blacklist.add(new ItemStack(Material.matchMaterial(s), 1));
+			System.out.println(s);
+			ItemStack is = new ItemStack(Material.matchMaterial(s), 1);
+			blacklist.add(is);
 		}
 		MULTIPLIER = instance.getConfig().getInt("multiplier");
 		new NotifierTask().runTaskTimer(instance, 12000, 12000);
@@ -167,6 +170,10 @@ public class SQShops extends JavaPlugin implements Listener {
 		for (ItemStack finalStack : i.getContents()) {
 			if (finalStack == null)
 				continue;
+
+			if (inBlacklist(finalStack.getType())) {
+				continue;
+			}
 			double quantity = finalStack.getAmount();
 			ItemStack checkStack = new ItemStack(finalStack);
 			checkStack.setAmount(1);
@@ -177,6 +184,17 @@ public class SQShops extends JavaPlugin implements Listener {
 		}
 		return roundTwoDecimals(total);
 
+	}
+
+	public static boolean inBlacklist(Material m) {
+
+		for (ItemStack is : blacklist) {
+			if (is.getType() == m) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	private void sellItems(Player player, Sign s) {
@@ -191,11 +209,11 @@ public class SQShops extends JavaPlugin implements Listener {
 			if (finalStack == null)
 				continue;
 
-			for (ItemStack is : blacklist) {
-				if (is.getType() == finalStack.getType()) {
-					continue;
-				}
+			if (inBlacklist(finalStack.getType())) {
+				leftovers.add(finalStack);
+				continue;
 			}
+
 			double quantity = finalStack.getAmount();
 			ItemStack checkStack = new ItemStack(finalStack);
 			checkStack.setAmount(1);
