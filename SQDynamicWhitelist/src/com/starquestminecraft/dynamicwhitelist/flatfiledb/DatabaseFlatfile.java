@@ -2,6 +2,7 @@ package com.starquestminecraft.dynamicwhitelist.flatfiledb;
 
 import java.util.ArrayList;
 import java.util.UUID;
+import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 
 import com.mini.Arguments;
@@ -12,6 +13,7 @@ import com.starquestmineraft.dynamicwhitelist.Whitelister;
 public class DatabaseFlatfile extends Database{
 
 	Mini database = new Mini(Whitelister.getInstance().getDataFolder() + "", "premiumdata.mini");
+	Semaphore lock = new Semaphore(1);
 	
 	private ArrayList<Runnable> runSyncQueue = new ArrayList<Runnable>();
 	public DatabaseFlatfile(){
@@ -55,6 +57,7 @@ public class DatabaseFlatfile extends Database{
 	@Override
 	public void addPremiumTime(final UUID u, final int hours){
 		//first load their arguments from the database
+			acquire();
 			Arguments entry = database.getArguments(u.toString());
 			
 			//if they aren't in the database they must be buying premium time before having logged into the server. Wierd.
@@ -76,6 +79,7 @@ public class DatabaseFlatfile extends Database{
 			}
 			database.addIndex(u.toString(), entry);
 			database.update();
+			release();
 
 	}
 	
@@ -99,21 +103,27 @@ public class DatabaseFlatfile extends Database{
 
 	@Override
 	public boolean hasPlayedBefore(UUID u) {
-		return database.hasIndex(u.toString());
+		acquire();
+		boolean retval = database.hasIndex(u.toString());
+		release();
+		return retval;
 	}
 
 	@Override
 	public void registerNewPlayer(UUID u) {
+		acquire();
 		Arguments entry = new Arguments(u.toString());
 		entry.setValue("purchaseTime", 0 + "");
 		entry.setValue("hoursPurchased", 0 + "");
 		entry.setValue("permanent", false + "");
 		database.addIndex(entry.getKey(), entry);
 		database.update();
+		release();
 	}
 
 	@Override
 	public void setPermanent(UUID u, boolean permanent) {
+		acquire();
 		Arguments entry = database.getArguments(u.toString());
 		
 		//if they aren't in the database they must be buying premium time before having logged into the server. Wierd.
@@ -131,13 +141,29 @@ public class DatabaseFlatfile extends Database{
 		}
 		database.addIndex(entry.getKey(), entry);
 		database.update();
+		release();
 	}
 
 	@Override
 	public boolean isPermanent(UUID u) {
+		acquire();
 		Arguments entry = database.getArguments(u.toString());
+		release();
 		if(entry == null) return false;
 		boolean permanent = entry.getBoolean("permanent");
 		return permanent;
+	}
+	
+	private void acquire(){
+		try {
+			lock.acquire();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	private void release(){
+		lock.release();
 	}
 }

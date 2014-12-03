@@ -50,7 +50,6 @@ public class Whitelister extends Plugin implements Listener{
 		if(!event.isCancelled()){
 			UUID u = event.getConnection().getUniqueId();
 			System.out.println("LoginEvent Called");
-			
 			if(!d.hasPlayedBefore(u)){
 				d.registerNewPlayer(u);
 				d.addPremiumTime(u, 168);
@@ -79,52 +78,6 @@ public class Whitelister extends Plugin implements Listener{
 				}
 			}
 		}
-	}
-	@EventHandler(priority = EventPriority.HIGHEST)
-	public void onPlayerChat(ChatEvent event){
-		if(event.isCommand()) return;
-		Connection c = event.getSender();
-		if(c instanceof ProxiedPlayer){
-			ProxiedPlayer p = (ProxiedPlayer) c;
-			if(premiumPlayers.contains(p.getUniqueId())){
-				event.setMessage(insertPrioritySymbolEfficient(event.getMessage()));
-			}
-		} 
-	}
-	
-	private String insertPrioritySymbol(String msg){
-		//[Rega][Warlord][Mod]username: message
-		String colonsplit = msg.substring(0, msg.indexOf(":"));
-		String msgcontent = msg.substring(msg.indexOf(":") + 1, msg.length());
-		//[Rega][Warlord][Mod]username
-		String[] split = colonsplit.split("]");
-		//[Rega, [Warlord, [Mod, username
-		String newmsg = split[0] + "]";
-		for(int i = 1; i < split.length - 1; i++ ){
-			newmsg = newmsg + split[i] + "]";
-		}
-		//[Rega][Warlord][Mod]
-		newmsg = newmsg + PRIORITY_SYMBOL;
-		//[Rega][Warlord][Mod][+]
-		newmsg = newmsg + split[split.length - 1];
-		//[Rega][Warlord][Mod][+]username
-		newmsg = newmsg + ":";
-		//[Rega][Warlord][Mod][+]username:
-		newmsg = newmsg + msgcontent;
-		//[Rega][Warlord][Mod][+]username: message
-		return newmsg;
-	}
-	
-	private String insertPrioritySymbolEfficient(String msg){
-		//[Rega][Warlord][Mod]username: message
-		int index = msg.indexOf(":");
-		if(index < 0) return msg;
-		String colonsplit = msg.substring(0, index);
-		String msgcontent = msg.substring(msg.indexOf(":") + 1, msg.length());
-		int insertionIndex = colonsplit.lastIndexOf("]") + 1;
-		String titles = colonsplit.substring(0, insertionIndex);
-		String username = colonsplit.substring(insertionIndex, colonsplit.length());
-		return titles + PRIORITY_SYMBOL + username + ":" + msgcontent;
 	}
 	
 	@EventHandler

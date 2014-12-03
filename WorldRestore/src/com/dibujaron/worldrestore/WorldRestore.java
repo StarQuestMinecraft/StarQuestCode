@@ -3,33 +3,22 @@ package com.dibujaron.worldrestore;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Set;
-
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
-import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
-import org.bukkit.block.DoubleChest;
 import org.bukkit.block.Sign;
-import org.bukkit.inventory.DoubleChestInventory;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
-import org.bukkit.material.Chest;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import com.massivecraft.factions.entity.BoardColls;
 import com.massivecraft.factions.entity.Faction;
 import com.massivecraft.factions.entity.FactionColls;
-import com.massivecraft.massivecore.ps.PS;
 import com.palmergames.bukkit.towny.object.Town;
-import com.palmergames.bukkit.towny.object.TownBlock;
 import com.palmergames.bukkit.towny.object.TownyUniverse;
-import com.sk89q.worldedit.BlockVector;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
-import com.sk89q.worldguard.domains.DefaultDomain;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 
 public class WorldRestore extends BukkitRunnable {
@@ -53,7 +42,7 @@ public class WorldRestore extends BukkitRunnable {
 	public static long month = 2592000000L;
 	final int MAX_PER_RUN = 10000;
 
-	public static final int[] fragileBlocks = new int[] { 29, 33, /* 34, */50, 52, 55, 63, 64, 65, 68, 69, 70, 71, 72, 75, 76, 77, 93, 94, 96, 131, 132, 143, 147, 148, 149, 150, 151, 171, 323, 324, 330, 331,
+	public static final int[] fragileBlocks = new int[] { 8, 9, 10, 11, 29, 33, /* 34, */50, 52, 55, 59, 63, 64, 65, 68, 69, 70, 71, 72, 75, 76, 77, 93, 94, 96, 131, 132, 143, 147, 148, 149, 150, 151, 171, 323, 324, 330, 331,
 			356, 404 };
 
 	public WorldRestore(World to, World from, boolean doWG, boolean doTowns, boolean doFactions) {
