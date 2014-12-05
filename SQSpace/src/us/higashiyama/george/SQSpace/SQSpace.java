@@ -118,9 +118,6 @@ public class SQSpace extends JavaPlugin implements Listener {
 		final int z = l.getBlockZ();
 		final World w = l.getWorld();
 		int height = 40;
-		if (w.getName().equalsIgnoreCase("Regalis") && isInSpawn(e)) {
-			height = 130;
-		}
 		for (int i = 0; i < height; i++) {
 			final int id1 = w.getBlockTypeIdAt(x, y + i + 1, z);
 			final int id2 = w.getBlockTypeIdAt(x, y - i, z);
@@ -134,19 +131,6 @@ public class SQSpace extends JavaPlugin implements Listener {
 		if ((!air1) && (!air2))
 			return false;
 		return true;
-	}
-
-	public static boolean isInSpawn(Entity e) {
-
-		if (!(e instanceof Player))
-			return false;
-
-		final ApplicableRegionSet s = instance.getWorldGuard().getRegionManager(Bukkit.getServer().getWorld("Regalis")).getApplicableRegions(e.getLocation());
-		for (final ProtectedRegion r : s) {
-			if (r.getId().equals("spawn"))
-				return true;
-		}
-		return false;
 	}
 
 	@EventHandler
@@ -167,15 +151,18 @@ public class SQSpace extends JavaPlugin implements Listener {
 		}
 		if ((planet.equals("Defalos")) || (planet.equals("AsteroidBelt")) || (planet.equals("Digitalia")) || (planet.equals("Regalis"))) {
 
-			if ((this.isInSpace(p)) && (!p.isFlying()) && (p.getGameMode().equals(GameMode.SURVIVAL))) {
+			if ((isInSpace(p)) && (!p.isFlying()) && (p.getGameMode().equals(GameMode.SURVIVAL))) {
 				p.setAllowFlight(true);
 				p.setFlying(true);
-				p.setFlySpeed(0.05F);
-			} else if ((!this.isInSpace(p)) && (p.isFlying()) && (p.getGameMode().equals(GameMode.SURVIVAL))) {
+				p.setFlySpeed(0.01F);
+			} else if ((!isInSpace(p)) && (p.isFlying()) && (p.getGameMode().equals(GameMode.SURVIVAL))) {
 				p.setAllowFlight(false);
 				p.setFlying(false);
 				p.setFlySpeed(0.1F);
 				p.setFallDistance(0.0F);
+			}
+			if(p.isSprinting()){
+				p.setSprinting(false);
 			}
 			this.checkIfSuffocating(p);
 		}

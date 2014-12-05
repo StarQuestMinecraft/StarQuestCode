@@ -1,11 +1,9 @@
 package com.dibujaron.worldrestore;
 
-import java.util.ArrayList;
 import java.util.Set;
 
 import org.bukkit.Chunk;
 import org.bukkit.World;
-import org.bukkit.block.Block;
 
 import com.massivecraft.factions.entity.BoardColls;
 import com.massivecraft.factions.entity.Faction;
