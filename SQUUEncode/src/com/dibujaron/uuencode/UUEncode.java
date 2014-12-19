@@ -20,7 +20,7 @@ public class UUEncode {
 		System.out.println(u2);
 	}
 	private static String encode(byte[] data) {
-		return uuec.encode(data);
+		return uuec.encodeBuffer(data);
 	}
 	
 	private static byte[] decode(String data){
