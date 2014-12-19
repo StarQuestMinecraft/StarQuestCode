@@ -41,8 +41,11 @@ public class SQSpace extends JavaPlugin implements Listener {
 	public void onEnable() {
 
 		instance = this;
-		this.getServer().getPluginManager().registerEvents(this, this);
-		new TimeReset(this);
+		String planet = Bukkit.getServerName();
+		if ((planet.equals("Defalos")) || (planet.equals("AsteroidBelt")) || (planet.equals("Digitalia")) || (planet.equals("Regalis"))) {
+			this.getServer().getPluginManager().registerEvents(this, this);
+			new TimeReset(this);
+		}
 	}
 
 	// Adding headshot support
@@ -150,20 +153,23 @@ public class SQSpace extends JavaPlugin implements Listener {
 			p.setRemainingAir(p.getMaximumAir());
 		}
 		if ((planet.equals("Defalos")) || (planet.equals("AsteroidBelt")) || (planet.equals("Digitalia")) || (planet.equals("Regalis"))) {
-
+			
 			if ((isInSpace(p)) && (!p.isFlying()) && (p.getGameMode().equals(GameMode.SURVIVAL))) {
 				p.setAllowFlight(true);
 				p.setFlying(true);
-				p.setFlySpeed(0.01F);
+				p.setFlySpeed(0.02F);
 			} else if ((!isInSpace(p)) && (p.isFlying()) && (p.getGameMode().equals(GameMode.SURVIVAL))) {
 				p.setAllowFlight(false);
 				p.setFlying(false);
 				p.setFlySpeed(0.1F);
 				p.setFallDistance(0.0F);
 			}
-			if(p.isSprinting()){
-				p.setSprinting(false);
+			if(p.isFlying() && p.getGameMode().equals(GameMode.SURVIVAL)){
+				if(p.isSprinting()){
+					p.setSprinting(false);
+				}
 			}
+		
 			this.checkIfSuffocating(p);
 		}
 	}
