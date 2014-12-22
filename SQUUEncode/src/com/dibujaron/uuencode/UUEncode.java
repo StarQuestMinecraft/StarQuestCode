@@ -1,6 +1,7 @@
 package com.dibujaron.uuencode;
 
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.util.UUID;
 
 import sun.misc.UUDecoder;
@@ -19,7 +20,7 @@ public class UUEncode {
 		UUID u2 = decodeUUID(data);
 		System.out.println(u2);
 	}
-	private static String encode(byte[] data) {
+	/*private static String encode(byte[] data) {
 		return uuec.encodeBuffer(data);
 	}
 	
@@ -40,12 +41,29 @@ public class UUEncode {
 	private static String stringFromBytes(byte[] b){
 		return new String(b);
 	}
-	
+	*/
 	public static String encodeUUID(UUID u){
-		return encode(stringToBytes(u.toString()));
+		return Base64.getEncoder().encodeToString(uuidtoByteArray(u));
 	}
 	
 	public static UUID decodeUUID(String data){
-		return UUID.fromString(stringFromBytes(decode(data)));
+		return uuidFromByteArray(decode(data));
+	}
+	
+	private static byte[] uuidtoByteArray(UUID u){
+		ByteBuffer buffer = ByteBuffer.allocate(Long.SIZE * 2);
+		buffer.putLong(u.getLeastSignificantBits());
+		buffer.putLong(u.getMostSignificantBits());
+		return buffer.array();
+	}
+	
+	private static UUID uuidFromByteArray(byte[] b){
+		ByteBuffer buffer = ByteBuffer.allocate(Long.SIZE * 2);
+		buffer.put(b);
+		buffer.flip();
+		long l1 = buffer.getLong();
+		long l2 = buffer.getLong();
+		UUID u = new UUID(l2, l1);
+		return u;
 	}
 }
