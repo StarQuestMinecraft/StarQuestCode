@@ -80,8 +80,10 @@ public class Crate extends Currency implements Serializable {
 		}
 
 		for (CardboardBox cb : this.storage) {
+			System.out.println(cb.toString());
 
-			name += " " + cb.toString();
+			name += cb.toString() + ";";
+			System.out.println(name);
 		}
 
 		this.name = name;
@@ -112,7 +114,7 @@ public class Crate extends Currency implements Serializable {
 			}
 			storage.add(cb);
 
-			name += " " + cb.toString();
+			name += cb.toString() + ";";
 		}
 
 		this.name = name;

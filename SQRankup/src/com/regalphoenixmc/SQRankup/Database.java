@@ -201,7 +201,7 @@ public class Database {
 		try {
 
 			s = Database.cntx
-					.prepareStatement("SELECT * FROM escrow WHERE `id` = ? AND (`from` LIKE ? || `from` = \"\") AND round(unix_timestamp() * 1000 + MICROSECOND(sysdate(6)) / 1000) > `time`");
+					.prepareStatement("SELECT * FROM escrow WHERE `id` = ? AND (`from` LIKE ? || `from` = \"\") AND round(unix_timestamp() * 1000 + MICROSECOND(sysdate(6)) / 1000) < `time`");
 			s.setInt(1, id);
 			s.setString(2, p.getName());
 			ResultSet rs = s.executeQuery();

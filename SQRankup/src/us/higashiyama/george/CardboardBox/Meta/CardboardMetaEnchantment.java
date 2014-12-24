@@ -46,4 +46,10 @@ public class CardboardMetaEnchantment implements CardboardItemMeta, Serializable
 		}
 		return meta;
 	}
+
+	@Override
+	public String toString() {
+
+		return enchantments.toString();
+	}
 }

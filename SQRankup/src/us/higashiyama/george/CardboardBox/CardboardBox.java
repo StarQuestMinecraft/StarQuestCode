@@ -41,9 +41,9 @@ public class CardboardBox implements Serializable {
 	public String toString() {
 
 		if (meta != null) {
-			return amount + " " + Material.getMaterial(this.type) + ":" + this.damage + " Enchants: " + enchants.toString() + " Meta: " + meta.toString();
+			return amount + " " + Material.getMaterial(this.type) + ":" + this.damage + " Enchants:" + enchants.toString() + " Meta:" + meta.toString();
 		} else {
-			return amount + " " + Material.getMaterial(this.type) + ":" + this.damage + " Enchants: " + enchants.toString();
+			return amount + " " + Material.getMaterial(this.type) + ":" + this.damage + " Enchants:" + enchants.toString();
 		}
 	}
 
