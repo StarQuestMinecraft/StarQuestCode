@@ -1,16 +1,64 @@
 package com.dibujaron.hme;
 
 import java.awt.Color;
-import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.Scanner;
+import java.util.UUID;
 
 import javax.imageio.ImageIO;
 
 public class HeightMapExpander {
+	
 	public static void main(String[] args){
+		UUID u = UUID.randomUUID();
+		long min = u.getLeastSignificantBits();
+		long max = u.getMostSignificantBits();
+		String a = String.valueOf(min);
+		String b = String.valueOf(max);
+		System.out.println(a);
+		System.out.println(b);
+		/*long value = mostSig;
+		String newValue = value + "";
+		int base = 16;
+		int MAX_LENGTH;
+		while(newValue.length() > 9){
+			newValue = Long.toString(value, base);
+			System.out.println("========================");
+			System.out.println("base:" + base);
+			System.out.println("value: " + newValue);
+			base++;
+		}
+		System.out.println(newValue);
+		System.out.println(base);
+		
+		long value2 = leastSig;
+		String newValue2 = value2 + "";
+		int base2 = 16;
+		while(newValue2.length() > 8){
+			newValue2 = Long.toString(value2, base2);
+			System.out.println("========================");
+			System.out.println("base2:" + base2);
+			System.out.println("value2: " + newValue2);
+			base2++;
+		}*/
+		//System.out.println(newValue2);
+		//System.out.println(base2);
+	}
+	
+	public byte[] longToBytes(long x) {
+		byte[] arr = String.valueOf(x).getBytes();
+		return arr;
+	}
+
+	public long bytesToLong(byte[] bytes) {
+		long longVar = Long.valueOf(new String(bytes)).longValue();
+		return longVar;
+	}
+	
+	
+	public static void main2(String[] args){
 		
 		//read input
 		Scanner s = new Scanner(System.in);

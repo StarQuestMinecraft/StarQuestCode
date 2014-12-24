@@ -47,8 +47,6 @@ public class Database {
 					+ "SELECT`name`, `town`  FROM boletarian_residents WHERE `town` != & UNION "
 					+ "SELECT`name`, `town`  FROM boskevine_residents WHERE `town` != & UNION "
 					+ "SELECT`name`, `town`  FROM ceharram_residents WHERE `town` != & UNION "
-					+ "SELECT`name`, `town`  FROM defalos_residents WHERE `town` != & UNION "
-					+ "SELECT`name`, `town`  FROM digitalia_residents WHERE `town` != & UNION "
 					+ "SELECT`name`, `town`  FROM drakos_residents WHERE `town` != & UNION "
 					+ "SELECT`name`, `town`  FROM emera_residents WHERE `town` != & UNION "
 					+ "SELECT`name`, `town`  FROM iffrizar_residents WHERE `town` != & UNION "
