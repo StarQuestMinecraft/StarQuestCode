@@ -5,8 +5,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-
-import net.countercraft.movecraft.utils.EMPUtils;
+import java.util.Random;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Color;
@@ -36,6 +35,7 @@ import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.util.Vector;
 
 public class SQTurrets extends JavaPlugin implements Listener {
 
@@ -46,6 +46,7 @@ public class SQTurrets extends JavaPlugin implements Listener {
 	public static ArrayList<Projectile> liveProjectiles = new ArrayList<Projectile>();
 	public static ArrayList<Projectile> liveEMP = new ArrayList<Projectile>();
 	public static ArrayList<Projectile> eggs = new ArrayList<Projectile>();
+	public static ArrayList<Projectile> childEggs = new ArrayList<Projectile>();
 	public static FileConfiguration config;
 
 	public void onEnable() {
@@ -109,6 +110,7 @@ public class SQTurrets extends JavaPlugin implements Listener {
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 
 		if (cmd.getName().equalsIgnoreCase("turretsreload") && sender.hasPermission("SQTurrets.reload")) {
+			System.out.println("REGISTERED");
 			config = YamlConfiguration.loadConfiguration(new File(getDataFolder(), "config.yml"));
 			turretTypes.clear();
 			ammoTypes.clear();
@@ -138,9 +140,67 @@ public class SQTurrets extends JavaPlugin implements Listener {
 	public void eggBreak(ProjectileHitEvent e) {
 
 		if (e.getEntity() instanceof Egg && eggs.contains(e.getEntity())) {
+
 			Location l = e.getEntity().getLocation();
+
 			// 2.3 = explosion POWER
-			e.getEntity().getWorld().createExplosion(l.getX(), l.getY(), l.getZ(), 2.3F, false, true);
+			// e.getEntity().getWorld().createExplosion(l.getX(), l.getY(),
+			// l.getZ(), 2.3F, false, true);
+
+			BlockFace[] faces = { BlockFace.WEST, BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH };
+			for (int i = 0; i < 4; i++) {
+				double rand = Math.random() * 3;
+				Random r = new Random();
+				boolean neg = r.nextBoolean();
+
+				if (neg) {
+					rand *= -1;
+				}
+
+				double x = rand;
+				neg = r.nextBoolean();
+
+				if (neg) {
+					rand *= -1;
+				}
+				double y = rand;
+				neg = r.nextBoolean();
+
+				if (neg) {
+					rand *= -1;
+				}
+				double z = rand;
+				System.out.println(x);
+				System.out.println(y);
+				System.out.println(z);
+				Vector v = new Vector(x, y, z);
+				System.out.println(rand);
+				Projectile proj = e.getEntity().getWorld().spawn(l.getBlock().getRelative(faces[i]).getLocation(), Egg.class);
+				proj.setVelocity(v);
+				childEggs.add(proj);
+			}
+
+			Firework f = (Firework) e.getEntity().getWorld().spawn(e.getEntity().getLocation(), Firework.class);
+			List<Color> colors = new ArrayList<Color>();
+			colors.add(Color.RED);
+			colors.add(Color.YELLOW);
+			colors.add(Color.ORANGE);
+			FireworkMeta fm = f.getFireworkMeta();
+			fm.clearEffects();
+			fm.setPower(1);
+			fm.addEffect(FireworkEffect.builder().with(FireworkEffect.Type.BALL_LARGE).withColor(colors).withFade().flicker(true).trail(true).build());
+			f.setFireworkMeta(fm);
+			f.detonate();
+
+		}
+
+		if (e.getEntity() instanceof Egg && childEggs.contains(e.getEntity())) {
+
+			Location l = e.getEntity().getLocation();
+
+			// 2.3 = explosion POWER
+			// e.getEntity().getWorld().createExplosion(l.getX(), l.getY(),
+			// l.getZ(), 2.3F, false, true);
 
 			Firework f = (Firework) e.getEntity().getWorld().spawn(e.getEntity().getLocation(), Firework.class);
 			List<Color> colors = new ArrayList<Color>();
@@ -158,7 +218,8 @@ public class SQTurrets extends JavaPlugin implements Listener {
 
 		if (e.getEntity() instanceof Snowball && liveEMP.contains(e.getEntity())) {
 			Location l = e.getEntity().getLocation();
-			EMPUtils.detonateEMP(l.getBlock().getRelative(yawToFace(l.getYaw(), false)));
+			// EMPUtils.detonateEMP(l.getBlock().getRelative(yawToFace(l.getYaw(),
+			// false)));
 			Firework f = (Firework) e.getEntity().getWorld().spawn(e.getEntity().getLocation(), Firework.class);
 			List<Color> colors = new ArrayList<Color>();
 			colors.add(Color.BLUE);
@@ -170,6 +231,7 @@ public class SQTurrets extends JavaPlugin implements Listener {
 			fm.addEffect(FireworkEffect.builder().with(FireworkEffect.Type.BALL_LARGE).withColor(colors).withFade().flicker(true).trail(true).build());
 			f.setFireworkMeta(fm);
 			f.detonate();
+
 		}
 
 		if (eggs.contains(e.getEntity())) {

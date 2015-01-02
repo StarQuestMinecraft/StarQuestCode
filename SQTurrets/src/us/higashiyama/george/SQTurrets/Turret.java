@@ -74,6 +74,7 @@ public class Turret {
 		// launchProjectile(this.projectileClass, finalVec);
 		// finally, set the shooter
 		proj.setVelocity(finalVec);
+
 		if (!(proj instanceof Egg) || !(proj instanceof Snowball)) {
 			proj.setShooter((ProjectileSource) p);
 		}

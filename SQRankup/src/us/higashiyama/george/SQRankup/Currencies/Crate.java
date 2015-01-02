@@ -9,7 +9,6 @@ package us.higashiyama.george.SQRankup.Currencies;
 import java.io.Serializable;
 import java.util.ArrayList;
 
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -33,11 +32,6 @@ public class Crate extends Currency implements Serializable {
 
 	@Override
 	public RankupPlayer canPurchase(Player player, double money, int kills, Perk perk) {
-
-		if (this.buildLocation() != null && !(this.buildLocation().equals(player.getLocation()))) {
-			player.sendMessage(ChatColor.RED + "You must be at the trading node specified with this offer.");
-			return null;
-		}
 
 		for (CardboardBox cb : storage) {
 			ItemStack is = cb.unbox();

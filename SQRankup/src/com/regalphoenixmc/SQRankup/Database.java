@@ -38,9 +38,9 @@ public class Database {
 
 	public static void setUp() {
 
-		String Database_table = "CREATE TABLE IF NOT EXISTS RANKUP (`name` VARCHAR(32) NOT NULL,`kills` int(16) DEFAULT 0,`lastkill` VARCHAR(32) DEFAULT NULL,`lastkilltime` bigint(18) DEFAULT 0,PRIMARY KEY (`name`))";
+		String Database_table = "CREATE TABLE IF NOT EXISTS RANKUP (`name` VARCHAR(32) NOT NULL,`kills` int(16) DEFAULT 0,`lastkill` VARCHAR(32) DEFAULT NULL,`lastkilltime` bigint(18) DEFAULT 0, `x` INTEGER, `y` INTEGER, `z` INTEGER, `world` VARCHAR(32), PRIMARY KEY (`name`))";
 		String Database_perks = "CREATE TABLE IF NOT EXISTS perks (`uuid` VARCHAR(64), `perkname` VARCHAR(32), `perk` BLOB, `redeemed` BOOLEAN)";
-		String Database_escrow = "CREATE TABLE IF NOT EXISTS escrow (`id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY, `uuid` VARCHAR(64), `wants` BLOB, `wantsname` LONGTEXT, `has` BLOB, `hasname` LONGTEXT, `from` VARCHAR(64), `time` LONG)";
+		String Database_escrow = "CREATE TABLE IF NOT EXISTS escrow (`id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY, `uuid` VARCHAR(64), `wants` BLOB, `wantsname` LONGTEXT, `has` BLOB, `hasname` LONGTEXT, `from` VARCHAR(64), `time` LONG, `x` INTEGER, `y` INTEGER, `z` INTEGER, `world` VARCHAR(32))";
 		getContext();
 		try {
 			Driver driver = (Driver) Class.forName(driverString).newInstance();

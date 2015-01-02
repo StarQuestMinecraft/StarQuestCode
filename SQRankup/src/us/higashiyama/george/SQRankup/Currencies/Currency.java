@@ -36,12 +36,4 @@ public abstract class Currency {
 		this.node = node;
 	}
 
-	public Location buildLocation() {
-
-		if (node == null) {
-			return null;
-		} else {
-			return new Location(Bukkit.getWorld(node.getWorld()), node.getX(), node.getY(), node.getZ());
-		}
-	}
 }

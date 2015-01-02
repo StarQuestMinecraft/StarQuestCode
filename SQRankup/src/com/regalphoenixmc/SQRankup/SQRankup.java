@@ -70,25 +70,8 @@ public class SQRankup extends JavaPlugin implements Listener {
 	@EventHandler
 	public void playerLogin(PlayerLoginEvent e) {
 
-		// Checks to make sure all purchased perms are credited
-		List<Perk> perks = Database.getRedeemedPlayerPerks(e.getPlayer());
-		for (Perk p : perks) {
-			List<String> perms = p.getPermissions();
-			for (String perm : perms) {
-				if (!e.getPlayer().hasPermission(perm)) {
-					permission.playerAdd(null, e.getPlayer(), perm);
-				}
-			}
-		}
-
-		List<Currency> unredeemed = Database.getUnredeemedPlayerPerks(e.getPlayer());
-
-		if (unredeemed != null && unredeemed.size() > 0) {
-			e.getPlayer().sendMessage(ChatColor.AQUA + "You have the following unredeemed perks: ");
-			for (Currency p : unredeemed) {
-				System.out.println(ChatColor.GOLD + "     " + p.getAlias());
-			}
-		}
+		notifyPlayerOfMultiplier(e.getPlayer());
+		notifyPlayerOfPerks(e.getPlayer());
 	}
 
 	private void loadPerks() {
@@ -177,51 +160,7 @@ public class SQRankup extends JavaPlugin implements Listener {
 		return instance;
 	}
 
-	public static Currency parseItemInput(Player player) {
 
-		Block b = player.getTargetBlock(null, 100);
-		if (b.getType() == (Material.SIGN) || b.getType() == (Material.WALL_SIGN)) {
-			// safecast
-			Sign s = (Sign) player.getTargetBlock(null, 100).getState();
-
-			int quantity;
-			try {
-				quantity = Integer.parseInt(s.getLine(1));
-			} catch (NumberFormatException ex) {
-				player.sendMessage(ChatColor.AQUA + "Must specify a whole number quantity on line 2 of the sign");
-				return null;
-			}
-			String name = s.getLine(0);
-
-			ArrayList<ItemStack> stackList = new ArrayList<ItemStack>();
-			for (String testName : itemNames.keySet()) {
-				if (testName.equalsIgnoreCase(name)) {
-
-					int stacks = getStackData(quantity)[0];
-					int remaining = getStackData(quantity)[1];
-
-					while (stacks > 0) {
-						ItemStack is = new ItemStack(Material.getMaterial(itemNames.get(testName)[0]), stacks * 64, (byte) itemNames.get(testName)[1]);
-						stackList.add(is);
-						stacks--;
-					}
-					ItemStack is = new ItemStack(Material.getMaterial(itemNames.get(testName)[0]), remaining, (byte) itemNames.get(testName)[1]);
-
-					stackList.add(is);
-				}
-			}
-
-			ArrayList<CardboardBox> cbList = new ArrayList<CardboardBox>();
-			for (ItemStack tis : stackList) {
-				cbList.add(new CardboardBox(tis));
-			}
-
-			Crate c = new Crate(cbList);
-			return c;
-
-		}
-		return null;
-	}
 
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 
@@ -229,8 +168,7 @@ public class SQRankup extends JavaPlugin implements Listener {
 			if (!(sender instanceof Player))
 				return true;
 			Player p = (Player) sender;
-			p.sendMessage(ChatColor.GOLD + "Private Offers: ");
-			Database.showPrivateOffers(p);
+			PerkHelper.showPrivateOffers(p);
 			return true;
 
 		}
@@ -246,226 +184,25 @@ public class SQRankup extends JavaPlugin implements Listener {
 				sender.sendMessage(ChatColor.AQUA + "Must specify a number ID of the offer");
 				return true;
 			}
+			
+			PerkHelper.removeOfferAndRecredit(p, id);
+			return true;
 
-			Currency currency = Database.removeOffer(id, p);
-
-			if (currency == null) {
-				sender.sendMessage(ChatColor.AQUA + "No offer with id: " + id + " in the database that you are allowed to delete");
-				return true;
-			}
-			if (currency instanceof Credits) {
-				currency.purchase((Player) sender, Database.getEntry(((Player) sender).getName()), 0, 0);
-			}
-
-			if (currency instanceof Perk) {
-				((Perk) currency).queuePurchase((Player) sender);
-			}
-
-			if (currency instanceof Crate) {
-				currency.purchase((Player) sender, Database.getEntry(((Player) sender).getName()), 0, 0);
-			}
-			sender.sendMessage(ChatColor.AQUA + "Perk removed and recredited.");
 		}
 		if (cmd.getName().equalsIgnoreCase("perktrade")) {
 			if (!(sender instanceof Player))
 				return true;
-			// format of command
-			// perktrade <wants> <has> <expiry> <player>
-
-			if (args.length < 1 || args.length > 4) {
-				return false;
-			}
-
-			// for making the transaction
-			if (args.length == 1) {
-				int id = 0;
-				try {
-					id = Integer.parseInt(args[0]);
-				} catch (NumberFormatException e) {
-					sender.sendMessage(ChatColor.AQUA + "Must specify a number ID of the offer");
-					return true;
-				}
-				System.out.println("getting currency");
-				Currency currency = Database.getOffer(id, (Player) sender);
-				System.out.println(currency);
-				if (currency == null) {
-					sender.sendMessage(ChatColor.AQUA + "No offer with id: " + id + " in the database that you are allowed to redeem at this time");
-					return true;
-				}
-
-				// If the player is at the node
-				if (currency.buildLocation() != null) {
-					if (!currency.buildLocation().equals(((Player) sender).getLocation())) {
-						sender.sendMessage(ChatColor.RED + "You are not at the designated trading node for this offer");
-						return true;
-					}
-				}
-
-				if (currency instanceof Credits) {
-					currency.purchase((Player) sender, Database.getEntry(((Player) sender).getName()), 0, 0);
-				}
-
-				if (currency instanceof Perk) {
-					System.out.println("perk");
-					((Perk) currency).queuePurchase((Player) sender);
-				}
-
-				if (currency instanceof Crate) {
-					System.out.println("Crate");
-					((Crate) currency).queuePurchase((Player) sender);
-				}
-				sender.sendMessage(ChatColor.AQUA + "Transaction credited.");
-				System.out.println("Deleting");
-				Database.deleteOffer(id);
-				return true;
-			}
-
-			if (args.length < 3) {
-				sender.sendMessage(ChatColor.RED + "You left out an argument");
-				return true;
-			}
-
-			Currency want = null;
-			Currency has = null;
-			int hours = 0;
-
-			try {
-				double credits = Double.parseDouble(args[0]);
-				want = new Credits(credits);
-			} catch (NumberFormatException e) {
-				for (Perk p : perks) {
-					if (p.getAlias().equalsIgnoreCase(args[0])) {
-						want = p;
-						break;
-					}
-
-				}
-
-				if (args[0].equalsIgnoreCase("inventory")) {
-					want = new Crate(((Player) sender).getInventory());
-				}
-
-				if (args[0].equalsIgnoreCase("item")) {
-					want = parseItemInput((Player) sender);
-				}
-
-			}
-
-			if (want == null) {
-				sender.sendMessage(ChatColor.AQUA + "No perk exists with the name: " + args[0]);
-				return true;
-			}
-
-			try {
-				double credits = Double.parseDouble(args[1]);
-				has = new Credits(credits);
-			} catch (NumberFormatException e) {
-				for (Perk p : perks) {
-					if (p.getAlias().equalsIgnoreCase(args[1])) {
-						has = p;
-						break;
-					}
-
-				}
-				if (args[1].equalsIgnoreCase("inventory")) {
-					has = new Crate(((Player) sender).getInventory());
-				}
-			}
-
-			if (args[1].equalsIgnoreCase("item")) {
-				has = parseItemInput((Player) sender);
-			}
-
-			if (has == null) {
-				sender.sendMessage(ChatColor.AQUA + "No perk exists with the name: " + args[0]);
-				return true;
-			}
-
-			try {
-				hours = Integer.parseInt(args[2]);
-			} catch (NumberFormatException e) {
-				sender.sendMessage(ChatColor.AQUA + "Expiry time must be a whole integer");
-				return true;
-			}
-
-			Player player = null;
-			if (args.length > 3) {
-				player = Bukkit.getPlayer(args[4]);
-				if (player == null) {
-					sender.sendMessage(ChatColor.AQUA + "No such player exists");
-					return true;
-				}
-			}
-
-			boolean hasPerk = false;
-			if (has instanceof Credits) {
-				if (economy.getBalance((Player) sender) < ((Credits) has).getCredits()) {
-					sender.sendMessage(ChatColor.AQUA + "Not enough credits to make the offer");
-					return true;
-				} else {
-					economy.withdrawPlayer((Player) sender, ((Credits) has).getCredits());
-					hasPerk = true;
-				}
-
-			}
-
-			if (has instanceof Perk) {
-				List<Currency> perks = Database.getUnredeemedPlayerPerks((Player) sender);
-				for (Currency p : perks) {
-					if ((p instanceof Perk) && p.getAlias().equalsIgnoreCase(((Perk) has).getAlias())) {
-						hasPerk = true;
-						Database.removePerk((Player) sender, (Perk) p);
-						break;
-					}
-				}
-			}
-
-			if (has instanceof Crate) {
-				// We know at this point that the player has the items
-
-				hasPerk = true;
-				Crate c = (Crate) has;
-				for (CardboardBox cb : c.getBoxes()) {
-					((Player) sender).getInventory().remove(cb.unbox());
-				}
-
-			}
-
-			if (!hasPerk) {
-				sender.sendMessage(ChatColor.AQUA + "You don't own the perk you want to trade");
-				return true;
-			}
-
-			Database.openOffer((Player) sender, player, want, has, hours * 3600000);
-
-			sender.sendMessage(ChatColor.AQUA + "Offer created!");
-
+			PerkHelper.perkTrade((Player) sender, args);
 			return true;
 		}
 
 		if (cmd.getName().equalsIgnoreCase("perkredeem")) {
-			if (!(sender instanceof Player))
-				return true;
-
+			if (!(sender instanceof Player)) return true;
 			Player p = (Player) sender;
 			if (args.length == 1) {
-				List<Currency> unredeemed = Database.getUnredeemedPlayerPerks(p);
-				for (Currency perk : unredeemed) {
-					if (perk.getAlias().equalsIgnoreCase(args[0])) {
-						perk.purchase(p, Database.getEntry(p.getName()), 0, 0);
-						break;
-					}
-				}
+				PerkHelper.searchAndRedeemPerk(p, args[0]);
 			} else if (args.length == 0) {
-				List<Currency> unredeemed = Database.getUnredeemedPlayerPerks(p);
-				if (unredeemed.size() > 0) {
-					p.sendMessage(ChatColor.AQUA + "You have the following unredeemed perks: ");
-					for (Currency perk : unredeemed) {
-						p.sendMessage(ChatColor.GOLD + "     " + perk.getAlias());
-					}
-				} else {
-					p.sendMessage(ChatColor.AQUA + "You have no perks to redeem");
-				}
+				PerkHelper.showUnredeemedPerks(p);
 			}
 			return true;
 
@@ -473,21 +210,8 @@ public class SQRankup extends JavaPlugin implements Listener {
 
 		if (cmd.getName().equalsIgnoreCase("perkadd") && sender.hasPermission("SQRankup.perkadd")) {
 			if (args.length == 2) {
-				String perk = args[0];
-				for (Perk p : perks) {
-					if (p.getAlias().equalsIgnoreCase(perk)) {
-
-						Player player = Bukkit.getPlayer(args[1]);
-						RankupPlayer rp = p.canPurchase(player, 0, 0, p);
-						if (rp != null) {
-
-							// Give the player the perk, but leave it unredeemed
-							p.queuePurchase(player);
-						}
-
-					}
-				}
-				return true;
+				//Player, Perk
+				PerkHelper.addPerkToPlayer(args[1], args[0]);
 			} else {
 				return false;
 			}
@@ -623,13 +347,7 @@ public class SQRankup extends JavaPlugin implements Listener {
 		return false;
 	}
 
-	@EventHandler
-	public void login(PlayerLoginEvent e) {
 
-		if (MULTIPLIER != 1) {
-			e.getPlayer().sendMessage(ChatColor.GOLD + "Hey " + e.getPlayer().getName() + "! There's a x" + MULTIPLIER + " multiplier on all kills!!");
-		}
-	}
 
 	public static void refresh() {
 
@@ -706,9 +424,10 @@ public class SQRankup extends JavaPlugin implements Listener {
 					break;
 
 			}
-		}
 
-		return i * MULTIPLIER;
+		}
+		int cost = i < 0 ? i : i * MULTIPLIER;
+		return cost;
 	}
 
 	// method to get the next rank on the rank structure
@@ -889,6 +608,38 @@ public class SQRankup extends JavaPlugin implements Listener {
 
 		int[] retArray = { fullstacks, remaining };
 		return retArray;
+
+	}
+
+	private void notifyPlayerOfMultiplier(Player player) {
+
+		if (MULTIPLIER > 1) {
+			player.sendMessage(ChatColor.GOLD + "There is a x" + MULTIPLIER + " multiplier on all kill values");
+		}
+	}
+
+	private void notifyPlayerOfPerks(Player player) {
+
+		// Checks to make sure all purchased perms are credited
+		List<Perk> perks = Database.getRedeemedPlayerPerks(player);
+		for (Perk p : perks) {
+			List<String> perms = p.getPermissions();
+			for (String perm : perms) {
+				if (!player.hasPermission(perm)) {
+					permission.playerAdd(null, player, perm);
+				}
+			}
+		}
+
+		// Notify the player of purchased perks
+		List<Currency> unredeemed = Database.getUnredeemedPlayerPerks(player);
+
+		if (unredeemed != null && unredeemed.size() > 0) {
+			player.sendMessage(ChatColor.AQUA + "You have the following unredeemed perks: ");
+			for (Currency p : unredeemed) {
+				System.out.println(ChatColor.GOLD + "     " + p.getAlias());
+			}
+		}
 
 	}
 
