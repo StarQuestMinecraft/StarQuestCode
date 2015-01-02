@@ -3,12 +3,15 @@ package com.dibujaron.worldrestore;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
+import org.bukkit.entity.Entity;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.plugin.PluginManager;
@@ -142,6 +145,10 @@ public class WorldRestore extends BukkitRunnable {
 					System.out.println("============================");
 					e.printStackTrace();
 				}
+				/*for(LivingEntity e : from.getEntitiesByClass){
+					Location l = e.getLocation();
+					e.teleport(new Location(to, l.getX(), l.getY(), l.getZ(), l.getYaw(), l.getPitch()));
+				}*/
 				this.cancel();
 			}
 		}

@@ -91,14 +91,6 @@ public class SQSpace extends JavaPlugin implements Listener {
 		return suffocating;
 	}
 
-	private WorldGuardPlugin getWorldGuard() {
-
-		final Plugin plugin = this.getServer().getPluginManager().getPlugin("WorldGuard");
-		if ((plugin == null) || (!(plugin instanceof WorldGuardPlugin)))
-			return null;
-		return (WorldGuardPlugin) plugin;
-	}
-
 	public boolean hasSpaceHelmet(Player p) {
 
 		final ItemStack helmet = p.getInventory().getHelmet();
@@ -148,25 +140,25 @@ public class SQSpace extends JavaPlugin implements Listener {
 	public void onPlayerMove(PlayerMoveEvent event) {
 
 		final Player p = event.getPlayer();
-		final String planet = p.getLocation().getWorld().getName();
+		final String planet = p.getLocation().getWorld().getName().toLowerCase();
 		if (this.hasSpaceHelmet(p)) {
 			p.setRemainingAir(p.getMaximumAir());
 		}
-		if ((planet.equals("Defalos")) || (planet.equals("AsteroidBelt")) || (planet.equals("Digitalia")) || (planet.equals("Regalis"))) {
+		if ((planet.equals("defalos")) || (planet.equals("asteroidBelt")) || (planet.equals("digitalia")) || (planet.equals("regalis"))) {
 			
-			if ((isInSpace(p)) && (!p.isFlying()) && (p.getGameMode().equals(GameMode.SURVIVAL))) {
-				p.setAllowFlight(true);
-				p.setFlying(true);
-				p.setFlySpeed(0.02F);
-			} else if ((!isInSpace(p)) && (p.isFlying()) && (p.getGameMode().equals(GameMode.SURVIVAL))) {
-				p.setAllowFlight(false);
-				p.setFlying(false);
-				p.setFlySpeed(0.1F);
-				p.setFallDistance(0.0F);
-			}
-			if(p.isFlying() && p.getGameMode().equals(GameMode.SURVIVAL)){
-				if(p.isSprinting()){
-					p.setSprinting(false);
+			if(p.getGameMode().equals(GameMode.SURVIVAL)){
+				if ((isInSpace(p)) && (!p.isFlying()) && (p.getLocation().getY() < 256)) {
+					p.setAllowFlight(true);
+					p.setFlying(true);
+					p.setFlySpeed(0.02F);
+				} else if ((!isInSpace(p)) && (p.isFlying())) {
+					p.setAllowFlight(false);
+					p.setFlying(false);
+					p.setFlySpeed(0.1F);
+					p.setFallDistance(0.0F);
+				}
+				if(p.isFlying() && p.isSprinting()){
+						p.setSprinting(false);
 				}
 			}
 		
