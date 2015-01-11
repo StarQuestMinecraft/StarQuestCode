@@ -54,7 +54,6 @@ public class Database {
 					+ "SELECT`name`, `town`  FROM kelakaria_residents WHERE `town` != & UNION "
 					+ "SELECT`name`, `town`  FROM krystallos_residents WHERE `town` != & UNION "
 					+ "SELECT`name`, `town`  FROM quavara_residents WHERE `town` != & UNION "
-					+ "SELECT`name`, `town`  FROM regalis_residents WHERE `town` != & UNION "
 					+ "SELECT`name`, `town`  FROM valadro_residents WHERE `town` != &" + ") AS query WHERE `name` = ?";
 			query = query.replace("&", "\"\"");
 			System.out.println(query);

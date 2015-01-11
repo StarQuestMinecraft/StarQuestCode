@@ -12,6 +12,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import com.regalphoenixmc.SQRankup.SQRankup;
+
 public class SQLTownyCheck extends JavaPlugin implements Listener {
 
 	public void onEnable() {
@@ -23,12 +25,14 @@ public class SQLTownyCheck extends JavaPlugin implements Listener {
 	@EventHandler
 	public void onPlayerCommand(PlayerCommandPreprocessEvent e) {
 
-		ArrayList<String> args = new ArrayList<String>(Arrays.asList(e.getMessage().replace("/", "").split(" ")));
+		Player p = e.getPlayer();
+		String command = e.getMessage().replace("/", "");
+		ArrayList<String> args = new ArrayList<String>(Arrays.asList(command.split(" ")));
 
 		if (args.size() < 3) {
 			return;
 		}
-		Player p = e.getPlayer();
+
 		if ((args.get(1).equalsIgnoreCase("add") && (args.get(0).equalsIgnoreCase("town") || args.get(0).equalsIgnoreCase("t")))) {
 			if (args.size() > 3) {
 				e.getPlayer().sendMessage(ChatColor.AQUA + "Too many arguments");
@@ -46,6 +50,10 @@ public class SQLTownyCheck extends JavaPlugin implements Listener {
 		}
 
 		if ((args.get(1).equalsIgnoreCase("join") && (args.get(0).equalsIgnoreCase("town") || args.get(0).equalsIgnoreCase("t")))) {
+			if(!isColonist(p)){
+				e.getPlayer().sendMessage("You are not a member of the colonist track, you cannot join a town.");
+				return;
+			}
 			if (!canJoinTown(p)) {
 				e.getPlayer().sendMessage(ChatColor.AQUA + "You are already in a town or cannot join one.");
 				e.setCancelled(true);
@@ -54,6 +62,10 @@ public class SQLTownyCheck extends JavaPlugin implements Listener {
 		}
 
 		if ((args.get(1).equalsIgnoreCase("new") && (args.get(0).equalsIgnoreCase("town") || args.get(0).equalsIgnoreCase("t")))) {
+			if(!isColonist(p)){
+				e.getPlayer().sendMessage("You are not a member of the colonist track, you cannot start a town.");
+				return;
+			}
 			if (!canStartTown(p)) {
 				e.getPlayer().sendMessage(ChatColor.AQUA + "You cannot start a town. You are already in one.");
 				e.setCancelled(true);
@@ -64,7 +76,11 @@ public class SQLTownyCheck extends JavaPlugin implements Listener {
 	}
 
 	public static boolean canJoinTown(Player p) {
-
+		
+		boolean spaceWorld = isSpaceWorld(p.getWorld().getName());
+		if(spaceWorld){
+			return true;
+		}
 		int currentTowns = Database.towns(p.getName());
 		if ((currentTowns == 0) && p.hasPermission("town.join")) {
 			return true;
@@ -73,6 +89,18 @@ public class SQLTownyCheck extends JavaPlugin implements Listener {
 		} else {
 			return false;
 		}
+	}
+
+	private static boolean isSpaceWorld(String name) {
+		return name.equalsIgnoreCase("Regalis") || name.equalsIgnoreCase("Digitalia") || name.equalsIgnoreCase("Defalos");
+	}
+	
+	private static boolean isColonist(Player p){
+		String[] allGroups = SQRankup.permission.getPlayerGroups(p);
+		for(String s : allGroups){
+			if(s.equals("settler") || s.equals("colonist") || s.equals("citizen") || s.equals("affluent") || s.equals("tycoon")) return true;
+		}
+		return false;
 	}
 
 	public static boolean canStartTown(Player p) {

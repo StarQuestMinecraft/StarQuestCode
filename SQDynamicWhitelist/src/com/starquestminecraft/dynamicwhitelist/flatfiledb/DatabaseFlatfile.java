@@ -7,28 +7,14 @@ import java.util.concurrent.TimeUnit;
 
 import com.mini.Arguments;
 import com.mini.Mini;
-import com.starquestmineraft.dynamicwhitelist.Database;
-import com.starquestmineraft.dynamicwhitelist.Whitelister;
+import com.starquestminecraft.dynamicwhitelist.Database;
+import com.starquestminecraft.dynamicwhitelist.Whitelister;
 
 public class DatabaseFlatfile extends Database{
 
 	Mini database = new Mini(Whitelister.getInstance().getDataFolder() + "", "premiumdata.mini");
 	Semaphore lock = new Semaphore(1);
-	
-	private ArrayList<Runnable> runSyncQueue = new ArrayList<Runnable>();
-	public DatabaseFlatfile(){
-		Whitelister.getInstance().getProxy().getScheduler().schedule(Whitelister.getInstance(), new Runnable(){
 
-			@Override
-			public void run() {
-				for(Runnable r : runSyncQueue){
-					r.run();
-				}
-				runSyncQueue.clear();
-			}
-			
-		}, 1000, 1000, TimeUnit.SECONDS);
-	}
 	@Override
 	public void addPremiumTime(final String playername, final int hours) {
 		Whitelister.getInstance().getProxy().getScheduler().runAsync(Whitelister.getInstance(), new Runnable(){
@@ -47,21 +33,20 @@ public class DatabaseFlatfile extends Database{
 	
 	private void addPremiumTimeAsync(String playername, final int hours){
 		final UUID u = super.uuidFromUsername(playername);
-		runSyncQueue.add(new Runnable(){
-			public void run(){
-				addPremiumTime(u, hours);
-			}
-		});
+		System.out.println("UUID acquired, adding to run queue.");
+		addPremiumTime(u, hours);
 	}
 	
 	@Override
 	public void addPremiumTime(final UUID u, final int hours){
 		//first load their arguments from the database
+			System.out.println("attempting to add premium time");
 			acquire();
 			Arguments entry = database.getArguments(u.toString());
 			
 			//if they aren't in the database they must be buying premium time before having logged into the server. Wierd.
 			if(entry == null){
+				System.out.println("Key not found in database.");
 				entry = new Arguments(u.toString());
 				entry.setValue("purchaseTime", 0 + "");
 				entry.setValue("hoursPurchased", 0 + "");
@@ -70,6 +55,7 @@ public class DatabaseFlatfile extends Database{
 			}
 			
 			int hoursRemaining = getHoursRemaining(entry);
+			System.out.println("Found in database, hours remaining: " + hoursRemaining);
 			int newHours = hoursRemaining + hours;
 			entry.setValue("purchaseTime", System.currentTimeMillis() + "");
 			entry.setValue("hoursPurchased", newHours + "");
@@ -157,6 +143,7 @@ public class DatabaseFlatfile extends Database{
 	private void acquire(){
 		try {
 			lock.acquire();
+			System.out.println("Acquiring lock: " + getMethodCaller());
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -164,6 +151,13 @@ public class DatabaseFlatfile extends Database{
 	}
 	
 	private void release(){
+		System.out.println("Releasing lock: " + getMethodCaller());
 		lock.release();
+	}
+	
+	public static String getMethodCaller(){
+		StackTraceElement[] stackTraceElements = Thread.currentThread().getStackTrace();
+		StackTraceElement e = stackTraceElements[3];
+		return e.getClassName() + " by method " + e.getMethodName() + " at line " + e.getLineNumber();
 	}
 }
