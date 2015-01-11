@@ -1,0 +1,49 @@
+ranks:
+  refugee:
+      credits: 0
+      infamy: 0
+      next:
+        - settler
+  settler:
+      credits: 10000
+      infamy: 0
+      next:
+        - colonist
+        - pirate
+  colonist:
+      credits: 50000
+      infamy: 0
+      next:
+        - citizen
+  citizen:
+      credits: 250000
+      infamy: 0
+      next:
+        - affluent
+  affluent:
+      credits: 1250000
+      infamy: 0
+      next:
+        - tycoon
+  tycoon:
+      credits: 6250000
+      infamy: 0
+  pirate:
+      credits: 0
+      infamy: 5
+      next:
+        - corsair
+  corsair:
+      credits: 0
+      infamy: 20
+      next:
+        - buccaneer
+  buccaneer:
+      credits: 0
+      infamy: 80
+      next:
+        - warlord
+  warlord:
+      credits: 0
+      infamy: 160
+multiplier: 1
