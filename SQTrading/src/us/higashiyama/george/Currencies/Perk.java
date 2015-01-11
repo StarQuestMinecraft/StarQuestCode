@@ -1,5 +1,5 @@
 
-package us.higashiyama.george.SQRankup.Currencies;
+package us.higashiyama.george.Currencies;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -8,11 +8,10 @@ import java.util.List;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
-import com.regalphoenixmc.SQRankup.Database;
-import com.regalphoenixmc.SQRankup.RankupPlayer;
-import com.regalphoenixmc.SQRankup.SQRankup;
+import us.higashiyama.george.SQTrading.Database;
+import us.higashiyama.george.SQTrading.SQTrading;
 
-public class Perk extends Currency implements Serializable {
+public class Perk implements Serializable, Currency {
 
 	private static final long serialVersionUID = 1326173868767072823L;
 	private String alias;
@@ -32,60 +31,52 @@ public class Perk extends Currency implements Serializable {
 		this.removeGroups = removeGroups;
 	}
 
-	// RankupPlayer return is so we can conserve SQL calls. null = false
 	@Override
-	public RankupPlayer canPurchase(Player player, double money, int kills, Perk perk) {
+	public boolean hasCurrency(Player player) {
 
-		for (String perm : perk.getRequiredPerms()) {
-			if (!(SQRankup.permission.has(player, perm))) {
-				player.sendMessage(ChatColor.RED + "You are missing one or more required prerequisite(s).");
-				return null;
+		List<Perk> perks = Database.getUnredeemedPlayerPerks(player);
+		for (Perk p : perks) {
+			if (perkEquals(p, this)) {
+				return true;
 			}
 		}
-		RankupPlayer rp = Database.getEntry(player.getName());
-		if (rp == null) {
-			rp = new RankupPlayer(player.getName(), 0, "", 0);
-		}
-		if (!(rp.getKills() >= kills)) {
-			int differential = kills - rp.getKills();
-			player.sendMessage(ChatColor.RED + "Not enough kills. You need " + differential + " more kills.");
-			return null;
-		}
+		return false;
 
-		double bal = SQRankup.economy.getBalance(player);
-		if (!(bal >= money)) {
-			double differential = money - bal;
-			player.sendMessage(ChatColor.RED + "Not enough credits. You need " + differential + " more credits.");
-			return null;
-		}
-
-		return rp;
 	}
 
 	@Override
-	public void purchase(Player player, RankupPlayer rp, double money, int kills) {
+	public void removeCurrency(Player p) {
+
+		Database.removePerk(p, this);
+
+	}
+
+	@Override
+	public void giveCurrency(Player player) {
+
+		Database.addPerk(player, this, false);
+
+	}
+
+	public void redeem(Player player) {
 
 		if (addGroups != null) {
 			for (String group : addGroups) {
-				SQRankup.permission.playerAddGroup(player, group);
+				SQTrading.permission.playerAddGroup(player, group);
 			}
 		}
 
 		if (removeGroups != null) {
 			for (String group : addGroups) {
-				SQRankup.permission.playerRemoveGroup(player, group);
+				SQTrading.permission.playerRemoveGroup(player, group);
 			}
 		}
 
-		SQRankup.economy.withdrawPlayer(player, money);
-
-		rp.setAsyncKills(kills * -1);
-		rp.saveData();
 		for (String perm : this.getPermissions()) {
-			SQRankup.permission.playerAdd(null, player, perm);
+			SQTrading.permission.playerAdd(null, player, perm);
 		}
 
-		SQRankup.dispatchCommands(this.getCommands(), player);
+		SQTrading.dispatchCommands(this.getCommands(), player);
 
 		this.requiredPerms.clear();
 		this.commands.clear();
@@ -103,10 +94,33 @@ public class Perk extends Currency implements Serializable {
 		player.sendMessage(ChatColor.GREEN + "Purchase Completed!");
 	}
 
-	public void queuePurchase(Player player) {
+	private static boolean perkEquals(Perk p1, Perk p2) {
 
-		Database.addPerk(player, this, false);
+		if (!p1.alias.equals(p2.alias)) {
+			return false;
+		}
 
+		if (!p1.permissions.equals(p2.permissions)) {
+			return false;
+		}
+
+		if (!p1.requiredPerms.equals(p2.requiredPerms)) {
+			return false;
+		}
+
+		if (!p1.commands.equals(p2.commands)) {
+			return false;
+		}
+
+		if (!p1.addGroups.equals(p2.addGroups)) {
+			return false;
+		}
+
+		if (!p1.removeGroups.equals(p2.removeGroups)) {
+			return false;
+		}
+
+		return true;
 	}
 
 	@Override

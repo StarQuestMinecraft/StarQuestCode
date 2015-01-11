@@ -1,5 +1,5 @@
 
-package us.higashiyama.george.SQRankup.Currencies;
+package us.higashiyama.george.Currencies;
 
 /*
  * This class is a Crate that can hold as many cardboard boxes as needed.
@@ -14,56 +14,13 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 import us.higashiyama.george.CardboardBox.CardboardBox;
+import us.higashiyama.george.SQTrading.Database;
 
-import com.regalphoenixmc.SQRankup.Database;
-import com.regalphoenixmc.SQRankup.RankupPlayer;
-
-public class Crate extends Currency implements Serializable {
+public class Crate implements Serializable, Currency {
 
 	private static final long serialVersionUID = 3171408210789986887L;
 	public ArrayList<CardboardBox> storage = new ArrayList<CardboardBox>();
 	public String name;
-
-	@Override
-	public String getAlias() {
-
-		return this.name;
-	}
-
-	@Override
-	public RankupPlayer canPurchase(Player player, double money, int kills, Perk perk) {
-
-		for (CardboardBox cb : storage) {
-			ItemStack is = cb.unbox();
-			if (!(player.getInventory().contains(is))) {
-				return null;
-			}
-		}
-
-		return Database.getEntry(player.getName());
-	}
-
-	@Override
-	public void purchase(Player player, RankupPlayer rp, double money, int kills) {
-
-		for (CardboardBox cb : storage) {
-			ItemStack is = cb.unbox();
-			// if inventory is full
-			if (player.getInventory().firstEmpty() == -1) {
-				player.getWorld().dropItem(player.getLocation(), is);
-			} else {
-				player.getInventory().addItem(is);
-			}
-
-		}
-
-	}
-
-	public void queuePurchase(Player player) {
-
-		Database.addPerk(player, this, false);
-
-	}
 
 	public Crate(Iterable<CardboardBox> itr) {
 
@@ -115,6 +72,55 @@ public class Crate extends Currency implements Serializable {
 
 	}
 
+	@Override
+	public String getAlias() {
+
+		return this.name;
+	}
+
+	@Override
+	public boolean hasCurrency(Player player) {
+
+		for (CardboardBox cb : storage) {
+			ItemStack is = cb.unbox();
+			if (!(player.getInventory().contains(is))) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	@Override
+	public void removeCurrency(Player p) {
+
+		for (CardboardBox cb : storage) {
+			p.getInventory().remove(cb.unbox());
+		}
+
+	}
+
+	@Override
+	public void giveCurrency(Player player) {
+
+		Database.addPerk(player, this, false);
+
+	}
+
+	public void redeem(Player player) {
+
+		for (CardboardBox cb : storage) {
+			ItemStack is = cb.unbox();
+			// if inventory is full
+			if (player.getInventory().firstEmpty() == -1) {
+				player.getWorld().dropItem(player.getLocation(), is);
+			} else {
+				player.getInventory().addItem(is);
+			}
+
+		}
+
+	}
+
 	public void unpack(Inventory i) {
 
 		ArrayList<ItemStack> unpacked = this.unpackBoxes();
@@ -150,4 +156,5 @@ public class Crate extends Currency implements Serializable {
 		return unpacked;
 
 	}
+
 }

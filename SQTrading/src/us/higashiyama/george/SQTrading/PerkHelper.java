@@ -1,5 +1,5 @@
 
-package com.regalphoenixmc.SQRankup;
+package us.higashiyama.george.SQTrading;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,23 +13,23 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import us.higashiyama.george.CardboardBox.CardboardBox;
-import us.higashiyama.george.SQRankup.Currencies.Crate;
-import us.higashiyama.george.SQRankup.Currencies.Credits;
-import us.higashiyama.george.SQRankup.Currencies.Currency;
-import us.higashiyama.george.SQRankup.Currencies.Perk;
+import us.higashiyama.george.Currencies.Crate;
+import us.higashiyama.george.Currencies.Credits;
+import us.higashiyama.george.Currencies.Currency;
+import us.higashiyama.george.Currencies.Perk;
 
 public class PerkHelper {
 
 	public static void perkTrade(Player p, String[] args) {
 
 		// format of command
-		// perktrade <wants> <has> <expiry> <player>
+		// trade <wants> <has> <expiry> <player>
 
 		if (args.length < 1 || args.length > 4) {
 			return;
 		}
 
-		// for making the transaction
+		// If the player wants to trade for an existing offer
 		if (args.length == 1) {
 			int id = 0;
 			try {
@@ -48,19 +48,8 @@ public class PerkHelper {
 
 			// TODO: Location check
 
-			if (currency instanceof Credits) {
-				currency.purchase(p, Database.getEntry(p.getName()), 0, 0);
-			}
+			currency.
 
-			if (currency instanceof Perk) {
-				System.out.println("perk");
-				((Perk) currency).queuePurchase(p);
-			}
-
-			if (currency instanceof Crate) {
-				System.out.println("Crate");
-				((Crate) currency).queuePurchase(p);
-			}
 			p.sendMessage(ChatColor.AQUA + "Transaction credited.");
 			System.out.println("Deleting");
 			Database.deleteOffer(id);
@@ -80,7 +69,7 @@ public class PerkHelper {
 			double credits = Double.parseDouble(args[0]);
 			want = new Credits(credits);
 		} catch (NumberFormatException e) {
-			for (Perk perk : SQRankup.perks) {
+			for (Perk perk : SQTrading.perks) {
 				if (perk.getAlias().equalsIgnoreCase(args[0])) {
 					want = perk;
 					break;
@@ -107,7 +96,7 @@ public class PerkHelper {
 			double credits = Double.parseDouble(args[1]);
 			has = new Credits(credits);
 		} catch (NumberFormatException e) {
-			for (Perk perk : SQRankup.perks) {
+			for (Perk perk : SQTrading.perks) {
 				if (perk.getAlias().equalsIgnoreCase(args[1])) {
 					has = perk;
 					break;
@@ -146,11 +135,11 @@ public class PerkHelper {
 
 		boolean hasPerk = false;
 		if (has instanceof Credits) {
-			if (SQRankup.economy.getBalance(p) < ((Credits) has).getCredits()) {
+			if (SQTrading.economy.getBalance(p) < ((Credits) has).getCredits()) {
 				p.sendMessage(ChatColor.AQUA + "Not enough credits to make the offer");
 				return;
 			} else {
-				SQRankup.economy.withdrawPlayer(p, ((Credits) has).getCredits());
+				SQTrading.economy.withdrawPlayer(p, ((Credits) has).getCredits());
 				hasPerk = true;
 			}
 
@@ -187,8 +176,6 @@ public class PerkHelper {
 
 		p.sendMessage(ChatColor.AQUA + "Offer created!");
 
-		
-
 	}
 
 	public static Currency parseItemInput(Player player) {
@@ -208,20 +195,20 @@ public class PerkHelper {
 			String name = s.getLine(0);
 
 			ArrayList<ItemStack> stackList = new ArrayList<ItemStack>();
-			for (String testName : SQRankup.itemNames.keySet()) {
+			for (String testName : SQTrading.itemNames.keySet()) {
 				if (testName.equalsIgnoreCase(name)) {
 
 					int stacks = getStackData(quantity)[0];
 					int remaining = getStackData(quantity)[1];
 
 					while (stacks > 0) {
-						ItemStack is = new ItemStack(Material.getMaterial(SQRankup.itemNames.get(testName)[0]), stacks * 64,
-								(byte) SQRankup.itemNames.get(testName)[1]);
+						ItemStack is = new ItemStack(Material.getMaterial(SQTrading.itemNames.get(testName)[0]), stacks * 64,
+								(byte) SQTrading.itemNames.get(testName)[1]);
 						stackList.add(is);
 						stacks--;
 					}
-					ItemStack is = new ItemStack(Material.getMaterial(SQRankup.itemNames.get(testName)[0]), remaining,
-							(byte) SQRankup.itemNames.get(testName)[1]);
+					ItemStack is = new ItemStack(Material.getMaterial(SQTrading.itemNames.get(testName)[0]), remaining,
+							(byte) SQTrading.itemNames.get(testName)[1]);
 
 					stackList.add(is);
 				}
@@ -275,7 +262,7 @@ public class PerkHelper {
 
 	public static void addPerkToPlayer(String playerAlias, String perk) {
 
-		for (Perk p : SQRankup.perks) {
+		for (Perk p : SQTrading.perks) {
 			if (p.getAlias().equalsIgnoreCase(perk)) {
 
 				Player player = Bukkit.getPlayer(playerAlias);

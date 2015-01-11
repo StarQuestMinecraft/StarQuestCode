@@ -1,5 +1,5 @@
 
-package com.regalphoenixmc.SQRankup;
+package us.higashiyama.george.SQTrading;
 
 import java.io.Serializable;
 

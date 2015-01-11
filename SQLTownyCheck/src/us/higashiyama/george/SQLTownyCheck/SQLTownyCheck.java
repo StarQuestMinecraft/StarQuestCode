@@ -23,14 +23,12 @@ public class SQLTownyCheck extends JavaPlugin implements Listener {
 	@EventHandler
 	public void onPlayerCommand(PlayerCommandPreprocessEvent e) {
 
-		Player p = e.getPlayer();
-		String command = e.getMessage().replace("/", "");
-		ArrayList<String> args = new ArrayList<String>(Arrays.asList(command.split(" ")));
+		ArrayList<String> args = new ArrayList<String>(Arrays.asList(e.getMessage().replace("/", "").split(" ")));
 
 		if (args.size() < 3) {
 			return;
 		}
-
+		Player p = e.getPlayer();
 		if ((args.get(1).equalsIgnoreCase("add") && (args.get(0).equalsIgnoreCase("town") || args.get(0).equalsIgnoreCase("t")))) {
 			if (args.size() > 3) {
 				e.getPlayer().sendMessage(ChatColor.AQUA + "Too many arguments");

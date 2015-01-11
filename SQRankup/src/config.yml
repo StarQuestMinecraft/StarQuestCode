@@ -1,31 +1,49 @@
-refugee:
-    cost: 0
-    kills: 0
-settler:
-    cost: 10000
-    kills: 0
-colonist:
-    cost: 50000
-    kills: 0
-citizen:
-    cost: 250000
-    kills: 0
-affluent:
-    cost: 1250000
-    kills: 0
-tycoon:
-    cost: 6250000
-    kills: 0
-pirate:
-    cost: 0
-    kills: 5
-corsair:
-    cost: 0
-    kills: 20
-buccaneer:
-    cost: 0
-    kills: 80
-warlord:
-    cost: 0
-    kills: 160
+ranks:
+  refugee:
+      credits: 0
+      infamy: 0
+      next:
+        - settler
+  settler:
+      credits: 10000
+      infamy: 0
+      next:
+        - colonist
+        - pirate
+  colonist:
+      credits: 50000
+      infamy: 0
+      next:
+        - citizen
+  citizen:
+      credits: 250000
+      infamy: 0
+      next:
+        - affluent
+  affluent:
+      credits: 1250000
+      infamy: 0
+      next:
+        - tycoon
+  tycoon:
+      credits: 6250000
+      infamy: 0
+  pirate:
+      credits: 0
+      infamy: 5
+      next:
+        - corsair
+  corsair:
+      credits: 0
+      infamy: 20
+      next:
+        - buccaneer
+  buccaneer:
+      credits: 0
+      infamy: 80
+      next:
+        - warlord
+  warlord:
+      credits: 0
+      infamy: 160
 multiplier: 1
