@@ -5,11 +5,9 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Random;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.Color;
-import org.bukkit.FireworkEffect;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -20,10 +18,8 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Egg;
-import org.bukkit.entity.Firework;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
-import org.bukkit.entity.Snowball;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
@@ -33,9 +29,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.util.Vector;
 
 public class SQTurrets extends JavaPlugin implements Listener {
 
@@ -43,10 +37,7 @@ public class SQTurrets extends JavaPlugin implements Listener {
 	public static ArrayList<Turret> turretTypes = new ArrayList<Turret>();
 	public static ArrayList<Ammo> ammoTypes = new ArrayList<Ammo>();
 	public static SQTurrets instance;
-	public static ArrayList<Projectile> liveProjectiles = new ArrayList<Projectile>();
-	public static ArrayList<Projectile> liveEMP = new ArrayList<Projectile>();
 	public static ArrayList<Projectile> eggs = new ArrayList<Projectile>();
-	public static ArrayList<Projectile> childEggs = new ArrayList<Projectile>();
 	public static FileConfiguration config;
 
 	public void onEnable() {
@@ -110,7 +101,6 @@ public class SQTurrets extends JavaPlugin implements Listener {
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 
 		if (cmd.getName().equalsIgnoreCase("turretsreload") && sender.hasPermission("SQTurrets.reload")) {
-			System.out.println("REGISTERED");
 			config = YamlConfiguration.loadConfiguration(new File(getDataFolder(), "config.yml"));
 			turretTypes.clear();
 			ammoTypes.clear();
@@ -137,110 +127,28 @@ public class SQTurrets extends JavaPlugin implements Listener {
 	}
 
 	@EventHandler
-	public void eggBreak(ProjectileHitEvent e) {
+	public void eggBreak(final ProjectileHitEvent e) {
 
 		if (e.getEntity() instanceof Egg && eggs.contains(e.getEntity())) {
 
-			Location l = e.getEntity().getLocation();
+			final Location l = e.getEntity().getLocation();
+			int radius = 3;
+			final int[][] newLocs = { { radius, 0 }, { -radius, 0 }, { 0, radius }, { 0, -radius }
 
-			// 2.3 = explosion POWER
-			// e.getEntity().getWorld().createExplosion(l.getX(), l.getY(),
-			// l.getZ(), 2.3F, false, true);
-
-			BlockFace[] faces = { BlockFace.WEST, BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH };
+			};
 			for (int i = 0; i < 4; i++) {
-				double rand = Math.random() * 3;
-				Random r = new Random();
-				boolean neg = r.nextBoolean();
+				final int count = i;
+				Bukkit.getScheduler().scheduleSyncDelayedTask(instance, new Runnable() {
 
-				if (neg) {
-					rand *= -1;
-				}
+					public void run() {
 
-				double x = rand;
-				neg = r.nextBoolean();
-
-				if (neg) {
-					rand *= -1;
-				}
-				double y = rand;
-				neg = r.nextBoolean();
-
-				if (neg) {
-					rand *= -1;
-				}
-				double z = rand;
-				System.out.println(x);
-				System.out.println(y);
-				System.out.println(z);
-				Vector v = new Vector(x, y, z);
-				System.out.println(rand);
-				Projectile proj = e.getEntity().getWorld().spawn(l.getBlock().getRelative(faces[i]).getLocation(), Egg.class);
-				proj.setVelocity(v);
-				childEggs.add(proj);
+						e.getEntity().getWorld().createExplosion(l.getX() + newLocs[count][0], l.getY(), l.getZ() + newLocs[count][1], 2.3F, false, true);
+					}
+				}, 4 * i);
 			}
-
-			Firework f = (Firework) e.getEntity().getWorld().spawn(e.getEntity().getLocation(), Firework.class);
-			List<Color> colors = new ArrayList<Color>();
-			colors.add(Color.RED);
-			colors.add(Color.YELLOW);
-			colors.add(Color.ORANGE);
-			FireworkMeta fm = f.getFireworkMeta();
-			fm.clearEffects();
-			fm.setPower(1);
-			fm.addEffect(FireworkEffect.builder().with(FireworkEffect.Type.BALL_LARGE).withColor(colors).withFade().flicker(true).trail(true).build());
-			f.setFireworkMeta(fm);
-			f.detonate();
-
-		}
-
-		if (e.getEntity() instanceof Egg && childEggs.contains(e.getEntity())) {
-
-			Location l = e.getEntity().getLocation();
-
-			// 2.3 = explosion POWER
-			// e.getEntity().getWorld().createExplosion(l.getX(), l.getY(),
-			// l.getZ(), 2.3F, false, true);
-
-			Firework f = (Firework) e.getEntity().getWorld().spawn(e.getEntity().getLocation(), Firework.class);
-			List<Color> colors = new ArrayList<Color>();
-			colors.add(Color.RED);
-			colors.add(Color.YELLOW);
-			colors.add(Color.ORANGE);
-			FireworkMeta fm = f.getFireworkMeta();
-			fm.clearEffects();
-			fm.setPower(1);
-			fm.addEffect(FireworkEffect.builder().with(FireworkEffect.Type.BALL_LARGE).withColor(colors).withFade().flicker(true).trail(true).build());
-			f.setFireworkMeta(fm);
-			f.detonate();
-
-		}
-
-		if (e.getEntity() instanceof Snowball && liveEMP.contains(e.getEntity())) {
-			Location l = e.getEntity().getLocation();
-			// EMPUtils.detonateEMP(l.getBlock().getRelative(yawToFace(l.getYaw(),
-			// false)));
-			Firework f = (Firework) e.getEntity().getWorld().spawn(e.getEntity().getLocation(), Firework.class);
-			List<Color> colors = new ArrayList<Color>();
-			colors.add(Color.BLUE);
-			colors.add(Color.GREEN);
-			colors.add(Color.WHITE);
-			FireworkMeta fm = f.getFireworkMeta();
-			fm.clearEffects();
-			fm.setPower(1);
-			fm.addEffect(FireworkEffect.builder().with(FireworkEffect.Type.BALL_LARGE).withColor(colors).withFade().flicker(true).trail(true).build());
-			f.setFireworkMeta(fm);
-			f.detonate();
-
-		}
-
-		if (eggs.contains(e.getEntity())) {
 			eggs.remove(e.getEntity());
 		}
 
-		if (liveEMP.contains(e.getEntity())) {
-			liveEMP.remove(e.getEntity());
-		}
 	}
 
 	@EventHandler

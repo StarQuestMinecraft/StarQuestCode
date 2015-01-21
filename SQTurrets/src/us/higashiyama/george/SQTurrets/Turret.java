@@ -79,13 +79,8 @@ public class Turret {
 			proj.setShooter((ProjectileSource) p);
 		}
 
-		// SQTurrets.liveProjectiles.add(proj);
 		if (proj instanceof Egg) {
 			SQTurrets.eggs.add(proj);
-		}
-
-		if (proj instanceof Snowball) {
-			SQTurrets.liveEMP.add(proj);
 		}
 
 		// play sounds
@@ -125,10 +120,6 @@ public class Turret {
 
 		if (proj instanceof Egg) {
 			SQTurrets.eggs.add(proj);
-		}
-
-		if (proj instanceof Snowball) {
-			SQTurrets.liveEMP.add(proj);
 		}
 
 		if (!(proj instanceof Egg) || !(proj instanceof Snowball)) {
