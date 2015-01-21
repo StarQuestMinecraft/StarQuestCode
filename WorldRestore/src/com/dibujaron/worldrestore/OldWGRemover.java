@@ -10,6 +10,7 @@ import com.earth2me.essentials.User;
 import com.sk89q.worldedit.regions.Region;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.sk89q.worldguard.domains.DefaultDomain;
+import com.sk89q.worldguard.protection.databases.ProtectionDatabaseException;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 
@@ -40,6 +41,11 @@ public class OldWGRemover {
 		}
 		for(ProtectedRegion r : removeLater){
 			rm.removeRegion(r.getId());
+		}
+		try{
+			rm.save();
+		} catch (Exception ex){
+			ex.printStackTrace();
 		}
 	}
 }

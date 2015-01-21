@@ -5,7 +5,7 @@ import java.util.Set;
 import org.bukkit.Chunk;
 import org.bukkit.World;
 
-import com.massivecraft.factions.entity.BoardColls;
+import com.massivecraft.factions.entity.BoardColl;
 import com.massivecraft.factions.entity.Faction;
 import com.massivecraft.massivecore.ps.PS;
 
@@ -19,7 +19,7 @@ public class FactionsPreprocessTask extends PreprocessTask{
 	@Override
 	public void process(World from, World to) {
 		System.out.println("Preprocessing: Faction " + f.getName());
-		Set<PS> chunks = BoardColls.get().getForWorld(from.getName()).getChunks(f);
+		Set<PS> chunks = BoardColl.get().getChunks(f);
 		for (PS ps : chunks) {
 			if (ps.getWorld().equals(from.getName())) {
 				Chunk c = ps.asBukkitChunk();

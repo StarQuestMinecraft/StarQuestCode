@@ -27,7 +27,6 @@ public class Whitelister extends Plugin implements Listener{
 	private static Whitelister instance;
 	
 	private static final int MAX_STANDARD_PLAYERS = 20;
-	private static final String PRIORITY_SYMBOL = "§f[§e+§f]";
 	private Database d;
 	
 	public void onEnable(){

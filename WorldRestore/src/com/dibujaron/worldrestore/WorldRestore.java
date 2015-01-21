@@ -18,7 +18,7 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import com.massivecraft.factions.entity.Faction;
-import com.massivecraft.factions.entity.FactionColls;
+import com.massivecraft.factions.entity.FactionColl;
 import com.palmergames.bukkit.towny.object.Town;
 import com.palmergames.bukkit.towny.object.TownyUniverse;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
@@ -72,7 +72,7 @@ public class WorldRestore extends BukkitRunnable {
 		}
 
 		if (doFactions) {
-			Collection<Faction> factions = FactionColls.get().getForWorld(from.getName()).getAll();
+			Collection<Faction> factions = FactionColl.get().getAll();
 			for (Faction f : factions) {
 				preTasks.add(new FactionsPreprocessTask(f));
 			}
