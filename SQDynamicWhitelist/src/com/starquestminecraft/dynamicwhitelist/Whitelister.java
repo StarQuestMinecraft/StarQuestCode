@@ -48,7 +48,6 @@ public class Whitelister extends Plugin implements Listener{
 	public void onLogin(LoginEvent event){
 		if(!event.isCancelled()){
 			UUID u = event.getConnection().getUniqueId();
-			System.out.println("LoginEvent Called");
 			if(!d.hasPlayedBefore(u)){
 				d.registerNewPlayer(u);
 				d.addPremiumTime(u, 168);
@@ -62,12 +61,10 @@ public class Whitelister extends Plugin implements Listener{
 			}
 			boolean isPremium = d.isPremium(u);
 			if(isPremium){
-				System.out.println("Is Premium!");
 				premiumPlayers.add(u);
 				System.out.println(premiumPlayers.size());
 				sendDelayedMessage(u, "Welcome! Thank you for using SQ Priority!");
 			} else {
-				System.out.println("Is not Premium!!");
 			if(getStandardPlayerCount() >= MAX_STANDARD_PLAYERS){
 					event.setCancelReason("Sorry, StarQuest is full right now! To join a full server purchase Priority Access at http://starquestminecraft.buycraft.net");
 					event.setCancelled(true);

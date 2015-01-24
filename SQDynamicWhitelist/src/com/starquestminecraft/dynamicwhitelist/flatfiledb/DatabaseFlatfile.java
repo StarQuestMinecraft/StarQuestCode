@@ -143,7 +143,6 @@ public class DatabaseFlatfile extends Database{
 	private void acquire(){
 		try {
 			lock.acquire();
-			System.out.println("Acquiring lock: " + getMethodCaller());
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -151,7 +150,6 @@ public class DatabaseFlatfile extends Database{
 	}
 	
 	private void release(){
-		System.out.println("Releasing lock: " + getMethodCaller());
 		lock.release();
 	}
 	
