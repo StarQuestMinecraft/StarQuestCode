@@ -42,18 +42,18 @@ ranks:
         - corsair
   corsair:
       credits: 0
-      infamyGain: 4
+      infamyGain: 3
       infamyCost: 20
       next:
         - buccaneer
   buccaneer:
       credits: 0
-      infamyGain: 6
+      infamyGain: 5
       infamyCost: 80
       next:
         - warlord
   warlord:
       credits: 0
-      infamyGain: 8
+      infamyGain: 7
       infamyCost: 160
 multiplier: 1

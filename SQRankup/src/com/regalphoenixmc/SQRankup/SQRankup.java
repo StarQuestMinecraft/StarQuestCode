@@ -214,11 +214,25 @@ public class SQRankup extends JavaPlugin implements Listener {
 			}
 		}
 	}
+	
+	public static void awardInfamyForKill(Player killer, OfflinePlayer killed){
+		boolean cooldown = Database.isInCooldown(killer, killed);
+		System.out.println(cooldown);
+		if (!cooldown) {
+			int infamy = rankToKills(killed);
+			CC3Wrapper.deposit(infamy, killer.getName(), CC3Currency.INFAMY, Cause.PLUGIN, "Rankup Kill");
+			killer.sendMessage(ChatColor.RED + "You were awarded " + infamy + " infamy for that kill. You now have "
+					+ CC3Wrapper.getBalance(killer.getName(), CC3Currency.INFAMY) + " infamy");
+			Database.addKill(killer, killed);
+		} else {
+			killer.sendMessage(ChatColor.RED + "You already killed that player in the last 20 minutes! Lay off for a bit...");
+		}
+	}
 
-	private int rankToKills(Player player) {
+	private static int rankToKills(OfflinePlayer killed) {
 
 		int i = 0;
-		String[] groups = permission.getPlayerGroups(null, getServer().getOfflinePlayer(player.getUniqueId()));
+		String[] groups = permission.getPlayerGroups(null, Bukkit.getOfflinePlayer(killed.getUniqueId()));
 		System.out.println(Arrays.toString(groups));
 		for (String p : groups) {
 			if (infamyGainMap.containsKey(p.toLowerCase())) {

@@ -9,6 +9,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
 public class Database {
@@ -44,7 +45,7 @@ public class Database {
 		}
 	}
 
-	public static void addKill(final Player player, final Player killed) {
+	public static void addKill(final Player player, final OfflinePlayer killed) {
 
 		Runnable task = new Runnable() {
 
@@ -74,7 +75,7 @@ public class Database {
 		new Thread(task, "DBThread").start();
 	}
 
-	public static boolean isInCooldown(Player killer, Player killed) {
+	public static boolean isInCooldown(OfflinePlayer killer, OfflinePlayer killed) {
 
 		System.out.print("[Rankup] Getting Last Kill Time");
 		if (!getContext()) {
