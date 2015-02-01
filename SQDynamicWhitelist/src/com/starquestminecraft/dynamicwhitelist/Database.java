@@ -39,6 +39,10 @@ public abstract class Database {
 	
 	public abstract boolean isPermanent(UUID u);
 	
+	public abstract boolean isUsingQueue();
+	
+	public abstract void setUsingQueue(boolean using);
+	
 	//MUST BE CALLED ASYNC
 	public UUID uuidFromUsername(String username){
 		Profile[] profiles = repo.findProfilesByNames(new String[] {username});

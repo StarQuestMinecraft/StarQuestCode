@@ -4,6 +4,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -28,9 +29,14 @@ public class Core extends JavaPlugin{
 				}
 			} else if(cmd.getName().equalsIgnoreCase("deleteoldwgs")){
 				if(sender instanceof Player){
+					sender.sendMessage("Deleting old wgs");
 					World w = ((Player) sender).getWorld();
-					OldWGRemover.removeOldWGs(w);
+					OldWGRemover.removeOldWGs(this, w);
 					return true;
+				} else if(sender instanceof ConsoleCommandSender){
+					World w = Bukkit.getWorld(Bukkit.getServerName());
+					sender.sendMessage("Deleting old wgs");
+					OldWGRemover.removeOldWGs(this, w);
 				}
 			}
 		}

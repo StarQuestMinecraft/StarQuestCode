@@ -38,8 +38,9 @@ public class SQRankup extends JavaPlugin implements Listener {
 	public static VaultEco vaultEco;
 	public static int MULTIPLIER = 1;
 	public static FileConfiguration config;
-	public static HashMap<String, Integer> infamyMap = new HashMap<String, Integer>();
+	public static HashMap<String, Integer> infamyCostMap = new HashMap<String, Integer>();
 	public static HashMap<String, Integer> creditMap = new HashMap<String, Integer>();
+	public static HashMap<String, Integer> infamyGainMap = new HashMap<String, Integer>();
 	public static HashMap<String, List<String>> rankTree = new HashMap<String, List<String>>();
 	public static HashMap<String, int[]> itemNames = new HashMap<String, int[]>();
 	public static Common craftconomy;
@@ -67,11 +68,12 @@ public class SQRankup extends JavaPlugin implements Listener {
 		System.out.println(names.toString());
 		for (String name : names) {
 			System.out.println(name);
-			infamyMap.put(name, config.getInt("ranks." + name + ".infamy"));
+			infamyCostMap.put(name, config.getInt("ranks." + name + ".infamycost"));
 			creditMap.put(name, config.getInt("ranks." + name + ".credits"));
+			infamyGainMap.put(name, config.getInt("rank." + name + ".infamygain"));
 			rankTree.put(name, config.getStringList("ranks." + name + ".next"));
 		}
-		System.out.println(infamyMap.toString());
+		System.out.println(infamyCostMap.toString());
 		System.out.println(creditMap.toString());
 		System.out.println(rankTree.toString());
 	}
@@ -219,8 +221,8 @@ public class SQRankup extends JavaPlugin implements Listener {
 		String[] groups = permission.getPlayerGroups(null, getServer().getOfflinePlayer(player.getUniqueId()));
 		System.out.println(Arrays.toString(groups));
 		for (String p : groups) {
-			if (infamyMap.containsKey(p.toLowerCase())) {
-				i = infamyMap.get(p.toLowerCase());
+			if (infamyGainMap.containsKey(p.toLowerCase())) {
+				i = infamyGainMap.get(p.toLowerCase());
 			}
 		}
 		int cost = i < 0 ? i : i * MULTIPLIER;
@@ -257,9 +259,9 @@ public class SQRankup extends JavaPlugin implements Listener {
 
 	public int getKillRequirement(String rank) {
 
-		for (String test : infamyMap.keySet()) {
+		for (String test : infamyCostMap.keySet()) {
 			if (test.toLowerCase().equals(rank.toLowerCase())) {
-				return infamyMap.get(rank);
+				return infamyCostMap.get(rank);
 			}
 		}
 

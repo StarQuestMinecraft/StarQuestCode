@@ -14,7 +14,7 @@ public class AutoRestart extends JavaPlugin{
 	public void onEnable(){
 		getServer().getScheduler().scheduleSyncDelayedTask(this, new Runnable(){
 			public void run(){
-				command("chatreload");
+				command("sync console all chatreload");
 			}
 		}, 800L);
 		//delay an hour and a half; there's no reason to check before then, and if you check too soon it'll restart loop.
