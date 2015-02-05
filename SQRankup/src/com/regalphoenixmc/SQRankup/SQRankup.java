@@ -126,7 +126,7 @@ public class SQRankup extends JavaPlugin implements Listener {
 					}
 					return true;
 				}
-				//NPE this line somehow. hmm.
+				//NPE this line somehow. hmm. ~Dib
 				if (nextRanks.contains(args[0].toLowerCase())) {
 					nextRank = args[0];
 				} else {
