@@ -1,10 +1,15 @@
 package com.dibujaron.ingameide;
 
 import java.io.File;
+
+import org.codehaus.janino.JavaSourceClassLoader;
+
 import java.io.IOException;
 import java.io.PrintWriter;
 
 public class ExecutionFactory {
+	
+	private static ClassLoader loader = new JavaSourceClassLoader(IngameIDE.getInstance().getLoader(), new File[] { IngameIDE.getInstance().getDataFolder() }, null);
 	
 	private static String[] before = {
 			"import org.bukkit.*;",
@@ -22,7 +27,6 @@ public class ExecutionFactory {
 			"public class IngameIDEExecutable implements Runnable{",
 			"",
 			"public void run(){" };
-			
 	private static String[] after = {
 			"}",
 			"}"
@@ -31,43 +35,29 @@ public class ExecutionFactory {
 	public static void execute(String[] lines){
 		String[] combination = combine(before, lines, after);
 		File f = writeFile(combination);
-		compile(f.getAbsolutePath());
-		String newPath = javaFilePathToClassFilePath(f.getAbsolutePath());
-		Runnable loaded = load(newPath);
-		loaded.run();
-	}
-	
-	private static String javaFilePathToClassFilePath(String javaPath){
-		String shortString = javaPath.substring(0, javaPath.length() - 4);
-		return shortString + "class";
-	}
-	
-	private static Runnable load(String path){
 		try {
-			Class<?> cl = IngameIDE.getInstance().getClass().getClassLoader().loadClass(path);
-			Runnable c = (Runnable) cl.newInstance();
-			return c;
-		} catch (Exception e) {
+			Runnable r = (Runnable) loader.loadClass(f.getName()).newInstance();
+			r.run();
+		} catch (InstantiationException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
-			return null;
-		}
-	}
-	
-	private static void compile(String path){
-		final Runtime rt = Runtime.getRuntime();
-		System.out.println(path);
-		try {
-			rt.exec("C:\\Program Files (x86)\\Java\\jdk1.7.0_45\\bin\\javac.exe " + path);
-		} catch (IOException e) {
+		} catch (IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
 	}
+
 	
 	private static File writeFile(String[] data){
 		try{
 			File f = new File(IngameIDE.getInstance().getDataFolder() + "/IngameIDEExecutable.java");
-			f.getParentFile().mkdirs();
+			if(!f.exists()){
+				f.mkdirs();
+			}
 			PrintWriter out = new PrintWriter(f);
 			for(String s : data){
 				out.write(s + "\n");

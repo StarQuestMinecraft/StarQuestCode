@@ -4,5 +4,7 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jre7"/>
 	<classpathentry kind="lib" path="C:/Users/Drew/Dropbox/Eclipse/External Jars/bukkit-1.7.9-R0.3-20140603.211345-2.jar"/>
 	<classpathentry kind="lib" path="C:/Users/Drew/Dropbox/Eclipse/External Jars/bPermissions.jar"/>
+	<classpathentry kind="lib" path="lib/commons-compiler.jar"/>
+	<classpathentry kind="lib" path="lib/janino.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

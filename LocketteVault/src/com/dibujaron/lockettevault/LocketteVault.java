@@ -43,6 +43,11 @@ public class LocketteVault extends JavaPlugin implements Listener{
 					event.setUseInteractedBlock(Result.ALLOW);
 					event.setUseItemInHand(Result.ALLOW);
 					event.setCancelled(false);
+				} else {
+					if(checkForBrokenSign(event.getClickedBlock())){
+						event.setCancelled(true);
+						event.getPlayer().sendMessage("There was a broken lock sign on this door. Try again.");
+					}
 				}
 			}
 			if(event.getClickedBlock().getState() instanceof InventoryHolder){
@@ -68,6 +73,36 @@ public class LocketteVault extends JavaPlugin implements Listener{
 		}
 	}
 	
+	private boolean checkForBrokenSign(Block clickedBlock) {
+		Block down = clickedBlock.getRelative(BlockFace.DOWN);
+		Block up = clickedBlock.getRelative(BlockFace.UP);
+		Material upType = up.getType();
+		Material downType = down.getType();
+		if(upType == Material.WOODEN_DOOR || upType == Material.IRON_DOOR_BLOCK){
+			//sign is mounted on the low door
+			if(checkForBrokenSignAroundBlock(up) || checkForBrokenSignAroundBlock(clickedBlock)) return true;
+		}
+		else if(downType == Material.WOODEN_DOOR || downType == Material.IRON_DOOR_BLOCK){
+			//sign is mounted on high door
+			if(checkForBrokenSignAroundBlock(down) || checkForBrokenSignAroundBlock(clickedBlock)) return true;
+		}
+		return false;	
+	}
+	
+	private boolean checkForBrokenSignAroundBlock(Block doorBlock){
+		for(Block b : getEdges(doorBlock, true, false)){
+			if(b.getType() == Material.WALL_SIGN || b.getType() == Material.SIGN_POST){
+				Sign s = (Sign) b.getState();
+				if(s.getLine(0).toLowerCase().contains("private") && !s.getLine(0).toLowerCase().contains("[private]")){
+					s.setLine(0, "[Private]");
+					s.update();
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onBlockBreak(BlockBreakEvent event){
 		if(event.getBlock().getType() == Material.WALL_SIGN){

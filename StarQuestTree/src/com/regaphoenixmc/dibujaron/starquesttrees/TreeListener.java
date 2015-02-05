@@ -5,9 +5,9 @@ import java.io.File;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
-
 import org.bukkit.TreeType;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -24,6 +24,10 @@ import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.bukkit.BukkitWorld;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 import com.sk89q.worldedit.schematic.SchematicFormat;
+import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
+import com.sk89q.worldguard.protection.ApplicableRegionSet;
+import com.sk89q.worldguard.protection.managers.RegionManager;
+import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 
 public class TreeListener implements Listener{
 	StarQuestTreesAndMobs plugin;
@@ -31,6 +35,35 @@ public class TreeListener implements Listener{
 		this.plugin = plugin;
 	}
 	
+	@EventHandler(priority = EventPriority.HIGHEST)
+	public void onPlayerBreak(BlockBreakEvent event){
+		if(event.getPlayer().getWorld().getName().equals("Regalis")){
+			if(event.getBlock().getType() == Material.LOG){
+				RegionManager rm = WorldGuardPlugin.inst().getRegionManager(event.getBlock().getWorld());
+				ApplicableRegionSet set = rm.getApplicableRegions(event.getBlock().getLocation());
+				for(ProtectedRegion r : set){
+					if(r.getId().startsWith("treefarm")){
+						event.setCancelled(false);
+						
+					}
+				}
+				if(!event.isCancelled()){
+					final Block b = event.getBlock().getRelative(BlockFace.DOWN);
+					final Block sapling = event.getBlock();
+					if(b.getType() == Material.DIRT){
+						event.setCancelled(true);
+						event.getPlayer().getInventory().addItem(event.getBlock().getDrops().toArray(new ItemStack[1]));
+						Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable(){
+							public void run(){
+								sapling.setType(Material.SAPLING);
+								sapling.setData((byte) 2);
+							}
+						}, 1L);
+					}
+				}
+			}
+		}
+	}
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onTreeGrow(StructureGrowEvent event) throws InterruptedException{
 		
@@ -103,7 +136,7 @@ public class TreeListener implements Listener{
 		WorldEditPlugin wep = ((WorldEditPlugin) Bukkit.getServer().getPluginManager().getPlugin("WorldEdit"));
 		WorldEdit we = wep.getWorldEdit();
 		LocalConfiguration config = we.getConfiguration();
-		LocalPlayer p = wep.wrapPlayer(Bukkit.getServer().getOnlinePlayers()[0]);
+		LocalPlayer p = wep.wrapPlayer(startBlock.getWorld().getPlayers().get(0));
 		File dir = we.getWorkingDirectoryFile(config.saveDir);
         File f;
         Vector v = new Vector(startBlock.getX(), startBlock.getY(), startBlock.getZ());

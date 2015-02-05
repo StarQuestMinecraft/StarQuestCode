@@ -73,6 +73,9 @@ public class IngameIDE extends JavaPlugin implements Listener{
 		userMap.put(sender, new CodeSession(sender));
 	}
 	
+	public ClassLoader getLoader(){
+		return this.getClassLoader();
+	}
 	private void executeCode(Player sender){
 		CodeSession s = userMap.get(sender);
 		if(s != null){
