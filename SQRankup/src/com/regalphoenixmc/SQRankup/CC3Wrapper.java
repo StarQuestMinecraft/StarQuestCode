@@ -27,7 +27,7 @@ public class CC3Wrapper {
 
 	public enum CC3Currency {
 
-		CREDITS("Credits"), INFAMY("Infamy");
+		CREDITS("Credit"), INFAMY("Infamy"), VOTES("Vote*");
 
 		private String name;
 
