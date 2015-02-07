@@ -1,3 +1,4 @@
+
 package com.regalphoenixmc.SQRankup;
 
 import java.io.File;
@@ -112,34 +113,36 @@ public class SQRankup extends JavaPlugin implements Listener {
 		if ((cmd.getName().equalsIgnoreCase("rankup")) && ((sender instanceof Player))) {
 			Player p = (Player) sender;
 			String rank = getRank(p);
-			String nextRank = getNextRank(rank);
-			if (nextRank == null) {
-				p.sendMessage(ChatColor.RED + "You are unable to rank up.");
+			String nextRank = null;
+			List<String> nextRanks = rankTree.get(rank.toLowerCase());
+
+			if (nextRanks == null || nextRanks.size() == 0) {
+				p.sendMessage(ChatColor.RED + "No next ranks found. You are unable to rank up.");
 				return true;
 			}
-			if (nextRank.equals("")) {
-				List<String> nextRanks = rankTree.get(rank);
-				if (args.length == 0) {
-					sender.sendMessage(ChatColor.RED + " You need to choose a rank path! Your avaliable choices are:");
-					for (String r : nextRanks) {
-						sender.sendMessage(ChatColor.GOLD + "    " + r);
-					}
-					return true;
-				}
-				//NPE this line somehow. hmm. ~Dib
-				if (nextRanks.contains(args[0].toLowerCase())) {
-					nextRank = args[0];
-				} else {
-					sender.sendMessage("Invalid rank. Type /rankup to see your choices");
-					return true;
-				}
 
+			if (args.length == 0) {
+				sender.sendMessage(ChatColor.RED + " You need to choose a rank path! Your avaliable choices are:");
+				for (String r : nextRanks) {
+					sender.sendMessage(ChatColor.GOLD + "    " + r);
+				}
+				return true;
+			} else if (args.length >= 1) {
+				if (nextRanks.contains(args[0].toLowerCase())) {
+					nextRank = args[0].toLowerCase();
+				} else {
+					p.sendMessage(ChatColor.RED + "No such rank by the name " + ChatColor.AQUA + args[0] + ChatColor.RED + " that you can rank up to.");
+					return true;
+				}
 			}
+
+			/*
 			if (rank.equalsIgnoreCase("settler")) {
 				sender.sendMessage(ChatColor.RED + "To rank up to settler, you must apply to the server on our minecraft forums thread");
 				sender.sendMessage(ChatColor.GOLD + "http://tinyurl.com/starquestapps");
 				return true;
 			}
+			*/
 
 			int moneyRequirement = getMonetaryCost(nextRank);
 			int killsRequirement = getKillRequirement(nextRank);
@@ -147,30 +150,34 @@ public class SQRankup extends JavaPlugin implements Listener {
 			double moneyFound = CC3Wrapper.getBalance(p.getName(), CC3Currency.CREDITS);
 			if ((killsFound >= killsRequirement) && (moneyFound >= moneyRequirement)) {
 				getServer().broadcastMessage(ChatColor.RED + sender.getName() + " has ranked up to " + nextRank.toString().toLowerCase() + "!");
-				permission.playerAddGroup(p, nextRank);
-				permission.playerRemoveGroup(p, rank);
+				permission.playerAddGroup(null, p, nextRank.toLowerCase());
+				permission.playerRemoveGroup(null, p, rank);
 				CC3Wrapper.withdraw(moneyRequirement, p.getName(), CC3Currency.CREDITS, Cause.PLUGIN, "Rankup withdrawl");
 				CC3Wrapper.withdraw(killsRequirement, p.getName(), CC3Currency.INFAMY, Cause.PLUGIN, "Rankup withdrawl");
 			} else {
-				sender.sendMessage("Current money: " + moneyFound + " Required Money: " + moneyRequirement + " Current Kills: " + killsFound + " Required Kills: " + killsRequirement);
+				sender.sendMessage("Current money: " + moneyFound + " Required Money: " + moneyRequirement + " Current Kills: " + killsFound
+						+ " Required Kills: " + killsRequirement);
 			}
 			return true;
 		}
 
 		if ((cmd.getName().equalsIgnoreCase("addapp")) && (sender.hasPermission("SQRankup.addApplication"))) {
-			//String rank = getRank(getServer().getOfflinePlayer(args[0]));
-			//String nextRank = getNextRank(rank);
+			// String rank = getRank(getServer().getOfflinePlayer(args[0]));
+			// String nextRank = getNextRank(rank);
 			if (args.length >= 1) {
 				getServer().broadcastMessage(ChatColor.RED + args[0] + " has ranked up to settler!");
 				getServer().broadcastMessage(
-						ChatColor.RED + "Are you a " + ChatColor.GREEN + "Refugee" + ChatColor.RED + "? Rank up to " + ChatColor.DARK_GREEN + "Settler" + ChatColor.RED + " like " + args[0] + " did!");
-				getServer().broadcastMessage(ChatColor.RED + "Visit " + ChatColor.BLUE + "http://tinyurl.com/starquestapps" + ChatColor.RED + " to apply for Settler rank!");
+						ChatColor.RED + "Are you a " + ChatColor.GREEN + "Refugee" + ChatColor.RED + "? Rank up to " + ChatColor.DARK_GREEN + "Settler"
+								+ ChatColor.RED + " like " + args[0] + " did!");
+				getServer().broadcastMessage(
+						ChatColor.RED + "Visit " + ChatColor.BLUE + "http://tinyurl.com/starquestapps" + ChatColor.RED + " to apply for Settler rank!");
 
 				permission.playerAddGroup(null, getServer().getOfflinePlayer(args[0]), "SETTLER");
 				permission.playerRemoveGroup(null, getServer().getOfflinePlayer(args[0]), "REFUGEE");
 				if (args.length >= 2) {
 					Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "money give " + args[1] + " 10000");
-					getServer().broadcastMessage(ChatColor.GOLD + args[1] + ChatColor.RED + " brought " + args[0] + " to the server and earned 10000 for doing so!");
+					getServer().broadcastMessage(
+							ChatColor.GOLD + args[1] + ChatColor.RED + " brought " + args[0] + " to the server and earned 10000 for doing so!");
 				}
 				return true;
 			}
@@ -201,7 +208,8 @@ public class SQRankup extends JavaPlugin implements Listener {
 			if (!cooldown) {
 				int infamy = rankToKills(killed);
 				CC3Wrapper.deposit(infamy, killer.getName(), CC3Currency.INFAMY, Cause.PLUGIN, "Rankup Kill");
-				killer.sendMessage(ChatColor.RED + "You were awarded " + infamy + " infamy for that kill. You now have " + CC3Wrapper.getBalance(killer.getName(), CC3Currency.INFAMY) + " infamy");
+				killer.sendMessage(ChatColor.RED + "You were awarded " + infamy + " infamy for that kill. You now have "
+						+ CC3Wrapper.getBalance(killer.getName(), CC3Currency.INFAMY) + " infamy");
 				Database.addKill(killer, killed);
 			} else {
 				killer.sendMessage(ChatColor.RED + "You already killed that player in the last 20 minutes! Lay off for a bit...");
@@ -210,12 +218,14 @@ public class SQRankup extends JavaPlugin implements Listener {
 	}
 
 	public static void awardInfamyForKill(Player killer, OfflinePlayer killed) {
+
 		boolean cooldown = Database.isInCooldown(killer, killed);
 		System.out.println(cooldown);
 		if (!cooldown) {
 			int infamy = rankToKills(killed);
 			CC3Wrapper.deposit(infamy, killer.getName(), CC3Currency.INFAMY, Cause.PLUGIN, "Rankup Kill");
-			killer.sendMessage(ChatColor.RED + "You were awarded " + infamy + " infamy for that kill. You now have " + CC3Wrapper.getBalance(killer.getName(), CC3Currency.INFAMY) + " infamy");
+			killer.sendMessage(ChatColor.RED + "You were awarded " + infamy + " infamy for that kill. You now have "
+					+ CC3Wrapper.getBalance(killer.getName(), CC3Currency.INFAMY) + " infamy");
 			Database.addKill(killer, killed);
 		} else {
 			killer.sendMessage(ChatColor.RED + "You already killed that player in the last 20 minutes! Lay off for a bit...");
@@ -236,29 +246,11 @@ public class SQRankup extends JavaPlugin implements Listener {
 		return cost;
 	}
 
-	// method to get the next rank on the rank structure
-	public String getNextRank(String rank) {
-
-		/*
-		 * for (String test : rankTree.keySet()) { List<String> ranks =
-		 * rankTree.get(test); if (ranks.size() > 1) { return ""; } else if
-		 * (ranks == null || ranks.size() == 0) { return null; } else { return
-		 * ranks.get(0).toUpperCase(); } }
-		 */
-		System.out.println("Getting next rank from rank " + rank);
-		List<String> next = rankTree.get(rank.toLowerCase());
-		System.out.println("available: " + next);
-		if (next == null || next.size() == 0) {
-			System.out.println("NO NEXT RANKS FOUND");
-			return null;
-		}
-		if (next.size() > 1)
-			return "";
-		return next.get(0).toUpperCase();
-	}
-
 	// method for getting monetary cost of rankup
 	public int getMonetaryCost(String rank) {
+
+		System.out.println("RANK: " + rank);
+
 		Integer i = creditMap.get(rank.toLowerCase());
 		if (i == null) {
 			return 1000000000;
@@ -280,11 +272,14 @@ public class SQRankup extends JavaPlugin implements Listener {
 	public String getRank(OfflinePlayer player) {
 
 		String[] allGroups = permission.getPlayerGroups(null, player);
-		System.out.println(allGroups);
-		for (String p : allGroups) {
-			List<String> nextRanks = rankTree.get(p.toLowerCase());
+		System.out.println(Arrays.toString(allGroups));
+		System.out.println("Starting group iteration");
+		for (String group : allGroups) {
+			System.out.println("     " + group);
+			List<String> nextRanks = rankTree.get(group.toLowerCase());
+			System.out.println("     next: " + nextRanks);
 			if (nextRanks != null)
-				return p;
+				return group;
 
 		}
 		return null;
