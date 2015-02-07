@@ -2,7 +2,6 @@
 package com.regalphoenixmc.SQRankup;
 
 import java.io.File;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
@@ -65,17 +64,12 @@ public class SQRankup extends JavaPlugin implements Listener {
 	public void loadRanks() {
 
 		Set<String> names = config.getConfigurationSection("ranks").getKeys(false);
-		System.out.println(names.toString());
 		for (String name : names) {
-			System.out.println(name);
 			infamyCostMap.put(name.toLowerCase(), config.getInt("ranks." + name + ".infamyCost"));
 			creditMap.put(name.toLowerCase(), config.getInt("ranks." + name + ".credits"));
-			infamyGainMap.put(name.toLowerCase(), config.getInt("rank." + name + ".infamyGain"));
+			infamyGainMap.put(name.toLowerCase(), config.getInt("ranks." + name + ".infamyGain"));
 			rankTree.put(name.toLowerCase(), config.getStringList("ranks." + name + ".next"));
 		}
-		System.out.println(infamyCostMap.toString());
-		System.out.println(creditMap.toString());
-		System.out.println(rankTree.toString());
 	}
 
 	@EventHandler
@@ -136,13 +130,11 @@ public class SQRankup extends JavaPlugin implements Listener {
 				}
 			}
 
-			/*
-			if (rank.equalsIgnoreCase("settler")) {
+			if (rank.equalsIgnoreCase("refugee")) {
 				sender.sendMessage(ChatColor.RED + "To rank up to settler, you must apply to the server on our minecraft forums thread");
 				sender.sendMessage(ChatColor.GOLD + "http://tinyurl.com/starquestapps");
 				return true;
 			}
-			*/
 
 			int moneyRequirement = getMonetaryCost(nextRank);
 			int killsRequirement = getKillRequirement(nextRank);
@@ -155,8 +147,10 @@ public class SQRankup extends JavaPlugin implements Listener {
 				CC3Wrapper.withdraw(moneyRequirement, p.getName(), CC3Currency.CREDITS, Cause.PLUGIN, "Rankup withdrawl");
 				CC3Wrapper.withdraw(killsRequirement, p.getName(), CC3Currency.INFAMY, Cause.PLUGIN, "Rankup withdrawl");
 			} else {
-				sender.sendMessage("Current money: " + moneyFound + " Required Money: " + moneyRequirement + " Current Kills: " + killsFound
-						+ " Required Kills: " + killsRequirement);
+
+				sender.sendMessage(ChatColor.AQUA + "Rankup Stats:");
+				sender.sendMessage(ChatColor.GOLD + "    " + moneyFound + "/" + moneyRequirement);
+				sender.sendMessage(ChatColor.GOLD + "    " + killsFound + "/" + killsRequirement);
 			}
 			return true;
 		}
@@ -194,52 +188,43 @@ public class SQRankup extends JavaPlugin implements Listener {
 	}
 
 	@EventHandler
-	public void onPlayerKill(PlayerDeathEvent event) {
+	public void onPlayerKill(final PlayerDeathEvent event) {
 
-		// if it's a suicide
-		if (event.getEntity().getKiller() == event.getEntity())
-			return;
+		// Let's run this async
+		Runnable task = new Runnable() {
 
-		if (event.getEntity().getKiller() instanceof Player) {
-			Player killer = (Player) event.getEntity().getKiller();
-			Player killed = event.getEntity();
-			boolean cooldown = Database.isInCooldown(killer, killed);
-			System.out.println(cooldown);
-			if (!cooldown) {
-				int infamy = rankToKills(killed);
-				CC3Wrapper.deposit(infamy, killer.getName(), CC3Currency.INFAMY, Cause.PLUGIN, "Rankup Kill");
-				killer.sendMessage(ChatColor.RED + "You were awarded " + infamy + " infamy for that kill. You now have "
-						+ CC3Wrapper.getBalance(killer.getName(), CC3Currency.INFAMY) + " infamy");
-				Database.addKill(killer, killed);
-			} else {
-				killer.sendMessage(ChatColor.RED + "You already killed that player in the last 20 minutes! Lay off for a bit...");
+			public void run() {
+
+				// if it's a suicide
+				if (event.getEntity().getKiller() == event.getEntity())
+					return;
+
+				if (event.getEntity().getKiller() instanceof Player) {
+					Player killer = (Player) event.getEntity().getKiller();
+					Player killed = event.getEntity();
+
+					if (!Database.isInCooldown(killer, killed)) {
+						int infamy = rankToKills(killed);
+						CC3Wrapper.deposit(infamy, killer.getName(), CC3Currency.INFAMY, Cause.PLUGIN, "Rankup Kill");
+						killer.sendMessage(ChatColor.RED + "You were awarded " + infamy + " infamy for that kill. You now have "
+								+ CC3Wrapper.getBalance(killer.getName(), CC3Currency.INFAMY) + " infamy");
+						Database.addKill(killer, killed);
+					} else {
+						killer.sendMessage(ChatColor.RED + "You already killed that player in the last 20 minutes! Lay off for a bit...");
+					}
+				}
 			}
-		}
+		};
+		new Thread(task, "RankupThread").start();
 	}
 
-	public static void awardInfamyForKill(Player killer, OfflinePlayer killed) {
-
-		boolean cooldown = Database.isInCooldown(killer, killed);
-		System.out.println(cooldown);
-		if (!cooldown) {
-			int infamy = rankToKills(killed);
-			CC3Wrapper.deposit(infamy, killer.getName(), CC3Currency.INFAMY, Cause.PLUGIN, "Rankup Kill");
-			killer.sendMessage(ChatColor.RED + "You were awarded " + infamy + " infamy for that kill. You now have "
-					+ CC3Wrapper.getBalance(killer.getName(), CC3Currency.INFAMY) + " infamy");
-			Database.addKill(killer, killed);
-		} else {
-			killer.sendMessage(ChatColor.RED + "You already killed that player in the last 20 minutes! Lay off for a bit...");
-		}
-	}
-
-	private static int rankToKills(OfflinePlayer killed) {
+	private static int rankToKills(Player killed) {
 
 		int i = 0;
-		String[] groups = permission.getPlayerGroups(null, Bukkit.getOfflinePlayer(killed.getUniqueId()));
-		System.out.println(Arrays.toString(groups));
-		for (String p : groups) {
-			if (infamyGainMap.containsKey(p.toLowerCase())) {
-				i = infamyGainMap.get(p.toLowerCase());
+		String[] groups = permission.getPlayerGroups(null, killed);
+		for (String group : groups) {
+			if (infamyGainMap.containsKey(group.toLowerCase())) {
+				i = infamyGainMap.get(group.toLowerCase());
 			}
 		}
 		int cost = i < 0 ? i : i * MULTIPLIER;
@@ -248,8 +233,6 @@ public class SQRankup extends JavaPlugin implements Listener {
 
 	// method for getting monetary cost of rankup
 	public int getMonetaryCost(String rank) {
-
-		System.out.println("RANK: " + rank);
 
 		Integer i = creditMap.get(rank.toLowerCase());
 		if (i == null) {
@@ -272,12 +255,8 @@ public class SQRankup extends JavaPlugin implements Listener {
 	public String getRank(OfflinePlayer player) {
 
 		String[] allGroups = permission.getPlayerGroups(null, player);
-		System.out.println(Arrays.toString(allGroups));
-		System.out.println("Starting group iteration");
 		for (String group : allGroups) {
-			System.out.println("     " + group);
 			List<String> nextRanks = rankTree.get(group.toLowerCase());
-			System.out.println("     next: " + nextRanks);
 			if (nextRanks != null)
 				return group;
 
