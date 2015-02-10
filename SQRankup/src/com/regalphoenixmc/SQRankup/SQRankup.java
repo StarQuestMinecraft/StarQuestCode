@@ -20,6 +20,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredServiceProvider;
@@ -70,6 +71,18 @@ public class SQRankup extends JavaPlugin implements Listener {
 			infamyGainMap.put(name.toLowerCase(), config.getInt("ranks." + name + ".infamyGain"));
 			rankTree.put(name.toLowerCase(), config.getStringList("ranks." + name + ".next"));
 		}
+	}
+
+	@EventHandler
+	public void onPlayerCommand(PlayerCommandPreprocessEvent e) {
+
+		String command = e.getMessage().replace("/", "").toLowerCase();
+		if (command.contains("money pay") && (command.contains("infamy") || command.contains("vote"))) {
+			e.getPlayer().sendMessage(ChatColor.RED + "You cannot send that currency to other players.");
+			e.setCancelled(true);
+			return;
+		}
+
 	}
 
 	@EventHandler
