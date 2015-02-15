@@ -169,8 +169,6 @@ public class SQRankup extends JavaPlugin implements Listener {
 		}
 
 		if ((cmd.getName().equalsIgnoreCase("addapp")) && (sender.hasPermission("SQRankup.addApplication"))) {
-			// String rank = getRank(getServer().getOfflinePlayer(args[0]));
-			// String nextRank = getNextRank(rank);
 			if (args.length >= 1) {
 				getServer().broadcastMessage(ChatColor.RED + args[0] + " has ranked up to settler!");
 				getServer().broadcastMessage(

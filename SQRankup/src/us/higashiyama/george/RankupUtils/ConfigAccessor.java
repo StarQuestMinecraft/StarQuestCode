@@ -20,22 +20,18 @@ public class ConfigAccessor {
 	public ConfigAccessor(JavaPlugin plugin, String fileName, String dir) {
 
 		if (plugin == null)
-			throw new IllegalArgumentException("plugin cannot be null");
-		if (!plugin.isInitialized())
-			throw new IllegalArgumentException("plugin must be initialized");
+			throw new IllegalArgumentException("Plugin cannot be null");
 		this.plugin = plugin;
 		this.fileName = fileName;
 		File dataFolder = new File(dir);
 		if (dataFolder == null)
 			throw new IllegalStateException();
 		this.configFile = new File(dir, fileName + ".yml");
-		System.out.println(this.configFile.toString());
 	}
 
 	public void reloadConfig() {
 
 		fileConfiguration = YamlConfiguration.loadConfiguration(configFile);
-
 		// Look for defaults in the jar
 		InputStream defConfigStream = plugin.getResource(fileName);
 		if (defConfigStream != null) {
