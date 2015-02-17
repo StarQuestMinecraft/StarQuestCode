@@ -1,4 +1,3 @@
-
 package us.higashiyama.george.SQLTownyCheck;
 
 import java.util.ArrayList;

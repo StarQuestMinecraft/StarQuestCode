@@ -1,5 +1,7 @@
 package com.dibujaron.autorestart;
 
+import net.md_5.bungee.api.ChatColor;
+
 import org.bukkit.scheduler.BukkitRunnable;
 
 public class DelayedRestartTask extends BukkitRunnable{
@@ -30,7 +32,7 @@ public class DelayedRestartTask extends BukkitRunnable{
 	}
 	
 	private void broadcast(String msg){
-		AutoRestart.command("sync console all say " + msg);
+		AutoRestart.command("sync console all say " + ChatColor.BLUE + msg);
 		System.out.println(msg);
 	}
 }

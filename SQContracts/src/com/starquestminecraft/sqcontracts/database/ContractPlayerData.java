@@ -1,6 +1,7 @@
 package com.starquestminecraft.sqcontracts.database;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
@@ -22,6 +23,12 @@ public class ContractPlayerData implements Serializable{
 		player = u;
 		contracts = currentContracts;
 		balances = tradeAmounts;
+	}
+	
+	public static ContractPlayerData createDefault(UUID u){
+		HashMap<String, Integer> tradeAmounts = new HashMap<String, Integer>();
+		List<Contract> currentContracts = new ArrayList<Contract>();
+		return new ContractPlayerData(u, currentContracts, tradeAmounts);
 	}
 	
 	public List<Contract> getContracts(){

@@ -22,7 +22,7 @@ public class ShipCaptureContract implements Contract{
 	
 	private static final String PIRATE_TAG = Contract.BLACK_MARKET_TAG + "[" + ChatColor.RED + "Piracy" + ChatColor.WHITE + "] ";
 	private static final String PRIVATEER_TAG = "[" + ChatColor.DARK_BLUE + "Privateering" + ChatColor.WHITE + "] ";
-	String craftType;
+	String[] craftTypes;
 	int num;
 	String targetStation;
 	int reward;

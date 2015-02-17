@@ -65,8 +65,8 @@ public class TreeListener implements Listener{
 		}
 	}
 	@EventHandler(priority = EventPriority.HIGHEST)
-	public void onTreeGrow(StructureGrowEvent event) throws InterruptedException{
-		
+	public void onTreeGrow(StructureGrowEvent event){
+	
 		//kelakarian flower trees
 		if (event.getWorld().getName().equalsIgnoreCase("Kelakaria")){
 			if (Math.random() > 0.5){

@@ -1,0 +1,75 @@
+#available currencies are:
+#reputation (good-guy kills)
+#infamy (black market kills)
+#philanthropy (charity)
+#merchanting (good-guy trading)
+#smuggling (black market trading)
+#salvage (implement later)
+
+contracts:
+	itemWoolExample:
+		minReward: 5000
+		maxReward: 10000
+		minLevels:
+			merchanting: 5
+			philanthropy: 1
+		blackMarket: false
+		items:
+			whitewool:
+				type: WOOL
+				data: 0
+				minAmount: 1000
+				maxAmount: 2000
+			bluewool:
+				type: WOOL
+				data: 11
+				minAmount: 500
+				maxAmount: 1000
+			redwool:
+				type: WOOL
+				data: 14
+				minAmount: 500
+				maxAmount: 1000
+	smuggleWoodExample:
+		minReward: 10000
+		maxReward: 15000
+		minLevels:
+			smuggling: 3
+		blackMarket: true
+		items:
+			birchwood:
+				type: LOG
+				data: 2
+				minAmount: 750
+				maxAmount: 1000
+			oakwood:
+				type: LOG
+				data: 0
+				minAmount: 100
+				maxAmount: 200
+	reputationExample:
+		minReward: 5000
+		maxReward: 10000
+		minLevels:
+			reputation: 0
+		blackMarket: false
+		targetClass: "Blockade Runner"
+		minAmount: 2
+		maxAmount: 4
+	piracyExample:
+		minReward: 10000
+		maxReward: 20000
+		minLevels:
+			infamy: 5
+		blackMarket: true
+		targetClass: "Heavy Freighter"
+		minAmount: 5
+		maxAmount: 10
+	philanthropyExample:
+		minLevels:
+			philanthropy: 0
+		cost: 100000
+		cause: "Starving orphan children on Kelakaria"
+			
+			
+				
