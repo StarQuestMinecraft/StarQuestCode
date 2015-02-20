@@ -1,0 +1,5 @@
+name: SQDatabase
+main: us.higashiyama.george.SQDatabase.SQDatabase
+version: 1.0.0
+commands:
+  swag:
