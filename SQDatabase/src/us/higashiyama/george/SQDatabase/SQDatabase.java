@@ -6,20 +6,62 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.HashMap;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class SQDatabase extends JavaPlugin implements Listener {
 
 	public static SQDataSource ds;
+	// Maps plugin names to their sql connection string
+	public static HashMap<String, SQLConnectionData> connStringMap = new HashMap<String, SQLConnectionData>();
 
 	public void onEnable() {
 
-		ds = new SQDataSource();
+		ConfigAccessor ca = new ConfigAccessor(this, "DBSettings", "C:/StarQuest/GlobalConfigs");
+		FileConfiguration fc = ca.getConfig();
+		for (String name : fc.getConfigurationSection("connstrings").getKeys(false)) {
+			connStringMap.put(
+					name.toLowerCase(),
+					new SQLConnectionData(fc.getString("connstrings." + name + ".username"), fc.getString("connstrings." + name + ".password"), fc
+							.getString("connstrings." + name + ".conn")));
+		}
+	}
 
+	public String getConnectionString(String plugin) {
+
+		if (connStringMap.get(plugin.toLowerCase()) != null) {
+			return connStringMap.get(plugin.toLowerCase()).getConnectionString();
+		}
+
+		return null;
+	}
+
+	public String getUsername(String plugin) {
+
+		if (connStringMap.get(plugin.toLowerCase()) != null) {
+			return connStringMap.get(plugin.toLowerCase()).getUsername();
+		}
+
+		return null;
+	}
+
+	public String getPassword(String plugin) {
+
+		if (connStringMap.get(plugin.toLowerCase()) != null) {
+			return connStringMap.get(plugin.toLowerCase()).getPassword();
+		}
+
+		return null;
+	}
+
+	public Connection getConnection() {
+
+		return ds.getConnection();
 	}
 
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
