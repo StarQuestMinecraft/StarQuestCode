@@ -6,6 +6,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.bukkit.command.Command;
@@ -24,12 +25,17 @@ public class SQDatabase extends JavaPlugin implements Listener {
 
 		ConfigAccessor ca = new ConfigAccessor(this, "DBSettings", "C:/StarQuest/GlobalConfigs");
 		FileConfiguration fc = ca.getConfig();
-		for (String name : fc.getConfigurationSection("connstrings").getKeys(false)) {
-			connStringMap.put(
-					name.toLowerCase(),
-					new SQLConnectionData(fc.getString("connstrings." + name + ".username"), fc.getString("connstrings." + name + ".password"), fc
-							.getString("connstrings." + name + ".conn")));
-		}
+		// Hold off on this for now...
+		/*
+				for (String name : fc.getConfigurationSection("connstrings").getKeys(false)) {
+					connStringMap.put(
+							name.toLowerCase(),
+							new SQLConnectionData(fc.getString("connstrings." + name + ".username"), fc.getString("connstrings." + name + ".password"), fc
+									.getString("connstrings." + name + ".conn")));
+				}
+		*/
+		// Set up happens in constructor
+		ds = new SQDataSource();
 	}
 
 	public String getConnectionString(String plugin) {
@@ -66,47 +72,51 @@ public class SQDatabase extends JavaPlugin implements Listener {
 
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 
-		Runnable r = new Runnable() {
+		long time = System.currentTimeMillis();
+		Runnable query = () -> {
+			ArrayList<String> names = new ArrayList<String>();
+			PreparedStatement s = null;
+			Connection c = null;
+			try {
+				c = ds.getConnection();
+				s = c.prepareStatement("SELECT * FROM rankup");
+				ResultSet rs = s.executeQuery();
 
-			@Override
-			public void run() {
+				while (rs.next()) {
+					names.add(rs.getString("name"));
+				}
 
-				runQuery();
-				System.out.println("Running1: " + System.currentTimeMillis());
+				interact(names);
+
+			} catch (SQLException e) {
+				System.out.print("[SQDatabase] SQL Error" + e.getMessage());
+			} catch (Exception e) {
+				System.out.print("[SQDatabase] SQL Error (Unknown)");
+				e.printStackTrace();
+			} finally {
+				close(s, c);
 			}
 		};
-		new Thread(r, "DBThread").start();
 
-		runQuery();
-		System.out.println("Running2: " + System.currentTimeMillis());
-		return false;
+		executeAsyncQuery(query);
+
+		System.out.println(System.currentTimeMillis() - time);
+
+		return true;
 
 	}
 
-	public static synchronized void runQuery() {
+	public static void interact(ArrayList<String> names) {
 
-		long start = System.currentTimeMillis();
-		PreparedStatement s = null;
-		Connection c = null;
-		try {
-			c = ds.getConnection();
-			s = c.prepareStatement("SELECT * FROM rankup");
-			ResultSet rs = s.executeQuery();
-
-			while (rs.next()) {
-				break;
-			}
-			s.close();
-		} catch (SQLException e) {
-			System.out.print("[SQDatabase] SQL Error" + e.getMessage());
-		} catch (Exception e) {
-			System.out.print("[SQDatabase] SQL Error (Unknown)");
-			e.printStackTrace();
-		} finally {
-			close(s, c);
+		for (String n : names) {
+			System.out.println(n);
 		}
+	}
 
-		System.out.println("Final time: " + (System.currentTimeMillis() - start));
+	// This runnable should specify what to do with the result
+	public static void executeAsyncQuery(Runnable task) {
+
+		new Thread(task, "DatabaseAsyncExecution-").run();
 	}
 
 	private static void close(Statement s, Connection c) {
@@ -116,10 +126,15 @@ public class SQDatabase extends JavaPlugin implements Listener {
 				return;
 			}
 			s.close();
+
+			// Let's first see if connections close by themselves
+
+			/*
 			if (c == null || c.isClosed()) {
 				return;
 			}
 			c.close();
+			*/
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

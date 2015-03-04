@@ -21,9 +21,9 @@ public class SQDataSource {
 		}
 
 		HikariConfig config = new HikariConfig();
-		config.setJdbcUrl("jdbc:mysql://starquest.c1odbljhmyum.us-east-1.rds.amazonaws.com:3306/minecraft");
-		config.setUsername("sqmaster");
-		config.setPassword("R3b!rth!ng");
+		config.setJdbcUrl("jdbc:mysql://localhost:3306/minecraft");
+		config.setUsername("root");
+		config.setPassword("");
 		config.addDataSourceProperty("cachePrepStmts", "true");
 		config.addDataSourceProperty("prepStmtCacheSize", "250");
 		config.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
