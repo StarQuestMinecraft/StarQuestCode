@@ -2,141 +2,69 @@
 package us.higashiyama.george.SQDatabase;
 
 import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Set;
 
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class SQDatabase extends JavaPlugin implements Listener {
 
-	public static SQDataSource ds;
 	// Maps plugin names to their sql connection string
-	public static HashMap<String, SQLConnectionData> connStringMap = new HashMap<String, SQLConnectionData>();
+	// private static HashMap<String, SQLConnectionData> connStringMap = new
+	// HashMap<String, SQLConnectionData>();
+	private static HashMap<String, SQDataSource> pluginPoolMap = new HashMap<String, SQDataSource>();
 
 	public void onEnable() {
 
 		ConfigAccessor ca = new ConfigAccessor(this, "DBSettings", "C:/StarQuest/GlobalConfigs");
 		FileConfiguration fc = ca.getConfig();
-		// Hold off on this for now...
-		/*
-				for (String name : fc.getConfigurationSection("connstrings").getKeys(false)) {
-					connStringMap.put(
-							name.toLowerCase(),
-							new SQLConnectionData(fc.getString("connstrings." + name + ".username"), fc.getString("connstrings." + name + ".password"), fc
-									.getString("connstrings." + name + ".conn")));
-				}
-		*/
-		// Set up happens in constructor
-		ds = new SQDataSource();
-	}
 
-	public String getConnectionString(String plugin) {
+		// Load our connection strings
+		for (String name : fc.getConfigurationSection("connstrings").getKeys(false)) {
+			String user = fc.getString("connstrings." + name + ".username");
+			String pass = fc.getString("connstrings." + name + ".password");
+			String conn = fc.getString("connstrings." + name + ".conn");
 
-		if (connStringMap.get(plugin.toLowerCase()) != null) {
-			return connStringMap.get(plugin.toLowerCase()).getConnectionString();
-		}
+			if (pluginPoolMap.containsKey(name.toLowerCase())) {
+				// Create a separate set to avoid concurrent mod issues
+				Set<String> registeredPlugins = pluginPoolMap.keySet();
 
-		return null;
-	}
-
-	public String getUsername(String plugin) {
-
-		if (connStringMap.get(plugin.toLowerCase()) != null) {
-			return connStringMap.get(plugin.toLowerCase()).getUsername();
-		}
-
-		return null;
-	}
-
-	public String getPassword(String plugin) {
-
-		if (connStringMap.get(plugin.toLowerCase()) != null) {
-			return connStringMap.get(plugin.toLowerCase()).getPassword();
-		}
-
-		return null;
-	}
-
-	public Connection getConnection() {
-
-		return ds.getConnection();
-	}
-
-	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-
-		long time = System.currentTimeMillis();
-		Runnable query = () -> {
-			ArrayList<String> names = new ArrayList<String>();
-			PreparedStatement s = null;
-			Connection c = null;
-			try {
-				c = ds.getConnection();
-				s = c.prepareStatement("SELECT * FROM rankup");
-				ResultSet rs = s.executeQuery();
-
-				while (rs.next()) {
-					names.add(rs.getString("name"));
+				// Iterate through already registered plugins to see if we can
+				// map to the same pool
+				for (String pluginName : registeredPlugins) {
+					if (pluginPoolMap.get(pluginName).getConnectionString().equalsIgnoreCase(conn)) {
+						pluginPoolMap.put(name.toLowerCase(), pluginPoolMap.get(pluginName));
+						break;
+					}
 				}
 
-				interact(names);
-
-			} catch (SQLException e) {
-				System.out.print("[SQDatabase] SQL Error" + e.getMessage());
-			} catch (Exception e) {
-				System.out.print("[SQDatabase] SQL Error (Unknown)");
-				e.printStackTrace();
-			} finally {
-				close(s, c);
+			} else {
+				// If it's not registered, then we add it
+				pluginPoolMap.put(name.toLowerCase(), new SQDataSource(conn, user, pass));
 			}
-		};
-
-		executeAsyncQuery(query);
-
-		System.out.println(System.currentTimeMillis() - time);
-
-		return true;
+		}
 
 	}
 
-	public static void interact(ArrayList<String> names) {
+	public static Connection getConnection(String plugin) {
 
-		for (String n : names) {
-			System.out.println(n);
+		SQDataSource ds = pluginPoolMap.get(plugin.toLowerCase());
+		if (ds != null) {
+			try {
+				return ds.getPool().getConnection();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
 		}
+		return null;
 	}
 
 	// This runnable should specify what to do with the result
 	public static void executeAsyncQuery(Runnable task) {
 
-		new Thread(task, "DatabaseAsyncExecution-").run();
-	}
-
-	private static void close(Statement s, Connection c) {
-
-		try {
-			if (s == null || s.isClosed()) {
-				return;
-			}
-			s.close();
-
-			// Let's first see if connections close by themselves
-
-			/*
-			if (c == null || c.isClosed()) {
-				return;
-			}
-			c.close();
-			*/
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		new Thread(task, "DatabaseAsyncExecution").run();
 	}
 }

@@ -1,269 +1,160 @@
 
 package us.higashiyama.george.SQDuties;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.sql.Connection;
-import java.sql.Driver;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-import com.dibujaron.globalsql.CInfo;
+import org.bukkit.entity.Player;
+
+import us.higashiyama.george.CardboardBox.Knapsack;
+import us.higashiyama.george.SQDatabase.SQDatabase;
 
 public class Database {
 
-	public String player;
-	public String server;
-	public String world;
-	public int x, y, z;
-	public static String driverString = "com.mysql.jdbc.Driver";
-	public static String hostname = (CInfo.get().getHostname() != null) ? CInfo.get().getHostname() : "play.starquestminecraft.com";
-	public static String port = (CInfo.get().getPort() != null) ? CInfo.get().getPort() : "3306";
-	public static String db_name = (CInfo.get().getDBName() != null) ? CInfo.get().getDBName() : "minecraft";
-	public static String username = (CInfo.get().getUsername() != null) ? CInfo.get().getUsername() : "minecraft";
-	public static String password = (CInfo.get().getPassword() != null) ? CInfo.get().getPassword() : "R3b!rth!ng";
-	public static Connection cntx = null;
-	public static String dsn = ("jdbc:mysql://" + hostname + ":" + port + "/" + db_name);
+	public static void savePlayer(Player p, Knapsack k) {
 
-	public static void setUp() {
-
-		String Database_table = "CREATE TABLE IF NOT EXISTS Duties (" + "`UUID` VARCHAR(64) NOT NULL," + "`inventory` LONGTEXT," + "`armor` LONGTEXT,"
-				+ "`location` LONGTEXT," + "PRIMARY KEY (`name`)" + ")";
-		getContext();
-		try {
-			Driver driver = (Driver) Class.forName(driverString).newInstance();
-			DriverManager.registerDriver(driver);
-		} catch (Exception e) {
-			System.out.println("[SQDatabases] Driver error: " + e);
-		}
-		Statement s = null;
-
-		try {
-			s = cntx.createStatement();
-			s.executeUpdate(Database_table);
-			System.out.println("[SQDatabase] Table check/creation sucessful");
-		} catch (SQLException ee) {
-			System.out.println("[SQDatabase] Table Creation Error");
-		} finally {
-			close(s);
-		}
-
-	}
-
-	public static boolean hasKey(String name) { // ought to be UUID
-
-		if (!getContext())
-			System.out.println("Context didn't work sucessfully");
-		PreparedStatement s = null;
-		try {
-			s = cntx.prepareStatement("SELECT * FROM Duties WHERE `UUID` = ?");
-			s.setString(1, name.toString());
-			ResultSet rs = s.executeQuery();
-			while (rs.next()) {
-				return true;
-			}
-			s.close();
-			return false;
-
-		} catch (SQLException e) {
-			System.out.print("[CCDB] SQL Error" + e.getMessage());
-		} catch (Exception e) {
-			System.out.print("[CCDB] SQL Error (Unknown)");
-			e.printStackTrace();
-		} finally {
-			close(s);
-		}
-
-		return false;
-
-	}
-
-	public static String getInv(String name) { // UUID
-
-		if (!getContext())
-			System.out.println("Context didn't work sucessfully");
-		PreparedStatement s = null;
-		try {
-			s = cntx.prepareStatement("SELECT `inventory` FROM Duties WHERE `UUID` = ?");
-			s.setString(1, name.toString());
-			ResultSet rs = s.executeQuery();
-			while (rs.next()) {
-				return rs.getString("inventory");
-			}
-			s.close();
-
-		} catch (SQLException e) {
-			System.out.print("[CCDB] SQL Error" + e.getMessage());
-		} catch (Exception e) {
-			System.out.print("[CCDB] SQL Error (Unknown)");
-			e.printStackTrace();
-		} finally {
-			close(s);
-		}
-		return null;
-
-	}
-
-	public static String getArmor(String name) { // UUID
-
-		if (!getContext())
-			System.out.println("Context didn't work sucessfully");
-		PreparedStatement s = null;
-		try {
-			s = cntx.prepareStatement("SELECT `armor` FROM Duties WHERE `UUID` = ?");
-			s.setString(1, name.toString());
-			ResultSet rs = s.executeQuery();
-			while (rs.next()) {
-				return rs.getString("armor");
-			}
-			s.close();
-
-		} catch (SQLException e) {
-			System.out.print("[CCDB] SQL Error" + e.getMessage());
-		} catch (Exception e) {
-			System.out.print("[CCDB] SQL Error (Unknown)");
-			e.printStackTrace();
-		} finally {
-			close(s);
-		}
-		return null;
-
-	}
-
-	public static String getLocation(String name) { // UUID
-
-		if (!getContext())
-			System.out.println("Context didn't work sucessfully");
-		PreparedStatement s = null;
-		try {
-			s = cntx.prepareStatement("SELECT `location` FROM Duties WHERE `UUID` = ?");
-			s.setString(1, name.toString());
-			ResultSet rs = s.executeQuery();
-			while (rs.next()) {
-				return rs.getString("location");
-			}
-			s.close();
-
-		} catch (SQLException e) {
-			System.out.print("[CCDB] SQL Error" + e.getMessage());
-		} catch (Exception e) {
-			System.out.print("[CCDB] SQL Error (Unknown)");
-			e.printStackTrace();
-		} finally {
-			close(s);
-		}
-		return null;
-
-	}
-
-	public static void deleteKey(final String name) {
-
-		Runnable task = new Runnable() {
-
-			public void run() {
-
-				try {
-					if (!getContext())
-						System.out.println("Context didn't work sucessfully");
-					PreparedStatement s = null;
-					try {
-						s = cntx.prepareStatement("DELETE FROM Duties WHERE `UUID` = ?");
-						s.setString(1, name.toString());
-						s.execute();
-						s.close();
-
-					} catch (SQLException e) {
-						System.out.print("[CCDB] SQL Error" + e.getMessage());
-					} catch (Exception e) {
-						System.out.print("[CCDB] SQL Error (Unknown)");
-						e.printStackTrace();
-					} finally {
-						close(s);
-					}
-				} catch (Exception ex) {
-					// handle error which cannot be thrown back
-				}
+		Runnable task = () -> {
+			Connection cntx = SQDatabase.getConnection("SQDuties");
+			PreparedStatement s = null;
+			try {
+				s = cntx.prepareStatement("INSERT INTO minecraft.duties `uuid`, `data`, `location` VALUES (?,?,?)");
+				s.setString(1, p.getUniqueId().toString());
+				byte[] knapsackBytes = convertToBytes(k);
+				s.setBinaryStream(2, convertToBinary(knapsackBytes), knapsackBytes.length);
+				s.setString(3, playerLocationToString(p));
+				s.execute();
+			} catch (SQLException ee) {
+				System.out.println("[SQDatabase] Table Creation Error");
+			} finally {
+				close(s);
 			}
 		};
-		new Thread(task, "ServiceThread").start();
+
+		SQDatabase.executeAsyncQuery(task);
 
 	}
 
-	public static void newKey(final String name, final String inv, final String armor, final String location) {
+	public static void deletePlayer(Player p) {
 
-		Runnable task = new Runnable() {
-
-			public void run() {
-
-				try {
-					if (!getContext())
-						System.out.println("Context didn't work sucessfully");
-					PreparedStatement s = null;
-					try {
-						s = cntx.prepareStatement("INSERT INTO Duties VALUES (?,?,?,?)");
-						s.setString(1, name.toString());
-						s.setString(2, inv);
-						s.setString(3, armor);
-						s.setString(4, location);
-						s.execute();
-						s.close();
-
-					} catch (SQLException e) {
-						System.out.print("[CCDB] SQL Error" + e.getMessage());
-					} catch (Exception e) {
-						System.out.print("[CCDB] SQL Error (Unknown)");
-						e.printStackTrace();
-					} finally {
-						close(s);
-					}
-				} catch (Exception ex) {
-					// handle error which cannot be thrown back
-				}
+		Runnable task = () -> {
+			Connection cntx = SQDatabase.getConnection("SQDuties");
+			PreparedStatement s = null;
+			try {
+				s = cntx.prepareStatement("DELETE FROM minecraft.duties WHERE `uuid` = ?");
+				s.setString(1, p.getUniqueId().toString());
+				s.execute();
+			} catch (SQLException ee) {
+				System.out.println("[SQDatabase] Table Creation Error");
+			} finally {
+				close(s);
 			}
 		};
-		new Thread(task, "ServiceThread").start();
+
+		SQDatabase.executeAsyncQuery(task);
 
 	}
 
-	public static boolean getContext() {
+	public static void loadData(Player p) {
 
-		try {
-			if (cntx == null || cntx.isClosed() || !cntx.isValid(1)) {
-				if (cntx != null && !cntx.isClosed()) {
-					try {
-						cntx.close();
-					} catch (SQLException e) {
-						System.out.print("Exception caught");
-					}
-					cntx = null;
+		Runnable task = () -> {
+			Connection cntx = SQDatabase.getConnection("SQDuties");
+			PreparedStatement s = null;
+			try {
+				s = cntx.prepareStatement("SELECT * FROM minecraft.duties WHERE `uuid` = ?");
+				s.setString(1, p.getUniqueId().toString());
+				ResultSet rs = s.executeQuery();
+				while (rs.next()) {
+					SQDuties.instance.sendPlayerToLocation(p, rs.getString("location"));
+					break;
 				}
-				if ((username.equalsIgnoreCase("")) && (password.equalsIgnoreCase(""))) {
-					cntx = DriverManager.getConnection(dsn);
-				} else
-					cntx = DriverManager.getConnection(dsn, username, password);
-
-				if (cntx == null || cntx.isClosed())
-					return false;
+			} catch (SQLException ee) {
+				System.out.println("[SQDatabase] Table Creation Error");
+			} finally {
+				close(s);
 			}
+		};
 
-			return true;
-		} catch (SQLException e) {
-			System.out.print("Error could not Connect to db " + dsn + ": " + e.getMessage());
-		}
-		return false;
+		SQDatabase.executeAsyncQuery(task);
+
+	}
+
+	public static void loadInventory(Player p) {
+
+		Runnable task = () -> {
+			Connection cntx = SQDatabase.getConnection("SQDuties");
+			PreparedStatement s = null;
+			try {
+				s = cntx.prepareStatement("SELECT * FROM minecraft.duties WHERE `uuid` = ?");
+				s.setString(1, p.getUniqueId().toString());
+				ResultSet rs = s.executeQuery();
+				while (rs.next()) {
+					byte[] unparsedPerk = (byte[]) rs.getObject("inventory");
+					ByteArrayInputStream baip = new ByteArrayInputStream(unparsedPerk);
+					ObjectInputStream ois = new ObjectInputStream(baip);
+					Knapsack k = (Knapsack) ois.readObject();
+					SQDuties.instance.restoreInventory(p, k);
+					break;
+				}
+			} catch (SQLException ee) {
+				System.out.println("[SQDatabase] Table Creation Error");
+			} catch (IOException e) {
+				e.printStackTrace();
+			} catch (ClassNotFoundException e) {
+				e.printStackTrace();
+			} finally {
+				close(s);
+				deletePlayer(p);
+			}
+		};
+
+		SQDatabase.executeAsyncQuery(task);
+
 	}
 
 	private static void close(Statement s) {
 
-		if (s == null) {
-			return;
-		}
 		try {
-			s.close();
-		} catch (Exception e) {
+			if (s == null || s.isClosed()) {
+				return;
+			} else {
+				s.close();
+			}
+		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+	}
+
+	private static byte[] convertToBytes(Knapsack k) {
+
+		ByteArrayOutputStream baos1 = new ByteArrayOutputStream();
+		ObjectOutputStream oos1;
+		try {
+			oos1 = new ObjectOutputStream(baos1);
+			oos1.writeObject(k);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		byte[] wantBytes = baos1.toByteArray();
+		return wantBytes;
+	}
+
+	private static ByteArrayInputStream convertToBinary(byte[] bytes) {
+
+		return new ByteArrayInputStream(bytes);
+	}
+
+	private static String playerLocationToString(Player p) {
+
+		return p.getServer().getServerName() + "," + p.getLocation().getWorld().getName() + "," + p.getLocation().getX() + "," + p.getLocation().getY() + ","
+				+ p.getLocation().getZ();
 	}
 
 }

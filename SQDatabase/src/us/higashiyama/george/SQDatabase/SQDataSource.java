@@ -9,9 +9,16 @@ import com.zaxxer.hikari.HikariDataSource;
 
 public class SQDataSource {
 
-	HikariDataSource connectionPool = null;
+	private HikariDataSource connectionPool = null;
+	private String connectionString;
+	private String username;
+	private String password;
 
-	public SQDataSource() {
+	public SQDataSource(String conn, String user, String pass) {
+
+		this.connectionString = conn;
+		this.username = user;
+		this.password = pass;
 
 		try {
 			Class.forName("com.mysql.jdbc.Driver");
@@ -21,16 +28,15 @@ public class SQDataSource {
 		}
 
 		HikariConfig config = new HikariConfig();
-		config.setJdbcUrl("jdbc:mysql://localhost:3306/minecraft");
-		config.setUsername("root");
-		config.setPassword("");
+		config.setJdbcUrl(this.connectionString);
+		config.setUsername(this.username);
+		config.setPassword(this.password);
 		config.addDataSourceProperty("cachePrepStmts", "true");
 		config.addDataSourceProperty("prepStmtCacheSize", "250");
 		config.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
 		config.addDataSourceProperty("useServerPrepStmts", "true");
 
 		connectionPool = new HikariDataSource(config);
-
 	}
 
 	public Connection getConnection() {
@@ -44,5 +50,45 @@ public class SQDataSource {
 		}
 		return null;
 
+	}
+
+	public void setPool(HikariDataSource ds) {
+
+		this.connectionPool = ds;
+	}
+
+	public HikariDataSource getPool() {
+
+		return this.connectionPool;
+	}
+
+	public String getConnectionString() {
+
+		return connectionString;
+	}
+
+	public void setConnectionString(String connectionString) {
+
+		this.connectionString = connectionString;
+	}
+
+	public String getUsername() {
+
+		return username;
+	}
+
+	public void setUsername(String username) {
+
+		this.username = username;
+	}
+
+	public String getPassword() {
+
+		return password;
+	}
+
+	public void setPassword(String password) {
+
+		this.password = password;
 	}
 }
