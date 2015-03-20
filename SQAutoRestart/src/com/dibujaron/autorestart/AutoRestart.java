@@ -16,7 +16,7 @@ public class AutoRestart extends JavaPlugin{
 			public void run(){
 				command("sync console all chatreload");
 			}
-		}, 800L);
+		}, 11000L);
 		//delay an hour and a half; there's no reason to check before then, and if you check too soon it'll restart loop.
 		//check every minute after that. players may get picky about their restart times.
 		new TimeCheckTask(this).runTaskTimer(this, 108000, 12000);
