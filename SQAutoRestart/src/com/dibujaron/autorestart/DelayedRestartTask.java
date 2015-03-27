@@ -32,7 +32,7 @@ public class DelayedRestartTask extends BukkitRunnable{
 	}
 	
 	private void broadcast(String msg){
-		AutoRestart.command("sync console bungee alert " +  msg);
+		AutoRestart.command("sync console bungee janesudo " +  msg);
 		System.out.println(msg);
 	}
 }

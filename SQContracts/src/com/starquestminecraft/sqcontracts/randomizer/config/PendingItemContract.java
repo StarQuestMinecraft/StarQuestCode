@@ -1,4 +1,4 @@
-package com.starquestminecraft.sqcontracts.contracts.pending;
+package com.starquestminecraft.sqcontracts.randomizer.config;
 
 import java.util.ArrayList;
 import java.util.List;

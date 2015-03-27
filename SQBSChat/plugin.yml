@@ -1,0 +1,237 @@
+﻿name: Chat
+main : com.minecraftdimensions.bungeesuitechat.BungeeSuiteChat
+version: 0.5b-57
+description: Part of the BungeeSuite this plugin handles all player chat
+author: Bloodsplat
+website: http://www.spigotmc.org/resources/bungeesuite.9/
+prefix: BungeeSuite
+softdepend: [Factions, TownyChat, Towny]
+commands:
+    admin:
+        description: Send messages/toggle to the admin channel
+        aliases: [a,ac]
+        permission: bungeesuite.chat.channel.admin
+        permission-message: §cYou do not have permission for this channel
+        usage: /<command>  *(message)
+    afk:
+        description: Toggles a players afk status
+        aliases: [away, brb]
+        permission: bungeesuite.chat.command.afk
+        permission-message: §cYou do not have permission for this command
+        usage: /<command>
+    chatspy:
+        description: Allows players to see all messages
+        aliases: [cspy,spy,socialspy]
+        permission: bungeesuite.chat.command.chatspy
+        permission-message: §cYou do not have permission for this command
+        usage: /<command>
+    channelinfo:
+        description: Gets the information for the channel
+        aliases: [channel,c,cinfo]
+        permission: bungeesuite.chat.command.channelinfo
+        permission-message: §cYou do not have permission for this command
+        usage: |
+            /<command> - gets current channels information
+            /<command> (channel) - gets the channels information
+    factionchat:
+        description: Allows the player to talk in the faction channel
+        aliases: [fc]
+        permission: bungeesuite.chat.channel.faction
+        permission-message: §cYou are unable to talk in this channel
+    factionchatally:
+        description: Allows the player to talk in the faction ally channel
+        aliases: [fca]
+        permission: bungeesuite.chat.channel.factionally
+        permission-message: §cYou are unable to talk in this channel 
+    factionchatfaction:
+        description: Allows the player to talk in the faction ally channel
+        aliases: [fcf]
+        permission: bungeesuite.chat.channel.faction
+        permission-message: §cYou are unable to talk in this channel
+    townychat:
+        description: Allows the player to talk in the towny town channel
+        aliases: [tc]
+        permission: bungeesuite.chat.channel.town
+        permission-message: §cYou are unable to talk in this channel
+    townychattown:
+        description: Allows the player to talk in towny town channel
+        aliases: [tct]
+        permission: bungeesuite.chat.channel.town
+        permission-message: §cYou are unable to talk in this channel
+    townychatnation:
+        description: Allows the player to talk in the towny nation channel
+        aliases: [nationchat, nc, tcn]
+        permission: bungeesuite.chat.channel.nation
+        permission-message: §cYou are unable to talk in this channel
+    formatchannel:
+        description: Changes the format of the channel
+        aliases: [formatc,cformat,cf]
+        permission: bungeesuite.chat.command.format
+        permission-message: §cYou do not have permission for this command
+        usage: /<command> (format)- changes the current channels format
+    global:
+        description: Send messages/toggle to the global channel
+        aliases: [g,globalchat,globalchannel,gchannel]
+        permission: bungeesuite.chat.channel.global
+        permission-message: §cYou do not have permission for this channel
+        usage: |
+            /<command> -toggles to global channel
+            /<command> (message) - sends message to global channel
+    ignore:
+        description: Ignores a player from chat
+        aliases: [ignoreplayer,playerignore]
+        permission: bungeesuite.chat.command.ignore
+        permission-message: §cYou do not have permission for this command
+        usage: /<command> (player)
+    ignores:
+        description: Gives a list of your ignored players
+        aliases: [ignorelist,listignores]
+        permission: bungeesuite.chat.command.ignores
+        permission-message: §cYou do not have permission for this command
+        usage: /<command>
+    local:
+        description: Send messages/toggle to the local channel
+        aliases: [l,lc,localchannel,lchannel,channellocal]
+        permission: bungeesuite.chat.channel.local
+        permission-message: §cYou do not have permission for this channel
+        usage: |
+            /<command> - toggles to local channel
+            /<command> (message) - sends message to the local channel
+    me:
+        description: Sends an emote to the chat on your server
+        aliases: [emote]
+        permission: bungeesuite.chat.command.me
+        permission-message: §cYou do not have permission for this command
+        usage: /<command> (message)
+    message:
+        description: Send a private message to a player
+        aliases: [tell,msg,pm,w,whisper,m]
+        permission: bungeesuite.chat.command.message
+        permission-message: §cYou do not have permission for this command
+        usage: /<command> (message)
+    mute:
+        description: Mute a specified player from chat
+        permission: bungeesuite.chat.command.mute
+        permission-message: §cYou do not have permission for this command
+        usage: /<command> (player)
+    muteall:
+        description: Mutes all chat proxy wide
+        permission: bungeesuite.chat.command.muteall
+        permission-message: §cYou do not have permission for this command
+        usage: /<command>
+    nickname:
+        description: Changes the players display name
+        aliases: [nick,displayname]
+        permission: bungeesuite.chat.command.nickname
+        permission-message: §cYou do not have permission for this command
+        usage: |
+            /<command> (nickname) - nickname self
+            /<command> (playername) (nickname)  -nickname other player
+    nicknameoff:
+        description: Removes the players nickname
+        aliases: [nickoff,nonick,nonickname]
+        permission: bungeesuite.chat.command.nickname
+        permission-message: §cYou do not have permission for this command
+        usage: /<command>
+    reloadchat:
+        description: Reloads the chat config and channels
+        aliases: [chatreload]
+        permission: bungeesuite.chat.command.reload
+        permission-message: §cYou do not have permission for this command
+        usage: /<command> 
+    reply:
+        description: Sends a reply to the last person who messaged you
+        aliases: [r]
+        permission: bungeesuite.chat.command.reply
+        permission-message: §cYou do not have permission for this command
+        usage: /<command> (message)
+    server:
+        description: Send messages/toggle to the server channel
+        aliases: [s,sc,serverchannel,schannel,channelserver]
+        permission: bungeesuite.chat.channel.server
+        permission-message: §cYou do not have permission for this channel
+        usage: |
+            /<command> - toggles to the server channel
+            /<command> (message) - sends a message to the server channel
+    tempmute:
+        description: Temporarily mutes a player
+        aliases: [tmute]
+        permission: bungeesuite.chat.command.tempmute
+        permission-message: §cYou do not have permission for this command
+        usage: /<command> (player) (time in minutes)
+    toggle:
+        description: Toggles through your available channels
+        aliases: [togglechannel,channeltoggle, ct]
+        permission: bungeesuite.chat.command.toggle
+        permission-message: §cYou do not have permission for this command
+        usage: /<command>
+    unignore:
+        description: Unignores a player from chat
+        aliases: [uignore,unignoreplayer]
+        permission: bungeesuite.chat.command.ignore
+        permission-message: §cYou do not have permission for this command
+        usage: /<command> (player)
+    unmute:
+        description: Unmutes a player from chat
+        aliases: [umute, unmuteplayer]
+        permission: bungeesuite.chat.command.mute
+        permission-message: §cYou do not have permission for this command
+        usage: /<command> (player)
+    unmuteall:
+        description: Toggles off the proxy wide mute
+        permission: bungeesuite.chat.command.muteall
+        permission-message: §cYou do not have permission for this command
+        usage: /<command>
+permissions:
+    bungeesuite.chat.*:
+        description: Gives access to all BungeeSuiteChat commands
+        default: op
+        children:
+            bungeesuite.chat.admin: true
+    bungeesuite.chat.admin:
+        description: Gives access to all BungeeSuiteChat admin commands
+        children:
+            bungeesuite.chat.mod: true
+            bungeesuite.chat.command.afk.global: true
+            bungeesuite.chat.command.afk.display: true
+            bungeesuite.chat.nickname.other: true
+            bungeesuite.chat.toggle.bypass: true
+            bungeesuite.chat.command.chatspy: true
+            bungeesuite.chat.command.muteall: true
+            bungeesuite.chat.channel.admin: true
+            bungeesuite.chat.command.reload: true
+            bungeesuite.chat.command.nickname.other: true
+            bungeesuite.chat.vip: true
+            bungeesuite.chat.command.channelinfo.format: true
+    bungeesuite.chat.mod:
+        description: Gives access to all BungeeSuiteChat mod commands
+        children:
+            bungeesuite.chat.command.mute: true
+            bungeesuite.chat.command.tempmute: true
+            bungeesuite.chat.user: true
+    bungeesuite.chat.user:
+        description: Gives access to all BungeeSuiteChat user commands
+        children:
+            bungeesuite.chat.channel.server: true
+            bungeesuite.chat.channel.local: true
+            bungeesuite.chat.channel.global: true
+            bungeesuite.chat.channel.faction: true
+            bungeesuite.chat.channel.factionally: true
+            bungeesuite.chat.channel.nation: true
+            bungeesuite.chat.channel.town: true
+            bungeesuite.chat.command.afk: true
+            bungeesuite.chat.command.channelinfo: true
+            bungeesuite.chat.command.ignore: true
+            bungeesuite.chat.command.ignores: true
+            bungeesuite.chat.command.message: true
+            bungeesuite.chat.command.reply: true
+            bungeesuite.chat.command.toggle: true
+    bungeesuite.chat.vip:
+        description: Gives the player access to the vip commands
+        children:
+            bungeesuite.chat.command.nickname: true
+            bungeesuite.chat.command.me: true
+            bungeesuite.chat.user: true
+            bungeesuite.chat.color: true
+
+        

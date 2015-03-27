@@ -1,4 +1,4 @@
-package com.starquestminecraft.sqcontracts.contracts.pending;
+package com.starquestminecraft.sqcontracts.randomizer.config;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,26 +16,16 @@ import com.starquestminecraft.sqcontracts.util.StationUtils;
 
 public class PendingShipCaptureContract extends PendingContract{
 	
-	List<PendingItem> pendingItems = new ArrayList<PendingItem>();
 	int amountMin, amountMax;
 	boolean blackMarket;
+	List<String> targetClasses;
 	
 	public PendingShipCaptureContract(FileConfiguration f, String key){
 		super(f, key);
 		this.blackMarket = f.getBoolean(key + ".blackMarket");
 		amountMin = f.getInt(key + ".minAmount");
 		amountMax = f.getInt(key + ".maxAmount");
-		
-		Set<String> itemKeys = c.getConfigurationSection(key + ".items").getKeys(true);
-		for(String iKey : itemKeys){
-			String localKey = key + ".items." + iKey;
-			Material type = Material.valueOf(c.getString(localKey + ".type"));
-			byte data = (byte) c.getInt(localKey + ".data");
-			int amountMin = c.getInt(localKey + ".minAmount");
-			int amountMax = c.getInt(localKey + ".maxAmount");
-			
-			pendingItems.add(new PendingItem(type, data, amountMin, amountMax));
-		}
+		targetClasses = f.getStringList(key + ".types");
 	}
 
 	@Override
@@ -44,6 +34,6 @@ public class PendingShipCaptureContract extends PendingContract{
 		int reward = getRandomBetween(generator, minReward, maxReward);
 		String targetStation = StationUtils.getRandomStation(generator);
 		int amount = getRandomBetween(generator, amountMin, amountMax);
-		return new ShipCaptureContract(player, reward, targetClass, amount, targetStation, blackMarket);
+		return new ShipCaptureContract(player, reward, targetClasses.toArray(new String[0]), amount, targetStation, blackMarket);
 	}
 }
