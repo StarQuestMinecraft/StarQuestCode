@@ -19,5 +19,7 @@ public class ItemContractGenerator {
 		//create itemstacks from the item id and amount (special case for wood data?)
 		//pick a target station
 		//done
+		
+		return null;
 	}
 }

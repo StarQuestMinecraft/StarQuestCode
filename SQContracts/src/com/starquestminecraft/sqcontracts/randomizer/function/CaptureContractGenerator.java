@@ -14,7 +14,7 @@ public class CaptureContractGenerator {
 	
 	public static ShipCaptureContract generate(ContractPlayerData pData, Random generator, boolean blackMarket){
 		if(classMinLevels == null) classMinLevels = convert(SQContracts.get().getConfig().getConfigurationSection("craftTypeMinLevels").getValues(false));
-		
+		return null;
 		//first get the number of ship classes to offer (1-4)
 		//for each one, pick a ship class based on the classes they have access to; eliminate any repeats
 		//then generate the number of ships as a function of their level (ln(x + 1) * 3) += randomizer

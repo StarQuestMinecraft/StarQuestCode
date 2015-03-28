@@ -24,7 +24,7 @@ public class MoneyContractGenerator {
 		String location = getLocation(generator);
 		String causemsg = cause + " on " + location;
 		
-		return new MoneyContract(cause, location, causemsg);
+		return new MoneyContract(pData.getPlayer(), location, (int) cost, causemsg);
 		//generate a "cause" based on "afflictions" and planet names, e.g. "starving children" on "krystallos" or "earthquake relief" on "quavara"
 		//done 
 	}
