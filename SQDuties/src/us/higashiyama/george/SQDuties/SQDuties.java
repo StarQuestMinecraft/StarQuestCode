@@ -227,9 +227,11 @@ public class SQDuties extends JavaPlugin implements Listener {
 				if (g.equalsIgnoreCase(v)) {
 					continue;
 				} else if (v.equalsIgnoreCase(g + "_duty")) {
-					enableDuty(p, v);
+					enableDuty(p, g);
+					return;
 				} else if (g.replace("_duty", "").equalsIgnoreCase(v)) {
 					disableDuty(p, v);
+					return;
 				}
 			}
 		}
@@ -296,15 +298,15 @@ public class SQDuties extends JavaPlugin implements Listener {
 			return;
 		}
 		World world = getServer().getWorld(parts[1]);
-		int x = Integer.parseInt(parts[2]);
-		int y = Integer.parseInt(parts[3]);
-		int z = Integer.parseInt(parts[4]);
+		double x = Double.parseDouble(parts[2]);
+		double y = Double.parseDouble(parts[3]);
+		double z = Double.parseDouble(parts[4]);
 		// if they are on the same server
-		if (parts[0].equalsIgnoreCase(parts[1])) {
+		if (true || parts[0].equalsIgnoreCase(parts[1])) {
 			Location newLoc = new Location(world, x, y, z);
 			p.teleport(newLoc);
 		} else {
-			BungeePlayerHandler.sendPlayer(p, parts[0], parts[1], x, y, z);
+			BungeePlayerHandler.sendPlayer(p, parts[0], parts[1], (int) x, (int) y, (int) z);
 		}
 
 		Database.loadInventory(p);
