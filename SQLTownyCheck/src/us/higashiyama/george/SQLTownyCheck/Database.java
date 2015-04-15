@@ -9,8 +9,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-import com.dibujaron.globalsql.CInfo;
-
 public class Database {
 
 	public String player;
@@ -18,11 +16,11 @@ public class Database {
 	public String world;
 	public int x, y, z;
 	public static String driverString = "com.mysql.jdbc.Driver";
-	public static String hostname = (CInfo.get().getHostname() != null) ? CInfo.get().getHostname() : "play.starquestminecraft.com";
-	public static String port = (CInfo.get().getPort() != null) ? CInfo.get().getPort() : "3306";
-	public static String db_name = (CInfo.get().getDBName() != null) ? CInfo.get().getDBName("towny") : "towny";
-	public static String username = (CInfo.get().getUsername() != null) ? CInfo.get().getUsername() : "minecraft";
-	public static String password = (CInfo.get().getPassword() != null) ? CInfo.get().getPassword() : "R3b!rth!ng";
+	public static String hostname = "starquest.c1odbljhmyum.us-east-1.rds.amazonaws.com/minecraft";
+	public static String port = "3306";
+	public static String db_name = "towny";
+	public static String username = "sqmaster";
+	public static String password = "R3b!rth!ng";
 	public static Connection cntx = null;
 	public static String dsn = ("jdbc:mysql://" + hostname + ":" + port + "/" + db_name);
 
@@ -44,19 +42,19 @@ public class Database {
 		PreparedStatement s = null;
 		int towns = 0;
 		try {
-			String query = "SELECT `name`AS player, COUNT(*) as totalTowns FROM( " + "SELECT`name`, `town`  FROM acualis_residents WHERE `town` != & UNION "
-					+ "SELECT`name`, `town`  FROM asteroidbelt_residents WHERE `town` != & UNION "
-					+ "SELECT`name`, `town`  FROM boletarian_residents WHERE `town` != & UNION "
-					+ "SELECT`name`, `town`  FROM boskevine_residents WHERE `town` != & UNION "
-					+ "SELECT`name`, `town`  FROM ceharram_residents WHERE `town` != & UNION "
-					+ "SELECT`name`, `town`  FROM drakos_residents WHERE `town` != & UNION "
-					+ "SELECT`name`, `town`  FROM emera_residents WHERE `town` != & UNION "
-					+ "SELECT`name`, `town`  FROM iffrizar_residents WHERE `town` != & UNION "
-					+ "SELECT`name`, `town`  FROM inaris_residents WHERE `town` != & UNION "
-					+ "SELECT`name`, `town`  FROM kelakaria_residents WHERE `town` != & UNION "
-					+ "SELECT`name`, `town`  FROM krystallos_residents WHERE `town` != & UNION "
-					+ "SELECT`name`, `town`  FROM quavara_residents WHERE `town` != & UNION "
-					+ "SELECT`name`, `town`  FROM valadro_residents WHERE `town` != &" + ") AS query WHERE `name` = ?";
+			String query = "SELECT `name`AS player, COUNT(*) as totalTowns FROM( " + "SELECT`name`, `town`  FROM ACUALIS_RESIDENTS WHERE `town` != & UNION "
+					+ "SELECT`name`, `town`  FROM ASTEROIDBELT_RESIDENTS WHERE `town` != & UNION "
+					+ "SELECT`name`, `town`  FROM BOLETARIAN_RESIDENTS WHERE `town` != & UNION "
+					+ "SELECT`name`, `town`  FROM BOSKEVINE_RESIDENTS WHERE `town` != & UNION "
+					+ "SELECT`name`, `town`  FROM CEHARRAM_RESIDENTS WHERE `town` != & UNION "
+					+ "SELECT`name`, `town`  FROM DRAKOS_RESIDENTS WHERE `town` != & UNION "
+					+ "SELECT`name`, `town`  FROM EMERA_RESIDENTS WHERE `town` != & UNION "
+					+ "SELECT`name`, `town`  FROM IFFRIZAR_RESIDENTS WHERE `town` != & UNION "
+					+ "SELECT`name`, `town`  FROM INARIS_RESIDENTS WHERE `town` != & UNION "
+					+ "SELECT`name`, `town`  FROM KELAKARIA_RESIDENTS WHERE `town` != & UNION "
+					+ "SELECT`name`, `town`  FROM KRYSTALLOS_RESIDENTS WHERE `town` != & UNION "
+					+ "SELECT`name`, `town`  FROM QUAVARA_RESIDENTS WHERE `town` != & UNION "
+					+ "SELECT`name`, `town`  FROM VALADRO_RESIDENTS WHERE `town` != &" + ") AS query WHERE `name` = ?";
 			query = query.replace("&", "\"\"");
 			System.out.println(query);
 			s = cntx.prepareStatement(query);
