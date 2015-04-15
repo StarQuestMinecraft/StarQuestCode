@@ -44,7 +44,7 @@ public class InventoryUtil {
 		return amountLeft;
 	}
 	
-	public static int removeDataCoresFromShipInventories(Craft c, int amount, String shipclass){
+	public static int removeDataCoresFromShipInventories(Craft c, int amount, String[] craftTypes){
 		int amountLeft = amount;
 		for(MovecraftLocation l : c.getBlockList()){
 			Block b = c.getW().getBlockAt(l.getX(), l.getY(), l.getZ());
@@ -54,7 +54,7 @@ public class InventoryUtil {
 					ItemStack i = h.getInventory().getItem(n);
 					if(ShipDataCore.isShipDataCore(i)){
 						ShipDataCore d = new ShipDataCore(i);
-						if(d.getType().equals(shipclass)){
+						if(contains(craftTypes, d.getType())){
 							h.getInventory().setItem(n, new ItemStack(Material.AIR, 1));
 							amountLeft--;
 							if(amountLeft <= 0) return 0;
@@ -64,5 +64,19 @@ public class InventoryUtil {
 			}
 		}
 		return amountLeft;
+	}
+	
+	private static <T> boolean contains(final T[] array, final T v) {
+	    if (v == null) {
+	        for (final T e : array)
+	            if (e == null)
+	                return true;
+	    } else {
+	        for (final T e : array)
+	            if (e == v || v.equals(e))
+	                return true;
+	    }
+
+	    return false;
 	}
 }

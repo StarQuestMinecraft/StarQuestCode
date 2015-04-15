@@ -29,8 +29,8 @@ public class ShipCaptureContract implements Contract{
 	boolean blackMarket;
 	UUID player;
 	
-	public ShipCaptureContract(UUID player, int reward, String craftType, int num, String targetStation, boolean blackMarket){
-		this.craftType = craftType;
+	public ShipCaptureContract(UUID player, int reward, String[] craftTypes, int num, String targetStation, boolean blackMarket){
+		this.craftTypes = craftTypes;
 		this.num = num;
 		this.reward = reward;
 		this.targetStation = targetStation;
@@ -39,7 +39,7 @@ public class ShipCaptureContract implements Contract{
 	}
 	
 	public CompletionStatus complete(Craft c){
-		int left = InventoryUtil.removeDataCoresFromShipInventories(c, num, craftType);
+		int left = InventoryUtil.removeDataCoresFromShipInventories(c, num, craftTypes);
 		if(left > 0){
 			if(left == num){
 				num = left;
@@ -57,18 +57,26 @@ public class ShipCaptureContract implements Contract{
 	@Override
 	public String getDescription() {
 		if(blackMarket){
-			return PIRATE_TAG + "Capture " + num + " ships of class " + craftType +
+			return PIRATE_TAG + "Capture " + num + " ships of class " + typesToString(craftTypes) +
 					" and bring their data cores back to Eco Station " +
 					targetStation + " for proof. Completing this contract " + 
 					" earns you " + reward + " credits and one Infamy " + 
 					" point.";
 		} else {
-			return PRIVATEER_TAG + "Capture " + num + " ships of class " + craftType +
+			return PRIVATEER_TAG + "Capture " + num + " ships of class " + typesToString(craftTypes) +
 					" piloted by [Wanted] players and bring their data cores back to Eco Station " +
 					targetStation + " for proof. Completing this contract " + 
 					" earns you " + reward + " credits and one Reputation " + 
 					" point.";
 		}
+	}
+	
+	private String typesToString(String[] types){
+		String retval = types[0];
+		for(int i = 1; i < types.length; i++){
+			retval = retval + ", " + types[i];
+		}
+		return retval;
 	}
 
 	@Override

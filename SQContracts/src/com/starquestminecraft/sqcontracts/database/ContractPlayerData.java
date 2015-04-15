@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import com.starquestminecraft.sqcontracts.contracts.Contract;
@@ -41,6 +42,10 @@ public class ContractPlayerData implements Serializable{
 	
 	public int getBalanceInCurrency(String currency){
 		return balances.get(currency);
+	}
+	
+	public Set<String> getCurrencies(){
+		return balances.keySet();
 	}
 	
 	public void setBalanceInCurrency(String currency, int amount){

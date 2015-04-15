@@ -12,8 +12,8 @@ import org.bukkit.entity.Player;
 
 import com.starquestminecraft.sqcontracts.contracts.Contract;
 import com.starquestminecraft.sqcontracts.database.ContractPlayerData;
+import com.starquestminecraft.sqcontracts.randomizer.config.ConfigRandomizer;
 import com.starquestminecraft.sqcontracts.util.ContractCompletionRunnable;
-import com.starquestminecraft.sqcontracts.util.ContractRandomizer;
 import com.starquestminecraft.sqcontracts.util.StationUtils;
 
 public class ContractCommand implements CommandExecutor {
@@ -113,7 +113,7 @@ public class ContractCommand implements CommandExecutor {
 	}
 
 	private void givePlayerNewContract(Player plr, int id) {
-		Contract[] available = ContractRandomizer.generateContractsForPlayer(plr.getUniqueId());
+		Contract[] available = SQContracts.get().getRandomizer().generateContractsForPlayer(plr.getUniqueId());
 		Contract c = available[id];
 		ContractPlayerData d = SQContracts.get().getContractDatabase().getDataOfPlayer(plr.getUniqueId());
 		d.getContracts().add(c);
@@ -122,7 +122,7 @@ public class ContractCommand implements CommandExecutor {
 	}
 
 	private void displayNewList(Player plr) {
-		Contract[] available = ContractRandomizer.generateContractsForPlayer(plr.getUniqueId());
+		Contract[] available = SQContracts.get().getRandomizer().generateContractsForPlayer(plr.getUniqueId());
 
 		plr.sendMessage(ChatColor.GREEN + "New contracts available for " + plr.getName());
 		plr.sendMessage(ChatColor.GOLD + "============================================");
