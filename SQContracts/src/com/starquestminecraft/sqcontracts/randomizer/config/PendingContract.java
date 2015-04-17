@@ -15,11 +15,12 @@ public abstract class PendingContract {
 	int minReward, maxReward;
 	
 	public PendingContract(FileConfiguration c, String key){
-		Set<String> minBalances = c.getConfigurationSection(key + ".minLevels").getKeys(true);
+		System.out.println("Low level key: " + key + ".minLevels");
+		Set<String> minBalances = c.getConfigurationSection(key + ".minLevels").getKeys(false);
 		for(String currency : minBalances){
 			String localKey = key + ".minLevels." + currency;
 			int amount = c.getInt(localKey);
-			this.minBalances.put(localKey, amount);
+			this.minBalances.put(currency, amount);
 		}
 		minReward = c.getInt(key + ".minReward");
 		maxReward = c.getInt(key + ".maxReward");
@@ -29,8 +30,11 @@ public abstract class PendingContract {
 	
 	public boolean isValidContractForPlayer(ContractPlayerData d) {
 		for(String s : minBalances.keySet()){
+			System.out.println("Testing for balance: " + s);
 			int requiredLevel = minBalances.get(s);
+			System.out.println("Required level: " + requiredLevel);
 			int playerLevel = d.getBalanceInCurrency(s);
+			System.out.println("Found level: " + playerLevel);
 			if(playerLevel < requiredLevel) return false;
 		}
 		return true;

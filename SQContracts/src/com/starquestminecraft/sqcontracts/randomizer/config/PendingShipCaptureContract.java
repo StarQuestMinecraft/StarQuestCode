@@ -25,7 +25,7 @@ public class PendingShipCaptureContract extends PendingContract{
 		this.blackMarket = f.getBoolean(key + ".blackMarket");
 		amountMin = f.getInt(key + ".minAmount");
 		amountMax = f.getInt(key + ".maxAmount");
-		targetClasses = f.getStringList(key + ".types");
+		targetClasses = f.getStringList(key + ".targetClasses");
 	}
 
 	@Override

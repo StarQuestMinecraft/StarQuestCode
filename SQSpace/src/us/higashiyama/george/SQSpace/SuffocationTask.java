@@ -45,7 +45,7 @@ public class SuffocationTask extends BukkitRunnable {
 		if (!this.plugin.checkIfSuffocating(p))
 		{
 			p.sendMessage(ChatColor.AQUA + "[Space] " + ChatColor.GREEN
-					+ "You are no longer suffocationg!");
+					+ "You are no longer suffocating!");
 		}
 	}
 

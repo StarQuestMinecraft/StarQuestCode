@@ -12,11 +12,12 @@ import net.countercraft.movecraft.craft.Craft;
 
 public interface Contract extends Serializable{
 	
-	public static final String BLACK_MARKET_TAG = "[" + ChatColor.DARK_RED + "Black Market" + ChatColor.WHITE + "]";
-	public static final String REGULAR_MARKET_TAG = "[" + ChatColor.GRAY + "Main Market" + ChatColor.WHITE + "]";
+	public static final String BLACK_MARKET_TAG = "[" + ChatColor.DARK_RED + "Black Market" + ChatColor.RESET + "]";
+	public static final String REGULAR_MARKET_TAG = "[" + ChatColor.GRAY + "Main Market" + ChatColor.RESET + "]";
+	
 	//-1 for complete failure, 0 for partial, 1 for success
 	public CompletionStatus complete(Craft c);
-	public String getDescription();
+	public String getDescription(ChatColor color);
 	public String getTargetStation();
 	public boolean isBlackMarket();
 	public UUID getPlayer();

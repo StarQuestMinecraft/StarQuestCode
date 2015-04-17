@@ -26,7 +26,7 @@ public class MoneyContract implements Contract {
 	private int cost;
 	private String cause;
 	
-	private static final String TAG = "[" + ChatColor.DARK_AQUA + "Philanthropy" + ChatColor.WHITE + "] ";
+	private static final String TAG = "[" + ChatColor.DARK_AQUA + "Philanthropy" + ChatColor.RESET + "] ";
 
 	public MoneyContract(UUID player, String targetStation, int cost, String cause) {
 		this.player = player;
@@ -57,9 +57,13 @@ public class MoneyContract implements Contract {
 	}
 
 	@Override
-	public String getDescription() {
-		return TAG + "Collect " + cost + " credits and bring them to " + getTargetStation() + " to help " + cause + "."
-				+ "Doing this will earn you one philanthropy point.";
+	public String getDescription(ChatColor c) {
+		return fixColor(c,TAG) + "Collect " + cost + " credits and bring them to " + getTargetStation() + " to help " + cause + "."
+				+ " Doing this will earn you one philanthropy point.";
+	}
+	
+	private String fixColor(ChatColor color, String string){
+		return string.replaceAll(ChatColor.RESET.toString(), color.toString());
 	}
 
 	@Override

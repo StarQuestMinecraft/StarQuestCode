@@ -41,7 +41,10 @@ public class ContractPlayerData implements Serializable{
 	}
 	
 	public int getBalanceInCurrency(String currency){
-		return balances.get(currency);
+		System.out.println("Getting balance in currency: " + currency);
+		Integer i = balances.get(currency);
+		if(i == null) return 0;
+		return i;
 	}
 	
 	public Set<String> getCurrencies(){

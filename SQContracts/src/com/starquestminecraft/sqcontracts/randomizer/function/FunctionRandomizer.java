@@ -1,7 +1,6 @@
 package com.starquestminecraft.sqcontracts.randomizer.function;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;
@@ -10,26 +9,28 @@ import com.starquestminecraft.sqcontracts.SQContracts;
 import com.starquestminecraft.sqcontracts.contracts.Contract;
 import com.starquestminecraft.sqcontracts.database.ContractPlayerData;
 import com.starquestminecraft.sqcontracts.randomizer.Randomizer;
+import com.starquestminecraft.sqcontracts.util.Weighable;
+import com.starquestminecraft.sqcontracts.util.WeightedRandom;
 
 public class FunctionRandomizer extends Randomizer{
 
 	@Override
 	public Contract[] generateContractsForPlayer(UUID player) {
 		
-		long seed = getRandomSeed(player);
-		Random generator = new Random(seed);
-		
 		ContractPlayerData pData = SQContracts.get().getContractDatabase().getDataOfPlayer(player);
 		Contract[] retval = new Contract[pData.getNumNewContractOffers()];
+		
+		long seed = getRandomSeed(pData);
+		Random generator = new Random(seed);
 		
 		//calculate the "weight" for each type of contract for selection
 		//weights are ln(x +1) where x is the balance in that contract
 		
-		List<Weighable> weights = new ArrayList<Weighable>(pData.getCurrencies().size());
+		List<Weighable<String>> weights = new ArrayList<Weighable<String>>(pData.getCurrencies().size());
 		for(String s : pData.getCurrencies()){
 			int balance = pData.getBalanceInCurrency(s);
 			double weight = Math.log(balance + 1);
-			weights.add(new Weighable(s, weight));
+			weights.add(new Weighable<String>(s, weight));
 		}
 		
 		for(int i = 0; i < retval.length; i++){
@@ -38,12 +39,13 @@ public class FunctionRandomizer extends Randomizer{
 		return null;
 	}
 
-	private Contract generate(Random generator, ContractPlayerData pData, List<Weighable> weights) {
+	private Contract generate(Random generator, ContractPlayerData pData, List<Weighable<String>> weights) {
 
 		//select one
-		Weighable winner = Weighable.weightedRandom(weights, generator);
+		WeightedRandom<String> r = new WeightedRandom<String>(weights, generator);
+		Weighable<String> winner = r.generate();
 		
-		switch(winner.getName()){
+		switch(winner.getObject()){
 		case "philanthropy":
 			return generateMoneyContract(generator, pData);
 		case "smuggling":

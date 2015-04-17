@@ -20,8 +20,8 @@ public class ShipCaptureContract implements Contract{
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	private static final String PIRATE_TAG = Contract.BLACK_MARKET_TAG + "[" + ChatColor.RED + "Piracy" + ChatColor.WHITE + "] ";
-	private static final String PRIVATEER_TAG = "[" + ChatColor.DARK_BLUE + "Privateering" + ChatColor.WHITE + "] ";
+	private static final String PIRATE_TAG = Contract.BLACK_MARKET_TAG + "[" + ChatColor.RED + "Piracy" + ChatColor.RESET + "] ";
+	private static final String PRIVATEER_TAG = "[" + ChatColor.DARK_BLUE + "Privateering" + ChatColor.RESET + "] ";
 	String[] craftTypes;
 	int num;
 	String targetStation;
@@ -39,7 +39,7 @@ public class ShipCaptureContract implements Contract{
 	}
 	
 	public CompletionStatus complete(Craft c){
-		int left = InventoryUtil.removeDataCoresFromShipInventories(c, num, craftTypes);
+		int left = InventoryUtil.removeDataCoresFromShipInventories(c, num, craftTypes, blackMarket);
 		if(left > 0){
 			if(left == num){
 				num = left;
@@ -55,20 +55,25 @@ public class ShipCaptureContract implements Contract{
 	}
 
 	@Override
-	public String getDescription() {
+	public String getDescription(ChatColor c) {
+		
 		if(blackMarket){
-			return PIRATE_TAG + "Capture " + num + " ships of class " + typesToString(craftTypes) +
+			return fixColor(c, PIRATE_TAG) + "Capture " + num + " ships of class " + typesToString(craftTypes) +
 					" and bring their data cores back to Eco Station " +
-					targetStation + " for proof. Completing this contract " + 
-					" earns you " + reward + " credits and one Infamy " + 
+					targetStation + " for proof. Completing this contract" + 
+					" earns you " + reward + " credits and one Infamy" + 
 					" point.";
 		} else {
-			return PRIVATEER_TAG + "Capture " + num + " ships of class " + typesToString(craftTypes) +
+			return fixColor(c, PRIVATEER_TAG) + "Capture " + num + " ships of class " + typesToString(craftTypes) +
 					" piloted by [Wanted] players and bring their data cores back to Eco Station " +
-					targetStation + " for proof. Completing this contract " + 
-					" earns you " + reward + " credits and one Reputation " + 
+					targetStation + " for proof. Completing this contract" + 
+					" earns you " + reward + " credits and one Reputation" + 
 					" point.";
 		}
+	}
+	
+	private String fixColor(ChatColor color, String string){
+		return string.replaceAll(ChatColor.RESET.toString(), color.toString());
 	}
 	
 	private String typesToString(String[] types){

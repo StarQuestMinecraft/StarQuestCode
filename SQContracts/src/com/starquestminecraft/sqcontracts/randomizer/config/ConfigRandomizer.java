@@ -24,21 +24,22 @@ public class ConfigRandomizer extends Randomizer{
 	private List<PendingContract> loadConfig() {
 		List<PendingContract> retval = new ArrayList<PendingContract>();
 		FileConfiguration c = SQContracts.get().getConfig();
-		Set<String> keys = c.getConfigurationSection("contracts").getKeys(true);
+		Set<String> keys = c.getConfigurationSection("contracts").getKeys(false);
 		for (String s : keys) {
+			System.out.println("Loading configured contract " + s);
 			String type = c.getString("contracts." + s + ".type");
 			PendingContract contract;
 			switch (type.toLowerCase()) {
 			case "item":
-				contract = new PendingItemContract(c, s);
+				contract = new PendingItemContract(c, "contracts." + s);
 				retval.add(contract);
 				continue;
 			case "capture":
-				contract = new PendingShipCaptureContract(c, s);
+				contract = new PendingShipCaptureContract(c,  "contracts." + s);
 				retval.add(contract);
 				continue;
 			case "money":
-				contract = new PendingMoneyContract(c, s);
+				contract = new PendingMoneyContract(c,  "contracts." + s);
 				retval.add(contract);
 				continue;
 			default:
@@ -50,12 +51,12 @@ public class ConfigRandomizer extends Randomizer{
 
 	
 	public Contract[] generateContractsForPlayer(UUID player){
-		long seed = getRandomSeed(player);
-		Random generator = new Random(seed);
-		
 		
 		ContractPlayerData pData = SQContracts.get().getContractDatabase().getDataOfPlayer(player);
 		List<PendingContract> contractsAvailableToPlayer = new ArrayList<PendingContract>();
+		
+		long seed = getRandomSeed(pData);
+		Random generator = new Random(seed);
 		
 		for(PendingContract c : availableContracts){
 			if(c.isValidContractForPlayer(pData)){

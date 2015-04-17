@@ -1,5 +1,7 @@
 package com.starquestminecraft.sqcontracts.database;
 
+import java.io.ByteArrayInputStream;
+import java.io.ObjectInputStream;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -14,7 +16,7 @@ public class SQLDatabase implements Database {
 	static final String UPDATE_OBJECT_SQL = "UPDATE contract_data SET object_value = ? WHERE `uuid` = ?";
 	static final String WRITE_OBJECT_SQL = "INSERT INTO contract_data(uuid, object_value) VALUES (?, ?)";
 	static final String READ_OBJECT_SQL = "SELECT object_value FROM contract_data WHERE `uuid`= ?";
-	static final String CREATE_TABLE = "CREATE TABLE IF NOT EXISTS java_objects ( uuid varchar(32), object_value BLOB, primary key (uuid))";
+	static final String CREATE_TABLE = "CREATE TABLE IF NOT EXISTS contract_data ( uuid varchar(32), object_value BLOB, primary key (uuid))";
 
 	public SQLDatabase() {
 		con = new BedspawnConnectionProvider();
@@ -57,10 +59,14 @@ public class SQLDatabase implements Database {
 			e.printStackTrace();
 		}
 	}
+	
+	private String stripDashes(UUID u){
+		return u.toString().replaceAll("-", "");
+	}
 
 	private boolean hasKey(Connection con, UUID u) throws Exception {
 		PreparedStatement s = con.prepareStatement(HAS_KEY_SQL);
-		s.setString(1, u.toString());
+		s.setString(1, stripDashes(u));
 		ResultSet rs = s.executeQuery();
 		if (rs.next()) {
 			return true;
@@ -74,7 +80,7 @@ public class SQLDatabase implements Database {
 
 		// set input parameters
 		pstmt.setObject(1, object);
-		pstmt.setString(2, object.getPlayer().toString());
+		pstmt.setString(2, stripDashes(object.getPlayer()));
 		pstmt.executeUpdate();
 		pstmt.close();
 	}
@@ -83,7 +89,7 @@ public class SQLDatabase implements Database {
 		PreparedStatement pstmt = conn.prepareStatement(WRITE_OBJECT_SQL);
 
 		// set input parameters
-		pstmt.setString(1, object.getPlayer().toString());
+		pstmt.setString(1, stripDashes(object.getPlayer()));
 		pstmt.setObject(2, object);
 		pstmt.executeUpdate();
 		pstmt.close();
@@ -91,11 +97,18 @@ public class SQLDatabase implements Database {
 
 	private ContractPlayerData readData(Connection conn, UUID plr) throws Exception {
 		PreparedStatement pstmt = conn.prepareStatement(READ_OBJECT_SQL);
-		pstmt.setString(1, plr.toString());
+		pstmt.setString(1, stripDashes(plr));
 		ResultSet rs = pstmt.executeQuery();
 		rs.next();
-		Object object = rs.getObject(1);
-		ContractPlayerData retval = (ContractPlayerData) object;
+		byte[] buffer = rs.getBytes(1);
+		
+		ObjectInputStream objectIn = null;
+		if (buffer != null)
+			objectIn = new ObjectInputStream(new ByteArrayInputStream(buffer));
+
+		Object deSerializedObject = objectIn.readObject();
+		System.out.println("Object is " + deSerializedObject.getClass().getName());
+		ContractPlayerData retval = (ContractPlayerData) deSerializedObject;
 		rs.close();
 		pstmt.close();
 		return retval;

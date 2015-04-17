@@ -5,6 +5,7 @@ import java.util.Random;
 import java.util.UUID;
 
 import com.starquestminecraft.sqcontracts.contracts.Contract;
+import com.starquestminecraft.sqcontracts.database.ContractPlayerData;
 
 public abstract class Randomizer {
 	
@@ -23,8 +24,10 @@ public abstract class Randomizer {
 		System.out.println("Base Seed: " + BASE_SEED);
 	}
 
-	public static long getRandomSeed(UUID player){
-		return BASE_SEED + (player.getLeastSignificantBits() - player.getMostSignificantBits());
+	public static long getRandomSeed(ContractPlayerData pData){
+		UUID player = pData.getPlayer();
+		int modif = pData.getContracts().size() + 1;
+		return BASE_SEED + (player.getLeastSignificantBits() - player.getMostSignificantBits()) / modif;
 	}
 	
 	public abstract Contract[] generateContractsForPlayer(UUID player);

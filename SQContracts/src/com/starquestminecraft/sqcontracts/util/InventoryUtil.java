@@ -16,13 +16,19 @@ public class InventoryUtil {
 		int amountRemoved = 0;
 		for(int i = 0; i < inv.getSize(); i++){
 			ItemStack item = inv.getItem(i);
-			if(item.getType() == type && item.getDurability() == durability){
-				if(item.getAmount() < (amount - amountRemoved) /*the amount left to remove*/){
+			if(item != null && item.getType() == type && item.getDurability() == durability){
+				int amtLeft = amount-amountRemoved;
+				if(item.getAmount() < amtLeft){
+					System.out.println("amount left more than this stack, removing.");
+					//add to the amount removed and delete the item
 					amountRemoved += item.getAmount();
 					inv.setItem(i, new ItemStack(Material.AIR, 1));
 				} else {
+					//everything is removed, subtract the last few from this stack and go
+					item.setAmount(item.getAmount() - amtLeft);
+					inv.setItem(i, item);
 					amountRemoved = amount;
-					item.setAmount(item.getAmount() - (amount - amountRemoved)  /*the amount left to remove*/);
+					System.out.println("amount left less than this stack, subtracting.");
 					break;
 				}
 			}
@@ -44,7 +50,7 @@ public class InventoryUtil {
 		return amountLeft;
 	}
 	
-	public static int removeDataCoresFromShipInventories(Craft c, int amount, String[] craftTypes){
+	public static int removeDataCoresFromShipInventories(Craft c, int amount, String[] craftTypes, boolean blackMarket){
 		int amountLeft = amount;
 		for(MovecraftLocation l : c.getBlockList()){
 			Block b = c.getW().getBlockAt(l.getX(), l.getY(), l.getZ());
