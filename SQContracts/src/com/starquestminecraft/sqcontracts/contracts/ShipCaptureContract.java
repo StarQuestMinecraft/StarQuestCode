@@ -8,6 +8,7 @@ import org.bukkit.OfflinePlayer;
 
 import net.countercraft.movecraft.bungee.InventoryUtils;
 import net.countercraft.movecraft.craft.Craft;
+import net.milkbowl.vault.economy.Economy;
 
 import com.starquestminecraft.sqcontracts.SQContracts;
 import com.starquestminecraft.sqcontracts.database.ContractPlayerData;
@@ -59,13 +60,15 @@ public class ShipCaptureContract implements Contract{
 		
 		if(blackMarket){
 			return fixColor(c, PIRATE_TAG) + "Capture " + num + " ships of class " + typesToString(craftTypes) +
-					" and bring their data cores back to Eco Station " +
+					" and bring their data cores back to eco station " +
 					targetStation + " for proof. Completing this contract" + 
 					" earns you " + reward + " credits and one Infamy" + 
-					" point.";
+					" point. While you have this contract open you will" +
+					" be on the Wanted list, and while you are Wanted" + 
+					" you will be pursued by Privateers.";
 		} else {
 			return fixColor(c, PRIVATEER_TAG) + "Capture " + num + " ships of class " + typesToString(craftTypes) +
-					" piloted by [Wanted] players and bring their data cores back to Eco Station " +
+					" piloted by [Wanted] players and bring their data cores back to eco station " +
 					targetStation + " for proof. Completing this contract" + 
 					" earns you " + reward + " credits and one Reputation" + 
 					" point.";
@@ -77,10 +80,18 @@ public class ShipCaptureContract implements Contract{
 	}
 	
 	private String typesToString(String[] types){
+		if(types.length == 1){
+			return types[0];
+		}
+		if(types.length == 2){
+			return types[0] + " or " + types[1];
+		}
+		
 		String retval = types[0];
-		for(int i = 1; i < types.length; i++){
+		for(int i = 1; i < types.length - 1; i++){
 			retval = retval + ", " + types[i];
 		}
+		retval = retval + ", or " + types[types.length -1];
 		return retval;
 	}
 
@@ -97,7 +108,10 @@ public class ShipCaptureContract implements Contract{
 	@Override
 	public void giveRewards(ContractPlayerData d) {
 		OfflinePlayer plr = Bukkit.getOfflinePlayer(d.getPlayer());
-		SQContracts.get().getEconomy().depositPlayer(plr, reward);
+		Economy e = SQContracts.get().getEconomy();
+		if(e != null){
+			SQContracts.get().getEconomy().depositPlayer(plr, reward);
+		}
 		String currency;
 		if(isBlackMarket()){
 			currency = "infamy";

@@ -35,7 +35,6 @@ public class SQRankup extends JavaPlugin implements Listener {
 
 	public static Permission permission = null;
 	public static SQRankup instance;
-	public static VaultEco vaultEco;
 	public static int MULTIPLIER = 1;
 	public static FileConfiguration config;
 	public static HashMap<String, Integer> infamyCostMap = new HashMap<String, Integer>();
@@ -99,13 +98,27 @@ public class SQRankup extends JavaPlugin implements Listener {
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 
 		if (cmd.getName().equalsIgnoreCase("rankuprefresh") && sender.hasPermission("SQRankup.refresh")) {
-			config = YamlConfiguration.loadConfiguration(new File(getDataFolder(), "config.yml"));
 			refresh();
 			sender.sendMessage("Rankup Multiplier Refreshed");
 			return true;
 		}
+		else if (cmd.getName().equalsIgnoreCase("resetrank") && sender.hasPermission("SQRankup.resetrank")){
+			if(args.length < 1){
+				sender.sendMessage("You need to provide a player!");
+				return true;
+			}
+			Player p = Bukkit.getPlayer(args[0]);
+			if(p == null){
+				sender.sendMessage("This player is not online, attempting to set group, but make sure you typed their name right!");
+			} else {
+				sender.sendMessage("Setting group.");
+			}
+			Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "perms player " + args[0] + " setgroup Settler");
+			Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "sync console all perms refresh");
+			return true;
+		}
 
-		if (cmd.getName().equalsIgnoreCase("rankupmultiplier") && sender.hasPermission("SQRankup.multiplier")) {
+		else if (cmd.getName().equalsIgnoreCase("rankupmultiplier") && sender.hasPermission("SQRankup.multiplier")) {
 			MULTIPLIER = Integer.parseInt(args[0]);
 			instance.getConfig().set("multiplier", MULTIPLIER);
 			saveConfig();
@@ -117,7 +130,7 @@ public class SQRankup extends JavaPlugin implements Listener {
 			return true;
 		}
 
-		if ((cmd.getName().equalsIgnoreCase("rankup")) && ((sender instanceof Player))) {
+		else if ((cmd.getName().equalsIgnoreCase("rankup")) && ((sender instanceof Player))) {
 			Player p = (Player) sender;
 			String rank = getRank(p);
 			String nextRank = null;

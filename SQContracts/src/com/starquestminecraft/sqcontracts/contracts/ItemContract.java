@@ -94,10 +94,10 @@ public class ItemContract implements Contract {
 	@Override
 	public String getDescription(ChatColor c) {
 		if (smuggler) {
-			return fixColor(c, SMUGGLER_TAG) + "Obtain the following items: " + printItems() + " and bring them to " + targetStation + ". Completing this contract" + " earns you " + reward
+			return fixColor(c, SMUGGLER_TAG) + "Obtain the following items: " + printItems() + " and bring them to eco station " + targetStation + ". Completing this contract" + " earns you " + reward
 					+ " credits and one Smuggling" + " point. While you have this contract open you will be on the Wanted list, and while" + " you are Wanted you will be pursued by Privateers.";
 		} else {
-			return fixColor(c, MERCHANT_TAG) + "Obtain the following items: " + printItems() + "and bring them to " + targetStation + ". Completing this contract " + "earns you " + reward
+			return fixColor(c, MERCHANT_TAG) + "Obtain the following items: " + printItems() + "and bring them to eco station " + targetStation + ". Completing this contract " + "earns you " + reward
 					+ " credits and one Merchant " + "point.";
 		}
 	}

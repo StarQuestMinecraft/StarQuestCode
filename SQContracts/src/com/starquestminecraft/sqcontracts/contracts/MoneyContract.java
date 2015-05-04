@@ -58,7 +58,7 @@ public class MoneyContract implements Contract {
 
 	@Override
 	public String getDescription(ChatColor c) {
-		return fixColor(c,TAG) + "Collect " + cost + " credits and bring them to " + getTargetStation() + " to help " + cause + "."
+		return fixColor(c,TAG) + "Collect " + cost + " credits and bring them to eco station " + getTargetStation() + " to help " + cause + "."
 				+ " Doing this will earn you one philanthropy point.";
 	}
 	

@@ -4,9 +4,9 @@ import java.util.List;
 import java.util.Random;
 
 import com.starquestminecraft.sqcontracts.SQContracts;
-import com.starquestminecraft.sqcontracts.contracts.ItemContract;
 import com.starquestminecraft.sqcontracts.contracts.MoneyContract;
 import com.starquestminecraft.sqcontracts.database.ContractPlayerData;
+import com.starquestminecraft.sqcontracts.util.StationUtils;
 
 public class MoneyContractGenerator {
 	
@@ -18,13 +18,13 @@ public class MoneyContractGenerator {
 		
 		int balance = pData.getBalanceInCurrency("philanthropy");
 		double baseCost = runEquation(balance);
-		double cost = FunctionRandomizer.randomModifier(baseCost, generator, 10);
+		double cost = FunctionRandomizer.randomModifierPercentage(baseCost, generator, 10);
 		
 		String cause = getCause(generator);
 		String location = getLocation(generator);
 		String causemsg = cause + " on " + location;
 		
-		return new MoneyContract(pData.getPlayer(), location, (int) cost, causemsg);
+		return new MoneyContract(pData.getPlayer(), StationUtils.getRandomStation(generator), (int) cost, causemsg);
 		//generate a "cause" based on "afflictions" and planet names, e.g. "starving children" on "krystallos" or "earthquake relief" on "quavara"
 		//done 
 	}
@@ -34,8 +34,8 @@ public class MoneyContractGenerator {
 		return causes.get((int) generator.nextInt(causes.size()));
 	}
 	private static String getLocation(Random generator){
-		if(causes == null) causes = SQContracts.get().getConfig().getStringList("planet");
-		return causes.get((int) generator.nextInt(causes.size()));
+		if(locations == null) locations = SQContracts.get().getConfig().getStringList("planets");
+		return locations.get((int) generator.nextInt(locations.size()));
 	}
 	
 	private static double runEquation(int x){

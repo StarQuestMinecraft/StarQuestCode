@@ -20,7 +20,7 @@ public class WeightedRandom<T> {
 		}
 		// Now choose a random item
 		int randomIndex = -1;
-		double random = Math.random() * totalWeight;
+		double random = generator.nextDouble() * totalWeight;
 		for (int i = 0; i < list.size(); ++i)
 		{
 		    random -= list.get(i).getWeight();

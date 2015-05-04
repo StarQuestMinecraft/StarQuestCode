@@ -19,9 +19,8 @@ import net.countercraft.movecraft.database.StarshipData;
 
 public class ShipDataCore {
 	
-	private static final String LONG_OBFUSCATED = "dibujarondibujarondibujarondibujarondi";
 	private static final String DATA_PENDING = ChatColor.RED + "Data Core Pending";
-	public static void createShipDataCore(Player p, final StarshipData d){
+	public static void createShipDataCore(final Player p, final StarshipData d){
 		ItemStack paper = new ItemStack(Material.PAPER, 1);
 		ItemMeta meta = paper.getItemMeta();
 		meta.setDisplayName(DATA_PENDING);
@@ -29,11 +28,11 @@ public class ShipDataCore {
 		p.getInventory().addItem(paper);
 		Bukkit.getServer().getScheduler().runTaskAsynchronously(SQContracts.get(), new Runnable(){
 			public void run(){
-				createShipDataCoreAsync(d);
+				createShipDataCoreAsync(p, d);
 			}
 		});
 	}
-	public static void createShipDataCoreAsync(final StarshipData d){
+	public static void createShipDataCoreAsync(Player destroyer, final StarshipData d){
 		System.out.println("Async call!");
 		String type = d.getType();
 		UUID pilot = d.getCaptain();
@@ -53,7 +52,7 @@ public class ShipDataCore {
 			lore.add(ChatColor.DARK_RED + "WANTED");
 		}
 		
-		lore.add(ChatColor.MAGIC + LONG_OBFUSCATED);
+		lore.add(ChatColor.MAGIC + destroyer.getUniqueId().toString());
 		Bukkit.getScheduler().runTask(Movecraft.getInstance(), new Runnable(){
 			public void run(){
 				createShipDataCoreCallback(d.getCaptain(), displayName, lore);
@@ -81,6 +80,7 @@ public class ShipDataCore {
 	}
 	
 	public static boolean isShipDataCore(ItemStack i){
+		if(i == null) return false;
 		if(i.getType() != Material.PAPER) return false;
 		ItemMeta m = i.getItemMeta();
 		return m.getDisplayName().equals(ChatColor.RESET + "" + ChatColor.AQUA + "Starship Data Core");
@@ -96,8 +96,10 @@ public class ShipDataCore {
 		List<String> lore = meta.getLore();
 		String uid = lore.get(0);
 		pilot = UUID.fromString(uid.substring(2, uid.length()));
-		type = lore.get(1);
-		blocksLength = Integer.parseInt(lore.get(2));
+		String typeString = lore.get(1);
+		type = typeString.substring(2, typeString.length());
+		String blockString = lore.get(2);
+		blocksLength = Integer.parseInt(blockString.substring(2, blockString.length() - 7));
 		pilotName = lore.get(3);
 	}
 

@@ -19,8 +19,9 @@ public abstract class Randomizer {
 		int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
 		int weekOfYear = calendar.get(Calendar.WEEK_OF_YEAR);
 		int weekOfMonth = calendar.get(Calendar.WEEK_OF_MONTH);
+		int ampm = calendar.get(Calendar.AM_PM);
 		
-		BASE_SEED = new Random(year + month + dayOfMonth + dayOfWeek + weekOfYear + weekOfMonth).nextLong();
+		BASE_SEED = new Random(year + month + dayOfMonth + dayOfWeek + weekOfYear + weekOfMonth - ampm).nextLong();
 		System.out.println("Base Seed: " + BASE_SEED);
 	}
 

@@ -1,24 +1,14 @@
 package com.starquestminecraft.sqcontracts;
 
-import net.countercraft.movecraft.Movecraft;
-import net.countercraft.movecraft.craft.Craft;
-import net.countercraft.movecraft.craft.CraftManager;
-import net.countercraft.movecraft.cryo.CryoSpawn;
+import java.io.File;
+
 import net.countercraft.movecraft.database.StarshipData;
 import net.countercraft.movecraft.event.CraftSignBreakEvent;
-import net.countercraft.movecraft.listener.InteractListener;
-import net.countercraft.movecraft.utils.KillUtils;
-import net.countercraft.movecraft.utils.MathUtils;
 import net.milkbowl.vault.economy.Economy;
 
-import org.bukkit.ChatColor;
-import org.bukkit.Material;
-import org.bukkit.block.Sign;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -26,6 +16,7 @@ import com.starquestminecraft.sqcontracts.database.Database;
 import com.starquestminecraft.sqcontracts.database.SQLDatabase;
 import com.starquestminecraft.sqcontracts.randomizer.Randomizer;
 import com.starquestminecraft.sqcontracts.randomizer.config.ConfigRandomizer;
+import com.starquestminecraft.sqcontracts.randomizer.function.FunctionRandomizer;
 import com.starquestminecraft.sqcontracts.util.ContractCompletionRunnable;
 import com.starquestminecraft.sqcontracts.util.ShipDataCore;
 import com.starquestminecraft.sqcontracts.util.StationUtils;
@@ -43,13 +34,19 @@ public class SQContracts extends JavaPlugin implements Listener{
 	public void onEnable() {
 		instance = this;
 		saveDefaultConfig();
-		ConfigRandomizer.captureBaseSeed();
+		if ( !new File( getDataFolder() + "shipclassdata.txt" ).exists() ) {
+			this.saveResource( "shipclassdata.txt", false );
+		}
+		if ( !new File( getDataFolder() + "itemdata.txt" ).exists() ) {
+			this.saveResource( "itemdata.txt", false );
+		}
+		Randomizer.captureBaseSeed();
 		StationUtils.setUp(getConfig());
 		economy = registerEconomy();
 		getCommand("contract").setExecutor(new ContractCommand());
 		ContractCompletionRunnable r = new ContractCompletionRunnable();
 		r.runTaskTimer(this, 20, 20);
-		randomizer = new ConfigRandomizer();
+		randomizer = new FunctionRandomizer();
 		contractDatabase = new SQLDatabase();
 		getServer().getPluginManager().registerEvents(this, this);
 	}
@@ -82,9 +79,9 @@ public class SQContracts extends JavaPlugin implements Listener{
 	
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void onSignBreak( final CraftSignBreakEvent e ) {
-		//if(!e.isBrokenByOwner() && !e.isCooledDown()){
+		if(!e.isBrokenByOwner() && !e.isWithinKillCooldown()){
 			StarshipData d = e.getData();
 			ShipDataCore.createShipDataCore(e.getPlayer(), d);
-		//}
+		}
 	}
 }

@@ -2,28 +2,21 @@ package com.starquestminecraft.sqcontracts.randomizer.function;
 
 import org.bukkit.Material;
 
-public class ItemData {
-	
-	Material myType;
+public class ShipClassData {
+	String className;
 	double myPrice;
 	int minLevel;
 	double rarity;
-	byte data;
 	
-	public ItemData(Material type, byte data, double unitPrice, int minLevel, double rarityMod) {
-		myType = type;
-		this.data = data;
+	public ShipClassData(String className, double unitPrice, int minLevel, double rarityMod){
+		this.className = className;
 		myPrice = unitPrice;
 		this.minLevel = minLevel;
-		rarity = rarityMod;
+		this.rarity = rarityMod;
 	}
-
-	public Material getType() {
-		return myType;
-	}
-
-	public byte getData() {
-		return data;
+	
+	public String getType() {
+		return className;
 	}
 
 	public double getUnitPrice() {

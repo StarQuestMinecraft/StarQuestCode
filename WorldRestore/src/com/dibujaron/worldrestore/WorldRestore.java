@@ -12,6 +12,8 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.plugin.PluginManager;
@@ -149,11 +151,25 @@ public class WorldRestore extends BukkitRunnable {
 					Location l = e.getLocation();
 					e.teleport(new Location(to, l.getX(), l.getY(), l.getZ(), l.getYaw(), l.getPitch()));
 				}*/
+				System.out.println("Attempting to warp entities...");
+				warpEntities(from, to);
+				System.out.println("Done!");
 				this.cancel();
 			}
 		}
 	}
 
+	private void warpEntities(World from, World to){
+		for(Entity e : from.getEntities()){
+			if(e instanceof LivingEntity){
+				if(!(e instanceof Player)){
+					LivingEntity le = (LivingEntity) e;
+					Location l = le.getLocation();
+					le.teleport(new Location(to, l.getX(), l.getY(), l.getZ(), l.getYaw(), l.getPitch()));
+				}
+			}
+		}
+	}
 	private void process(Block b) {
 		
 		Chunk c = b.getChunk();

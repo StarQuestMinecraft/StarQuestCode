@@ -3,6 +3,7 @@ package com.starquestminecraft.sqcontracts.database;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -19,6 +20,15 @@ public class ContractPlayerData implements Serializable{
 	UUID player;
 	List<Contract> contracts;
 	HashMap<String, Integer> balances;
+	
+	private static Set<String> currencies = new HashSet<String>();
+	static{
+		currencies.add("philanthropy");
+		currencies.add("smuggling");
+		currencies.add("trading");
+		currencies.add("reputation");
+		currencies.add("infamy");
+	}
 	
 	public ContractPlayerData(UUID u, List<Contract> currentContracts, HashMap<String, Integer> tradeAmounts){
 		player = u;
@@ -41,14 +51,13 @@ public class ContractPlayerData implements Serializable{
 	}
 	
 	public int getBalanceInCurrency(String currency){
-		System.out.println("Getting balance in currency: " + currency);
 		Integer i = balances.get(currency);
 		if(i == null) return 0;
 		return i;
 	}
 	
 	public Set<String> getCurrencies(){
-		return balances.keySet();
+		return currencies;
 	}
 	
 	public void setBalanceInCurrency(String currency, int amount){

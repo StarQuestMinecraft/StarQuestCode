@@ -5,6 +5,58 @@
 #merchanting (good-guy trading)
 #smuggling (black market trading)
 #salvage (implement later)
+
+causes:
+    - "starving children"
+    - "earthquake relief"
+    - "immunizations for toddlers"
+    - "remote infrastructure improvements"
+    - "forcefield research"
+    - "artificial intelligence research"
+    - "defense research"
+    - "homeless children"
+    - "the heritage museum"
+    - "food production"
+    - "planetary defenses"
+    - "bribes"
+    - "free lunch"
+    - "flu outbreak relief"
+    - "free college education"
+    - "the red cross"
+    - "the humane society"
+    - "chemical warfare research"
+    - "doomsday weapon development"
+    - "noob relief shelters"
+planets:
+    - "Quavara"
+    - "Boskevine"
+    - "Valadro"
+    - "Iffrizar"
+    - "Kelakaria"
+    - "Ceharram"
+    - "Boletarian"
+    - "Emera"
+    - "Drakos"
+    - "Luna Inaris"
+    - "Rastafar"
+    - "Grallion"
+    - "Acualis"
+    - "Krystallos"
+    - "Uradine"
+    - "Madreos"
+    - "Erecos"
+    - "Sampetra"
+    - "Symphalia"
+    - "Tyderia"
+    - "Tezoralyn"
+    - "Regalis Station"
+    - "Earth-that-was"
+    - "Persephone"
+    - "Terminus"
+    - "Trenzalore"
+    - "Dantooine"
+    - "Sagittaron"
+    
 stations:
     - Regalis_West_Station
     - Regalis_North_Station

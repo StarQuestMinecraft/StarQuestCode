@@ -55,16 +55,27 @@ public class InventoryUtil {
 		for(MovecraftLocation l : c.getBlockList()){
 			Block b = c.getW().getBlockAt(l.getX(), l.getY(), l.getZ());
 			if(b.getState() instanceof InventoryHolder){
+				System.out.println("checking inv.");
 				InventoryHolder h = (InventoryHolder) b.getState();
 				for(int n = 0; n < h.getInventory().getSize(); n++){
 					ItemStack i = h.getInventory().getItem(n);
+					if(i != null){
+						System.out.println("    " + i.getType());
+					}
 					if(ShipDataCore.isShipDataCore(i)){
+						System.out.println("is data core");
 						ShipDataCore d = new ShipDataCore(i);
-						if(contains(craftTypes, d.getType())){
-							h.getInventory().setItem(n, new ItemStack(Material.AIR, 1));
-							amountLeft--;
-							if(amountLeft <= 0) return 0;
-						}
+						//if(!d.getPilot().equals(c.pilot.getUniqueId())){
+							if(contains(craftTypes, d.getType())){
+								System.out.println("Craft types contains!");
+								h.getInventory().setItem(n, new ItemStack(Material.AIR, 1));
+								amountLeft--;
+								if(amountLeft <= 0) return 0;
+							}
+							System.out.println("Craft types not contains!");
+						/*} else {
+							c.pilot.sendMessage("You cannot redeem a data core from a ship that you were flying.");
+						}*/
 					}
 				}
 			}
@@ -73,6 +84,8 @@ public class InventoryUtil {
 	}
 	
 	private static <T> boolean contains(final T[] array, final T v) {
+		System.out.println("V: " + v.toString());
+		System.out.println("array: " + arrayPrint(array));
 	    if (v == null) {
 	        for (final T e : array)
 	            if (e == null)
@@ -84,5 +97,14 @@ public class InventoryUtil {
 	    }
 
 	    return false;
+	}
+	
+	private static <T> String arrayPrint(T[] arr){
+		String retval = "[" + arr[0].toString();
+		for(int i = 1; i < arr.length; i++){
+			retval = retval + ", " + arr[i];
+		}
+		retval = retval + "]";
+		return retval;
 	}
 }

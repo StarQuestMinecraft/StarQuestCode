@@ -15,5 +15,8 @@ commands:
   rankupmultiplier:
     description: Set a kill multiplier
     usage: /rankupmultiplier <int>
+  resetrank:
+    description: Reset a player's rank
+    usage: /resetrank <player>
 
    
