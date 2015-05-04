@@ -2,7 +2,8 @@ name: SQDuties
 main: us.higashiyama.george.SQDuties.SQDuties
 version: 1.0.0
 softdepend: [PermissionsEx]
-depend: [Movecraft, Vault]
+#depend: [Movecraft, Vault]
+depend: [Vault]
 commands:
    duty:
       description: enable/disable dutymode!

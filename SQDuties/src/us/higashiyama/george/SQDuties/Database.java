@@ -25,14 +25,15 @@ public class Database {
 			Connection cntx = SQDatabase.getConnection("SQDuties");
 			PreparedStatement s = null;
 			try {
-				s = cntx.prepareStatement("INSERT INTO minecraft.duties `uuid`, `data`, `location` VALUES (?,?,?)");
+				s = cntx.prepareStatement("INSERT INTO minecraft.duties (`uuid`, `data`, `location`) VALUES (?,?,?)");
 				s.setString(1, p.getUniqueId().toString());
 				byte[] knapsackBytes = convertToBytes(k);
 				s.setBinaryStream(2, convertToBinary(knapsackBytes), knapsackBytes.length);
 				s.setString(3, playerLocationToString(p));
 				s.execute();
 			} catch (SQLException ee) {
-				System.out.println("[SQDatabase] Table Creation Error");
+				System.out.println("[SQDatabase] Table Insertion Error");
+				System.out.println(ee);
 			} finally {
 				close(s);
 			}
@@ -52,7 +53,7 @@ public class Database {
 				s.setString(1, p.getUniqueId().toString());
 				s.execute();
 			} catch (SQLException ee) {
-				System.out.println("[SQDatabase] Table Creation Error");
+				System.out.println("[SQDatabase] Table Deletion Error");
 			} finally {
 				close(s);
 			}
@@ -76,7 +77,7 @@ public class Database {
 					break;
 				}
 			} catch (SQLException ee) {
-				System.out.println("[SQDatabase] Table Creation Error");
+				System.out.println("[SQDatabase] Table Loading Error");
 			} finally {
 				close(s);
 			}
@@ -96,7 +97,7 @@ public class Database {
 				s.setString(1, p.getUniqueId().toString());
 				ResultSet rs = s.executeQuery();
 				while (rs.next()) {
-					byte[] unparsedPerk = (byte[]) rs.getObject("inventory");
+					byte[] unparsedPerk = (byte[]) rs.getObject("data");
 					ByteArrayInputStream baip = new ByteArrayInputStream(unparsedPerk);
 					ObjectInputStream ois = new ObjectInputStream(baip);
 					Knapsack k = (Knapsack) ois.readObject();
@@ -104,7 +105,8 @@ public class Database {
 					break;
 				}
 			} catch (SQLException ee) {
-				System.out.println("[SQDatabase] Table Creation Error");
+				System.out.println("[SQDatabase] Table Select Error");
+				System.out.println(ee);
 			} catch (IOException e) {
 				e.printStackTrace();
 			} catch (ClassNotFoundException e) {
