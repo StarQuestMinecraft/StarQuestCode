@@ -85,6 +85,11 @@ public class SQLTownyCheck extends JavaPlugin implements Listener {
 				return;
 			}
 		}
+		if ((args.get(1).equalsIgnoreCase("set") && args.get(2).equalsIgnoreCase("name") && (args.get(0).equalsIgnoreCase("town") || args.get(0).equalsIgnoreCase("t")))) {
+			e.getPlayer().sendMessage("You cannot rename towns.");
+			e.setCancelled(true);
+			return;
+		}
 
 	}
 
