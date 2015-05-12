@@ -12,7 +12,9 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
  
+
 import com.starquestminecraft.sqcontracts.SQContracts;
+import com.starquestminecraft.sqcontracts.database.ContractPlayerData;
 
 import net.countercraft.movecraft.Movecraft;
 import net.countercraft.movecraft.database.StarshipData;
@@ -20,7 +22,8 @@ import net.countercraft.movecraft.database.StarshipData;
 public class ShipDataCore {
 	
 	private static final String DATA_PENDING = ChatColor.RED + "Data Core Pending";
-	public static void createShipDataCore(final Player p, final StarshipData d){
+	private static final String LONG_OBFUSCATED = "dibujarondibujarondibujarondibujaron";
+	public static void createShipDataCore(Player p, final StarshipData d){
 		ItemStack paper = new ItemStack(Material.PAPER, 1);
 		ItemMeta meta = paper.getItemMeta();
 		meta.setDisplayName(DATA_PENDING);
@@ -28,11 +31,11 @@ public class ShipDataCore {
 		p.getInventory().addItem(paper);
 		Bukkit.getServer().getScheduler().runTaskAsynchronously(SQContracts.get(), new Runnable(){
 			public void run(){
-				createShipDataCoreAsync(p, d);
+				createShipDataCoreAsync(d);
 			}
 		});
 	}
-	public static void createShipDataCoreAsync(Player destroyer, final StarshipData d){
+	public static void createShipDataCoreAsync(final StarshipData d){
 		System.out.println("Async call!");
 		String type = d.getType();
 		UUID pilot = d.getCaptain();
@@ -47,12 +50,12 @@ public class ShipDataCore {
 		lore.add(ChatColor.RESET + "" + bnum + " blocks");
 		lore.add(ChatColor.RESET + "Captain: " + name);
 		
-		boolean wanted = SQContracts.get().getContractDatabase().getDataOfPlayer(pilot).isWanted();
-		if(wanted){
+		ContractPlayerData data = SQContracts.get().getContractDatabase().getDataOfPlayer(pilot);
+		if(data != null && data.isWanted()){
 			lore.add(ChatColor.DARK_RED + "WANTED");
 		}
 		
-		lore.add(ChatColor.MAGIC + destroyer.getUniqueId().toString());
+		lore.add(ChatColor.MAGIC + LONG_OBFUSCATED);
 		Bukkit.getScheduler().runTask(Movecraft.getInstance(), new Runnable(){
 			public void run(){
 				createShipDataCoreCallback(d.getCaptain(), displayName, lore);

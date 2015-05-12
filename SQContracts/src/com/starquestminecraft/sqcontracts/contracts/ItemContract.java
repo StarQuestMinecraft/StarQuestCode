@@ -7,11 +7,13 @@ import net.countercraft.movecraft.craft.Craft;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 
 import com.starquestminecraft.sqcontracts.SQContracts;
 import com.starquestminecraft.sqcontracts.database.ContractPlayerData;
 import com.starquestminecraft.sqcontracts.util.CompletionStatus;
+import com.starquestminecraft.sqcontracts.util.DataUtils;
 import com.starquestminecraft.sqcontracts.util.InventoryUtil;
 
 public class ItemContract implements Contract {
@@ -109,7 +111,8 @@ public class ItemContract implements Contract {
 	private String printItems() {
 		String retval = "\n";
 		for (ItemHolder i : items) {
-			String itemLine = formatAmount(i.getAmount()) + " of " + i.getType().toString().toLowerCase() + " with data value " + i.getData();
+			String itemLine = formatAmount(i.getAmount()) + " of " + DataUtils.formatItemName(i.getType(), i.getData());
+			if(items.size() == 1) return itemLine;
 			retval = retval + itemLine + "\n";
 		}
 		return retval;

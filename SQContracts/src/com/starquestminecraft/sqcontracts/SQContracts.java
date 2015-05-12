@@ -79,7 +79,7 @@ public class SQContracts extends JavaPlugin implements Listener{
 	
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void onSignBreak( final CraftSignBreakEvent e ) {
-		if(!e.isBrokenByOwner() && !e.isWithinKillCooldown()){
+		if(!e.isBrokenByOwner() && e.isWithinKillCooldown()){
 			StarshipData d = e.getData();
 			ShipDataCore.createShipDataCore(e.getPlayer(), d);
 		}

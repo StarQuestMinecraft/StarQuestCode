@@ -56,7 +56,7 @@ public class ContractPlayerData implements Serializable{
 		return i;
 	}
 	
-	public Set<String> getCurrencies(){
+	public static Set<String> getCurrencies(){
 		return currencies;
 	}
 	
