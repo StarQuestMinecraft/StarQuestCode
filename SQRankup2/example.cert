@@ -1,0 +1,51 @@
+#identifier is the "key" of this cert, it's used in the mutually exclusives and the prerequisites. Must be unique.
+identifier: example
+
+# a description given to the player.
+description: This is an example cert. It gives some fake permissions and runs some fake commands.
+
+# if this cert should be one that they start out with.
+default: false
+
+# pre requisites for this perk. If the prerequisite has prerequisites, you don't need to include those in this list. put "none" if none.
+preRequisites: preReqId2, preReqId2
+
+# minimum currency levels for this cert.
+infamyMin: 5
+philanthropyMin: 3
+tradingMin: 2
+smugglingMin: 3
+piracyMin: 4
+
+#cost for this cert. This is taken from their cc3 account.
+costCredits: 500
+costExamplePoints: 500
+costWhatever: 20
+
+# a tag unlocked for this cert. This is put in [] and has tag color put on it.
+tag: Example
+
+# the color for the tag. This is the minecraft color code number/letter
+tagColor: a
+
+# the maximum number of certs that have this as a prereq that the player can have. -1 to disable.
+maxSubCerts: -1
+
+# set this to true if you want this cert to be exempt from the maxSubCerts check
+# for example, BlockadeRunner might have subcerts Armored BlockadeRunner, Fast BlockadeRunner, Heavy BlockadeRunner and Interceptor
+# We would set maxSubCerts to 1 because we want them to only be able to choose one of the three BR variants
+# but we'd set subCertCheckExempt to true for Interceptor because they should be able to get that no matter what.
+subCertCheckExempt: false
+
+# certs that this player cannot have at the same time as this one.
+mutuallyExclusives: otherBadExample
+
+# commands to run from console when this cert is purchased. {name} replaces with player name, {uuid} with UUID, {world} with world, and {server} with server.
+onAdd: perms player {name} set example.permission.lol
+onAdd: perms player {name} set example.permission2.lol
+onAdd: fakeCommand {uuid} {world} {server}
+
+# commands to run when this cert is removed from the player. Should undo everything in onAdd.
+onRemove: perms player {name} unset example.permission.lol
+onRemove: perms player {name} unset example.permission2.lol
+onRemove: oppositeFakeCommand {uuid} {world} {server}

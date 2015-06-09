@@ -77,7 +77,7 @@ public class MachinaRedstoneBridge extends JavaPlugin implements Runnable{
             
             Block down = block.getRelative(BlockFace.DOWN);
             if (down.getType() != Material.BRICK) {
-            	System.out.println("Down is not a bridge!");
+            	continue;
             }
   
         	Block[] edges = BlockUtils.getEdges(down, false, false);

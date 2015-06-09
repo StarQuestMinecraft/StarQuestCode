@@ -23,7 +23,7 @@ public class ShipDataCore {
 	
 	private static final String DATA_PENDING = ChatColor.RED + "Data Core Pending";
 	private static final String LONG_OBFUSCATED = "dibujarondibujarondibujarondibujaron";
-	public static void createShipDataCore(Player p, final StarshipData d){
+	public static void createShipDataCore(final Player p, final StarshipData d){
 		ItemStack paper = new ItemStack(Material.PAPER, 1);
 		ItemMeta meta = paper.getItemMeta();
 		meta.setDisplayName(DATA_PENDING);
@@ -31,11 +31,11 @@ public class ShipDataCore {
 		p.getInventory().addItem(paper);
 		Bukkit.getServer().getScheduler().runTaskAsynchronously(SQContracts.get(), new Runnable(){
 			public void run(){
-				createShipDataCoreAsync(d);
+				createShipDataCoreAsync(p, d);
 			}
 		});
 	}
-	public static void createShipDataCoreAsync(final StarshipData d){
+	public static void createShipDataCoreAsync(final Player p, final StarshipData d){
 		System.out.println("Async call!");
 		String type = d.getType();
 		UUID pilot = d.getCaptain();
@@ -58,7 +58,7 @@ public class ShipDataCore {
 		lore.add(ChatColor.MAGIC + LONG_OBFUSCATED);
 		Bukkit.getScheduler().runTask(Movecraft.getInstance(), new Runnable(){
 			public void run(){
-				createShipDataCoreCallback(d.getCaptain(), displayName, lore);
+				createShipDataCoreCallback(p.getUniqueId(), displayName, lore);
 			}
 		});
 	}
@@ -78,6 +78,7 @@ public class ShipDataCore {
 				m.setLore(lore);
 				item.setItemMeta(m);
 				p.updateInventory();
+				return;
 			}
 		}
 	}

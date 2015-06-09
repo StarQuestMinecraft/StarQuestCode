@@ -27,8 +27,12 @@ public abstract class Randomizer {
 
 	public static long getRandomSeed(ContractPlayerData pData){
 		UUID player = pData.getPlayer();
-		int modif = pData.getContracts().size() + 1;
-		return BASE_SEED + (player.getLeastSignificantBits() - player.getMostSignificantBits()) / modif;
+		int modifCurrency = 0;
+		for(String s : ContractPlayerData.getCurrencies()){
+			modifCurrency += pData.getBalanceInCurrency(s);
+		}
+		int modifNum = pData.getContracts().size();
+		return BASE_SEED + player.getLeastSignificantBits() - player.getMostSignificantBits() + modifCurrency - modifNum;
 	}
 	
 	public abstract Contract[] generateContractsForPlayer(UUID player);

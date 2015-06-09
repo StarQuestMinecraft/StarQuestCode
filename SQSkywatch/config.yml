@@ -1,0 +1,21 @@
+#the number of fighters to spawn (median)
+numFighters: 5
+
+#a range above or below numFighters to spawn fighters in (must be less than numFighters)
+randomRange: 2
+
+#the response time of the fighters after the illegal activity. In seconds.
+responseTime: 10
+
+#shocktroop bows
+powerLevel: 5
+knockbackLevel: 2
+flame: true
+#shocktroop armor
+protectionLevel: 4
+
+#outright kill them if they evade?
+outrightKill: true
+
+#use PvP lock during warning?
+pvpLock: true

@@ -22,16 +22,16 @@ public class Database {
 	public static Connection cntx = null;
 	public static String dsn = ("jdbc:mysql://" + hostname + ":" + port + "/" + db_name);
 	
-	private static final String update_main = "INSERT INTO reconnect_data(uuid, maingameserver) VALUES (?, ?) ON DUPLICATE KEY UPDATE maingameserver=?,lastServer=?";
-	private static final String update_alt = "INSERT INTO reconnect_data(uuid, altserver) VALUES (?, ?) ON DUPLICATE KEY UPDATE altserver=?,lastServer=?";
-	private static final String get_main = "SELECT maingameserver FROM reconnect_data WHERE uuid = ?";
-	private static final String get_alt = "SELECT altserver FROM reconnect_data WHERE uuid = ?";
-	private static final String get_last = "SELECT lastserver FROM reconnect_data WHERE uuid = ?";
+	private static final String update_main = "INSERT INTO reconnect_data(uuid, mainServer, lastServer) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE mainServer=?,lastServer=?";
+	private static final String update_alt = "INSERT INTO reconnect_data(uuid, altServer, lastServer) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE altServer=?,lastServer=?";
+	private static final String get_main = "SELECT mainServer FROM reconnect_data WHERE uuid = ?";
+	private static final String get_alt = "SELECT altServer FROM reconnect_data WHERE uuid = ?";
+	private static final String get_last = "SELECT lastServer FROM reconnect_data WHERE uuid = ?";
 
 	//c
 	public static void setUp() {
 
-		String Database_table = "CREATE TABLE IF NOT EXISTS reconnect_data (`uuid` VARCHAR(36),`maingameserver` VARCHAR(32),`altserver` VARCHAR(32), `lastServer` VARCHAR(32), PRIMARY KEY(`uuid`))";
+		String Database_table = "CREATE TABLE IF NOT EXISTS reconnect_data (`uuid` VARCHAR(36),`mainServer` VARCHAR(32),`altServer` VARCHAR(32), `lastServer` VARCHAR(32), PRIMARY KEY(`uuid`))";
 		getContext();
 		try {
 			Driver driver = (Driver) Class.forName(driverString).newInstance();
@@ -74,6 +74,7 @@ public class Database {
 					s.setString(2, server);
 					s.setString(3, server);
 					s.setString(4, server);
+					s.setString(5, server);
 					s.execute();
 					s.close();
 				} catch (SQLException e) {
@@ -110,11 +111,11 @@ public class Database {
 			if (rs.next()) {
 				String server;
 				if(type == ServerType.MAIN){
-					server = rs.getString("maingameserver");
+					server = rs.getString("mainServer");
 				} else if(type == ServerType.ALT){
-					server = rs.getString("altserver");
+					server = rs.getString("altServer");
 				} else {
-					server = rs.getString("lastserver");
+					server = rs.getString("lastServer");
 				}
 				s.close();
 				return server;
@@ -146,11 +147,7 @@ public class Database {
 					}
 					cntx = null;
 				}
-				if ((username.equalsIgnoreCase("")) && (password.equalsIgnoreCase(""))) {
-					cntx = DriverManager.getConnection(dsn);
-				} else {
-					cntx = DriverManager.getConnection(dsn, username, password);
-				}
+				cntx = DriverManager.getConnection(dsn, username, password);
 				if ((cntx == null) || (cntx.isClosed())) {
 					return false;
 				}
@@ -169,7 +166,6 @@ public class Database {
 		}
 		try {
 			s.close();
-			cntx.close();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

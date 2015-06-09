@@ -1,4 +1,0 @@
-name: SQMessengerServer
-main: com.dibujaron.messenger.server.Core
-version: 1.0
-author: dibujaron

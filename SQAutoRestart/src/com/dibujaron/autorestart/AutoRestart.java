@@ -13,9 +13,10 @@ public class AutoRestart extends JavaPlugin {
 
 	public void onEnable() {
 		if (Bukkit.getServerName().equals("Regalis")) {
+			System.out.println("Server is Regalis, scheduling restart!");
 			getServer().getScheduler().scheduleSyncDelayedTask(this, new Runnable() {
 				public void run() {
-					command("sync console all chatreload");
+					command("ee chatreload");
 				}
 			}, 11000L);
 			// delay an hour and a half; there's no reason to check before then,
@@ -46,8 +47,8 @@ public class AutoRestart extends JavaPlugin {
 	}
 
 	public static void restart() {
-		command("sync console all stop");
-		command("sync console bungee end");
+		command("ee stop");
+		command("eb end");
 		executeBatch("autorestart-helper");
 	}
 

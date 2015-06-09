@@ -1,0 +1,17 @@
+#ShipSpawner by Dibujaron
+
+#Price, the price of a ship
+price: 5700
+
+#schematic, the worldedit schematic in the schematics folder to load and paste
+#any red wool on the schematic will be replaced with the chosen color of wool from the sign
+schematic: noobship
+
+#length, the x-size of the schematic
+length: 10
+
+#height, the y-size of the schematic
+height: 5
+
+#width, the z-size of the schematic
+width: 11

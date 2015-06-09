@@ -1,0 +1,113 @@
+package com.dibujaron.BetterPassives;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
+import org.bukkit.configuration.Configuration;
+import org.bukkit.entity.EntityType;
+
+
+public class Settings {
+	
+	private static List<EntityType> passives;
+	private static List<EntityType> hostiles;
+	private static HashMap<String, Planet> planets = new HashMap<String, Planet>();
+	
+	public static void loadSettings(Configuration c){
+		passives = new ArrayList<EntityType>();
+		for(String s : c.getStringList("allPassives")){
+			EntityType t = EntityType.fromName(s);
+			if(t == null){
+				System.out.println("No EntityType found for " + s + "!");
+			} else {
+				passives.add(EntityType.fromName(s));
+			}
+		}
+		hostiles = new ArrayList<EntityType>();
+		for(String s : c.getStringList("allHostiles")){
+			EntityType t = EntityType.fromName(s);
+			if(t == null){
+				System.out.println("No EntityType found for " + s + "!");
+			} else {
+				hostiles.add(EntityType.fromName(s));
+			}
+		}
+		
+		for(String key : c.getConfigurationSection("planets").getKeys(false)){
+			List<String> passives = c.getStringList("planets."+key+".passives");
+			List<String> hostiles = c.getStringList("planets."+key+".hostiles");
+			System.out.println("Loaded " + passives.size() + " passives and " + hostiles.size() + " hostiles for " + key);
+			Planet p = new Planet(key, hostiles, passives);
+			planets.put(key, p);
+		}
+	}
+	
+	public static List<EntityType> getAllHostiles(){
+		return hostiles;
+	}
+	
+	public static List<EntityType> getAllPassives(){
+		return passives;
+	}
+	
+	public static List<EntityType> getHostilesOfPlanet(String planet){
+		Planet p = planets.get(planet.toLowerCase());
+		if(p != null){
+			if(p.hostiles().size() > 0){
+				return p.hostiles();
+			}
+		}
+		return null;
+	}
+	
+	public static List<EntityType> getPassivesOfPlanet(String planet){
+		Planet p = planets.get(planet.toLowerCase());
+		if(p != null){
+			if(p.passives().size() > 0)
+			return p.passives();
+		}
+		return null;
+	}
+	
+	private static class Planet{
+		
+		String name;
+		List<EntityType> hostiles;
+		List<EntityType> passives;
+		
+		public Planet(String name, List<String> hostiles, List<String> passives){
+			this.name = name;
+			this.hostiles = new ArrayList<EntityType>();
+			for(String s : hostiles){
+				EntityType t = EntityType.fromName(s);
+				if(t == null){
+					System.out.println("No EntityType found for " + s + "!");
+				} else {
+					this.hostiles.add(EntityType.fromName(s));
+				}
+			}
+			this.passives = new ArrayList<EntityType>();
+			for(String s : passives){
+				EntityType t = EntityType.fromName(s);
+				if(t == null){
+					System.out.println("No EntityType found for " + s + "!");
+				} else {
+					this.passives.add(EntityType.fromName(s));
+				}
+			}
+		}
+		
+		public String getName(){
+			return name;
+		}
+		
+		public List<EntityType> hostiles(){
+			return hostiles;
+		}
+		
+		public List<EntityType> passives(){
+			return passives;
+		}
+	}
+}

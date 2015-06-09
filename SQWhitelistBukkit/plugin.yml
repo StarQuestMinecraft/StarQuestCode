@@ -1,0 +1,14 @@
+name: SQDynamicWhitelist
+main: com.starquestminecraft.dynamicwhitelist.Whitelister
+version: 1.0.0
+
+commands:
+    timeadd:
+        description: add subscription time (in hours).
+        usage: /timeadd <name> <hours>
+    subscription:
+        description: check your subscription time remaining.
+        usage: /subscription
+    permanent:
+        description: give someone permanent subscription
+        usage: /permanent <name> <true/false>

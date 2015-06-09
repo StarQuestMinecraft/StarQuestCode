@@ -1,0 +1,14 @@
+name: SQSkywatch
+version: 1.0.0
+main: com.dibujaron.skywatch.SQSkywatch
+
+commands:
+   drone:
+      description: spawn a drone on a player.
+      usage: /drone <player>
+   shocktroop:
+      description: spawn a shocktroop on a player.
+      usage: /shocktroop <player>
+   triggerSkywatch:
+      description: spawn a shocktroop on a player.
+      usage: /shocktroop <player>

@@ -1,0 +1,24 @@
+freeSlots: 20
+
+#=====StarQuest===== Premium Players: 10 Standard Players: 10
+motd:
+    motd: =====StarQuest=====
+    premiumName: Premium
+    standardName: Standard
+
+#how much free premium time to give to new players when they join, measured in hours
+beginnerTime: 168
+
+#message when a premium player joins
+premiumJoin: 'Welcome, thank you for using SQPriority!'
+
+#messgae when a standard player joins
+standardJoin: 'Welcome to StarQuest!'
+
+#message when a new player joins
+newJoin: "Welcome to StarQuest! As a new player, you recieve one week of Priority Access!"
+
+#message when a standard player is kicked due to a full server
+standardKick: 'Sorry, StarQuest is full right now! To join a full server purchase Priority Access at http://starquestminecraft.buycraft.net'
+
+

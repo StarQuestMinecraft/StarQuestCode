@@ -105,12 +105,13 @@ public class ContractCommand implements CommandExecutor {
 	}
 
 	private void setContractLevel(Player p, CommandSender sndr, String[] cmdargs) {
-		String currency = cmdargs[0];
+		String currency = cmdargs[1];
 		try {
-			int level = Integer.parseInt(cmdargs[1]);
+			int level = Integer.parseInt(cmdargs[2]);
 			ContractPlayerData d = SQContracts.get().getContractDatabase().getDataOfPlayer(p.getUniqueId());
-			if (d.getCurrencies().contains(currency)) {
+			if (ContractPlayerData.getCurrencies().contains(currency)) {
 				d.setBalanceInCurrency(currency, level);
+				SQContracts.get().getContractDatabase().updatePlayerData(p.getUniqueId(), d);
 				sndr.sendMessage("Done succesfully.");
 			} else {
 				sndr.sendMessage("Unknown currency.");
@@ -122,7 +123,7 @@ public class ContractCommand implements CommandExecutor {
 	}
 
 	private void displayWantedList(Player plr, String[] fnlargs) {
-		if (fnlargs.length == 0) {
+		if (fnlargs.length == 1) {
 			List<Player> plrs = plr.getWorld().getPlayers();
 
 			plr.sendMessage(ChatColor.RED + "Wanted players online in your world: ");
@@ -161,7 +162,7 @@ public class ContractCommand implements CommandExecutor {
 
 		ContractPlayerData data = SQContracts.get().getContractDatabase().getDataOfPlayer(relevant.getUniqueId());
 		plr.sendMessage("Contract stats for " + relevant.getName());
-		for (String s : data.getCurrencies()) {
+		for (String s : ContractPlayerData.getCurrencies()) {
 			plr.sendMessage(ChatColor.RED + s + ": " + data.getBalanceInCurrency(s));
 		}
 	}

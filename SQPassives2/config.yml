@@ -1,0 +1,84 @@
+#Config file for betterPassives by dibujaron
+#Originally developed for Erecia.net roleplay server
+
+allPassives:
+    - bat
+    - chicken
+    - cow
+    - pig
+    - sheep
+    - wolf
+    - ozelot
+    - mushroomcow
+    - rabbit
+
+allHostiles:
+
+    - blaze
+    - creeper
+    - guardian
+    - endermite
+    - ghast
+    - guardian
+    - magmacube
+    - skeleton
+    - slime
+    - spider
+    - zombie
+    - witch
+    
+planets:
+    kelakaria:
+        passives:
+            - chicken
+        hostiles:
+            - slime
+    valadro:
+        passives:
+            - cow
+            - pig
+        hostiles:
+            - creeper
+            - skeleton
+    boskevine:
+        passives:
+            - ozelot
+        hostiles:
+            - spider
+    iffrizar:
+        passives:
+            - sheep
+            - cow
+            - wolf
+        hostiles:
+            - enderman
+    boletarian:
+        passives:
+            - mushroomcow
+        hostiles: []
+    emera:
+        passives:
+            - pig
+        hostiles:
+            - zombie
+    krystallos:
+        passives:
+            - chicken
+        hostiles:
+            - skeleton
+    acualis:
+        passives:
+            - sheep
+        hostiles:
+            - creeper
+    ceharram:
+        passives: []
+        hostiles:
+            - pigzombie
+            - blaze
+    quavara:
+        passives: []
+        hostiles:
+            - silverfish
+            - zombie
+    

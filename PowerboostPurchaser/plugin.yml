@@ -1,0 +1,11 @@
+name: PowerboostPurchaser
+version: 1.0.0
+main: com.dibujaron.powerboostpurchaser.PowerboostPurchaser
+depend: [Factions, Movecraft]
+commands:
+   powerboost:
+      description: manage personal or faction power boosts.
+      usage: /powerboost <faction/personal> [cancel / (purchase <value>)]
+   taxes:
+      description: manage your faction's taxes.
+      usage: /taxes [set <value>]
