@@ -46,8 +46,6 @@ public class Database {
 			System.out.println("[SQReconnect] Table check/creation sucessful");
 		} catch (SQLException ee) {
 			System.out.println("[SQReconnect] Table Creation Error");
-		} finally {
-			close(s);
 		}
 	}
 
@@ -82,8 +80,6 @@ public class Database {
 				} catch (Exception e) {
 					System.out.print("[SQReconnect] SQL Error (Unknown)");
 					e.printStackTrace();
-				} finally {
-					Database.close(s);
 				}
 			}
 		};
@@ -129,8 +125,6 @@ public class Database {
 		} catch (Exception e) {
 			System.out.print("[SQDatabase] SQL Error (Unknown)");
 			e.printStackTrace();
-		} finally {
-			close(s);
 		}
 		return null;
 	}
@@ -157,18 +151,6 @@ public class Database {
 			System.out.print("Error could not Connect to db " + dsn + ": " + e.getMessage());
 		}
 		return false;
-	}
-
-	private static void close(Statement s) {
-
-		if (s == null) {
-			return;
-		}
-		try {
-			s.close();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
 	}
 
 }

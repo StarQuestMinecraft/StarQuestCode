@@ -1,0 +1,5 @@
+#this is the current day of the apocalypse. It updates automatically every restart.
+day: 1.0
+
+#verbose output
+verbose: true
