@@ -23,7 +23,8 @@ public class PlayerBurnTask extends BukkitRunnable{
 			}
 			Location l = p.getLocation();
 			int fromSky = l.getBlock().getLightFromSky();
-			if(fromSky < 13){
+			long time = (w.getTime() % 24000);
+			if(fromSky < 13 || time > 12000){
 				continue;
 			} else {
 				p.setFireTicks(40);

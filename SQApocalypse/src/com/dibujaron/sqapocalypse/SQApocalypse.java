@@ -4,9 +4,13 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Sound;
 import org.bukkit.World;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -19,13 +23,52 @@ public class SQApocalypse extends JavaPlugin implements Listener{
 	
 	private DestroyTask task;
 	private PlayerBurnTask task2;
+	private ScoreUpdateTask task3;
 	
+	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
+		if(args.length == 0) return false;
+		String arg = args[0];
+		if(arg.equals("score")){
+			displayScore(sender);
+			return true;
+		}
+		if(arg.equals("top")){
+			displayTop(sender);
+			return true;
+		}
+		return false;
+	}
+	
+	private void displayTop(CommandSender sender) {
+		if(sender instanceof Player){
+			final Player p = (Player) sender;
+			Bukkit.getScheduler().runTaskAsynchronously(this, new Runnable(){
+				public void run(){
+					SQLDatabase.displayTop(p);
+				}
+			});
+		}
+	}
+
+	private void displayScore(CommandSender sender) {
+		if(sender instanceof Player){
+			final Player p = (Player) sender;
+			Bukkit.getScheduler().runTaskAsynchronously(this, new Runnable(){
+				public void run(){
+					int score = SQLDatabase.getScore(p.getUniqueId());
+					p.sendMessage("Your score is: " + score);
+				}
+			});
+		}
+	}
+
 	public void onEnable(){
 		String name = Bukkit.getServerName();
 		if(name.equals("Regalis") || name.equals("Defalos") || name.equals("Digitalia")){
 			Bukkit.getPluginManager().disablePlugin(this);
 			return;
 		}
+		SQLDatabase.setUp();
 		Bukkit.getServer().getPluginManager().registerEvents(this,this);
 		saveDefaultConfig();
 		day = getConfig().getDouble("day");
@@ -41,6 +84,8 @@ public class SQApocalypse extends JavaPlugin implements Listener{
 			task2 = new PlayerBurnTask(w, stage);
 			task2.runTaskTimer(this, 20, 20);
 		}
+		task3 = new ScoreUpdateTask(this);
+		task3.runTaskTimer(this, 60 * 20, 60 * 20);
 	}
 	
 	private int getStageFromDay(double day){
@@ -82,5 +127,22 @@ public class SQApocalypse extends JavaPlugin implements Listener{
 			}
 		}, 20 * 10L);
 	}
-
+	
+	@EventHandler
+	public void onPlayerDeath(final PlayerDeathEvent event){
+		Bukkit.getScheduler().runTaskAsynchronously(this, new Runnable(){
+			public void run(){
+				SQLDatabase.addScore(event.getEntity().getUniqueId(), -30);
+				event.getEntity().sendMessage("You lost 30 points because you died.");
+				Entity killer = event.getEntity().getKiller();
+				if(killer instanceof Player){
+					Player pkill = (Player) killer;
+					if(pkill == event.getEntity()) return;
+					SQLDatabase.addScore(pkill.getUniqueId(), 60);
+					event.getEntity().sendMessage("You gained 60 points for the kill.");
+				}
+			}
+		});
+		
+	}
 }
