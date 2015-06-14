@@ -12,6 +12,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class SQApocalypse extends JavaPlugin implements Listener{
@@ -20,6 +21,7 @@ public class SQApocalypse extends JavaPlugin implements Listener{
 	public static boolean verbose;
 	public static int radius = getRadius();
 	public static double day;
+	private static SQApocalypse instance;
 	
 	private DestroyTask task;
 	private PlayerBurnTask task2;
@@ -29,10 +31,12 @@ public class SQApocalypse extends JavaPlugin implements Listener{
 		if(args.length == 0) return false;
 		String arg = args[0];
 		if(arg.equals("score")){
+			System.out.println("Displaying score.");
 			displayScore(sender);
 			return true;
 		}
 		if(arg.equals("top")){
+			System.out.println("Displaying top.");
 			displayTop(sender);
 			return true;
 		}
@@ -63,11 +67,8 @@ public class SQApocalypse extends JavaPlugin implements Listener{
 	}
 
 	public void onEnable(){
+		instance = this;
 		String name = Bukkit.getServerName();
-		if(name.equals("Regalis") || name.equals("Defalos") || name.equals("Digitalia")){
-			Bukkit.getPluginManager().disablePlugin(this);
-			return;
-		}
 		SQLDatabase.setUp();
 		Bukkit.getServer().getPluginManager().registerEvents(this,this);
 		saveDefaultConfig();
@@ -77,6 +78,11 @@ public class SQApocalypse extends JavaPlugin implements Listener{
 		//every time the server restarts update it by half a day
 		getConfig().set("day", day + 0.5);
 		saveConfig();
+		task3 = new ScoreUpdateTask(this);
+		task3.runTaskTimer(this, 60 * 20, 60 * 20);
+		if(name.equals("Regalis") || name.equals("Defalos") || name.equals("Digitalia")){
+			return;
+		}
 		if(stage > 0){
 			World w = Bukkit.getWorld(Bukkit.getServerName());
 			task = new DestroyTask(w, stage);
@@ -84,8 +90,6 @@ public class SQApocalypse extends JavaPlugin implements Listener{
 			task2 = new PlayerBurnTask(w, stage);
 			task2.runTaskTimer(this, 20, 20);
 		}
-		task3 = new ScoreUpdateTask(this);
-		task3.runTaskTimer(this, 60 * 20, 60 * 20);
 	}
 	
 	private int getStageFromDay(double day){
@@ -132,17 +136,39 @@ public class SQApocalypse extends JavaPlugin implements Listener{
 	public void onPlayerDeath(final PlayerDeathEvent event){
 		Bukkit.getScheduler().runTaskAsynchronously(this, new Runnable(){
 			public void run(){
-				SQLDatabase.addScore(event.getEntity().getUniqueId(), -30);
+				int killedScore = SQLDatabase.getScore(event.getEntity().getUniqueId());
+				if(killedScore - 30 < 0){
+					SQLDatabase.updateScore(event.getEntity().getUniqueId(), 0);
+				} else {
+					SQLDatabase.addScore(event.getEntity().getUniqueId(), -30);
+				}
 				event.getEntity().sendMessage("You lost 30 points because you died.");
 				Entity killer = event.getEntity().getKiller();
 				if(killer instanceof Player){
 					Player pkill = (Player) killer;
 					if(pkill == event.getEntity()) return;
-					SQLDatabase.addScore(pkill.getUniqueId(), 60);
-					event.getEntity().sendMessage("You gained 60 points for the kill.");
+					if(RecentKillHandler.hasKilledWithinHour(pkill, event.getEntity())){
+						killer.sendMessage("You have killed this player within an hour. No points were awarded.");
+						return;
+					} else {
+						RecentKillHandler.addRecentKill(pkill, event.getEntity());
+						pkill.sendMessage("This kill has been added to the recent kills database. You cannot kill this player again within an hour.");
+					}
+					int newDeadScore = killedScore - 30;
+					if(newDeadScore <= 0){
+						SQLDatabase.addScore(pkill.getUniqueId(), killedScore);
+						event.getEntity().sendMessage("You gained " + killedScore + " points for the kill. (they don't have 30 to lose)");
+					} else {
+						SQLDatabase.addScore(pkill.getUniqueId(), 30);
+						event.getEntity().sendMessage("You gained 30 points for this kill.");
+					}
 				}
 			}
 		});
 		
+	}
+
+	public static Plugin getInstance() {
+		return instance;
 	}
 }

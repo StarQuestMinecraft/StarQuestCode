@@ -57,6 +57,7 @@ public class SQLDatabase {
 				OfflinePlayer p = Bukkit.getOfflinePlayer(u);
 				if(p != null){
 					requester.sendMessage(num + "): " + p.getName() + ", " + score + " points");
+					num++;
 				}
 			}
 			rs.close();
