@@ -38,7 +38,7 @@ public class RecentKillHandler {
 					}
 				}
 			}
-		});
+		}, 20 * 60 * 60);
 	}
 	
 	private static class RecentKill{

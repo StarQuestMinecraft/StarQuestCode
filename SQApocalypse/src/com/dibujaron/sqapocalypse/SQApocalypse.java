@@ -86,7 +86,7 @@ public class SQApocalypse extends JavaPlugin implements Listener{
 		if(stage > 0){
 			World w = Bukkit.getWorld(Bukkit.getServerName());
 			task = new DestroyTask(w, stage);
-			task.runTaskTimer(this, 1, 1);
+			task.runTaskTimer(this, 3, 3);
 			task2 = new PlayerBurnTask(w, stage);
 			task2.runTaskTimer(this, 20, 20);
 		}
