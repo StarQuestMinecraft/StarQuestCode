@@ -93,14 +93,12 @@ public class SQSpace extends JavaPlugin implements Listener {
 
 	public boolean hasSpaceHelmet(Player p) {
 
-		final ItemStack helmet = p.getInventory().getHelmet();
-		if (null != helmet) {
-			// Can breathe in space wearing a Pumpkin (Space Helmet)
-			// Also can breathe in space if helmet has Respiration III
-			if ((helmet.getType() == Material.PUMPKIN) || (3 == helmet.getEnchantmentLevel(Enchantment.OXYGEN)))
-				return true;
-		}
-		return false;
+		final Material helmet = p.getInventory().getHelmet().getType();
+		final Material chest = p.getInventory().getChestplate().getType();
+		final Material legs = p.getInventory().getLeggings().getType();
+		final Material boots = p.getInventory().getBoots().getType();
+		return (helmet == Material.PUMPKIN && chest == Material.LEATHER_CHESTPLATE && legs == Material.LEATHER_LEGGINGS && boots == Material.LEATHER_BOOTS);
+
 	}
 
 	public static boolean isInSpace(Entity e) {
