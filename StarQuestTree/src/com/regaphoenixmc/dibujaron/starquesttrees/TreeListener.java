@@ -68,7 +68,7 @@ public class TreeListener implements Listener{
 	public void onTreeGrow(StructureGrowEvent event){
 	
 		//kelakarian flower trees
-		if (event.getWorld().getName().equalsIgnoreCase("Kelakaria")){
+		if (event.getWorld().getName().equalsIgnoreCase("Rakuria")){
 			if (Math.random() > 0.5){
 				if (event.getSpecies() == TreeType.BIRCH){
 					event.setCancelled(true);
@@ -101,7 +101,7 @@ public class TreeListener implements Listener{
 			}
 			return;
 		}
-		if (event.getWorld().getName().equalsIgnoreCase("Quavara")){
+		if (event.getWorld().getName().equalsIgnoreCase("Grun")){
 			if (event.getSpecies() == TreeType.TREE || event.getSpecies() == TreeType.BIG_TREE){
 				event.setCancelled(true);
 				spawnTree(event.getLocation(), "Quavara-Oak", new Vector(-4, 0, -4));
@@ -111,7 +111,7 @@ public class TreeListener implements Listener{
 			event.setCancelled(true);
 			return;
 		}
-		if (event.getWorld().getName().equalsIgnoreCase("Valadro")){
+		if (event.getWorld().getName().equalsIgnoreCase("Otavo")){
 			if (event.getSpecies() == TreeType.TREE || event.getSpecies() == TreeType.BIG_TREE){
 				if (Math.random() > 0.5){
 					event.setCancelled(true);
@@ -119,14 +119,6 @@ public class TreeListener implements Listener{
 					SetBlockTask t = new SetBlockTask(event.getLocation().getBlock(), 17, (byte) 0);
 					t.runTaskLater(plugin, 5);
 				}
-			}
-		}
-		if (event.getWorld().getName().equalsIgnoreCase("Ceharram")){
-			if (event.getSpecies() == TreeType.REDWOOD){
-					event.setCancelled(true);
-					spawnTree(event.getLocation(), "Ceharram-Spruce", new Vector(-2, 0, -2));
-					SetBlockTask t = new SetBlockTask(event.getLocation().getBlock(), 17, (byte) 1);
-					t.runTaskLater(plugin, 5);
 			}
 		}
 	}
