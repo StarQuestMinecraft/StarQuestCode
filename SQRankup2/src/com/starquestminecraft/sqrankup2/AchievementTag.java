@@ -44,7 +44,7 @@ public class AchievementTag implements BonusTag{
 		map(map, new AchievementTag(Achievement.MINE_WOOD, "Woodsman", "b"));
 		map(map, new AchievementTag(Achievement.BUILD_PICKAXE, "Miner", "b"));
 		map(map, new AchievementTag(Achievement.BUILD_FURNACE, "Cook", "b"));
-		map(map, new AchievementTag(Achievement.BUILD_HOE, "Miner", "b"));
+		map(map, new AchievementTag(Achievement.BUILD_HOE, "Farmer", "b"));
 		map(map, new AchievementTag(Achievement.BUILD_SWORD, "Swordsman", "c"));
 		map(map, new AchievementTag(Achievement.MAKE_BREAD, "Baker", "b"));
 		map(map, new AchievementTag(Achievement.COOK_FISH, "Fisherman", "b"));

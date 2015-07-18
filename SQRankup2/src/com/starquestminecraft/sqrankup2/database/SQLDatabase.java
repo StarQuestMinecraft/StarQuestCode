@@ -8,7 +8,10 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.UUID;
+
+import com.starquestminecraft.sqrankup2.SQRankup2;
 
 public class SQLDatabase implements Database {
 
@@ -27,21 +30,29 @@ public class SQLDatabase implements Database {
 
 	@Override
 	public ArrayList<String> getCertsOfPlayer(UUID u) {
+		ArrayList<String> retvals = new ArrayList<String>();
+		retvals.addAll(SQRankup2.get().defaultCerts.keySet());
 		try {
 			if (hasKey(con.getConnection(), u)) {
-				return readData(con.getConnection(), u);
-			} else {
-				return new ArrayList<String>();
+				retvals.addAll(readData(con.getConnection(), u));
 			}
 
 		} catch (Exception e) {
 			e.printStackTrace();
-			return new ArrayList<String>();
 		}
+		return retvals;
 	}
 
 	@Override
 	public void updateCertsOfPlayer(UUID u, ArrayList<String> newCerts) {
+		ListIterator<String> i = newCerts.listIterator();
+		while(i.hasNext()){
+			String s = i.next();
+			if(SQRankup2.get().defaultCerts.get(s) != null){
+				//it's a default
+				i.remove();
+			}
+		}
 		try {
 			if (hasKey(con.getConnection(), u)) {
 				updateData(con.getConnection(), u, newCerts);

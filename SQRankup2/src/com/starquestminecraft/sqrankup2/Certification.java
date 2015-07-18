@@ -35,7 +35,9 @@ public class Certification {
 				} else if(key.equals("onremove")){
 					onRemove.add(split[1]);
 				} else {
-					values.put(key, split[1]);
+					if(split.length > 1){
+						values.put(key, split[1]);
+					}
 				}
 			}
 		} catch (Exception e) {
@@ -52,30 +54,31 @@ public class Certification {
 		return values.get("description");
 	}
 	
-	public String[] getPreRequisites(){
-		String pre = values.get("prerequisites");
-		if(pre == null || pre.equals("none")) return new String[0];
-		else return pre.split(", ");
+	public boolean isDefault(){
+		String s = values.get("default");
+		if(s == null) return false;
+		return Boolean.parseBoolean(values.get("default"));
 	}
-	private String[] getAltPreRequisites() {
-		String pre = values.get("altprerequisites");
+	
+	public String[] getLawfulPreRequisites(){
+		String pre = values.get("lawfulprerequisites");
 		if(pre == null || pre.equals("none")) return new String[0];
 		else return pre.split(", ");
 	}
 	
-	public int getRequirementInContractCurrency(String currency){
-		String val = values.get(currency + "min");
+	public String[] getOutlawPreRequisites(){
+		String pre = values.get("outlawprerequisites");
+		if(pre == null || pre.equals("none")) return new String[0];
+		else return pre.split(", ");
+	}
+	
+	public int getRequirementInContractLevels(String currency){
+		String val = values.get(currency.toLowerCase() + "min");
 		if(val == null) return 0;
 		return Integer.parseInt(val);
 	}
 	
-	public int getAltRequirementInContractCurrency(String currency){
-		String val = values.get("alt" + currency + "min");
-		if(val == null) return 0;
-		return Integer.parseInt(val);
-	}
-	
-	public int getCostInCurrency(String currency){
+	public int getCostInCC3Currency(String currency){
 		try{
 			return Integer.parseInt(values.get("cost" + currency));
 		} catch (Exception e){
@@ -84,30 +87,39 @@ public class Certification {
 	}
 	
 	public int getCost(){
-		return getCostInCurrency("credits");
+		return getCostInCC3Currency("credits");
 	}
 	
 	public boolean satisfiesCurrencyRequirements(ContractPlayerData d){
+		int ttl = 0;
 		for(String s : ContractPlayerData.getCurrencies()){
 			int pBal = d.getBalanceInCurrency(s);
-			int reqBal = getRequirementInContractCurrency(s);
+			ttl += pBal;
+			int reqBal = getRequirementInContractLevels(s);
 			if(pBal < reqBal) return false;
 		}
+		if(SQRankup2.getBalanceInCombat(d) < getRequirementInContractLevels("reputationOrInfamy")) return false;
+		if(SQRankup2.getBalanceInTrade(d) < getRequirementInContractLevels("tradingOrSmuggling")) return false;
+		if(ttl < getRequirementInContractLevels("total")) return false;
 		return true;
 	}
-	
-	public boolean satisfiesAltCurrencyRequirements(ContractPlayerData d){
-		for(String s : ContractPlayerData.getCurrencies()){
-			int pBal = d.getBalanceInCurrency(s);
-			int reqBal = getAltRequirementInContractCurrency(s);
-			if(pBal < reqBal) return false;
-		}
-		return true;
-	}
-	
-	public boolean satisfiesPreReqs(List<String> existing){
+		
+	public boolean satisfiesLawfulPreReqs(List<String> existing){
 		for(String s : existing) System.out.println("existing: " + s);
-		for(String s : getPreRequisites()){
+		for(String s : getLawfulPreRequisites()){
+			System.out.println("testing prereq: " + s);
+			if(!existing.contains(s) && !existing.contains("alt-" + s)){
+				System.out.println("Existing does not contain!");
+				return false;
+			}
+		}
+		System.out.println("Passed!");
+		return true;
+	}
+	
+	public boolean satisfiesOutlawPreReqs(List<String> existing){
+		for(String s : existing) System.out.println("existing: " + s);
+		for(String s : getOutlawPreRequisites()){
 			System.out.println("testing prereq: " + s);
 			if(!existing.contains(s) && !existing.contains("alt-" + s)){
 				System.out.println("Existing does not contain!");
@@ -119,35 +131,15 @@ public class Certification {
 	}
 	
 
-	public boolean satisfiesAltPreReqs(ArrayList<String> existing) {
-		for(String s : getAltPreRequisites()){
-			if(!existing.contains(s) && !existing.contains("alt-" + s)) return false;
-		}
-		return true;
-	}
-	
-
 	public String getTag(){
-		return values.get("tag");
+		return values.get("lawfultag");
 	}
 	
-
-	public Object getAltTag() {
-		String altTag = values.get("alttag");
-		if(altTag == null) return getTag();
-		return altTag;
-	}
 	
 	public String getTagColor(){
-		String tagColor = values.get("tagcolor");
+		String tagColor = values.get("lawfultagcolor");
 		if(tagColor == null) return null;
 		return "§" + tagColor;
-	}
-	
-	public String getAltTagColor(){
-		String altTagColor = values.get("alttagcolor");
-		if(altTagColor == null) return getTagColor();
-		return "§" + altTagColor;
 	}
 	
 	public String getTagFormatted(){
@@ -159,13 +151,27 @@ public class Certification {
 		return ChatColor.WHITE + "[" + getTagColor() + getTag() + ChatColor.WHITE + "]" + previous;
 	}
 	
-	public String getAltTagFormatted(){
-		return getAltTagFormatted(ChatColor.WHITE);
+	public String getOutlawTag(){
+		String tag = values.get("outlawtag");
+		if(tag == null) return getTag();
+		return tag;
 	}
 	
-	public String getAltTagFormatted(ChatColor previous){
-		if(getAltTag() == null) return null;
-		return ChatColor.WHITE + "[" + getAltTagColor() + getAltTag() + ChatColor.WHITE + "]" + previous;
+	
+	public String getOutlawTagColor(){
+		String tagColor = values.get("outlawtagcolor");
+		if(tagColor == null) return getTagColor();
+		return "§" + tagColor;
+	}
+	
+
+	public String getOutlawTagFormatted() {
+		return getOutlawTagFormatted(ChatColor.WHITE);
+	}
+	
+	public String getOutlawTagFormatted(ChatColor previous){
+		if(getOutlawTag() == null) return null;
+		return ChatColor.WHITE + "[" + getOutlawTagColor() + getOutlawTag() + ChatColor.WHITE + "]" + previous;
 	}
 
 	
@@ -212,18 +218,18 @@ public class Certification {
 		".\nRequires: " + printRequirements() + 
 		".\nPrerequisite Certs: " + printPreReqs() + 
 		"\nConflicts with: " + printConflicts() + 
-		"\nCosts " + getCostInCurrency("credits") + " credits.";
+		"\nCosts " + getCostInCC3Currency("credits") + " credits.";
 		return retval;
 	}
 
 	private String getTagDescriptionFormatted(ChatColor color) {
 		String tag = getTagFormatted(color);
 		if(tag == null) return "";
-		String altTag = getAltTagFormatted(color);
+		String altTag = getOutlawTagFormatted(color);
 		if(altTag.equals(tag)){
 			return "\nUnlocks the tag " + tag;
 		} else {
-			return "\nUnlocks the tag " + tag + " or " + altTag + " (alternate)";
+			return "\nUnlocks the tag " + tag + " (lawful) or " + altTag + " (outlaw)";
 		}
 	}
 
@@ -234,8 +240,8 @@ public class Certification {
 	}
 
 	private String printPreReqs() {
-		String[] preReqs = getPreRequisites();
-		String[] altReqs = getAltPreRequisites();
+		String[] preReqs = getLawfulPreRequisites();
+		String[] altReqs = getOutlawPreRequisites();
 		if(altReqs.length == 0){
 			if(preReqs.length == 0){
 				return "none";
@@ -244,7 +250,7 @@ public class Certification {
 			}
 		}
 		else {
-			return formatStringArray(preReqs) + " or  " + formatStringArray(altReqs) + " (alternate)";
+			return formatStringArray(preReqs) + " (lawful) or  " + formatStringArray(altReqs) + " (outlaw)";
 		}
 	}
 	
@@ -259,27 +265,39 @@ public class Certification {
 		retval = retval + " and " + str[str.length - 1];
 		return retval;
 	}
-
-	private String printRequirements() {
-		Set<String> currencies = ContractPlayerData.getCurrencies();
-		ArrayList<String> main = new ArrayList<String>();
-		ArrayList<String> alts = new ArrayList<String>();
-
-		for(String s : currencies){
-			int reqBal = getRequirementInContractCurrency(s);
+	
+/*for(String s : ContractPlayerData.getCurrencies()){
+			int pBal = d.getBalanceInCurrency(s);
+			ttl += pBal;
+			int reqBal = getRequirementInContractLevels(s);
+			if(pBal < reqBal) return false;
+		}
+		if(SQRankup2.getBalanceInCombat(d) < getRequirementInContractLevels("reputationOrInfamy")) return false;
+		if(SQRankup2.getBalanceInTrade(d) < getRequirementInContractLevels("tradingOrSmuggling")) return false;
+		if(ttl < getRequirementInContractLevels("total")) return false;*/
+	
+	private String printRequirements(){
+		ArrayList<String> reqs = new ArrayList<String>();
+		for(String s : ContractPlayerData.getCurrencies()){
+			int reqBal = getRequirementInContractLevels(s);
 			if(reqBal > 0){
-				main.add(reqBal + " " + s);
-			}
-			int altBal = getAltRequirementInContractCurrency(s);
-			if(altBal > 0){
-				alts.add(altBal + " " + s);
+				reqs.add(reqBal + " " + s);
 			}
 		}
-		if(alts.size() == 0){
-			return formatStringArray(main.toArray(new String[0]));
-		} else {
-			return formatStringArray(main.toArray(new String[0])) + " or " + formatStringArray(alts.toArray(new String[0])) + " (alternate)";
+		int reqBal;
+		reqBal = getRequirementInContractLevels("reputationOrInfamy");
+		if(reqBal > 0){
+			reqs.add(reqBal + " " + "Reputation (lawful) or Infamy (outlaw)");
 		}
+		reqBal = getRequirementInContractLevels("tradingOrSmuggling");
+		if(reqBal > 0){
+			reqs.add(reqBal + " " + "Trading (lawful) or Smuggling (outlaw)");
+		}
+		reqBal = getRequirementInContractLevels("total");
+		if(reqBal > 0){
+			reqs.add(reqBal + " " + "total contract levels.");
+		}
+		return formatStringArray(reqs.toArray(new String[0]));
 	}
 
 	public boolean canAffordCosts(Player p) {
@@ -287,17 +305,12 @@ public class Certification {
 		return SQRankup2.eco.has(p, getCost());
 	}
 
-	public boolean hasLevels(Player p) {
-		return satisfiesCurrencyRequirements(SQContracts.get().getContractDatabase().getDataOfPlayer(p.getUniqueId()));
-	}
-	
-	public boolean hasAltLevels(Player p){
-		return satisfiesAltCurrencyRequirements(SQContracts.get().getContractDatabase().getDataOfPlayer(p.getUniqueId()));
+	public boolean hasLevels(ContractPlayerData d) {
+		return satisfiesCurrencyRequirements(d);
 	}
 
 	public void takeCost(Player p) {
 		SQRankup2.eco.withdrawPlayer(p, getCost());
 
 	}
-
 }

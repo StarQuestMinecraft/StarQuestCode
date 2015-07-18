@@ -1,5 +1,6 @@
 package com.starquestminecraft.sqrankup2;
 
+import java.io.Console;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -13,19 +14,24 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerAchievementAwardedEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import com.starquestminecraft.sqcontracts.SQContracts;
+import com.starquestminecraft.sqcontracts.database.ContractPlayerData;
 import com.starquestminecraft.sqrankup2.database.Database;
 import com.starquestminecraft.sqrankup2.database.SQLDatabase;
 
 public class SQRankup2 extends JavaPlugin implements Listener{
 
 	HashMap<String, Certification> certPool = new HashMap<String, Certification>();
+	public HashMap<String, Certification> defaultCerts = new HashMap<String, Certification>();
 	HashMap<String, BonusTag> bonusTags = new HashMap<String, BonusTag>();
 
 	private static SQRankup2 instance;
@@ -42,6 +48,9 @@ public class SQRankup2 extends JavaPlugin implements Listener{
 			if (f.getName().endsWith(".cert")) {
 				Certification c = new Certification(f.getPath());
 				certPool.put(c.getIdentifier(), c);
+				if(c.isDefault()){
+					defaultCerts.put(c.getIdentifier(), c);
+				}
 				count++;
 			}
 		}
@@ -52,6 +61,23 @@ public class SQRankup2 extends JavaPlugin implements Listener{
 		AchievementTag.loadAchievements(bonusTags);
 
 		System.out.println("Certs loaded from file: " + count);
+	}
+	
+	@EventHandler
+	public void onPlayerJoin(PlayerJoinEvent event){
+		if(Bukkit.getServerName().equals("Trinitos_Alpha")){
+			if(!event.getPlayer().hasPlayedBefore()){
+				System.out.println("New player @alpha!");
+				System.out.println("Stripping groups!");
+				for(String s : permission.getPlayerGroups(event.getPlayer())){
+					if(s.equalsIgnoreCase("mod") || s.equalsIgnoreCase("developer") || s.equalsIgnoreCase("srmod") || s.equalsIgnoreCase("trlmod") || s.equalsIgnoreCase("trmod") || s.equalsIgnoreCase("jrdev") || s.equalsIgnoreCase("Manager")){
+						continue;
+					}
+					permission.playerRemoveGroup(event.getPlayer(), s);
+				}
+				permission.playerAddGroup(event.getPlayer(), "settler");
+			}
+		}
 	}
 
 	private boolean setupPermissions() {
@@ -89,35 +115,101 @@ public class SQRankup2 extends JavaPlugin implements Listener{
 	}
 
 	public boolean onCommand(CommandSender sender, Command cmd, String label, final String[] args) {
-		if (args.length < 1) {
-			displayHelp(sender);
+		if(cmd.getName().equalsIgnoreCase("certification")){
+			if (args.length < 1) {
+				displayHelp(sender);
+				return true;
+			}
+			if(args[0].equalsIgnoreCase("reload") && (sender instanceof ConsoleCommandSender)){
+				reload();
+			}
+			final String keyArg = args[0];
+			if (!(sender instanceof Player))
+				return false;
+			final Player p = (Player) sender;
+			Bukkit.getServer().getScheduler().runTaskAsynchronously(this, new Runnable() {
+				public void run() {
+					switch (keyArg) {
+					case "unlock":
+						handleUnlock(p, args);
+						return;
+					case "remove":
+						removeCert(p, args);
+						return;
+					case "list":
+						listCerts(p, args);
+						return;
+					case "tag":
+						handleTags(p, args);
+						return;
+					case "available":
+						handleAvailable(p, args);
+						return;
+					default:
+						displayHelp(p);
+					}
+				}
+			});
+			return true;
+		} else if ((cmd.getName().equalsIgnoreCase("addapp")) && (sender.hasPermission("SQRankup.addApplication"))) {
+			if (args.length >= 1) {
+				getServer().broadcastMessage(ChatColor.RED + args[0] + " has ranked up to settler!");
+				getServer().broadcastMessage(
+						ChatColor.RED + "Are you a " + ChatColor.GREEN + "Refugee" + ChatColor.RED + "? Rank up to " + ChatColor.DARK_GREEN + "Settler"
+								+ ChatColor.RED + " like " + args[0] + " did!");
+				getServer().broadcastMessage(
+						ChatColor.RED + "Visit " + ChatColor.BLUE + "http://tinyurl.com/starquestapps" + ChatColor.RED + " to apply for Settler rank!");
+
+				permission.playerAddGroup(null, getServer().getOfflinePlayer(args[0]), "SETTLER");
+				permission.playerRemoveGroup(null, getServer().getOfflinePlayer(args[0]), "REFUGEE");
+				if (args.length >= 2) {
+					Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "money give " + args[1] + " 10000");
+					getServer().broadcastMessage(
+							ChatColor.GOLD + args[1] + ChatColor.RED + " brought " + args[0] + " to the server and earned 10000 for doing so!");
+				}
+				return true;
+			}
+			sender.sendMessage("Needs an argument.");
+			return false;
+		} else if (cmd.getName().equalsIgnoreCase("resetrank") && sender.hasPermission("SQRankup.resetrank")){
+			if(args.length < 1){
+				sender.sendMessage("You need to provide a player!");
+				return true;
+			}
+			Player p = Bukkit.getPlayer(args[0]);
+			if(p == null){
+				sender.sendMessage("This player is not online, attempting to set group, but make sure you typed their name right!");
+			} else {
+				sender.sendMessage("Setting group.");
+			}
+			Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "perms player " + args[0] + " setgroup Settler");
+			Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "sync console all perms refresh");
 			return true;
 		}
-		final String keyArg = args[0];
-		if (!(sender instanceof Player))
-			return false;
-		final Player p = (Player) sender;
-		Bukkit.getServer().getScheduler().runTaskAsynchronously(this, new Runnable() {
-			public void run() {
-				switch (keyArg) {
-				case "unlock":
-					handleUnlock(p, args);
-					return;
-				case "remove":
-					removeCert(p, args);
-					return;
-				case "list":
-					listCerts(p, args);
-					return;
-				case "tag":
-					handleTags(p, args);
-					return;
-				default:
-					displayHelp(p);
+		return false;
+	}
+
+	private void reload() {
+		int count = 0;
+		certPool.clear();
+		defaultCerts.clear();
+		for (File f : this.getDataFolder().listFiles()) {
+			if (f.getName().endsWith(".cert")) {
+				Certification c = new Certification(f.getPath());
+				certPool.put(c.getIdentifier(), c);
+				if(c.isDefault()){
+					defaultCerts.put(c.getIdentifier(), c);
 				}
+				count++;
 			}
-		});
-		return true;
+		}
+		setupPermissions();
+		setupChat();
+		setupEconomy();
+		Bukkit.getPluginManager().registerEvents(this, this);
+		AchievementTag.loadAchievements(bonusTags);
+
+		System.out.println("Certs loaded from file: " + count);
 	}
 
 	private void handleUnlock(Player p, String[] args) {
@@ -125,11 +217,23 @@ public class SQRankup2 extends JavaPlugin implements Listener{
 		ArrayList<Certification> available = getAvailableUnlocks(p, playerCerts);
 		if (args.length == 1) {
 			// display the list of available unlocks for the sender
-			displayUnlocks(p, available);
+			p.sendMessage("do /certs available to see your available unlocks, then do /certs unlock # to unlock that cert.");
 		} else {
-			if (args.length == 2) {
+			if (args.length >= 2) {
 				try {
 					int i = Integer.parseInt(args[1]);
+					UnlockType type;
+					if(args.length >= 3){
+						if(args[2].equalsIgnoreCase("outlaw")){
+							type = UnlockType.OUTLAW;
+						} else if(args[2].equalsIgnoreCase("lawful")){
+							type = UnlockType.LAWFUL;
+						} else {
+							type = UnlockType.NEUTRAL;
+						}
+					} else {
+						type = UnlockType.NEUTRAL;
+					}
 					System.out.println(i);
 					System.out.println(available.size());
 					if (i > -1 && i < available.size()) {
@@ -138,16 +242,16 @@ public class SQRankup2 extends JavaPlugin implements Listener{
 							p.sendMessage("you do not have the credits to purchase this cert.");
 							return;
 						}
-						if(c.hasLevels(p)){
+						ContractPlayerData d = SQContracts.get().getContractDatabase().getDataOfPlayer(p.getUniqueId());
+						if(c.hasLevels(d)){
+							String certType = getTypeOfCertToGive(c, p, d, type);
+							if(certType == null){
+								p.sendMessage("You specified " + args[2] + " for your unlock but you do not have the levels.");
+								return;
+							}
 							c.takeCost(p);
 							c.giveToPlayer(p);
-							playerCerts.add(c.getIdentifier());
-							database.updateCertsOfPlayer(p.getUniqueId(), playerCerts);
-							p.sendMessage("You have succesfully unlocked cert " + c.getIdentifier() + "!");
-						} else if(c.hasAltLevels(p)){
-							c.takeCost(p);
-							c.giveToPlayer(p);
-							playerCerts.add("alt-" + c.getIdentifier());
+							playerCerts.add(certType + "-" + c.getIdentifier());
 							database.updateCertsOfPlayer(p.getUniqueId(), playerCerts);
 							p.sendMessage("You have succesfully unlocked cert " + c.getIdentifier() + "!");
 						} else {
@@ -167,11 +271,63 @@ public class SQRankup2 extends JavaPlugin implements Listener{
 		}
 	}
 
-	private void displayUnlocks(Player p, ArrayList<Certification> unlocks) {
+	private String getTypeOfCertToGive(Certification c, Player p,
+			ContractPlayerData d,  UnlockType type) {
+		//we know they satisfy the requirements overall
+		//first, if they specified a type, let's make sure they have the stuff for it
+		if(type == UnlockType.LAWFUL){
+			if(d.getBalanceInCurrency("reputation") < c.getRequirementInContractLevels("reputationOrInfamy")){
+				//they're stupid
+				return null;
+			}
+			if(d.getBalanceInCurrency("trading") < c.getRequirementInContractLevels("tradingOrSmuggling")){
+				//they're stupid
+				return null;
+			}
+			return "lawful";
+		}
+		if(type == UnlockType.OUTLAW){
+			if(d.getBalanceInCurrency("infamy") < c.getRequirementInContractLevels("reputationOrInfamy")){
+				//they're stupid
+				return null;
+			}
+			if(d.getBalanceInCurrency("smuggling") < c.getRequirementInContractLevels("tradingOrSmuggling")){
+				//they're stupid
+				return null;
+			}
+			return "outlaw";
+		}
+		//type is neutral, determine which is higher and give them that
+		int totalLawful = d.getBalanceInCurrency("trading") + d.getBalanceInCurrency("reputation");
+		int totalOutlaw = d.getBalanceInCurrency("smuggling") + d.getBalanceInCurrency("infamy");
+		if(totalOutlaw > totalLawful) return "outlaw";
+		return "lawful";
+	}
+	
+	private void handleAvailable(Player p, String[] args){
+		ArrayList<String> unlocks = database.getCertsOfPlayer(p.getUniqueId());
+		ArrayList<Certification> available = getAvailableUnlocks(p, unlocks);
+		if(args.length > 1){
+			try{
+				int i = Integer.parseInt(args[1]);
+				displayAvailable(p, available, i);
+			} catch (Exception e){
+				p.sendMessage("Invalid format, do it like this: /certs available <page number>");
+			}
+		} else {
+			displayAvailable(p, available, 1);
+		}
+		
+	}
 
-		p.sendMessage(ChatColor.GREEN + "Available certifications to unlock:");
+	private void displayAvailable(Player p, ArrayList<Certification> unlocks, int page) {
+		
+		int startPoint = 0 + ((page -1) * 10); //0, 10, 20, 30
+		System.out.println("Start point: " + startPoint);
+		p.sendMessage(ChatColor.GREEN + "Available certifications to unlock (page " + page + "):");
 		p.sendMessage(ChatColor.GOLD + "============================================");
-		for (int i = 0; i < unlocks.size(); i++) {
+		int endPoint = startPoint + 10 > unlocks.size() ? unlocks.size() : startPoint + 10;
+		for (int i = startPoint; i < endPoint; i++) {
 			Certification c = unlocks.get(i);
 			ChatColor color;
 			if (i % 2 == 0) {
@@ -182,14 +338,15 @@ public class SQRankup2 extends JavaPlugin implements Listener{
 			p.sendMessage(color + "" + i + "): " + c.getFullDescription(color));
 		}
 		p.sendMessage(ChatColor.GOLD + "============================================");
+		p.sendMessage(ChatColor.GREEN + "do /certs available " + (page + 1) + " to see the next page");
 	}
 
 	private ArrayList<Certification> getAvailableUnlocks(Player p, ArrayList<String> existingCerts) {
 		ArrayList<Certification> retval = new ArrayList<Certification>();
 		for (Certification c : certPool.values()) {
 			System.out.println("testing cert: " + c.getIdentifier());
-			if (!existingCerts.contains(c.getIdentifier()) && !existingCerts.contains("alt-" + c.getIdentifier())) {
-				if (c.satisfiesPreReqs(existingCerts) || c.satisfiesAltPreReqs(existingCerts)) {
+			if (!existingCerts.contains(c.getIdentifier())) {
+				if (c.satisfiesLawfulPreReqs(existingCerts) || c.satisfiesOutlawPreReqs(existingCerts)) {
 					System.out.println("Cert passed!");
 					retval.add(c);
 				}
@@ -218,7 +375,7 @@ public class SQRankup2 extends JavaPlugin implements Listener{
 				return;
 			}
 			String cert = playerCerts.get(i);
-			Certification c = certPool.get(stripAlt(cert));
+			Certification c = certPool.get(stripType(cert));
 			System.out.println("Removing cert!");
 			if(c != null){
 				System.out.println("Removing cert!");
@@ -239,11 +396,7 @@ public class SQRankup2 extends JavaPlugin implements Listener{
 		ArrayList<String> playerCerts = database.getCertsOfPlayer(p.getUniqueId());
 		int num = 0;
 		for (String s : playerCerts) {
-			if(isAlt(s)){
-				p.sendMessage(num + "): " + stripAlt(s));
-			} else {
-				p.sendMessage(num + "): " + s);
-			}
+				p.sendMessage(num + "): " + stripType(s));
 			num++;
 		}
 	}
@@ -283,12 +436,13 @@ public class SQRankup2 extends JavaPlugin implements Listener{
 		ArrayList<String> playerCerts = database.getCertsOfPlayer(p.getUniqueId());
 		ArrayList<String> retval = new ArrayList<String>();
 		for (String s : playerCerts) {
-			Certification c = certPool.get(stripAlt(s));
+			Certification c = certPool.get(stripType(s));
 			if(c != null){
-				if(isAlt(s)){
-					String tag = c.getAltTagFormatted();
+				UnlockType type = getLawfulType(s);
+				if(type == UnlockType.OUTLAW){
+					String tag = c.getOutlawTagFormatted();
 					if(tag != null){
-						retval.add(c.getAltTagFormatted());
+						retval.add(c.getOutlawTagFormatted());
 					}
 				} else {
 					String tag = c.getTagFormatted();
@@ -345,14 +499,30 @@ public class SQRankup2 extends JavaPlugin implements Listener{
 		}
 	}
 	
-	public boolean isAlt(String s){
-		return s.startsWith("alt-");
+	public String stripType(String s){
+		if(s.startsWith("outlaw-") || s.startsWith("lawful-")){
+			return s.substring(7, s.length());
+		} return s;
 	}
 	
-	public String stripAlt(String s){
-		if(s.startsWith("alt-")){
-			return s.substring(4, s.length());
-		}
-		return s;
+	public UnlockType getLawfulType(String s){
+		if(s.startsWith("outlaw-")) return UnlockType.OUTLAW;
+		if(s.startsWith("lawful-")) return UnlockType.LAWFUL;
+		return UnlockType.NEUTRAL;
 	}
+	
+	public static int getBalanceInCombat(ContractPlayerData d){
+		int a = d.getBalanceInCurrency("infamy");
+		int b = d.getBalanceInCurrency("reputation");
+		if(a > b) return a;
+		return b;
+	}
+	
+	public static int getBalanceInTrade(ContractPlayerData d){
+		int a = d.getBalanceInCurrency("trading");
+		int b = d.getBalanceInCurrency("smuggling");
+		if(a > b) return a;
+		return b;
+	}
+	
 }
