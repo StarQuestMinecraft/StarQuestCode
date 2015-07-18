@@ -5,6 +5,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
 public class PlayerBurnTask extends BukkitRunnable{
@@ -16,6 +17,8 @@ public class PlayerBurnTask extends BukkitRunnable{
 	}
 	
 	public void run(){
+		long time = (w.getTime() % 24000);
+		if(time > 12000) return;
 		for(Player p : w.getPlayers()){
 			if(p.getGameMode() == GameMode.CREATIVE) return;
 			if(stage < 4){
@@ -26,8 +29,7 @@ public class PlayerBurnTask extends BukkitRunnable{
 			}
 			Location l = p.getLocation();
 			int fromSky = l.getBlock().getLightFromSky();
-			long time = (w.getTime() % 24000);
-			if(fromSky < 13 || time > 12000){
+			if(fromSky < 13){
 				continue;
 			} else {
 				p.setFireTicks(40);

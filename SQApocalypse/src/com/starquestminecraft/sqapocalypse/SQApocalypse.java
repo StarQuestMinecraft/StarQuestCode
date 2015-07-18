@@ -6,6 +6,7 @@ import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -39,6 +40,11 @@ public class SQApocalypse extends JavaPlugin implements Listener{
 			System.out.println("Displaying top.");
 			displayTop(sender);
 			return true;
+		}
+		if(arg.equals("modify")){
+			if(sender instanceof ConsoleCommandSender){
+				SQLDatabase.addScore(Bukkit.getOfflinePlayer(args[1]).getUniqueId(), Integer.parseInt(args[2]));
+			}
 		}
 		return false;
 	}
@@ -79,16 +85,21 @@ public class SQApocalypse extends JavaPlugin implements Listener{
 		getConfig().set("day", day + 0.5);
 		saveConfig();
 		task3 = new ScoreUpdateTask(this);
-		task3.runTaskTimer(this, 60 * 20, 60 * 20);
+		task3.runTaskTimerAsynchronously(this, 60 * 20, 60 * 20);
 		if(name.equals("Regalis") || name.equals("Defalos") || name.equals("Digitalia")){
 			return;
 		}
 		if(stage > 0){
 			World w = Bukkit.getWorld(Bukkit.getServerName());
-			task = new DestroyTask(w, stage);
-			task.runTaskTimer(this, 3, 3);
+			//task = new DestroyTask(w, stage);
+			//task.runTaskTimer(this, 20, 20);
 			task2 = new PlayerBurnTask(w, stage);
 			task2.runTaskTimer(this, 20, 20);
+		}
+		if(stage > 2){
+			World w = Bukkit.getWorld(Bukkit.getServerName());
+			task = new DestroyTask(w, stage);
+			task.runTaskTimer(this, 20 * 60, 20 * 60);
 		}
 	}
 	
