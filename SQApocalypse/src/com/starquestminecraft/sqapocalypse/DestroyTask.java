@@ -1,4 +1,4 @@
-package com.dibujaron.sqapocalypse;
+package com.starquestminecraft.sqapocalypse;
 
 import org.bukkit.Chunk;
 import org.bukkit.Material;

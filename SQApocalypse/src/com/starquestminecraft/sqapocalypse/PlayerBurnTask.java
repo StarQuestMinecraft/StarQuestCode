@@ -1,4 +1,4 @@
-package com.dibujaron.sqapocalypse;
+package com.starquestminecraft.sqapocalypse;
 
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -18,8 +18,11 @@ public class PlayerBurnTask extends BukkitRunnable{
 	public void run(){
 		for(Player p : w.getPlayers()){
 			if(p.getGameMode() == GameMode.CREATIVE) return;
-			if(stage < 4 && p.getInventory().getHelmet().getType() == Material.PUMPKIN){
-				continue;
+			if(stage < 4){
+				ItemStack helmet = p.getInventory().getHelmet();
+				if(helmet != null && helmet.getType() == Material.PUMPKIN){
+					continue;
+				}
 			}
 			Location l = p.getLocation();
 			int fromSky = l.getBlock().getLightFromSky();

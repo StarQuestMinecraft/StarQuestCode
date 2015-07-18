@@ -228,6 +228,7 @@ public class SQSkywatch extends JavaPlugin implements Listener {
 		int randMod = (int) Math.round(Math.random() * randomRange * 2 - randomRange);
 		final int numToSummon = numFighters + randMod;
 		int i = 0;
+		popDoors(p.getLocation().getBlock());
 		while(i < numToSummon){
 			spawnShocktroop(p);
 			i++;
@@ -441,5 +442,18 @@ public class SQSkywatch extends JavaPlugin implements Listener {
 
 	public static SQSkywatch getInstance() {
 		return instance;
+	}
+	
+	public static void popDoors(Block b, int radius){
+		int mod = radius/2;
+		Block minCorner = b.getRelative(-mod, 0, -mod);
+		for(int x = 0, x < radius, x++){
+			for(int z = 0; z < radius, z++){
+				Block target = minCorner.getRelative(x, 0, z);
+				if(target.getType() == Material.WOOD_DOOR){
+					target.breakNaturally();
+				}
+			}
+		}
 	}
 }

@@ -1,4 +1,4 @@
-package com.dibujaron.sqapocalypse;
+package com.starquestminecraft.sqapocalypse;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;

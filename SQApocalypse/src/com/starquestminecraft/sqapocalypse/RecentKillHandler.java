@@ -1,4 +1,4 @@
-package com.dibujaron.sqapocalypse;
+package com.starquestminecraft.sqapocalypse;
 
 import java.util.HashMap;
 import java.util.HashSet;
