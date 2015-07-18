@@ -1,9 +1,0 @@
-name: SQTurrets
-main: us.higashiyama.george.SQTurrets.SQTurrets
-version: 1.7.3
-commands:
-  turretsreload:
-  turretlist:
-    description: List all turrets you have permission to use
-    usage: /turretlist
-   

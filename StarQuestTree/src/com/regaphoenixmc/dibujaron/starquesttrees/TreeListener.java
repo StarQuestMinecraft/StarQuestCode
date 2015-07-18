@@ -18,9 +18,9 @@ import org.bukkit.inventory.ItemStack;
 import com.sk89q.worldedit.CuboidClipboard;
 import com.sk89q.worldedit.EditSession;
 import com.sk89q.worldedit.LocalConfiguration;
-import com.sk89q.worldedit.LocalPlayer;
 import com.sk89q.worldedit.Vector;
 import com.sk89q.worldedit.WorldEdit;
+import com.sk89q.worldedit.bukkit.BukkitPlayer;
 import com.sk89q.worldedit.bukkit.BukkitWorld;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 import com.sk89q.worldedit.schematic.SchematicFormat;
@@ -73,28 +73,28 @@ public class TreeListener implements Listener{
 				if (event.getSpecies() == TreeType.BIRCH){
 					event.setCancelled(true);
 					spawnTree(event.getLocation(), "Kelakaria-Birch", new Vector(-3, -1, -3));
-					SetBlockTask t = new SetBlockTask(event.getLocation().getBlock(), 17, (byte) 2);
+					BlockSetTask t = new BlockSetTask(event.getLocation().getBlock(), 17, (byte) 2);
 					t.runTaskLater(plugin, 5);
 					return;
 				}
 				if (event.getSpecies() == TreeType.TREE){
 					event.setCancelled(true);
 					spawnTree(event.getLocation(), "Kelakaria-Oak", new Vector(-4, 0, -6));
-					SetBlockTask t = new SetBlockTask(event.getLocation().getBlock(), 17, (byte) 0);
+					BlockSetTask t = new BlockSetTask(event.getLocation().getBlock(), 17, (byte) 0);
 					t.runTaskLater(plugin, 5);
 					return;
 				}
 				if (event.getSpecies() == TreeType.SMALL_JUNGLE){
 					event.setCancelled(true);
 					spawnTree(event.getLocation(), "Kelakaria-Jungle", new Vector(-2, 0, -2));
-					SetBlockTask t = new SetBlockTask(event.getLocation().getBlock(), 17, (byte) 3);
+					BlockSetTask t = new BlockSetTask(event.getLocation().getBlock(), 17, (byte) 3);
 					t.runTaskLater(plugin, 5);
 					return;
 				}
 				if (event.getSpecies() == TreeType.REDWOOD){
 					event.setCancelled(true);
 					spawnTree(event.getLocation(), "Kelakaria-Spruce", new Vector(-3, -1, -3));
-					SetBlockTask t = new SetBlockTask(event.getLocation().getBlock(), 17, (byte) 1);
+					BlockSetTask t = new BlockSetTask(event.getLocation().getBlock(), 17, (byte) 1);
 					t.runTaskLater(plugin, 5);
 					return;
 				}
@@ -105,7 +105,7 @@ public class TreeListener implements Listener{
 			if (event.getSpecies() == TreeType.TREE || event.getSpecies() == TreeType.BIG_TREE){
 				event.setCancelled(true);
 				spawnTree(event.getLocation(), "Quavara-Oak", new Vector(-4, 0, -4));
-				SetBlockTask t = new SetBlockTask(event.getLocation().getBlock(), 17, (byte) 0);
+				BlockSetTask t = new BlockSetTask(event.getLocation().getBlock(), 17, (byte) 0);
 				t.runTaskLater(plugin, 5);
 			}
 			event.setCancelled(true);
@@ -116,7 +116,7 @@ public class TreeListener implements Listener{
 				if (Math.random() > 0.5){
 					event.setCancelled(true);
 					spawnTree(event.getLocation(), "Valadro-Oak", new Vector(-7, -3, -7));
-					SetBlockTask t = new SetBlockTask(event.getLocation().getBlock(), 17, (byte) 0);
+					BlockSetTask t = new BlockSetTask(event.getLocation().getBlock(), 17, (byte) 0);
 					t.runTaskLater(plugin, 5);
 				}
 			}
@@ -125,7 +125,7 @@ public class TreeListener implements Listener{
 			if (event.getSpecies() == TreeType.REDWOOD){
 					event.setCancelled(true);
 					spawnTree(event.getLocation(), "Ceharram-Spruce", new Vector(-2, 0, -2));
-					SetBlockTask t = new SetBlockTask(event.getLocation().getBlock(), 17, (byte) 1);
+					BlockSetTask t = new BlockSetTask(event.getLocation().getBlock(), 17, (byte) 1);
 					t.runTaskLater(plugin, 5);
 			}
 		}
@@ -136,7 +136,7 @@ public class TreeListener implements Listener{
 		WorldEditPlugin wep = ((WorldEditPlugin) Bukkit.getServer().getPluginManager().getPlugin("WorldEdit"));
 		WorldEdit we = wep.getWorldEdit();
 		LocalConfiguration config = we.getConfiguration();
-		LocalPlayer p = wep.wrapPlayer(startBlock.getWorld().getPlayers().get(0));
+		BukkitPlayer p = wep.wrapPlayer(startBlock.getWorld().getPlayers().get(0));
 		File dir = we.getWorkingDirectoryFile(config.saveDir);
         File f;
         Vector v = new Vector(startBlock.getX(), startBlock.getY(), startBlock.getZ());

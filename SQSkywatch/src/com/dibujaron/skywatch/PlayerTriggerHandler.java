@@ -35,7 +35,7 @@ public class PlayerTriggerHandler implements Listener{
 			//it's pvp
 			triggerCheck((Player) event.getDamager(), (Player) event.getEntity(), event, event.getDamage());
 		}
-		if(event.getDamager() instanceof Projectile){
+		else if(event.getDamager() instanceof Projectile && event.getEntity() instanceof Player){
 			Projectile p = (Projectile) event.getDamager();
 			if(p.getShooter() instanceof Player && event.getEntity() instanceof Player && p.getShooter() != event.getEntity()){
 				triggerCheck((Player) p.getShooter(), (Player) event.getEntity(), event, event.getDamage());

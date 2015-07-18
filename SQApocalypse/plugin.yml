@@ -1,5 +1,5 @@
 name: SQApocalypse
-main: com.dibujaron.sqapocalypse.SQApocalypse
+main: com.starquestminecraft.sqapocalypse.SQApocalypse
 version: 1.0.0
 commands:
   apocalypse:

@@ -71,6 +71,7 @@ public class DroneShocktroop {
 		e.setChestplate(chest);
 		e.setLeggings(leggings);
 		e.setBoots(boots);
+		
 
 		ItemStack bow = new ItemStack(Material.BOW, 1);
 		bow.addEnchantment(Enchantment.ARROW_DAMAGE, SQSkywatch.powerLevel);
