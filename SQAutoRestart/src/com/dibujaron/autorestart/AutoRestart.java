@@ -2,12 +2,16 @@ package com.dibujaron.autorestart;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.TimerTask;
 
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import com.dibujaron.autorestart.tasks.DelayedRestartTask;
+import com.dibujaron.autorestart.tasks.TimeCheckTask;
 
 public class AutoRestart extends JavaPlugin {
 
@@ -24,6 +28,7 @@ public class AutoRestart extends JavaPlugin {
 			// check every minute after that. players may get picky about their
 			// restart times.
 			new TimeCheckTask(this).runTaskTimer(this, 108000, 12000);
+
 		}
 	}
 

@@ -1,4 +1,4 @@
-package com.dibujaron.autorestart;
+package com.dibujaron.autorestart.tasks;
 
 import java.util.Calendar;
 import java.util.GregorianCalendar;

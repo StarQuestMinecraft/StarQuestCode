@@ -1,8 +1,10 @@
-package com.dibujaron.autorestart;
+package com.dibujaron.autorestart.tasks;
 
 import net.md_5.bungee.api.ChatColor;
 
 import org.bukkit.scheduler.BukkitRunnable;
+
+import com.dibujaron.autorestart.AutoRestart;
 
 public class DelayedRestartTask extends BukkitRunnable{
 	
