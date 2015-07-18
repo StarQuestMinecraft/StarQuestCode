@@ -1,0 +1,16 @@
+rakuria:
+    target: rakuria
+    x: 100
+    y: 200
+    z: 500
+    tx: 500
+    ty: 200
+    tz: 400
+grun:
+    target: grun
+    x: 100
+    y: 200
+    z: 500
+    tx: 500
+    ty: 200
+    tz: 100

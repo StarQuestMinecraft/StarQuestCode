@@ -1,0 +1,5 @@
+name: SQPorts
+version: 1.0.0
+main: com.dibujaron.sqports.SQPorts
+depend: [WorldGuard, Movecraft]
+description: Travel in Style!
