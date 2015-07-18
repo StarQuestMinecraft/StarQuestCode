@@ -1,0 +1,17 @@
+#Class,price,minLevel,rarity
+Fighter,1000,0,1.1
+Shuttle,1000,0,1.1
+Barge,1000,0,0.1
+LightFreighter,3000,0,1.0
+Freighter,5000,3,1.0
+Gunship,3500,0,1.0
+Cruiser,7000,10,0.5
+Corvette,5000,5,1.0
+Courier,3000,3,1.0
+Interceptor,5000,5,1.0
+HeavyFreighter,7500,10,1.0
+Cruiser,10000,10,0.5
+Ironclad,10000,20,0.1
+Tank,3500,10,0.3
+Speeder,2000,0,0.3
+Skiff,3000,0,0.3

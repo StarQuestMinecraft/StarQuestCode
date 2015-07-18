@@ -1,0 +1,145 @@
+#available currencies are:
+#reputation (good-guy kills)
+#infamy (black market kills)
+#philanthropy (charity)
+#merchanting (good-guy trading)
+#smuggling (black market trading)
+#salvage (implement later)
+
+causes:
+    - "starving children"
+    - "earthquake relief"
+    - "immunizations for toddlers"
+    - "remote infrastructure improvements"
+    - "forcefield research"
+    - "artificial intelligence research"
+    - "defense research"
+    - "homeless children"
+    - "the heritage museum"
+    - "food production"
+    - "planetary defenses"
+    - "bribes"
+    - "free lunch"
+    - "flu outbreak relief"
+    - "free college education"
+    - "the red cross"
+    - "the humane society"
+    - "chemical warfare research"
+    - "doomsday weapon development"
+    - "noob relief shelters"
+planets:
+    - "Quavara"
+    - "Boskevine"
+    - "Valadro"
+    - "Iffrizar"
+    - "Kelakaria"
+    - "Ceharram"
+    - "Boletarian"
+    - "Emera"
+    - "Drakos"
+    - "Luna Inaris"
+    - "Rastafar"
+    - "Grallion"
+    - "Acualis"
+    - "Krystallos"
+    - "Uradine"
+    - "Madreos"
+    - "Erecos"
+    - "Sampetra"
+    - "Symphalia"
+    - "Tyderia"
+    - "Tezoralyn"
+    - "Regalis Station"
+    - "Earth-that-was"
+    - "Persephone"
+    - "Terminus"
+    - "Trenzalore"
+    - "Dantooine"
+    - "Sagittaron"
+    
+stations:
+    - Alpha_North
+    - Alpha_West
+    - Gamma_West
+    - Gamma_South
+    - Beta_East
+    - Beta_North
+contracts:
+    itemWoolExample:
+        type: item
+        minReward: 5000
+        maxReward: 10000
+        minLevels:
+            merchanting: 0
+            philanthropy: 0
+        blackMarket: false
+        items:
+            whitewool:
+                type: WOOL
+                data: 0
+                minAmount: 1000
+                maxAmount: 2000
+            bluewool:
+                type: WOOL
+                data: 11
+                minAmount: 500
+                maxAmount: 1000
+            redwool:
+                type: WOOL
+                data: 14
+                minAmount: 500
+                maxAmount: 1000
+    smuggleWoodExample:
+        type: item
+        minReward: 10000
+        maxReward: 15000
+        minLevels:
+            smuggling: 0
+        blackMarket: true
+        items:
+            birchwood:
+                type: LOG
+                data: 2
+                minAmount: 750
+                maxAmount: 1000
+            oakwood:
+                type: LOG
+                data: 0
+                minAmount: 100
+                maxAmount: 200
+    reputationExample:
+        type: capture
+        minReward: 5000
+        maxReward: 10000
+        minLevels:
+            reputation: 0
+        blackMarket: false
+        targetClasses:
+            - BlockadeRunner
+            - Gunship
+            - Starfighter
+        minAmount: 2
+        maxAmount: 4
+    piracyExample:
+        type: capture
+        minReward: 10000
+        maxReward: 20000
+        minLevels:
+            infamy: 5
+        blackMarket: true
+        targetClasses:
+            - HeavyFreighter
+            - LightFreighter
+            - SuperFreighter
+            - Starfighter
+        minAmount: 5
+        maxAmount: 10
+    philanthropyExample:
+        type: money
+        minLevels:
+            philanthropy: 0
+        cost: 100000
+        cause: "Starving orphan children on Kelakaria"
+            
+            
+                
