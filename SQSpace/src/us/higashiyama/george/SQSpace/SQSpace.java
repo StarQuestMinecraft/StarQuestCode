@@ -42,9 +42,9 @@ public class SQSpace extends JavaPlugin implements Listener {
 
 		instance = this;
 		String planet = Bukkit.getServerName();
-		if ((planet.equals("Defalos")) || (planet.equals("AsteroidBelt")) || (planet.equals("Digitalia")) || (planet.equals("Regalis"))) {
+		if ((planet.equals("Trinitos_Alpha")) || (planet.equals("Trinitos_Beta")) || (planet.equals("Trinitos_Gamma"))) {
+			System.out.println("Events registered!");
 			this.getServer().getPluginManager().registerEvents(this, this);
-			new TimeReset(this);
 		}
 	}
 
@@ -81,7 +81,7 @@ public class SQSpace extends JavaPlugin implements Listener {
 		// is in a "Space" area.
 		// It is only a Respiration / Perm check
 		boolean suffocating = false;
-		if (!p.hasPermission("SQSpace.nosuffocate") && !(p.getGameMode().equals(GameMode.CREATIVE)) && (this.isInSpace(p)) && (!this.hasSpaceHelmet(p))
+		if (!p.hasPermission("SQSpace.nosuffocate") && !(p.getGameMode().equals(GameMode.CREATIVE)) && (isInSpace(p)) && (!this.hasSpaceArmor(p))
 				&& (!Players.contains(p))) {
 			Players.add(p);
 			p.sendMessage(ChatColor.AQUA + "[Space] " + ChatColor.RED + "You are now Suffocating!");
@@ -91,16 +91,28 @@ public class SQSpace extends JavaPlugin implements Listener {
 		return suffocating;
 	}
 
-	public boolean hasSpaceHelmet(Player p) {
+	public boolean hasSpaceArmor(Player p) {
 
-		final ItemStack helmet = p.getInventory().getHelmet();
-		if (null != helmet) {
+		/*final ItemStack helmet = p.getInventory().getHelmet();
+		if (helmet != null) {
 			// Can breathe in space wearing a Pumpkin (Space Helmet)
 			// Also can breathe in space if helmet has Respiration III
-			if ((helmet.getType() == Material.PUMPKIN) || (3 == helmet.getEnchantmentLevel(Enchantment.OXYGEN)))
+			if ((helmet.getType() == Material.PUMPKIN))
 				return true;
+		}*/
+		ItemStack[] armor = p.getInventory().getArmorContents();
+		if(armor == null) return false;
+		for(ItemStack i : armor){
+			if(i == null) return false;
+			if(!isArmor(i.getType())){
+				return false;
+			}
 		}
-		return false;
+		return true;
+	}
+	
+	private boolean isArmor(Material m){
+		return m == Material.CHAINMAIL_HELMET ||  m == Material.CHAINMAIL_CHESTPLATE ||  m == Material.CHAINMAIL_LEGGINGS || m ==  Material.CHAINMAIL_BOOTS;
 	}
 
 	public static boolean isInSpace(Entity e) {
@@ -141,10 +153,10 @@ public class SQSpace extends JavaPlugin implements Listener {
 
 		final Player p = event.getPlayer();
 		final String planet = p.getLocation().getWorld().getName().toLowerCase();
-		if (this.hasSpaceHelmet(p)) {
+		if (this.hasSpaceArmor(p)) {
 			p.setRemainingAir(p.getMaximumAir());
 		}
-		if ((planet.equals("defalos")) || (planet.equals("asteroidBelt")) || (planet.equals("digitalia")) || (planet.equals("regalis"))) {
+		if ((planet.startsWith("trinitos"))){
 			
 			if(p.getGameMode().equals(GameMode.SURVIVAL)){
 				if ((isInSpace(p)) && (!p.isFlying()) && (p.getLocation().getY() < 256)) {

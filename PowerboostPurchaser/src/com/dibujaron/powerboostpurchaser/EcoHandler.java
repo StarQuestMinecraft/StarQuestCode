@@ -10,7 +10,7 @@ public class EcoHandler {
 	private static Economy eco;
 	
 	public static int getCost(){
-		return 500;
+		return 100;
 	}
 	
 	public static Economy getEconomy(){

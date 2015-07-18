@@ -105,8 +105,8 @@ public class SubcontractGenerator {
 		values.put("identifier", shipClass + "_" + type + level);
 		values.put("description", "Upgrade your " + shipClass + " to support level " + level + " " + type);
 		if(level == 1){
-		values.put("preRequisites", shipClass);
-		values.put("altPreRequisites", shipClass);
+		values.put("lawfulPreRequisites", shipClass);
+		values.put("outlawPreRequisites", shipClass);
 		} else {
 			String preReq = shipClass;
 			for(int i = 1; i < level; i++){
@@ -114,7 +114,6 @@ public class SubcontractGenerator {
 				preReq = preReq + ", " + miniPrereq;
 			}
 			values.put("preRequisites", preReq);
-			values.put("altPreRequisites", preReq);
 		}
 		values.put("costCredits", "" + ((int) level * cert.getCostInCurrency("credits") / 10));
 		values.put("subCertCheckExempt", "false");

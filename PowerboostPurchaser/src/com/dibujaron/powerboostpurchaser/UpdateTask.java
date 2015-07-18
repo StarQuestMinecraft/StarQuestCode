@@ -53,7 +53,9 @@ public class UpdateTask extends BukkitRunnable{
 				} else {
 					if(!(m.getRole() == Rel.LEADER)){
 						f.setInvited(m, false);
+						f.saveToRemote();
 						m.resetFactionData();
+						m.saveToRemote();
 					}
 				}
 			}
@@ -66,15 +68,13 @@ public class UpdateTask extends BukkitRunnable{
 				//this means that it was cancelled, we don't have to do anything
 				continue;
 			}
-			if(Econ.hasAtLeast(f, EcoHandler.getCost() * boost, "powerboost charge")){
-				Econ.modifyMoney(f, -1 * EcoHandler.getCost() * boost, "powerboost charge");
-				if(fpb.getFaction().getPowerBoost() != fpb.getBoost()){
-					fpb.getFaction().setPowerBoost(boost);
-				}
+			if(Econ.hasAtLeast(f, EcoHandler.getCost() * boost, "powerboost daily charge")){
+				Econ.modifyMoney(f, -1 * EcoHandler.getCost() * boost, "powerboost daily charge");
+				Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "f powerboost f " + f.getName() + " " + boost);
 			} else {
 				PowerboostPurchaser.janeMessage(fpb.getFaction().getName() + " could not afford to maintain their powerboost.");
 				d.setBoostOfFaction(new FactionPowerboost(fpb.getFaction(), 0));
-				fpb.getFaction().setPowerBoost((double) 0);
+				Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "f powerboost f " + f.getName() + " 0");
 			}
 		}
 	}

@@ -54,7 +54,7 @@ public class SuffocationTask extends BukkitRunnable {
 		if (!this.plugin.isInSpace(this.p)) {
 			this.cancel(this.p);
 		}
-		if (this.plugin.hasSpaceHelmet(this.p)) {
+		if (this.plugin.hasSpaceArmor(this.p)) {
 			this.cancel(this.p);
 		}
 		if (this.p.isDead()) {

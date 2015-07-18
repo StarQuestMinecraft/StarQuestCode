@@ -26,7 +26,7 @@ public class PowerboostPurchaser extends JavaPlugin{
 		instance = this;
 		database = new SQLDatabase();
 		EcoHandler.setupEconomy();
-		if(Bukkit.getServerName().equals("Regalis")){
+		if(Bukkit.getServerName().equals("Trinitos_Alpha")){
 			UpdateTask.schedule();
 		}
 	}
@@ -132,6 +132,9 @@ public class PowerboostPurchaser extends JavaPlugin{
 	}
 
 	private void purchasePersonalBoost(Player p, int power) {
+		p.sendMessage("Personal boosts are currently disabled.");
+		return;
+		/*
 		PersonalPowerboost b = new PersonalPowerboost(p.getUniqueId(), power);
 		Economy eco = EcoHandler.getEconomy();
 		EconomyResponse r = eco.withdrawPlayer(p, b.getBoost() * EcoHandler.getCost());
@@ -140,7 +143,7 @@ public class PowerboostPurchaser extends JavaPlugin{
 			database.setBoostOfPlayer(b);
 		} else {
 			p.sendMessage("You cannot afford this powerboost.");
-		}
+		}*/
 	}
 
 	private void viewPersonalBoost(Player p) {
@@ -157,9 +160,10 @@ public class PowerboostPurchaser extends JavaPlugin{
 
 	private void purchaseFactionBoost(Player p, Faction f, int power) {
 		FactionPowerboost b = new FactionPowerboost(f, power);
-		if(Econ.hasAtLeast(f, b.getBoost() * EcoHandler.getCost(), "purchase boost")){
-			Econ.modifyMoney(f, b.getBoost() * EcoHandler.getCost(), "purchase boost");
+		if(Econ.hasAtLeast(f, b.getBoost() * EcoHandler.getCost(), "to purchase powerboost")){
+			Econ.modifyMoney(f, -1 * b.getBoost() * EcoHandler.getCost(), "purchasing powerboost");
 			p.sendMessage("Your faction powerboost has been set and you have been charged for the first day.");
+			Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "f powerboost f " + f.getName() + " " + power);
 			database.setBoostOfFaction(b);
 		} else {
 			p.sendMessage("You cannot afford this powerboost.");

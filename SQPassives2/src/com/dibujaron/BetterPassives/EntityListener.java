@@ -35,33 +35,43 @@ public class EntityListener implements Listener {
 	@EventHandler
 	public void onEntitySpawn(CreatureSpawnEvent event) {
 		if (event.isCancelled()) {
+			System.out.println("[SQPassives] Event pre-cancelled.");
 			return;
 		}
 		if (event.getEntity().getType() == EntityType.SQUID) {
-			if (event.getEntity().getWorld().getName().equalsIgnoreCase("Boskevine")) {
+			List<EntityType> passives = Settings.getPassivesOfPlanet(event.getEntity().getWorld().getName());
+			if(passives != null && passives.contains(EntityType.SQUID)){
+				return;
+			} else {
+				event.setCancelled(true);
 				return;
 			}
-			event.setCancelled(true);
-			return;
 		}
 
 		if ((event.getEntity().getType() == EntityType.WITHER) || (event.getEntity().getType() == EntityType.WITHER_SKULL || event.getEntity().getType() == EntityType.ARMOR_STAND)) {
+			System.out.println("[SQPassives] wither/witherskull/armorstand allowed.");
 			return;
 		}
 
 		if (event.getSpawnReason() == CreatureSpawnEvent.SpawnReason.BREEDING) {
+			System.out.println("[SQPassives] breeding!");
 			event.getEntity().setCustomName(this.p.getRandomName(event.getEntity()));
 			event.getEntity().setCustomNameVisible(true);
 		} else if (event.getSpawnReason() == CreatureSpawnEvent.SpawnReason.EGG) {
-			if (!event.getEntity().getWorld().getName().equals("Kelakaria"))
+			String n = event.getEntity().getWorld().getName().toLowerCase();
+			if (!(n.equals("nalavor") || n.equals("sampetra"))){
+				System.out.println("[SQPassives] egg cancelled, not allowed here!");
 				event.setCancelled(true);
+			}
 		} else if ((!PASSTHROUGH_REASONS.contains(event.getSpawnReason())) && (!event.isCancelled())) {
 			List<EntityType> types = this.p.getAcceptableHostileTypes(event.getLocation().getWorld());
 			if (types == null) {
+				System.out.println("[SQPassives] types null for planet.");
 				event.setCancelled(true);
 				return;
 			}
 			if (types.size() == 0) {
+				System.out.println("[SQPassives] no hostiles for planet");
 				event.setCancelled(true);
 				return;
 			}
@@ -69,17 +79,15 @@ public class EntityListener implements Listener {
 			EntityType type = types.get((int) (Math.random() * types.size()));
 			Entity e = event.getLocation().getWorld().spawnEntity(event.getEntity().getLocation(), type);
 			String n = e.getWorld().getName().toLowerCase();
-			if ((e.getType() == EntityType.SKELETON) && (n.equals("inaris"))) {
+			if ((e.getType() == EntityType.SKELETON) && (n.equals("avaquo"))) {
 				Skeleton s = (Skeleton) e;
 				s.setSkeletonType(Skeleton.SkeletonType.WITHER);
-			} else if ((e.getType() == EntityType.CREEPER) && (n.equals("acualis"))) {
+			} else if ((e.getType() == EntityType.CREEPER) && (n.equals("tallimar"))) {
 				Creeper c = (Creeper) e;
 				c.setPowered(true);
 				permaVanish(c);
-			} else if ((e.getType() == EntityType.SKELETON) && (n.equals("krystallos"))) {
+			} else if ((e.getType() == EntityType.SKELETON) && (n.equals("uru"))) {
 				createRobot((Skeleton) e);
-			} else if ((e.getType() == EntityType.ZOMBIE) && (n.equals("emera"))) {
-				createSpiritBlock((Zombie) e);
 			}
 			event.setCancelled(true);
 		}

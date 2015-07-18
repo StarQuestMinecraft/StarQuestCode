@@ -12,13 +12,13 @@ import org.bukkit.plugin.java.JavaPlugin;
 public class AutoRestart extends JavaPlugin {
 
 	public void onEnable() {
-		if (Bukkit.getServerName().equals("Regalis")) {
-			System.out.println("Server is Regalis, scheduling restart!");
+		if (Bukkit.getServerName().equals("Trinitos_Alpha")) {
+			System.out.println("Server is Alpha, scheduling restart!");
 			getServer().getScheduler().scheduleSyncDelayedTask(this, new Runnable() {
 				public void run() {
 					command("ee chatreload");
 				}
-			}, 11000L);
+			}, 20 * 60 * 5L);
 			// delay an hour and a half; there's no reason to check before then,
 			// and if you check too soon it'll restart loop.
 			// check every minute after that. players may get picky about their
@@ -58,7 +58,7 @@ public class AutoRestart extends JavaPlugin {
 
 	private static void executeBatch(String filename) {
 		try {
-			File dir = new File("C:\\StarQuest\\BungeeUtils");
+			File dir = new File("C:\\SQ3\\BungeeUtils");
 			Runtime.getRuntime().exec("c:\\windows\\system32\\cmd.exe /d /c " + filename + ".bat", null, dir);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block

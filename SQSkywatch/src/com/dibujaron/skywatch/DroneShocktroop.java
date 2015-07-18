@@ -10,6 +10,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Arrow;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Fireball;
 import org.bukkit.entity.Player;
@@ -82,8 +83,12 @@ public class DroneShocktroop {
 		mySkeleton.getWorld().playEffect(mySkeleton.getLocation(), Effect.ENDER_SIGNAL, 0);
 	}
 	
-	public static boolean isPossiblyShocktroop(Skeleton s) {
-		return s.getCustomName() != null && s.getCustomName().equals("Skywatch Shock Trooper");
+	public static boolean isPossiblyShocktroop(Entity e) {
+		if(e instanceof Skeleton){
+			Skeleton s = (Skeleton) e;
+			return s.getCustomName() != null && s.getCustomName().equals("Skywatch Shock Trooper");
+		}
+		return false;
 	}
 
 	Skeleton mySkeleton;

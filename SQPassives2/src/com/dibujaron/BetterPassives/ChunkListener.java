@@ -27,7 +27,8 @@ public class ChunkListener implements Listener {
 		Material.SNOW,
 		Material.MYCEL,
 		Material.SNOW_BLOCK,
-		Material.LEAVES
+		Material.LEAVES,
+		Material.NETHERRACK
 	});
 	
 	static final List<Material> PASSTHROUGH_TYPES = Arrays.asList(new Material[]{

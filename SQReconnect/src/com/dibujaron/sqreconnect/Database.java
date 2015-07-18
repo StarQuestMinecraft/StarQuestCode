@@ -133,14 +133,6 @@ public class Database {
 
 		try {
 			if ((cntx == null) || (cntx.isClosed()) || (!cntx.isValid(1))) {
-				if ((cntx != null) && (!cntx.isClosed())) {
-					try {
-						cntx.close();
-					} catch (SQLException e) {
-						System.out.print("Exception caught");
-					}
-					cntx = null;
-				}
 				cntx = DriverManager.getConnection(dsn, username, password);
 				if ((cntx == null) || (cntx.isClosed())) {
 					return false;

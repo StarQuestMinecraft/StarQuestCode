@@ -5,12 +5,18 @@ import net.countercraft.movecraft.event.CraftProjectileDetonateEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Ghast;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.projectiles.ProjectileSource;
 
 import com.starquestminecraft.sqcontracts.SQContracts;
 import com.starquestminecraft.sqcontracts.contracts.Contract;
@@ -20,18 +26,34 @@ import com.starquestminecraft.sqcontracts.database.Database;
 
 public class PlayerTriggerHandler implements Listener{
 		
-	@EventHandler
+	@EventHandler(priority = EventPriority.MONITOR)
 	public void onPlayerHit(EntityDamageByEntityEvent event){
+		if(event.isCancelled()) return;
 		System.out.println("Entity hit");
-		if(event.getDamager() instanceof Player && event.getEntity() instanceof Player){
+		if(event.getDamager() instanceof Player && event.getEntity() instanceof Player && event.getDamager() != event.getEntity()){
 			System.out.println("Player hit!");
 			//it's pvp
 			triggerCheck((Player) event.getDamager(), (Player) event.getEntity(), event, event.getDamage());
 		}
 		if(event.getDamager() instanceof Projectile){
 			Projectile p = (Projectile) event.getDamager();
-			if(p.getShooter() instanceof Player){
+			if(p.getShooter() instanceof Player && event.getEntity() instanceof Player && p.getShooter() != event.getEntity()){
 				triggerCheck((Player) p.getShooter(), (Player) event.getEntity(), event, event.getDamage());
+			}
+		}
+	}
+	
+	@EventHandler
+	public void onPlayerDeath(PlayerDeathEvent event){
+		Entity killer = event.getEntity().getKiller();
+		if(killer != null){
+			if(killer instanceof Player && killer != event.getEntity()){
+				triggerCheck((Player) killer, event.getEntity(), null, 100);
+			} else if (killer instanceof Projectile){
+				ProjectileSource shooter = ((Projectile) killer).getShooter();
+				if(shooter instanceof Player && shooter != event.getEntity()){
+					triggerCheck((Player) shooter, event.getEntity(), null, 100);
+				}
 			}
 		}
 	}
@@ -42,7 +64,7 @@ public class PlayerTriggerHandler implements Listener{
 		Player closest = findClosestPlayer(event.getExplosionBlock());
 		if(closest == event.getShooter()) return;
 		double dist = distanceSquared(event.getExplosionBlock().getLocation(), closest.getLocation());
-		if(dist < 20 * 20){
+		if(dist < 30 * 30){
 			System.out.println("Close player, triggering!");
 			triggerCheck(event.getShooter(), closest, event, 4D);
 		}
@@ -52,8 +74,10 @@ public class PlayerTriggerHandler implements Listener{
 		SkywatchStatus s = SkywatchStatus.statusOf(damager.getUniqueId());
 		if(s == SkywatchStatus.WARN_SHORT){
 			damager.sendMessage("PvP blocked by Skywatch lock.");
-			event.setCancelled(true);
-			return;
+			if(event != null){
+				event.setCancelled(true);
+				return;
+			}
 		}
 		Bukkit.getScheduler().runTaskAsynchronously(SQSkywatch.getInstance(), new Runnable(){
 			public void run(){
@@ -91,7 +115,7 @@ public class PlayerTriggerHandler implements Listener{
 		ContractPlayerData damagerData = d.getDataOfPlayer(damager.getUniqueId());
 		ContractPlayerData damagedData = d.getDataOfPlayer(damaged.getUniqueId());
 		boolean isDamagerPrivateer = isPrivateer(damagerData);
-		boolean isDamagedPrivateeer = isPrivateer(damagedData);
+		boolean isDamagedPrivateer = isPrivateer(damagedData);
 		boolean isDamagerWanted = damagerData.isWanted();
 		boolean isDamagedWanted = damagedData.isWanted();
 		
@@ -99,7 +123,7 @@ public class PlayerTriggerHandler implements Listener{
 			System.out.println("Should not trigger- damager is privateer and damagee is wanted!");
 			return false;
 		}
-		if(isDamagerWanted && isDamagedPrivateeer){
+		if(isDamagerWanted && isDamagedPrivateer){
 			System.out.println("Should not trigger- damager is wanted and damagee is privateer!");
 			return false;
 		}

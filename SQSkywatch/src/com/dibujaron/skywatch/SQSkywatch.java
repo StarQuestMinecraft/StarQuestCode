@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.util.UUID;
 
 import net.countercraft.movecraft.utils.EMPUtils;
+import net.countercraft.movecraft.utils.LocationUtils;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -52,6 +53,10 @@ public class SQSkywatch extends JavaPlugin implements Listener {
 	
 	private static SQSkywatch instance;
 	public void onEnable() {
+		if(LocationUtils.getSystem().equalsIgnoreCase("Trinitos_Gamma")){
+			Bukkit.getPluginManager().disablePlugin(this);
+			return;
+		}
 		instance = this;
 		getServer().getScheduler().scheduleSyncRepeatingTask(this, new Runnable() {
 			public void run() {
@@ -72,14 +77,50 @@ public class SQSkywatch extends JavaPlugin implements Listener {
 		flameBows = getConfig().getBoolean("flame");
 		pvpLock = getConfig().getBoolean("pvpLock");
 	}
+	
 	@EventHandler
 	public void onEntityDeath(EntityDeathEvent event){
-		if(event.getEntity() instanceof Skeleton){
+		Entity e = event.getEntity();
+		if(e instanceof Ghast){
+			Ghast g = (Ghast) e;
+			DroneFighter f = SQSkywatch.getInstance().getFighter(g);
+			SQSkywatch.activeFighters.remove(g);
+			Player target = f.target;
+			if(!SQSkywatch.outrightKill && SkywatchStatus.statusOf(target.getUniqueId()) == SkywatchStatus.ALL && !stillHasSkywatchAttacking(target, f, null)){
+				SkywatchStatus.setStatus(target.getUniqueId(), SkywatchStatus.NONE);
+				if(target != null) target.sendMessage("You have defeated all Skywatch troops and are now safe.");
+			}
+		} else if(DroneShocktroop.isPossiblyShocktroop(e)){
 			Skeleton s = (Skeleton) event.getEntity();
-			if(DroneShocktroop.isPossiblyShocktroop(s)){
-				event.getDrops().clear();
+			event.getDrops().clear();
+			DroneShocktroop stp = SQSkywatch.getInstance().getShocktroop(s);
+			SQSkywatch.activeFighters.remove(stp);
+			Player target = stp.target;
+			if(!SQSkywatch.outrightKill && SkywatchStatus.statusOf(target.getUniqueId()) == SkywatchStatus.ALL && !stillHasSkywatchAttacking(target, null, stp)){
+				SkywatchStatus.setStatus(target.getUniqueId(), SkywatchStatus.NONE);
+				if(target != null) target.sendMessage("You have defeated all Skywatch troops and are now safe.");
+			}
+			 //it's skywatch
+			//get the skywatch object associated with it
+		}
+		//is skywatch
+		//is last skywatch for player
+		//skywatchstatus=none if beta
+	}
+	
+	private boolean stillHasSkywatchAttacking(Player target, DroneFighter deadFighter, DroneShocktroop deadShocktroop){
+		for(DroneFighter ftr : SQSkywatch.activeFighters){
+			if(ftr != deadFighter && ftr.target == target){
+				//return, they still have active other skywatch after them.
+				return true;
 			}
 		}
+		for(DroneShocktroop stp : SQSkywatch.activeShocktroops){
+			if(stp != deadShocktroop && stp.target == target){
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	public void onDisable(){
@@ -289,7 +330,6 @@ public class SQSkywatch extends JavaPlugin implements Listener {
 
 
 	private static void update() {
-		System.out.println("active fighters: " + activeFighters.size() + "active shocktroops: " + activeShocktroops.size());
 		Iterator<DroneFighter> i = activeFighters.iterator();
 		while (i.hasNext()) {
 			DroneFighter f = i.next();
@@ -421,7 +461,7 @@ public class SQSkywatch extends JavaPlugin implements Listener {
 		}
 	}
 
-	private DroneFighter getFighter(Ghast g) {
+	DroneFighter getFighter(Ghast g) {
 		for (DroneFighter f : activeFighters) {
 			if (f.getGhast() == g) {
 				return f;
@@ -430,7 +470,7 @@ public class SQSkywatch extends JavaPlugin implements Listener {
 		return null;
 	}
 	
-	private DroneShocktroop getShocktroop(Skeleton skel){
+	DroneShocktroop getShocktroop(Skeleton skel){
 		for (DroneShocktroop s : activeShocktroops) {
 			if (s.mySkeleton == skel) {
 				return s;

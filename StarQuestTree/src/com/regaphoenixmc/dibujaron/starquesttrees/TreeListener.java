@@ -68,7 +68,7 @@ public class TreeListener implements Listener{
 	public void onTreeGrow(StructureGrowEvent event){
 	
 		//kelakarian flower trees
-		if (event.getWorld().getName().equalsIgnoreCase("Kelakaria")){
+		if (event.getWorld().getName().equalsIgnoreCase("Rakuria")){
 			if (Math.random() > 0.5){
 				if (event.getSpecies() == TreeType.BIRCH){
 					event.setCancelled(true);
@@ -101,7 +101,7 @@ public class TreeListener implements Listener{
 			}
 			return;
 		}
-		if (event.getWorld().getName().equalsIgnoreCase("Quavara")){
+		if (event.getWorld().getName().equalsIgnoreCase("Grun")){
 			if (event.getSpecies() == TreeType.TREE || event.getSpecies() == TreeType.BIG_TREE){
 				event.setCancelled(true);
 				spawnTree(event.getLocation(), "Quavara-Oak", new Vector(-4, 0, -4));
@@ -111,7 +111,7 @@ public class TreeListener implements Listener{
 			event.setCancelled(true);
 			return;
 		}
-		if (event.getWorld().getName().equalsIgnoreCase("Valadro")){
+		if (event.getWorld().getName().equalsIgnoreCase("Otavo")){
 			if (event.getSpecies() == TreeType.TREE || event.getSpecies() == TreeType.BIG_TREE){
 				if (Math.random() > 0.5){
 					event.setCancelled(true);
@@ -121,7 +121,7 @@ public class TreeListener implements Listener{
 				}
 			}
 		}
-		if (event.getWorld().getName().equalsIgnoreCase("Ceharram")){
+		if (event.getWorld().getName().equalsIgnoreCase("Xylos")){
 			if (event.getSpecies() == TreeType.REDWOOD){
 					event.setCancelled(true);
 					spawnTree(event.getLocation(), "Ceharram-Spruce", new Vector(-2, 0, -2));
@@ -153,7 +153,8 @@ public class TreeListener implements Listener{
 	}
 	@EventHandler
 	public void onBlockBreak(BlockBreakEvent event){
-		if (event.getPlayer().getWorld().getName().equalsIgnoreCase("Kelakaria")){
+		if(event.isCancelled()) return;
+		if (event.getPlayer().getWorld().getName().equalsIgnoreCase("Rakuria")){
 			if (event.getBlock().getType() == Material.WOOL){
 				Block wool = event.getBlock();
 				double chance = Math.random() * 100;
@@ -177,7 +178,7 @@ public class TreeListener implements Listener{
 				}
 			}
 		}
-		if (event.getPlayer().getWorld().getName().equalsIgnoreCase("Ceharram")){
+		if (event.getPlayer().getWorld().getName().equalsIgnoreCase("Xylos")){
 			if (event.getBlock().getType() == Material.GLOWSTONE){
 				double chance = Math.random() * 100;
 				if (chance < 5){
@@ -185,7 +186,31 @@ public class TreeListener implements Listener{
 				}
 			}
 		}
-		if (event.getPlayer().getWorld().getName().equalsIgnoreCase("Boletarian")){
+		if (event.getPlayer().getWorld().getName().equalsIgnoreCase("Grun")){
+			if (event.getBlock().getType() == Material.CACTUS){
+				double chance = Math.random() * 100;
+				if (chance < 20){
+					event.getBlock().getWorld().dropItem(event.getBlock().getLocation(), new ItemStack(Material.WOOL, 1, (short) 13));
+				}
+			}
+		}
+		if (event.getPlayer().getWorld().getName().equalsIgnoreCase("Loyavas")){
+			if (event.getBlock().getType() == Material.LEAVES && (event.getBlock().getData() == 5 || event.getBlock().getData() == 13)) {
+				double chance = Math.random() * 100;
+				if (chance < 20){
+					event.getBlock().getWorld().dropItem(event.getBlock().getLocation(), new ItemStack(Material.WOOL, 1, (short) 7));
+				}
+			}
+		}
+		if (event.getPlayer().getWorld().getName().equalsIgnoreCase("Eratoss")){
+			if (event.getBlock().getType() == Material.DIRT) {
+				double chance = Math.random() * 100;
+				if (chance < 5){
+					event.getBlock().getWorld().dropItem(event.getBlock().getLocation(), new ItemStack(Material.GRASS, 1));
+				}
+			}
+		}
+		if (event.getPlayer().getWorld().getName().equalsIgnoreCase("Cetallion")){
 			if (event.getBlock().getTypeId() == 100){
 				double chance = Math.random() * 100;
 				if (chance < 25){
