@@ -112,13 +112,18 @@ public class SQSkywatch extends JavaPlugin implements Listener {
 	private boolean stillHasSkywatchAttacking(Player target, DroneFighter deadFighter, DroneShocktroop deadShocktroop){
 		for(DroneFighter ftr : SQSkywatch.activeFighters){
 			if(ftr != deadFighter && ftr.target == target){
-				//return, they still have active other skywatch after them.
-				return true;
+				if(ftr.getGhast() != null && !ftr.getGhast().isDead()){
+					//return, they still have active other skywatch after them.
+					return true;
+				}
 			}
 		}
 		for(DroneShocktroop stp : SQSkywatch.activeShocktroops){
 			if(stp != deadShocktroop && stp.target == target){
-				return true;
+				if(stp.getSkeleton() != null && !stp.getSkeleton().isDead()){
+					//return, they still have active other skywatch after them.
+					return true;
+				}
 			}
 		}
 		return false;

@@ -75,9 +75,10 @@ public class Turret {
 		// finally, set the shooter
 		proj.setVelocity(finalVec);
 
-		if (!(proj instanceof Egg) || !(proj instanceof Snowball)) {
+		/*if (!(proj instanceof Egg) || !(proj instanceof Snowball)) {
 			proj.setShooter((ProjectileSource) p);
-		}
+		}*/
+		proj.setShooter(p);
 
 		if (proj instanceof Egg) {
 			SQTurrets.eggs.add(proj);

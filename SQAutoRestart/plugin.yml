@@ -5,4 +5,7 @@ commands:
    restartall:
       description: restart the server.
       usage: /restart <time delay>
+   delaystop:
+      description: stop the server in one second.
+      usage: /delaystop
 

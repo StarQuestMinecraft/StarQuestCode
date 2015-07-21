@@ -93,5 +93,11 @@ public class MoneyContract implements Contract {
 	
 	@Override
 	public void penalizeForCancellation(Player p) {
+		SQContracts.get().getEconomy().withdrawPlayer(p, cost / 2);
+	}
+	
+	@Override
+	public boolean canAffordCancellation(Player p){
+		return SQContracts.get().getEconomy().getBalance(p) >= (cost / 2);
 	}
 }

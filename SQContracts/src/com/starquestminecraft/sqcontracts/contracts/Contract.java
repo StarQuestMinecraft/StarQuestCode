@@ -25,5 +25,6 @@ public interface Contract extends Serializable{
 	public void giveRewards(ContractPlayerData d);
 	public long getOpenedMillis();
 	public void penalizeForCancellation(Player p);
+	public boolean canAffordCancellation(Player p);
 	
 }

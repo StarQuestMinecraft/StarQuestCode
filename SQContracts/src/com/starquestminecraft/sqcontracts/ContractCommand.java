@@ -192,13 +192,20 @@ public class ContractCommand implements CommandExecutor {
 		}
 		ContractPlayerData pdat = SQContracts.get().getContractDatabase().getDataOfPlayer(plr.getUniqueId());
 		Contract c = pdat.getContracts().get(i);
-		pdat.getContracts().remove(c);
-		SQContracts.get().getContractDatabase().updatePlayerData(plr.getUniqueId(), pdat);
 		if(System.currentTimeMillis() - c.getOpenedMillis() < 1000 * 60 * 60){
+			pdat.getContracts().remove(c);
+			SQContracts.get().getContractDatabase().updatePlayerData(plr.getUniqueId(), pdat);
 			plr.sendMessage("This contract has been removed for free (< 1 hr).");
 		} else {
-			c.penalizeForCancellation(plr);
-			plr.sendMessage("You have been charged for your failure to complete this contract.");
+			if(c.canAffordCancellation(plr)){
+				c.penalizeForCancellation(plr);
+				pdat.getContracts().remove(c);
+				SQContracts.get().getContractDatabase().updatePlayerData(plr.getUniqueId(), pdat);
+				plr.sendMessage("You have been charged for your failure to complete this contract.");
+			} else {
+				plr.sendMessage("You cannot afford the penalty for cancelling this contract (1/2 the reward). If you"
+						+ " feel you must cancel it, save up some cash and remove it once you can afford it.");
+			}
 		}
 	}
 

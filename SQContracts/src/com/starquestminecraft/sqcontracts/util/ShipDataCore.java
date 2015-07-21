@@ -83,16 +83,36 @@ public class ShipDataCore {
 		}
 	}
 	
-	public static boolean isShipDataCore(ItemStack i, boolean blackMarketRequired){
+	public static boolean isShipDataCore(ItemStack i, boolean isContractPiracy){
+		//piracy contracts can only complete with NON WANTED contracts
+		//privateering contracts can only complete with WANTED contracts
 		if(i == null) return false;
 		if(i.getType() != Material.PAPER) return false;
 		ItemMeta m = i.getItemMeta();
 		
 		if(m.getDisplayName().equals(ChatColor.RESET + "" + ChatColor.AQUA + "Starship Data Core")){
-			if(!blackMarketRequired) return true;
-			return m.getLore().size() > 5;
+			boolean wanted = isDataCoreWanted(m);
+			if(isContractPiracy){
+				//it's piracy
+				if(!wanted){
+					//piracy contracts can only complete with non wanted contracts.
+					return true;
+				}
+				//if it's wanted and a piracy contract, return false.
+				return false;
+			} else {
+				//it's privateering
+				if(wanted){
+					return true;
+				}
+				return false;
+			}
 		}
 		return false;
+	}
+	
+	private static boolean isDataCoreWanted(ItemMeta meta){
+		return meta.getLore().contains(ChatColor.DARK_RED + "WANTED");
 	}
 
 	private String type;

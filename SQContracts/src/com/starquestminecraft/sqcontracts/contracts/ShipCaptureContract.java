@@ -134,4 +134,9 @@ public class ShipCaptureContract implements Contract{
 	public void penalizeForCancellation(Player p) {
 		SQContracts.get().getEconomy().withdrawPlayer(p, reward / 2);
 	}
+	
+	@Override
+	public boolean canAffordCancellation(Player p){
+		return SQContracts.get().getEconomy().getBalance(p) >= (reward / 2);
+	}
 }
