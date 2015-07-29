@@ -1,9 +1,9 @@
 package com.starquestminecraft.sqrankup2;
 
-import java.io.Console;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import net.milkbowl.vault.chat.Chat;
 import net.milkbowl.vault.economy.Economy;
@@ -75,7 +75,7 @@ public class SQRankup2 extends JavaPlugin implements Listener{
 					}
 					permission.playerRemoveGroup(event.getPlayer(), s);
 				}
-				permission.playerAddGroup(event.getPlayer(), "settler");
+				permission.playerAddGroup(event.getPlayer(), "Refugee");
 			}
 		}
 	}
@@ -127,6 +127,10 @@ public class SQRankup2 extends JavaPlugin implements Listener{
 			if (!(sender instanceof Player))
 				return false;
 			final Player p = (Player) sender;
+			if(!p.hasPermission("rankup.use")){
+				p.sendMessage("You must be a [P] (player) to use Rankup! Apply for [P] at http://tinyurl.com/starquestapps");
+				return true;
+			}
 			Bukkit.getServer().getScheduler().runTaskAsynchronously(this, new Runnable() {
 				public void run() {
 					switch (keyArg) {
@@ -153,12 +157,12 @@ public class SQRankup2 extends JavaPlugin implements Listener{
 			return true;
 		} else if ((cmd.getName().equalsIgnoreCase("addapp")) && (sender.hasPermission("SQRankup.addApplication"))) {
 			if (args.length >= 1) {
-				getServer().broadcastMessage(ChatColor.RED + args[0] + " has ranked up to settler!");
+				getServer().broadcastMessage(ChatColor.RED + args[0] + " has ranked up to Player!");
 				getServer().broadcastMessage(
-						ChatColor.RED + "Are you a " + ChatColor.GREEN + "Refugee" + ChatColor.RED + "? Rank up to " + ChatColor.DARK_GREEN + "Settler"
-								+ ChatColor.RED + " like " + args[0] + " did!");
+						ChatColor.RED + "Are you a [" + ChatColor.DARK_GRAY + "G" + ChatColor.RED + "] (Guest)? Rank up to [" + ChatColor.GRAY + "P"
+								+ ChatColor.RED + "] (Player) like " + args[0] + " did!");
 				getServer().broadcastMessage(
-						ChatColor.RED + "Visit " + ChatColor.BLUE + "http://tinyurl.com/starquestapps" + ChatColor.RED + " to apply for Settler rank!");
+						ChatColor.RED + "Visit " + ChatColor.BLUE + "http://tinyurl.com/starquestapps" + ChatColor.RED + " to apply for Player rank!");
 
 				permission.playerAddGroup(null, getServer().getOfflinePlayer(args[0]), "SETTLER");
 				permission.playerRemoveGroup(null, getServer().getOfflinePlayer(args[0]), "REFUGEE");
@@ -234,8 +238,6 @@ public class SQRankup2 extends JavaPlugin implements Listener{
 					} else {
 						type = UnlockType.NEUTRAL;
 					}
-					System.out.println(i);
-					System.out.println(available.size());
 					if (i > -1 && i < available.size()) {
 						Certification c = available.get(i);
 						if(!c.canAffordCosts(p)){
@@ -269,6 +271,18 @@ public class SQRankup2 extends JavaPlugin implements Listener{
 				}
 			}
 		}
+	}
+	
+	public static int getNumUpgrades(List<String> certs, String shipclass){
+		String key = shipclass.toLowerCase() + "_";
+		int retval = 0;
+		for(String s : certs){
+			String certName = stripType(s).toLowerCase();
+			if(certName.startsWith(key)){
+				retval++;
+			}
+		}
+		return retval;
 	}
 
 	private String getTypeOfCertToGive(Certification c, Player p,
@@ -323,7 +337,6 @@ public class SQRankup2 extends JavaPlugin implements Listener{
 	private void displayAvailable(Player p, ArrayList<Certification> unlocks, int page) {
 		
 		int startPoint = 0 + ((page -1) * 10); //0, 10, 20, 30
-		System.out.println("Start point: " + startPoint);
 		p.sendMessage(ChatColor.GREEN + "Available certifications to unlock (page " + page + "):");
 		p.sendMessage(ChatColor.GOLD + "============================================");
 		int endPoint = startPoint + 10 > unlocks.size() ? unlocks.size() : startPoint + 10;
@@ -342,13 +355,17 @@ public class SQRankup2 extends JavaPlugin implements Listener{
 	}
 
 	private ArrayList<Certification> getAvailableUnlocks(Player p, ArrayList<String> existingCerts) {
+		ArrayList<String> existingStripped = new ArrayList<String>();
+		for(String s : existingCerts){
+			existingStripped.add(stripType(s));
+		}
 		ArrayList<Certification> retval = new ArrayList<Certification>();
 		for (Certification c : certPool.values()) {
-			System.out.println("testing cert: " + c.getIdentifier());
-			if (!existingCerts.contains(c.getIdentifier())) {
+			if (!existingStripped.contains(stripType(c.getIdentifier()))) {
 				if (c.satisfiesLawfulPreReqs(existingCerts) || c.satisfiesOutlawPreReqs(existingCerts)) {
-					System.out.println("Cert passed!");
-					retval.add(c);
+					if(c.satisfiesUpgradeCountRequirements(existingCerts)){
+						retval.add(c);
+					}
 				}
 			}
 		}
@@ -376,9 +393,7 @@ public class SQRankup2 extends JavaPlugin implements Listener{
 			}
 			String cert = playerCerts.get(i);
 			Certification c = certPool.get(stripType(cert));
-			System.out.println("Removing cert!");
 			if(c != null){
-				System.out.println("Removing cert!");
 				c.removeFromPlayer(p);
 				playerCerts.remove(cert);
 				database.updateCertsOfPlayer(p.getUniqueId(), playerCerts);
@@ -475,20 +490,16 @@ public class SQRankup2 extends JavaPlugin implements Listener{
 	
 	@EventHandler
 	public void onPlayerAchievement(PlayerAchievementAwardedEvent event){
-		System.out.println("Achievement!");
 		Achievement a = event.getAchievement();
 		for(String s : bonusTags.keySet()){
-			System.out.println("Testing bonus tag " + s);
 			BonusTag t = bonusTags.get(s);
 			if(t instanceof AchievementTag){
 				AchievementTag tag = (AchievementTag) t;
 				Achievement a2 = tag.getAchievement();
 				if(a2 == a){
-					System.out.println("Achievement found!");
 					String id = tag.getIdentifier();
 					ArrayList<String> certs = database.getCertsOfPlayer(event.getPlayer().getUniqueId());
 					if(!certs.contains(id)){
-						System.out.println("Adding cert for bonus tag.");
 						certs.add(id);
 					}
 					database.updateCertsOfPlayer(event.getPlayer().getUniqueId(), certs);
@@ -499,7 +510,7 @@ public class SQRankup2 extends JavaPlugin implements Listener{
 		}
 	}
 	
-	public String stripType(String s){
+	public static String stripType(String s){
 		if(s.startsWith("outlaw-") || s.startsWith("lawful-")){
 			return s.substring(7, s.length());
 		} return s;

@@ -94,12 +94,9 @@ public class ShipDataCore {
 			boolean wanted = isDataCoreWanted(m);
 			if(isContractPiracy){
 				//it's piracy
-				if(!wanted){
 					//piracy contracts can only complete with non wanted contracts.
 					return true;
-				}
 				//if it's wanted and a piracy contract, return false.
-				return false;
 			} else {
 				//it's privateering
 				if(wanted){

@@ -14,8 +14,6 @@ public class UUIDUtils {
 		if(profiles == null || profiles.length == 0) return null;
 		String s = profiles[0].getId();
 		String s2 = profiles[0].getName();
-		System.out.println(s);
-		System.out.println(s2);
 		UUID u = uncanonicalizeUUID(s);
 		return u;
 	}

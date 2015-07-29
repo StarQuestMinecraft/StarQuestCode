@@ -22,15 +22,11 @@ public class CaptureContractGenerator {
 		
 	//first get the number of ship classes to offer (1-4)
 		int numClasses = (int) Math.round(FunctionRandomizer.randomModifierRange(3, generator, 2));
-		System.out.println("numClasses: " + numClasses);
 		
 	//now get the number of ships to capture (1-15 ish)
 		double numShipsBase = 0.04 * (level) + 1;
-		System.out.println("numShipsBase: " + numShipsBase);
 		double numShipsMod = FunctionRandomizer.randomModifierPercentage(numShipsBase, generator, 50);
-		System.out.println("numShipsMod: " + numShipsBase);
 		int numShipsFnl = (int) Math.round(numShipsMod);
-		System.out.println("rounded: " + numShipsFnl);
 		if(numShipsFnl < 1) numShipsFnl = 1;
 		
 	//for each class type, pick a class type based on their level

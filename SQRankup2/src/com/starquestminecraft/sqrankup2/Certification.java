@@ -105,29 +105,52 @@ public class Certification {
 	}
 		
 	public boolean satisfiesLawfulPreReqs(List<String> existing){
-		for(String s : existing) System.out.println("existing: " + s);
+		ArrayList<String> existingStripped = new ArrayList<String>();
+		for(String s : existing){
+			existingStripped.add(SQRankup2.stripType(s));
+		}
 		for(String s : getLawfulPreRequisites()){
-			System.out.println("testing prereq: " + s);
-			if(!existing.contains(s) && !existing.contains("alt-" + s)){
-				System.out.println("Existing does not contain!");
+			String s2 = SQRankup2.stripType(s);
+			if(!existingStripped.contains(s2)){
 				return false;
 			}
 		}
-		System.out.println("Passed!");
 		return true;
 	}
 	
 	public boolean satisfiesOutlawPreReqs(List<String> existing){
-		for(String s : existing) System.out.println("existing: " + s);
+		ArrayList<String> existingStripped = new ArrayList<String>();
+		for(String s : existing){
+			existingStripped.add(SQRankup2.stripType(s));
+		}
 		for(String s : getOutlawPreRequisites()){
-			System.out.println("testing prereq: " + s);
-			if(!existing.contains(s) && !existing.contains("alt-" + s)){
-				System.out.println("Existing does not contain!");
+			String s2 = SQRankup2.stripType(s);
+			if(!existingStripped.contains(s2)){
 				return false;
 			}
 		}
-		System.out.println("Passed!");
 		return true;
+	}
+	
+	public boolean satisfiesUpgradeCountRequirements(List<String> existing){
+		String shipClass = values.get("relevantshipclass");
+		if(shipClass == null) return true;
+		
+		//used by captain certs
+		String minUpgrades = values.get("minupgrades");
+		int min = 0;
+		if(minUpgrades != null){
+			min = Integer.parseInt(minUpgrades);
+		}
+		//used by all upgrade certs
+		String maxUpgrades = values.get("maxupgrades");
+		int max = Integer.MAX_VALUE;
+		if(maxUpgrades != null){
+			max = Integer.parseInt(maxUpgrades);
+		}
+		
+		int upgrades = SQRankup2.getNumUpgrades(existing, shipClass);
+		return min <= upgrades && upgrades <= max;
 	}
 	
 
@@ -194,7 +217,6 @@ public class Certification {
 			cmd = cmd.replaceAll("\\{uuid\\}", p.getUniqueId().toString());
 			cmd = cmd.replaceAll("\\{world\\}", p.getWorld().getName());
 			cmd = cmd.replaceAll("\\{server\\}", Bukkit.getServerName());
-			System.out.println("dispatching: " + cmd);
 			Bukkit.dispatchCommand(Bukkit.getConsoleSender(), cmd);
 		}
 	}
@@ -206,7 +228,6 @@ public class Certification {
 			cmd = cmd.replaceAll("\\{uuid\\}", p.getUniqueId().toString());
 			cmd = cmd.replaceAll("\\{world\\}", p.getWorld().getName());
 			cmd = cmd.replaceAll("\\{server\\}", Bukkit.getServerName());
-			System.out.println("dispatching: " + cmd);
 			Bukkit.dispatchCommand(Bukkit.getConsoleSender(), cmd);
 		}
 	}

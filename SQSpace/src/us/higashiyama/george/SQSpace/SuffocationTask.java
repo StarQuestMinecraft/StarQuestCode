@@ -14,23 +14,6 @@ public class SuffocationTask extends BukkitRunnable {
 	SuffocationTask(SQSpace plugin, Player p) {
 		this.p = p;
 		long delay = 20L;
-		if (null != p.getInventory().getHelmet()) {
-			this.OxygenLevel = p.getInventory().getHelmet()
-					.getEnchantmentLevel(Enchantment.OXYGEN);
-			switch (this.OxygenLevel) {
-			case 3: // Should never trigger - qualifies as hasSpaceHelmet
-				delay *= 27;
-				// Intentionally use fall-through to create exponential time
-				// growth in delay
-			case 2:
-				delay *= 9;
-			case 1:
-				delay *= 3;
-
-			default:
-				break;
-			}
-		}
 		this.runTaskTimer(plugin, delay, delay);
 		this.plugin = plugin;
 	}

@@ -45,12 +45,12 @@ public class AutoRestart extends JavaPlugin {
 			return true;
 		}
 		if(cmd.getName().equalsIgnoreCase("delaystop") && sender instanceof ConsoleCommandSender){
-			System.out.println("Server stopping in one second...");
+			System.out.println("Server stopping in five seconds...");
 			Bukkit.getScheduler().scheduleSyncDelayedTask(this, new Runnable(){
 				public void run(){
 					Bukkit.getServer().shutdown();
 				}
-			}, 20L);
+			}, 20 * 5L);
 			return true;
 		}
 		return false;

@@ -25,7 +25,6 @@ public class FileDatabase implements Database {
 	public ContractPlayerData getDataOfPlayer(UUID u) {
 		File f = new File(path + u);
 		if (!f.exists()) {
-			System.out.println("No contract data found for" + u);
 			return ContractPlayerData.createDefault(u);
 		} else {
 			ContractPlayerData retval;
@@ -43,7 +42,6 @@ public class FileDatabase implements Database {
 	public void updatePlayerData(UUID u, ContractPlayerData d) {
 		File f = new File(path + u);
 		if (!f.exists()) {
-			System.out.println("Creating new ContractPlayerData for " + u);
 			f.mkdirs();
 		}
 		try {

@@ -30,6 +30,7 @@ public class Certification {
 				if (s.length() == 0)
 					continue;
 				String[] split = s.split(": ");
+				if(split.length < 2) continue;
 				String key = split[0].toLowerCase();
 				if (key.equals("onadd")) {
 					onAdd.add(split[1]);

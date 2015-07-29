@@ -21,7 +21,6 @@ public class FunctionRandomizer extends Randomizer{
 	@Override
 	public Contract[] generateContractsForPlayer(UUID player, String type) {
 		
-		System.out.println("Generating contracts of type " + type + ".");
 		ContractPlayerData pData = SQContracts.get().getContractDatabase().getDataOfPlayer(player);
 		Contract[] retval = new Contract[pData.getNumNewContractOffers()];
 		
@@ -49,7 +48,6 @@ public class FunctionRandomizer extends Randomizer{
 			//String cType = currencies[generator.nextInt(currencies.length)];
 			retval[i] = generate(generator, pData, /*cType*/ type);
 		}
-		System.out.println("returning retval");
 		return retval;
 	}
 
@@ -60,19 +58,14 @@ public class FunctionRandomizer extends Randomizer{
 		
 		switch(type){
 		case "philanthropy":
-			System.out.println("Generating philanthropy contract.");
 			return generateMoneyContract(generator, pData);
 		case "smuggling":
-			System.out.println("Generating smuggling contract.");
 			return generateItemContract(generator, pData, true);
 		case "trading":
-			System.out.println("Generating trading contract.");
 			return generateItemContract(generator, pData, false);
 		case "infamy":
-			System.out.println("Generating infamy contract.");
 			return generateShipCaptureContract(generator, pData, true);
 		case "reputation":
-			System.out.println("Generating reputation contract.");
 			return generateShipCaptureContract(generator, pData, false);
 		}
 		return null;

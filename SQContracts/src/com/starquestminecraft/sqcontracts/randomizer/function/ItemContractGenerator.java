@@ -52,17 +52,13 @@ public class ItemContractGenerator {
 			prices = new int[1];
 			prices[0] = targ;
 		}
-		System.out.println(arrayPrint(prices) + ", summing to " + priceTarget);
 		
 	//given the price for each, figure out about how many items that is (rounding)
 		int[] numItemsEach = new int[numFnl];
 		for(int i = 0; i < numFnl; i++){
 			int priceCoveredByItem = prices[i];
-			System.out.println("    Price covered by item: " + priceCoveredByItem);
 			double itemsdbl = priceCoveredByItem / data[i].getUnitPrice();
-			System.out.println("    itemsdbl: " + itemsdbl);
 			int itemsFnl = (int) Math.round(itemsdbl);
-			System.out.println("    itemsfnl: " + itemsFnl);
 			if(itemsFnl < 1) itemsFnl = 1;
 			numItemsEach[i] = itemsFnl;
 		}

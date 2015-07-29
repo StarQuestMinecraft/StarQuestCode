@@ -23,7 +23,6 @@ public abstract class Randomizer {
 		int ampm = calendar.get(Calendar.AM_PM);
 		
 		BASE_SEED = new Random(year + month + dayOfMonth + dayOfWeek + weekOfYear + weekOfMonth - ampm).nextLong();
-		System.out.println("Base Seed: " + BASE_SEED);
 	}
 
 	public static long getRandomSeed2(ContractPlayerData pData){
@@ -37,16 +36,10 @@ public abstract class Randomizer {
 		double leastSig = player.getLeastSignificantBits();
 		
 		if(modifCurrency == 0) modifCurrency = -1;
-		System.out.println("modifCurrency: " + modifCurrency);
 		if(modifNum == 0) modifNum = -2;
-		System.out.println("modifNum: " + modifNum);
 		if(leastSig == 0) leastSig = -3;
-		System.out.println("leastSig: " + modifNum);
 		if(mostSig == 0) mostSig = -4;
-		System.out.println("mostSig: " + mostSig);
-		System.out.println("base seed: " + BASE_SEED);
 		long seed = (long) (BASE_SEED * leastSig * mostSig * modifCurrency * modifNum);
-		System.out.println("Seed for " + pData.getPlayer() + " is " + seed);
 		return seed;
 	}
 	

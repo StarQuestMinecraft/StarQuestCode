@@ -24,7 +24,6 @@ public class FileDataHandler {
 	private static List<Weighable<ShipClassData>> shipDataList = new ArrayList<Weighable<ShipClassData>>();
 
 	public static void loadFromFile() {
-		System.out.println("Begin loading file data.");
 		try {
 			File f = new File(SQContracts.get().getDataFolder() + File.separator + "itemdata.txt");
 			BufferedReader br = new BufferedReader(new FileReader(f));
@@ -40,9 +39,7 @@ public class FileDataHandler {
 				line = br.readLine();
 			}
 			br.close();
-			System.out.println("Finished loading item data: " + itemDataList.size() + " entries.");
 
-			System.out.println("Begin loading starship data.");
 			f = new File(SQContracts.get().getDataFolder() + File.separator + "shipclassdata.txt");
 			br = new BufferedReader(new FileReader(f));
 			line = br.readLine();
@@ -57,7 +54,6 @@ public class FileDataHandler {
 				line = br.readLine();
 			}
 			br.close();
-			System.out.println("Finished loading starship data: " + shipDataList.size() + " entries.");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -128,7 +124,6 @@ public class FileDataHandler {
 			return new ItemData(type, data, price, minLevel, rarity);
 		} catch (Exception e) {
 			e.printStackTrace();
-			System.out.println("failed to load ship class data: " + line);
 			return null;
 		}
 	}
@@ -144,7 +139,6 @@ public class FileDataHandler {
 			return new ShipClassData(className, price, minLevel, rarity);
 		} catch (Exception e) {
 			e.printStackTrace();
-			System.out.println("failed to load ship class data: " + line);
 			return null;
 		}
 	}

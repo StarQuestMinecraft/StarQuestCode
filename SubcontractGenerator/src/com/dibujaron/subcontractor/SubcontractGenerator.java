@@ -28,7 +28,6 @@ public class SubcontractGenerator {
 		Certification cert = new Certification(f.getAbsolutePath());
 		System.out.println(cert.getDescription());
 		String shipclass = cert.getIdentifier();
-		
 		File directory = f.getParentFile();
 		
 		//generate armor 1
@@ -77,24 +76,6 @@ public class SubcontractGenerator {
 		generateCaptainCert(directory, cert);
 	}
 	
-	private static boolean isCombatShipclass(String shipclass){
-		switch(shipclass.toLowerCase()){
-			case "fighter":
-			case "starfighter":
-			case "gunship":
-			case "cruiser":
-			case "dreadnought":
-			case "pursuer":
-			case "interceptor":
-			case "carrier":
-			case "warpcarrier":
-			case "warpdreadnought":
-				return true;
-			default:
-				return false;
-		}
-	}
-	
 	private static void generateShipclassSubCert(File directory, Certification cert, String type, int level, int incrementation) throws IOException{
 		String shipClass = cert.getIdentifier();
 		HashMap<String,String> values = new HashMap<String, String>();
@@ -105,21 +86,28 @@ public class SubcontractGenerator {
 		values.put("identifier", shipClass + "_" + type + level);
 		values.put("description", "Upgrade your " + shipClass + " to support level " + level + " " + type);
 		if(level == 1){
-		values.put("lawfulPreRequisites", shipClass);
-		values.put("outlawPreRequisites", shipClass);
+			values.put("lawfulPreRequisites", shipClass);
+			values.put("outlawPreRequisites", shipClass);
 		} else {
 			String preReq = shipClass;
-			for(int i = 1; i < level; i++){
+			/*for(int i = 1; i < level; i++){
 				String miniPrereq = shipClass + "_" + type + i;
 				preReq = preReq + ", " + miniPrereq;
-			}
-			values.put("preRequisites", preReq);
+			}*/
+			preReq = preReq + "_" + type + (level-1);
+			values.put("lawfulPreRequisites", preReq);
+			values.put("outlawPreRequisites", preReq);
 		}
-		values.put("costCredits", "" + ((int) level * cert.getCostInCurrency("credits") / 10));
+		values.put("costCredits", "" + (30 * cert.getCostInCurrency("credits") / 100));
 		values.put("subCertCheckExempt", "false");
+		values.put("relevantShipClass", shipClass);
+		values.put("maxUpgrades", "" + 4);
 		onAdd.add("perms player {name} set movecraft." + shipClass + "." + type + "." + level);
 		onRemove.add("perms player {name} unset movecraft." + shipClass + "." + type + "." + level);
 		putMinValues(values, cert.values, incrementation);
+		if(level == 3){
+			lockForClass(values, cert.values, type, incrementation);
+		}
 		Certification armor1 = new Certification(values, onAdd, onRemove);
 		File writeFile = new File(directory + File.separator + "finished" + File.separator + shipClass + "_" + type + level + ".cert");
 		if(!writeFile.exists()){
@@ -138,32 +126,49 @@ public class SubcontractGenerator {
 		values.put("default", "" + false);
 		values.put("identifier", shipClass + "_captain");
 		values.put("description", "A captain title for " + shipClass + ".");
-		
-		values.put("tag", capitalizeFirstLetter(shipClass) + " Captain");
+		values.put("relevantShipClass", shipClass);
+		values.put("minUpgrades", "" + 5);
+		String tag = capitalizeFirstLetter(shipClass) + " Captain";
+		values.put("lawfulTag", tag);
+		values.put("outlawTag", tag);
 		if(isCombatShipclass(shipClass)){
-			values.put("preRequisites", shipClass + "_guns3");
-			values.put("altPreRequisites", shipClass + "_armor3");
-			values.put("tagColor", 4 + "");
-			values.put("altTagColor", 1 + "");
+			values.put("outlawTagColor", 4 + "");
+			values.put("lawfulTagColor", 1 + "");
 		} else {
-			values.put("preRequisites", shipClass + "_speed3");
-			values.put("altPreRequisites", shipClass + "_capacity3");
-			values.put("tagColor", 6 + "");
-			values.put("altTagColor", 3 + "");
+			values.put("outlawTagColor", 6 + "");
+			values.put("lawfulTagColor", 3 + "");
 		}
 		
-		values.put("costCredits", "" + ((int) cert.getCostInCurrency("credits") / 10));
+		values.put("costCredits", "" + 0);
 		values.put("subCertCheckExempt", "false");
 		putMinValues(values, cert.values, 15);
-		Certification armor1 = new Certification(values, onAdd, onRemove);
+		Certification cap = new Certification(values, onAdd, onRemove);
 		File writeFile = new File(directory + File.separator + "finished" + File.separator + shipClass + "_captain.cert");
 		if(!writeFile.exists()){
 			writeFile.getParentFile().mkdirs();
 			writeFile.createNewFile();
 		}
-		armor1.writeToFile(writeFile);
+		cap.writeToFile(writeFile);
 	}
 	
+	private static boolean isCombatShipclass(String shipClass) {
+		switch(shipClass.toLowerCase()){
+		case "carrier":
+		case "cruiser":
+		case "dreadnought":
+		case "fighter":
+		case "flagdreadnought":
+		case "gunship":
+		case "interceptor":
+		case "pursuer":
+		case "tank":
+		case "warmachine":
+			return true;
+		default:
+			return false;
+		}
+	}
+
 	private static String capitalizeFirstLetter(String shipClass) {
 		return shipClass.substring(0,1).toUpperCase() + shipClass.substring(1, shipClass.length());
 	}
@@ -174,12 +179,28 @@ public class SubcontractGenerator {
 		values.put("tradingMin", checkAndIncrement(existing.get("tradingmin"), i));
 		values.put("smugglingMin", checkAndIncrement(existing.get("smugglingmin"), i));
 		values.put("reputationMin", checkAndIncrement(existing.get("reputationmin"), i));
-		
-		values.put("altInfamyMin", checkAndIncrement(existing.get("altinfamymin"), i));
-		values.put("altPhilanthropyMin", checkAndIncrement(existing.get("altphilanthropymin"), i));
-		values.put("altTradingMin", checkAndIncrement(existing.get("alttradingmin"), i));
-		values.put("altSmugglingMin", checkAndIncrement(existing.get("altsmugglingmin"), i));
-		values.put("altReputationMin", checkAndIncrement(existing.get("altreputationmin"), i));
+		values.put("tradingOrSmugglingMin", checkAndIncrement(existing.get("tradingorsmugglingmin"), i));
+		values.put("reputationOrInfamyMin", checkAndIncrement(existing.get("reputationorinfamymin"), i));
+		values.put("totalMin", checkAndIncrement(existing.get("totalmin"), i));
+	}
+	
+	private static void lockForClass(HashMap<String, String> values, HashMap<String, String> existing, String type, int i){
+		if(type == "guns"){
+			values.put("infamyMin", checkAndIncrement(existing.get("reputationorinfamymin"), i));
+			return;
+		}
+		if(type == "armor"){
+			values.put("reputationMin", checkAndIncrement(existing.get("reputationorinfamymin"), i));
+			return;
+		}
+		if(type == "capacity"){
+			values.put("tradingMin", checkAndIncrement(existing.get("tradingorsmugglingmin"), i));
+			return;
+		}
+		if(type == "speed"){
+			values.put("smugglingMin", checkAndIncrement(existing.get("tradingorsmugglingmin"), i));
+			return;
+		}
 	}
 	
 	private static String checkAndIncrement(String valueString, int incrementation){

@@ -27,17 +27,14 @@ public class ContractCompletionRunnable extends BukkitRunnable {
 	public void run() {
 		for (Holder h : toComplete) {
 			try {
-				System.out.println("Attempting to complete contract: " + h.d.getPlayer());
 				Contract c = h.c;
 				Player p = Bukkit.getPlayer(c.getPlayer());
 				if (p == null) {
-					System.out.println("ERROR: attempted to complete contract for offline player.");
 					continue;
 				}
 
 				Craft craft = CraftManager.getInstance().getCraftByPlayer(p);
 				if (craft == null) {
-					p.sendMessage("You must be flying a ship to complete your contract.");
 					continue;
 				}
 

@@ -1,5 +1,6 @@
 package com.starquestminecraft.sqcontracts;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
@@ -17,6 +18,7 @@ import com.starquestminecraft.sqcontracts.randomizer.config.ConfigRandomizer;
 import com.starquestminecraft.sqcontracts.util.ContractCompletionRunnable;
 import com.starquestminecraft.sqcontracts.util.StationUtils;
 import com.starquestminecraft.sqcontracts.util.UUIDUtils;
+import com.starquestminecraft.sqcontracts.util.WantedUtils;
 
 public class ContractCommand implements CommandExecutor {
 
@@ -82,7 +84,6 @@ public class ContractCommand implements CommandExecutor {
 						handleNewCommand(plr, plr, fnlargs);
 						return;
 					case "available":
-						System.out.println("Available registered!");
 						handleAvailableCommand(plr, plr, fnlargs);
 						return;
 					case "list":
@@ -139,16 +140,25 @@ public class ContractCommand implements CommandExecutor {
 	private void displayWantedList(Player plr, String[] fnlargs) {
 		if (fnlargs.length == 1) {
 			List<Player> plrs = plr.getWorld().getPlayers();
-
-			plr.sendMessage(ChatColor.RED + "Wanted players online in your world: ");
+			ArrayList<String> wantedMessages = new ArrayList<String>();
+			ArrayList<String> privateerMessages = new ArrayList<String>();
 			for (Player p : plrs) {
 				ContractPlayerData data = SQContracts.get().getContractDatabase().getDataOfPlayer(p.getUniqueId());
 				if (data.isWanted()) {
-					plr.sendMessage(ChatColor.RED + p.getName());
+					wantedMessages.add(ChatColor.RED + p.getName());
 					if (p != plr)
 						p.sendMessage(ChatColor.RED + plr.getName() + " saw your name on the wanted list!");
 				}
+				if(data.isPrivateer()){
+					privateerMessages.add(ChatColor.BLUE + p.getName());
+					if (p != plr)
+						p.sendMessage(ChatColor.BLUE + plr.getName() + " saw your name on the privateer list!");
+				}
 			}
+			plr.sendMessage(ChatColor.RED + "Wanted players online in your world: ");
+			for(String s : wantedMessages) plr.sendMessage(s);
+			plr.sendMessage(ChatColor.BLUE + "Privateer players online in your world:");
+			for(String s : privateerMessages) plr.sendMessage(s);
 		} else {
 			UUID u = UUIDUtils.uuidFromUsername(fnlargs[0]);
 			if(u == null) plr.sendMessage("This player was not found, did you type their name right?");
@@ -157,6 +167,11 @@ public class ContractCommand implements CommandExecutor {
 				plr.sendMessage("This player is wanted.");
 			} else {
 				plr.sendMessage("This player is not wanted.");
+			}
+			if(data.isPrivateer()){
+					plr.sendMessage("This player is a privateer.");
+			} else {
+				plr.sendMessage("This player is not a privateer.");
 			}
 		}
 	}
@@ -202,6 +217,10 @@ public class ContractCommand implements CommandExecutor {
 				pdat.getContracts().remove(c);
 				SQContracts.get().getContractDatabase().updatePlayerData(plr.getUniqueId(), pdat);
 				plr.sendMessage("You have been charged for your failure to complete this contract.");
+				if(c.isBlackMarket()){
+					WantedUtils.addDelayedWanted(plr.getUniqueId());
+					plr.sendMessage("Your wanted status for this contract will remain for the next hour.");
+				}
 			} else {
 				plr.sendMessage("You cannot afford the penalty for cancelling this contract (1/2 the reward). If you"
 						+ " feel you must cancel it, save up some cash and remove it once you can afford it.");
@@ -265,6 +284,10 @@ public class ContractCommand implements CommandExecutor {
 			notify.sendMessage("To see your list of available contracts, type /contract available <type>.");
 			notify.sendMessage("To accept one, type /contract new <type> #, where # is the number of the contract from the available list.");
 		} else {
+			if(plr.getWorld().getName().toLowerCase().startsWith("trinitos_")){
+				plr.sendMessage("You can only accept new contracts on a planet.");
+				return;
+			}
 			try {
 				String type = args[1];
 				int id = Integer.parseInt(args[2]);

@@ -9,6 +9,8 @@ import java.util.Set;
 import java.util.UUID;
 
 import com.starquestminecraft.sqcontracts.contracts.Contract;
+import com.starquestminecraft.sqcontracts.contracts.ShipCaptureContract;
+import com.starquestminecraft.sqcontracts.util.WantedUtils;
 
 public class ContractPlayerData implements Serializable{
 	
@@ -79,6 +81,18 @@ public class ContractPlayerData implements Serializable{
 		for(Contract c : contracts){
 			if(c.isBlackMarket()) return true;
 		}
+		if(WantedUtils.delayedWantedPlayers.keySet().contains(player)){
+			return true;
+		}
 		return false;
 	}
+	
+	public boolean isPrivateer(){
+		for(Contract c : contracts){
+			if(c instanceof ShipCaptureContract && !c.isBlackMarket()) return true;
+		}
+		return false;
+	}
+	
+	
 }

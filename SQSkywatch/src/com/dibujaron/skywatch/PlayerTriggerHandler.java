@@ -60,12 +60,10 @@ public class PlayerTriggerHandler implements Listener{
 	
 	@EventHandler
 	public void onCraftShoot(CraftProjectileDetonateEvent event){
-		System.out.println("Craft bullet hit");
 		Player closest = findClosestPlayer(event.getExplosionBlock());
 		if(closest == event.getShooter()) return;
 		double dist = distanceSquared(event.getExplosionBlock().getLocation(), closest.getLocation());
 		if(dist < 30 * 30){
-			System.out.println("Close player, triggering!");
 			triggerCheck(event.getShooter(), closest, event, 4D);
 		}
 	}

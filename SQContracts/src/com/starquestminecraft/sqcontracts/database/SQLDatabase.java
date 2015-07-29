@@ -109,7 +109,6 @@ public class SQLDatabase implements Database {
 			objectIn = new ObjectInputStream(new ByteArrayInputStream(buffer));
 
 		Object deSerializedObject = objectIn.readObject();
-		System.out.println("Object is " + deSerializedObject.getClass().getName());
 		ContractPlayerData retval = (ContractPlayerData) deSerializedObject;
 		rs.close();
 		pstmt.close();
@@ -144,7 +143,6 @@ public class SQLDatabase implements Database {
 		}
 		rs.close();
 		pstmt.close();
-		System.out.println("Read " + i + " entries.");
 		return all.toArray(new ContractPlayerData[0]);
 	}
 }
