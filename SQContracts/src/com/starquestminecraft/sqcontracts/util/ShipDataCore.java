@@ -13,11 +13,13 @@ import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
  
 
+
 import com.starquestminecraft.sqcontracts.SQContracts;
 import com.starquestminecraft.sqcontracts.database.ContractPlayerData;
 
 import net.countercraft.movecraft.Movecraft;
 import net.countercraft.movecraft.database.StarshipData;
+import net.countercraft.movecraft.utils.LocationUtils;
 
 public class ShipDataCore {
 	
@@ -43,22 +45,29 @@ public class ShipDataCore {
 		int bnum = d.getBlockList().length;
 		
 		
-		final String displayName = (ChatColor.RESET + "" + ChatColor.AQUA + "Starship Data Core");
-		final ArrayList<String> lore = new ArrayList<String>();
-		lore.add(ChatColor.MAGIC + pilot.toString());
-		lore.add(ChatColor.RESET + type);
-		lore.add(ChatColor.RESET + "" + bnum + " blocks");
-		lore.add(ChatColor.RESET + "Captain: " + name);
-		
+		String displayName = (ChatColor.RESET + "" + ChatColor.AQUA + "Starship Data Core");
 		ContractPlayerData data = SQContracts.get().getContractDatabase().getDataOfPlayer(pilot);
-		if(data != null && data.isWanted()){
-			lore.add(ChatColor.DARK_RED + "WANTED");
+		boolean wanted = data.isWanted();
+		final ArrayList<String> lore = new ArrayList<String>();
+		if(!wanted && LocationUtils.getSystem().equals("Trinitos_Alpha")){
+			displayName = (ChatColor.RESET + "" + ChatColor.RED + "Invalid Data Core");
+			lore.add(ChatColor.RESET + "Cannot recieve non-wanted data cores in Alpha.");
+		} else {
+			lore.add(ChatColor.MAGIC + pilot.toString());
+			lore.add(ChatColor.RESET + type);
+			lore.add(ChatColor.RESET + "" + bnum + " blocks");
+			lore.add(ChatColor.RESET + "Captain: " + name);
+			
+			if(data != null && wanted){
+				lore.add(ChatColor.DARK_RED + "WANTED");
+			}
 		}
 		
 		lore.add(ChatColor.MAGIC + LONG_OBFUSCATED);
+		final String displayName2 = displayName;
 		Bukkit.getScheduler().runTask(Movecraft.getInstance(), new Runnable(){
 			public void run(){
-				createShipDataCoreCallback(p.getUniqueId(), displayName, lore);
+				createShipDataCoreCallback(p.getUniqueId(), displayName2, lore);
 			}
 		});
 	}

@@ -1,11 +1,11 @@
 name: SQAutoRestart
 main: com.dibujaron.autorestart.AutoRestart
-version: 1.0.0
+version: 1.0.1
 commands:
    restartall:
       description: restart the server.
       usage: /restart <time delay>
-   delaystop:
+   autorestart:
       description: stop the server in one second.
       usage: /delaystop
 

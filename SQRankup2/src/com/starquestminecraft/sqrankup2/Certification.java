@@ -16,7 +16,7 @@ import com.starquestminecraft.sqcontracts.SQContracts;
 import com.starquestminecraft.sqcontracts.database.ContractPlayerData;
 
 
-public class Certification {
+public class Certification implements Comparable<Certification>{
 	
 	private HashMap<String, String> values = new HashMap<String, String>();
 	private ArrayList<String> onAdd = new ArrayList<String>();
@@ -333,5 +333,10 @@ public class Certification {
 	public void takeCost(Player p) {
 		SQRankup2.eco.withdrawPlayer(p, getCost());
 
+	}
+
+	@Override
+	public int compareTo(Certification o) {
+		return this.getIdentifier().compareTo(o.getIdentifier());
 	}
 }

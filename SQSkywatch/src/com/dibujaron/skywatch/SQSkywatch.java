@@ -52,9 +52,13 @@ public class SQSkywatch extends JavaPlugin implements Listener {
 	public static boolean flameBows;
 	public static boolean pvpLock;
 	
+	public static double wins;
+	public static double losses;
+	public static String system;
 	private static SQSkywatch instance;
 	public void onEnable() {
-		if(LocationUtils.getSystem().equalsIgnoreCase("Trinitos_Gamma")){
+		system = LocationUtils.getSystem();
+		if(system.equalsIgnoreCase("Trinitos_Gamma")){
 			Bukkit.getPluginManager().disablePlugin(this);
 			return;
 		}
@@ -77,6 +81,32 @@ public class SQSkywatch extends JavaPlugin implements Listener {
 		outrightKill = getConfig().getBoolean("outrightKill");
 		flameBows = getConfig().getBoolean("flame");
 		pvpLock = getConfig().getBoolean("pvpLock");
+		
+		if(system.equalsIgnoreCase("Trinitos_Beta")){
+			wins = getConfig().getInt("wins");
+			losses = getConfig().getInt("losses");
+		}
+	}
+	
+	public void onDisable(){
+		for(World w : Bukkit.getWorlds()){
+			for(Entity e : w.getEntities()){
+				if(e.getType() == EntityType.GHAST){
+					e.remove();
+				}
+				if(e.getType() == EntityType.SKELETON){
+					if(DroneShocktroop.isPossiblyShocktroop((Skeleton) e)){
+						e.remove();
+					}
+				}
+			}
+		}
+		
+		if(system.equalsIgnoreCase("Trinitos_Beta")){
+			getConfig().set("wins", "" + ((int) wins));
+			getConfig().set("losses", "" + ((int) losses));
+			saveConfig();
+		}
 	}
 	
 	@EventHandler
@@ -90,6 +120,7 @@ public class SQSkywatch extends JavaPlugin implements Listener {
 			if(!SQSkywatch.outrightKill && SkywatchStatus.statusOf(target.getUniqueId()) == SkywatchStatus.ALL && !stillHasSkywatchAttacking(target, f, null)){
 				SkywatchStatus.setStatus(target.getUniqueId(), SkywatchStatus.NONE);
 				if(target != null) target.sendMessage("You have defeated all Skywatch troops and are now safe.");
+				losses++;
 			}
 		} else if(DroneShocktroop.isPossiblyShocktroop(e)){
 			Skeleton s = (Skeleton) event.getEntity();
@@ -100,6 +131,7 @@ public class SQSkywatch extends JavaPlugin implements Listener {
 			if(!SQSkywatch.outrightKill && SkywatchStatus.statusOf(target.getUniqueId()) == SkywatchStatus.ALL && !stillHasSkywatchAttacking(target, null, stp)){
 				SkywatchStatus.setStatus(target.getUniqueId(), SkywatchStatus.NONE);
 				if(target != null) target.sendMessage("You have defeated all Skywatch troops and are now safe.");
+				losses++;
 			}
 			 //it's skywatch
 			//get the skywatch object associated with it
@@ -127,21 +159,6 @@ public class SQSkywatch extends JavaPlugin implements Listener {
 			}
 		}
 		return false;
-	}
-	
-	public void onDisable(){
-		for(World w : Bukkit.getWorlds()){
-			for(Entity e : w.getEntities()){
-				if(e.getType() == EntityType.GHAST){
-					e.remove();
-				}
-				if(e.getType() == EntityType.SKELETON){
-					if(DroneShocktroop.isPossiblyShocktroop((Skeleton) e)){
-						e.remove();
-					}
-				}
-			}
-		}
 	}
 
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
@@ -236,6 +253,7 @@ public class SQSkywatch extends JavaPlugin implements Listener {
 		SkywatchStatus s = SkywatchStatus.statusOf(u);
 		if(s != SkywatchStatus.NONE && s != SkywatchStatus.OFFLINE){
 			SkywatchStatus.setStatus(u, SkywatchStatus.NONE);
+			wins++;
 		}
 		triggerRemoval(e.getEntity());
 	}
@@ -262,7 +280,18 @@ public class SQSkywatch extends JavaPlugin implements Listener {
 	public void triggerSkywatchFighters(final Player p){
 		if(numFighters == 0) return;
 		int randMod = (int) Math.round(Math.random() * randomRange * 2 - randomRange);
-		final int numToSummon = numFighters + randMod;
+		int numToSummon = numFighters + randMod;
+		
+		if(system.equalsIgnoreCase("Trinitos_Beta")){
+			double ratio = losses / wins;
+			double temp = numToSummon * ratio;
+			if(!p.getWorld().getName().startsWith("Trinitos")){
+				//planet, double shocktroops, half fighters
+				temp *= 0.5;
+			}
+			if(temp < 1) temp = 1;
+			numToSummon = (int) Math.round(temp);
+		}
 		int i = 0;
 		while(i < numToSummon){
 			spawnDrone(p);
@@ -273,7 +302,18 @@ public class SQSkywatch extends JavaPlugin implements Listener {
 	public void triggerSkywatchShocktroops(final Player p){
 		if(numFighters == 0) return;
 		int randMod = (int) Math.round(Math.random() * randomRange * 2 - randomRange);
-		final int numToSummon = numFighters + randMod;
+		int numToSummon = numFighters + randMod;
+		if(system.equalsIgnoreCase("Trinitos_Beta")){
+			double ratio = losses / wins;
+			double temp = numToSummon * ratio;
+			if(!p.getWorld().getName().startsWith("Trinitos")){
+				//planet, double shocktroops, half fighters
+				temp *= 2;
+			}
+			if(temp < 1) temp = 1;
+			numToSummon = (int) Math.round(temp);
+
+		}
 		int i = 0;
 		while(i < numToSummon){
 			spawnShocktroop(p);

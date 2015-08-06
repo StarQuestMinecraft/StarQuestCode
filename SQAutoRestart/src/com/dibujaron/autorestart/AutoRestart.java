@@ -44,7 +44,7 @@ public class AutoRestart extends JavaPlugin {
 			restartDelayed(time);
 			return true;
 		}
-		if(cmd.getName().equalsIgnoreCase("delaystop") && sender instanceof ConsoleCommandSender){
+		if(cmd.getName().equalsIgnoreCase("autorestart") && sender instanceof ConsoleCommandSender){
 			System.out.println("Server stopping in five seconds...");
 			Bukkit.getScheduler().scheduleSyncDelayedTask(this, new Runnable(){
 				public void run(){
@@ -61,7 +61,7 @@ public class AutoRestart extends JavaPlugin {
 	}
 
 	public static void restart() {
-		command("ee delaystop");
+		command("ee autorestart");
 		command("eb end");
 		executeBatch("autorestart-helper");
 	}

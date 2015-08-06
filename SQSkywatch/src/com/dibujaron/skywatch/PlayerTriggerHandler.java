@@ -109,6 +109,8 @@ public class PlayerTriggerHandler implements Listener{
 	}
 	
 	private boolean shouldTriggerOnDamager(Player damager, Player damaged){
+		SkywatchStatus status = SkywatchStatus.statusOf(damaged.getUniqueId());
+		if(status != SkywatchStatus.NONE) return false;
 		Database d = SQContracts.get().getContractDatabase();
 		ContractPlayerData damagerData = d.getDataOfPlayer(damager.getUniqueId());
 		ContractPlayerData damagedData = d.getDataOfPlayer(damaged.getUniqueId());

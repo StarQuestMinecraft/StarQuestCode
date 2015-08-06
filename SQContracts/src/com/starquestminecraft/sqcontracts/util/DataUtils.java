@@ -11,7 +11,7 @@ public class DataUtils {
 		case SAPLING:
 		case WOOD_STEP:
 		case LEAVES:
-			return formatWoodData(data);
+			return formatWoodData(data) + type.toString().toLowerCase();
 		case WOOL:
 		case CARPET:
 		case STAINED_GLASS:

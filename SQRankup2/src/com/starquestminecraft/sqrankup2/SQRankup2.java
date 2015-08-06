@@ -2,6 +2,7 @@ package com.starquestminecraft.sqrankup2;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
@@ -369,6 +370,7 @@ public class SQRankup2 extends JavaPlugin implements Listener{
 				}
 			}
 		}
+		Collections.sort(retval);
 		return retval;
 	}
 

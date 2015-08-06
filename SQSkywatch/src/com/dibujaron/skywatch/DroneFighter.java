@@ -37,8 +37,13 @@ public class DroneFighter {
 		System.out.println("fireloc: " + fireLoc);
 		Fireball f = (Fireball) myGhast.getWorld().spawnEntity(fireLoc, EntityType.FIREBALL);
 		f.setDirection(target);
-		f.setIsIncendiary(false);
-		f.setYield(2.0F);
+		if(myGhast.getWorld().getName().startsWith("Trinitos_")){
+			f.setIsIncendiary(false);
+			f.setYield(2.0F);
+		} else {
+			f.setIsIncendiary(true);
+			f.setYield(1.5F);
+		}
 	}
 	
 	public Vector toTarget(){
