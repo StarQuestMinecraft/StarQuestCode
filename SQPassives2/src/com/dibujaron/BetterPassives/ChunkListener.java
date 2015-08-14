@@ -33,7 +33,8 @@ public class ChunkListener implements Listener {
 	
 	static final List<Material> PASSTHROUGH_TYPES = Arrays.asList(new Material[]{
 		Material.LEAVES,
-		Material.WOOL
+		Material.WOOL,
+		Material.LOG
 	});
 	
 	/*if ((baseLocBlock.getType() != Material.GRASS)
@@ -108,7 +109,7 @@ public class ChunkListener implements Listener {
 			Location spawnLoc = new Location(baseLoc.getWorld(),
 					baseLoc.getX(), baseLoc.getY() + 1.0D, baseLoc.getZ());
 			for (int n = numToSpawn; n > 0; n--) {
-				Ageable e = (Ageable) baseLoc.getWorld().spawnEntity(spawnLoc,
+				LivingEntity e = (LivingEntity) baseLoc.getWorld().spawnEntity(spawnLoc,
 						type);
 				Vector v = new Vector(Math.random() * 3.0D, 0.0D, Math.random());
 				e.setVelocity(v);

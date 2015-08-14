@@ -17,20 +17,20 @@ public class Settings {
 	public static void loadSettings(Configuration c){
 		passives = new ArrayList<EntityType>();
 		for(String s : c.getStringList("allPassives")){
-			EntityType t = EntityType.fromName(s);
+			EntityType t = EntityType.valueOf(s.toUpperCase());
 			if(t == null){
 				System.out.println("No EntityType found for " + s + "!");
 			} else {
-				passives.add(EntityType.fromName(s));
+				passives.add(EntityType.valueOf(s.toUpperCase()));
 			}
 		}
 		hostiles = new ArrayList<EntityType>();
 		for(String s : c.getStringList("allHostiles")){
-			EntityType t = EntityType.fromName(s);
+			EntityType t = EntityType.valueOf(s.toUpperCase());
 			if(t == null){
 				System.out.println("No EntityType found for " + s + "!");
 			} else {
-				hostiles.add(EntityType.fromName(s));
+				hostiles.add(EntityType.valueOf(s.toUpperCase()));
 			}
 		}
 		
@@ -39,7 +39,7 @@ public class Settings {
 			List<String> hostiles = c.getStringList("planets."+key+".hostiles");
 			System.out.println("Loaded " + passives.size() + " passives and " + hostiles.size() + " hostiles for " + key);
 			Planet p = new Planet(key, hostiles, passives);
-			planets.put(key, p);
+			planets.put(key.toLowerCase(), p);
 		}
 	}
 	
@@ -80,20 +80,22 @@ public class Settings {
 			this.name = name;
 			this.hostiles = new ArrayList<EntityType>();
 			for(String s : hostiles){
-				EntityType t = EntityType.fromName(s);
+				s = s.toUpperCase();
+				EntityType t = EntityType.valueOf(s);
 				if(t == null){
 					System.out.println("No EntityType found for " + s + "!");
 				} else {
-					this.hostiles.add(EntityType.fromName(s));
+					this.hostiles.add(EntityType.valueOf(s));
 				}
 			}
 			this.passives = new ArrayList<EntityType>();
 			for(String s : passives){
-				EntityType t = EntityType.fromName(s);
+				s = s.toUpperCase();
+				EntityType t = EntityType.valueOf(s);
 				if(t == null){
 					System.out.println("No EntityType found for " + s + "!");
 				} else {
-					this.passives.add(EntityType.fromName(s));
+					this.passives.add(EntityType.valueOf(s));
 				}
 			}
 		}
