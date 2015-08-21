@@ -35,9 +35,10 @@ public class EntityListener implements Listener {
 	@EventHandler
 	public void onEntitySpawn(CreatureSpawnEvent event) {
 		if (event.isCancelled()) {
-			System.out.println("[SQPassives] Event pre-cancelled.");
 			return;
 		}
+		if(FactionUtils.isInClaimedLand(event.getLocation())) return;
+
 		if (event.getEntity().getType() == EntityType.SQUID) {
 			List<EntityType> passives = Settings.getPassivesOfPlanet(event.getEntity().getWorld().getName());
 			if(passives != null && passives.contains(EntityType.SQUID)){
@@ -49,7 +50,6 @@ public class EntityListener implements Listener {
 		}
 
 		if ((event.getEntity().getType() == EntityType.WITHER) || (event.getEntity().getType() == EntityType.WITHER_SKULL || event.getEntity().getType() == EntityType.ARMOR_STAND)) {
-			System.out.println("[SQPassives] wither/witherskull/armorstand allowed.");
 			return;
 		}
 
@@ -60,18 +60,15 @@ public class EntityListener implements Listener {
 		} else if (event.getSpawnReason() == CreatureSpawnEvent.SpawnReason.EGG) {
 			String n = event.getEntity().getWorld().getName().toLowerCase();
 			if (!(n.equals("nalavor") || n.equals("sampetra"))){
-				System.out.println("[SQPassives] egg cancelled, not allowed here!");
 				event.setCancelled(true);
 			}
 		} else if ((!PASSTHROUGH_REASONS.contains(event.getSpawnReason())) && (!event.isCancelled())) {
 			List<EntityType> types = this.p.getAcceptableHostileTypes(event.getLocation().getWorld());
 			if (types == null) {
-				System.out.println("[SQPassives] types null for planet.");
 				event.setCancelled(true);
 				return;
 			}
 			if (types.size() == 0) {
-				System.out.println("[SQPassives] no hostiles for planet");
 				event.setCancelled(true);
 				return;
 			}

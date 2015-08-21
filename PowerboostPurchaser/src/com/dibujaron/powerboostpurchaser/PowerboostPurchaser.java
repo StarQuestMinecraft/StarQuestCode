@@ -189,7 +189,7 @@ public class PowerboostPurchaser extends JavaPlugin{
 	}
 	
 	public static void janeMessage(String message){
-		Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "sync console all janesudo " + message);
+		Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "eb janesudo " + message);
 	}
 }
 

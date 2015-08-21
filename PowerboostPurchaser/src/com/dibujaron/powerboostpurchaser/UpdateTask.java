@@ -4,6 +4,7 @@ import java.util.Calendar;
 import java.util.List;
 
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -35,7 +36,7 @@ public class UpdateTask extends BukkitRunnable{
 		}
 		long millisDiff = millis - System.currentTimeMillis();
 		int ticksDiff = (int) (millisDiff * 0.02);
-		t.runTaskTimer(PowerboostPurchaser.get(), ticksDiff, 86400 * 20);
+		t.runTaskTimerAsynchronously(PowerboostPurchaser.get(), ticksDiff, 86400 * 20);
 	}
 	
 	@Override
@@ -48,14 +49,17 @@ public class UpdateTask extends BukkitRunnable{
 			List<MPlayer> l = f.getMPlayers();
 			for(int i = 0; i < l.size(); i++){
 				MPlayer m = l.get(i);
-				if(EcoHandler.getEconomy().withdrawPlayer(Bukkit.getOfflinePlayer(m.getUuid()), taxes).transactionSuccess()){
-					total += taxes;
-				} else {
-					if(!(m.getRole() == Rel.LEADER)){
-						f.setInvited(m, false);
-						f.saveToRemote();
-						m.resetFactionData();
-						m.saveToRemote();
+				OfflinePlayer plr = Bukkit.getOfflinePlayer(m.getUuid());
+				if(plr != null){
+					if(EcoHandler.getEconomy().withdrawPlayer(Bukkit.getOfflinePlayer(m.getUuid()), taxes).transactionSuccess()){
+						total += taxes;
+					} else {
+						if(!(m.getRole() == Rel.LEADER)){
+							f.setInvited(m, false);
+							f.saveToRemote();
+							m.resetFactionData();
+							m.saveToRemote();
+						}
 					}
 				}
 			}

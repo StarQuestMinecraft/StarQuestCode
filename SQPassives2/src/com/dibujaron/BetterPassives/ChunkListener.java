@@ -73,15 +73,17 @@ public class ChunkListener implements Listener {
 
 	@EventHandler(priority = EventPriority.HIGH)
 	public void onChunkLoad(ChunkLoadEvent event) {
+		
 		if (Math.random() * 10.0 < 2.0) {
+			double chunkX = event.getChunk().getX() * 16;
+			double chunkZ = event.getChunk().getZ() * 16;
 			List<EntityType> types = Settings.getPassivesOfPlanet(event.getWorld().getName());
 			if (types == null || types.size() == 0)
 				return;
-
+			if(FactionUtils.isInClaimedLand(new Location(event.getWorld(), chunkX, 0, chunkZ))) return;
 			double X = 16.0D * Math.random();
 			double Z = 16.0D * Math.random();
-			double chunkX = event.getChunk().getX() * 16;
-			double chunkZ = event.getChunk().getZ() * 16;
+			
 			Location baseLoc = this.p.getRealHighestBlockAt(
 					new Location(event.getChunk().getWorld(), chunkX + X, 5.0D,
 							chunkZ + Z)).getLocation();
