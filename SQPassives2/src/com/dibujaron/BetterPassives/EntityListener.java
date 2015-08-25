@@ -37,7 +37,10 @@ public class EntityListener implements Listener {
 		if (event.isCancelled()) {
 			return;
 		}
-		if(FactionUtils.isInClaimedLand(event.getLocation())) return;
+		if(FactionUtils.isInClaimedLand(event.getLocation())){
+			event.setCancelled(true);
+			return;
+		}
 
 		if (event.getEntity().getType() == EntityType.SQUID) {
 			List<EntityType> passives = Settings.getPassivesOfPlanet(event.getEntity().getWorld().getName());
