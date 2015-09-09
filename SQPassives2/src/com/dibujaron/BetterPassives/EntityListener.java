@@ -37,10 +37,6 @@ public class EntityListener implements Listener {
 		if (event.isCancelled()) {
 			return;
 		}
-		if(FactionUtils.isInClaimedLand(event.getLocation())){
-			event.setCancelled(true);
-			return;
-		}
 
 		if (event.getEntity().getType() == EntityType.SQUID) {
 			List<EntityType> passives = Settings.getPassivesOfPlanet(event.getEntity().getWorld().getName());
@@ -66,6 +62,10 @@ public class EntityListener implements Listener {
 				event.setCancelled(true);
 			}
 		} else if ((!PASSTHROUGH_REASONS.contains(event.getSpawnReason())) && (!event.isCancelled())) {
+			if(FactionUtils.isInClaimedLand(event.getLocation())){
+				event.setCancelled(true);
+				return;
+			}
 			List<EntityType> types = this.p.getAcceptableHostileTypes(event.getLocation().getWorld());
 			if (types == null) {
 				event.setCancelled(true);

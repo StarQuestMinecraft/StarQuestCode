@@ -83,8 +83,15 @@ public class SQSkywatch extends JavaPlugin implements Listener {
 		pvpLock = getConfig().getBoolean("pvpLock");
 		
 		if(system.equalsIgnoreCase("Trinitos_Beta")){
-			wins = getConfig().getInt("wins");
-			losses = getConfig().getInt("losses");
+			wins = getConfig().getInt("wins"); //10
+			losses = getConfig().getInt("losses"); //12
+			if(wins > losses && losses > 4){
+				wins = wins - (losses - 5);
+				losses = 5;
+			} else if(losses > wins && wins > 4){
+				wins = 5;
+				losses = losses - (wins - 5);
+			}
 		}
 	}
 	
@@ -103,8 +110,8 @@ public class SQSkywatch extends JavaPlugin implements Listener {
 		}
 		
 		if(system.equalsIgnoreCase("Trinitos_Beta")){
-			getConfig().set("wins", "" + ((int) wins));
-			getConfig().set("losses", "" + ((int) losses));
+			getConfig().set("wins", wins);
+			getConfig().set("losses", losses);
 			saveConfig();
 		}
 	}
@@ -113,6 +120,7 @@ public class SQSkywatch extends JavaPlugin implements Listener {
 	public void onEntityDeath(EntityDeathEvent event){
 		Entity e = event.getEntity();
 		if(e instanceof Ghast){
+			event.getDrops().clear();
 			Ghast g = (Ghast) e;
 			DroneFighter f = SQSkywatch.getInstance().getFighter(g);
 			SQSkywatch.activeFighters.remove(g);

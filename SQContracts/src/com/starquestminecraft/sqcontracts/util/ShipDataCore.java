@@ -65,6 +65,7 @@ public class ShipDataCore {
 		
 		lore.add(ChatColor.MAGIC + LONG_OBFUSCATED);
 		final String displayName2 = displayName;
+		System.out.println("Data Core: player " + p.getName() + " got a data core from " + name);
 		Bukkit.getScheduler().runTask(Movecraft.getInstance(), new Runnable(){
 			public void run(){
 				createShipDataCoreCallback(p.getUniqueId(), displayName2, lore);
