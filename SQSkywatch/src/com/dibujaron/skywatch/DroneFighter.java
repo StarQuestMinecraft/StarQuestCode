@@ -9,6 +9,7 @@ import org.bukkit.entity.Fireball;
 import org.bukkit.entity.Ghast;
 import org.bukkit.entity.LargeFireball;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
 import org.bukkit.util.Vector;
 
 public class DroneFighter {
@@ -35,8 +36,13 @@ public class DroneFighter {
 		//myGhast.getWorld().playSound(myGhast.getLocation(), Sound.GHAST_DEATH, 2.0f, (float) (Math.random() * 3.0f));
 		Location fireLoc = myGhast.getLocation().clone().add(target2);
 		System.out.println("fireloc: " + fireLoc);
-		Fireball f = (Fireball) myGhast.getWorld().spawnEntity(fireLoc, EntityType.FIREBALL);
-		f.setDirection(target);
+		//Fireball f = (Fireball) myGhast.getWorld().spawnEntity(fireLoc, EntityType.FIREBALL);
+		//f.setDirection(target);
+		Projectile proj = myGhast.getWorld().spawn(fireLoc, Fireball.class);
+		// launchProjectile(this.projectileClass, finalVec);
+		// finally, set the shooter
+		proj.setVelocity(target);
+		Fireball f = (Fireball) proj;
 		if(myGhast.getWorld().getName().startsWith("Trinitos_")){
 			f.setIsIncendiary(false);
 			f.setYield(2.0F);

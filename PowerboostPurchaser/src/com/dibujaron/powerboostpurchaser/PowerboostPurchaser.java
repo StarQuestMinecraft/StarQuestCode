@@ -155,6 +155,7 @@ public class PowerboostPurchaser extends JavaPlugin{
 
 	private void cancelFactionBoost(Player p, Faction f) {
 		database.setBoostOfFaction(new FactionPowerboost(f, 0));
+		Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "f powerboost f " + f.getName() + " " + 0);
 		p.sendMessage("Your faction powerboost has been cancelled. It will be removed the next time costs are collected.");
 	}
 

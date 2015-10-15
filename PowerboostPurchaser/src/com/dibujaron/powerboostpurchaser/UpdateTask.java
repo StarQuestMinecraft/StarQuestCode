@@ -24,7 +24,7 @@ public class UpdateTask extends BukkitRunnable{
 		//should be taken at 9:00 PM 
 		//first try today
 		Calendar cal = Calendar.getInstance();
-		cal.set(Calendar.HOUR_OF_DAY, 21);
+		cal.set(Calendar.HOUR_OF_DAY, 18);
 		cal.set(Calendar.MINUTE, 0);
 		cal.set(Calendar.SECOND, 0);
 		cal.set(Calendar.MILLISECOND, 0);
@@ -68,17 +68,24 @@ public class UpdateTask extends BukkitRunnable{
 			
 			if(fpb == null) continue;
 			double boost = (double) fpb.getBoost();
+			if(f.getPowerBoost() != boost){
+				f.setPowerBoost(boost);
+			}
 			if(boost == 0){
-				//this means that it was cancelled, we don't have to do anything
+				if(boost != f.getPowerBoost()){
+					Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "f powerboost f " + f.getName() + " " + boost);
+				}
 				continue;
 			}
 			if(Econ.hasAtLeast(f, EcoHandler.getCost() * boost, "powerboost daily charge")){
 				Econ.modifyMoney(f, -1 * EcoHandler.getCost() * boost, "powerboost daily charge");
-				Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "f powerboost f " + f.getName() + " " + boost);
 			} else {
 				PowerboostPurchaser.janeMessage(fpb.getFaction().getName() + " could not afford to maintain their powerboost.");
 				d.setBoostOfFaction(new FactionPowerboost(fpb.getFaction(), 0));
-				Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "f powerboost f " + f.getName() + " 0");
+				boost = 0;
+			}
+			if(boost != f.getPowerBoost()){
+				Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "f powerboost f " + f.getName() + " " + boost);
 			}
 		}
 	}

@@ -228,7 +228,12 @@ public class Certification implements Comparable<Certification>{
 			cmd = cmd.replaceAll("\\{uuid\\}", p.getUniqueId().toString());
 			cmd = cmd.replaceAll("\\{world\\}", p.getWorld().getName());
 			cmd = cmd.replaceAll("\\{server\\}", Bukkit.getServerName());
-			Bukkit.dispatchCommand(Bukkit.getConsoleSender(), cmd);
+			try{
+				Bukkit.dispatchCommand(Bukkit.getConsoleSender(), cmd);
+			} catch (Exception e){
+				e.printStackTrace();
+				continue;
+			}
 		}
 	}
 

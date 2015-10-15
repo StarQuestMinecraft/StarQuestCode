@@ -13,6 +13,7 @@ import net.milkbowl.vault.permission.Permission;
 import org.bukkit.Achievement;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
@@ -165,12 +166,19 @@ public class SQRankup2 extends JavaPlugin implements Listener{
 				getServer().broadcastMessage(
 						ChatColor.RED + "Visit " + ChatColor.BLUE + "http://tinyurl.com/starquestapps" + ChatColor.RED + " to apply for Player rank!");
 
-				permission.playerAddGroup(null, getServer().getOfflinePlayer(args[0]), "SETTLER");
-				permission.playerRemoveGroup(null, getServer().getOfflinePlayer(args[0]), "REFUGEE");
+				OfflinePlayer p = getServer().getOfflinePlayer(args[0]);
+				permission.playerAddGroup(null, p, "SETTLER");
+				permission.playerRemoveGroup(null, p, "REFUGEE");
 				if (args.length >= 2) {
-					Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "money give " + args[1] + " 10000");
+					Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "money give " + args[1] + " 30000");
+					OfflinePlayer p2 = getServer().getOfflinePlayer(args[1]);
+					if(p2 != null){
+						ContractPlayerData d = SQContracts.get().getContractDatabase().getDataOfPlayer(p2.getUniqueId());
+						d.setBalanceInCurrency("philanthropy", d.getBalanceInCurrency("philanthropy") + 1);
+						SQContracts.get().getContractDatabase().updatePlayerData(p2.getUniqueId(), d);
+					}
 					getServer().broadcastMessage(
-							ChatColor.GOLD + args[1] + ChatColor.RED + " brought " + args[0] + " to the server and earned 10000 for doing so!");
+							ChatColor.GOLD + args[1] + ChatColor.RED + " brought " + args[0] + " to the server and earned 30000c + one philanthropy point for doing so!");
 				}
 				return true;
 			}
@@ -401,7 +409,13 @@ public class SQRankup2 extends JavaPlugin implements Listener{
 				database.updateCertsOfPlayer(p.getUniqueId(), playerCerts);
 				p.sendMessage("Cert removed.");
 			} else {
-				p.sendMessage("Error: cert not found.");
+				if(playerCerts.contains(cert)){
+					playerCerts.remove(cert);
+					database.updateCertsOfPlayer(p.getUniqueId(), playerCerts);
+					p.sendMessage("This cert no longer exists, so you were not penalized for its removal. Cert Removed.");
+				} else {
+					p.sendMessage("Error: cert not found.");
+				}
 			}
 		} catch (NumberFormatException e){
 			p.sendMessage("This is not a valid number. Please provide the number of the cert you wish to remove from /cert list.");
