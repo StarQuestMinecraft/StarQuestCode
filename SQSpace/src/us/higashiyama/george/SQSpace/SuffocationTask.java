@@ -48,7 +48,7 @@ public class SuffocationTask extends BukkitRunnable {
 			this.cancel(this.p);
 		}
 		if (!this.canceled) {
-			this.p.damage(1.0D);
+			this.p.setHealth(p.getHealth()-1.0D);
 		}
 	}
 }
