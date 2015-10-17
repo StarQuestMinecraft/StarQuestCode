@@ -126,7 +126,7 @@ public class ItemContract implements Contract {
 		if (fullstax == 0)
 			return "" + amount;
 		int leftovers = amount % item.getMaxStackSize();
-		if (fullstax == 1){
+		if (item.getMaxStackSize() != 1){
 			return amount + " (" + fullstax + " stacks + " + leftovers + ")";
 		} else{
 			return Integer.toString(amount);
