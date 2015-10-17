@@ -110,7 +110,7 @@ public class ContractCommand implements CommandExecutor {
 			});
 			return true;
 		}
-		if (valid == false)
+		if (!valid)
 		{
 			plr.sendMessage(ChatColor.RED + "Invalid command");
 			plr.sendMessage(ChatColor.RED + "To see available contracts, do: " + ChatColor.BLUE + "/contract available <type>");
