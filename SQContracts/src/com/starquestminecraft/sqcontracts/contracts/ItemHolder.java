@@ -28,6 +28,10 @@ public class ItemHolder implements Serializable{
 		return amount;
 	}
 	
+	public int getMaxStackSize(){
+		return type.getMaxStackSize();
+	}
+	
 	public short getData(){
 		return data;
 	}

@@ -114,19 +114,23 @@ public class ItemContract implements Contract {
 	private String printItems() {
 		String retval = "\n";
 		for (ItemHolder i : items) {
-			String itemLine = formatAmount(i.getAmount()) + " of " + DataUtils.formatItemName(i.getType(), i.getData());
+			String itemLine = formatAmount(i.getAmount(), i) + " of " + DataUtils.formatItemName(i.getType(), i.getData());
 			if(items.size() == 1) return itemLine;
 			retval = retval + itemLine + "\n";
 		}
 		return retval;
 	}
 
-	private String formatAmount(int amount) {
-		int fullstax = (int) Math.floor(amount / 64);
+	private String formatAmount(int amount, ItemHolder item) {
+		int fullstax = (int) Math.floor(amount / item.getMaxStackSize());
 		if (fullstax == 0)
 			return "" + amount;
-		int leftovers = amount % 64;
-		return amount + " (" + fullstax + " stacks + " + leftovers + ")";
+		int leftovers = amount % item.getMaxStackSize();
+		if (fullstax == 1){
+			return amount + " (" + fullstax + " stacks + " + leftovers + ")";
+		} else{
+			return Integer.toString(amount);
+		}
 	}
 
 	@Override
