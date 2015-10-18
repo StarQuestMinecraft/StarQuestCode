@@ -236,9 +236,6 @@ public class Events implements Listener{
 			
 			final Arrow arrow = (Arrow) event.getEntity();
 			
-			//Making the arrow fly straight
-			(new NoGravity()).run(arrow);
-			
 			BukkitScheduler scheduler = Bukkit.getServer().getScheduler();
 			
 			Player player = (Player) arrow.getShooter();
@@ -251,6 +248,13 @@ public class Events implements Listener{
 				@Override
 				public void run() {
 					
+					if (arrow.hasMetadata("no_pickup")) {
+						
+						//Making the arrow fly straight
+						(new NoGravity()).run(arrow);
+						
+					}
+										
 					//Checking if the shooter is not null (Dispenser or other source)
 					if(!(arrow.getShooter() == null)) {
 						
