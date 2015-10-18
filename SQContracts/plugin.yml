@@ -10,4 +10,4 @@ depend:
 commands:
    contract:
       description: contract master command.
-      usage: /contract
+      usage: Do /contract help to view a list of commands
