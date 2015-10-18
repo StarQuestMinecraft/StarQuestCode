@@ -60,9 +60,9 @@ public class Events implements Listener{
 					double bowDamage = (Main.getPluginConfig().getDouble("damage") * bowDamagePrecentIncrease);
 					
 					int ammo = 0;
-					int ammoPerPack = 0;
-					int reloadTime = 0;
-					int fireTime = 0;
+					int ammoPerPack = Main.getPluginConfig().getInt("ammo per pack");
+					int reloadTime = Main.getPluginConfig().getInt("reload time");
+					int fireTime = Main.getPluginConfig().getInt("fire time");
 					
 					//Checking to make sure that the blaster lore is updated to the config
 					if (handItem.getItemMeta().hasLore()) {
@@ -70,18 +70,18 @@ public class Events implements Listener{
 						List<String> lore2 = handItem.getItemMeta().getLore();
 						ItemMeta meta2 = (ItemMeta) handItem.getItemMeta();
 					
-						if (!(lore2.get(0).equals("§6Ammo Per Pack: §f" + Main.getPluginConfig().getString("ammo per pack")) && 
-							lore2.get(2).equals("§6Damage: §f" + Main.getPluginConfig().getString("damage"))  && 
-							lore2.get(3).equals("§6Reload Time: §f" + Main.getPluginConfig().getString("reload time")) && 
-							lore2.get(4).equals("§6Fire Time: §f" + Main.getPluginConfig().getString("fire time")))) {
+						if (!(lore2.get(0).equals("§6Ammo Per Pack: §f" + ammoPerPack) && 
+							lore2.get(2).equals("§6Damage: §f" + bowDamage)  && 
+							lore2.get(3).equals("§6Reload Time: §f" + reloadTime) && 
+							lore2.get(4).equals("§6Fire Time: §f" + fireTime))) {
 							
 							lore2.clear();
 							
-							lore2.add(ChatColor.GOLD + "Ammo Per Pack: " + ChatColor.WHITE + Main.getPluginConfig().getString("ammo per pack"));
-							lore2.add(ChatColor.GOLD + "Ammo: " + ChatColor.WHITE + "0");
+							lore2.add(ChatColor.GOLD + "Ammo Per Pack: " + ChatColor.WHITE + ammoPerPack);
+							lore2.add(ChatColor.GOLD + "Ammo: " + ChatColor.WHITE + ammo);
 							lore2.add(ChatColor.GOLD + "Damage: " + ChatColor.WHITE + bowDamage);
-							lore2.add(ChatColor.GOLD + "Reload Time: " + ChatColor.WHITE + Main.getPluginConfig().getString("reload time"));
-							lore2.add(ChatColor.GOLD + "Fire Time: " + ChatColor.WHITE + Main.getPluginConfig().getString("fire time"));
+							lore2.add(ChatColor.GOLD + "Reload Time: " + ChatColor.WHITE + reloadTime);
+							lore2.add(ChatColor.GOLD + "Fire Time: " + ChatColor.WHITE + fireTime);
 							meta2.setLore(lore2);
 							meta2.setDisplayName("Blaster " + ChatColor.GOLD +  "(" + ammo + "/" + ammoPerPack + ")");
 							handItem.setItemMeta(meta2);
@@ -95,11 +95,11 @@ public class Events implements Listener{
 						List<String> lore = new ArrayList<String>();
 						ItemMeta meta = (ItemMeta) handItem.getItemMeta();
 						
-						lore.add(ChatColor.GOLD + "Ammo Per Pack: " + ChatColor.WHITE + Main.getPluginConfig().getString("ammo per pack"));
-						lore.add(ChatColor.GOLD + "Ammo: " + ChatColor.WHITE + "0");
+						lore.add(ChatColor.GOLD + "Ammo Per Pack: " + ChatColor.WHITE + ammoPerPack);
+						lore.add(ChatColor.GOLD + "Ammo: " + ChatColor.WHITE + ammo);
 						lore.add(ChatColor.GOLD + "Damage: " + ChatColor.WHITE + bowDamage);
-						lore.add(ChatColor.GOLD + "Reload Time: " + ChatColor.WHITE + Main.getPluginConfig().getString("reload time"));
-						lore.add(ChatColor.GOLD + "Fire Time: " + ChatColor.WHITE + Main.getPluginConfig().getString("fire time"));
+						lore.add(ChatColor.GOLD + "Reload Time: " + ChatColor.WHITE + reloadTime);
+						lore.add(ChatColor.GOLD + "Fire Time: " + ChatColor.WHITE + fireTime);
 						meta.setLore(lore);
 						meta.setDisplayName("Blaster " + ChatColor.GOLD +  "(" + ammo + "/" + ammoPerPack + ")");
 						handItem.setItemMeta(meta);
@@ -113,28 +113,23 @@ public class Events implements Listener{
 					if (handItem.getItemMeta().hasLore() && (bowLore.get(0).substring(2, 15).equals("Ammo Per Pack") && bowLore.get(1).substring(2, 6).equals("Ammo") && bowLore.get(2).substring(2, 8).equals("Damage")  && bowLore.get(3).substring(2, 13).equals("Reload Time") && bowLore.get(4).substring(2, 11).equals("Fire Time"))) {
 						
 						ammo = Integer.parseInt(bowLore.get(1).substring(10));
-						ammoPerPack = Integer.parseInt(bowLore.get(0).substring(19));
-						reloadTime = (int) (Double.parseDouble(bowLore.get(3).substring(17)));
-						fireTime = (int) (Double.parseDouble(bowLore.get(4).substring(15)));
+//						ammoPerPack = Integer.parseInt(bowLore.get(0).substring(19));
+//						reloadTime = (int) (Double.parseDouble(bowLore.get(3).substring(17)));
+//						fireTime = (int) (Double.parseDouble(bowLore.get(4).substring(15)));
 						
 					} else {
 						
 						List<String> lore = new ArrayList<String>();
 						ItemMeta meta = (ItemMeta) handItem.getItemMeta();
 						
-						lore.add(ChatColor.GOLD + "Ammo Per Pack: " + Main.getPluginConfig().getString("ammo per pack"));
-						lore.add(ChatColor.GOLD + "Ammo: " + ChatColor.WHITE + "0");
+						lore.add(ChatColor.GOLD + "Ammo Per Pack: " + ammoPerPack);
+						lore.add(ChatColor.GOLD + "Ammo: " + ChatColor.WHITE + ammo);
 						lore.add(ChatColor.GOLD + "Damage: " + ChatColor.WHITE + bowDamage);
-						lore.add(ChatColor.GOLD + "Reload Time: " + ChatColor.WHITE + Main.getPluginConfig().getString("reload time"));
-						lore.add(ChatColor.GOLD + "Fire Time: " + ChatColor.WHITE + Main.getPluginConfig().getString("fire time"));
+						lore.add(ChatColor.GOLD + "Reload Time: " + ChatColor.WHITE + reloadTime);
+						lore.add(ChatColor.GOLD + "Fire Time: " + ChatColor.WHITE + fireTime);
 						meta.setLore(lore);
 						meta.setDisplayName("Blaster " + ChatColor.GOLD +  "(" + ammo + "/" + ammoPerPack + ")");
 						handItem.setItemMeta(meta);
-						
-						ammo = 0;
-						ammoPerPack = 7;
-						reloadTime = 500;
-						fireTime = 250;
 						
 					}
 					
