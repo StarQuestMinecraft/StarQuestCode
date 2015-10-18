@@ -49,6 +49,7 @@ public class ShipCaptureContract implements Contract{
 				num = left;
 				return CompletionStatus.INCOMPLETE;
 			}
+			num = left;
 			return CompletionStatus.PARTIAL;
 		}
 		return CompletionStatus.COMPLETE;
