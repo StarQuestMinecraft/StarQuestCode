@@ -1,0 +1,7 @@
+name: SQTractorBeam
+main: me.thetimelord.SQTractorBeam
+version: 1.0
+commands:
+   hello:
+      description: Blank description.
+      usage: /<command>
