@@ -41,7 +41,8 @@ public class PlayerListener implements Listener{
 				 boolean foundGlass2 = false;
 				 boolean foundGlowstone = false;
 				 boolean alreadySwitched = false;
-				 boolea stop = false;
+				 String stringJ = ("blank");
+				 boolean stop = false;
 				 byte glassType = 0;
 				 Player player = event.getPlayer();
 				 org.bukkit.material.Sign signMat = (org.bukkit.material.Sign)event.getClickedBlock().getState().getData();
@@ -81,6 +82,8 @@ public class PlayerListener implements Listener{
 				 {
 					 signBlock.setLine(0,"{" + ChatColor.BLUE + "Tractor Beam" + ChatColor.BLACK + "}");
 					 signBlock.setLine(1, "{" + ChatColor.RED + "OFFLINE" + ChatColor.BLACK + "}");
+					 signBlock.setLine(0,"{" + ChatColor.BLUE + "Tractor Beam" + ChatColor.BLACK + "}");
+					 signBlock.setLine(2, " ");
 					 signBlock.update(); 
 					 
 					 alreadySwitched = true;
@@ -120,6 +123,9 @@ public class PlayerListener implements Listener{
 										 b.setData(glassType);
 									 }
 									 alreadySwitched = true;
+									 stringJ = Integer.toString(j);
+									 signBlock.setLine(2, stringJ);
+									 signBlock.update();
 								 }
 							 }
 						 }
@@ -133,7 +139,10 @@ public class PlayerListener implements Listener{
 						 b = location.getBlock().getRelative(signFace, 4 + i);
 						 if (b.getTypeId() ==160)
 						 {
+							 stringJ = signBlock.getLine(2);
+							 int jToInt = Integer.parseInt(stringJ);
 							 signBlock.setLine(1, "{" + ChatColor.RED + "OFFLINE" + ChatColor.BLACK + "}");
+							 signBlock.setLine(2, " ");
 							 signBlock.update(); 
 							 
 							 b = location.getBlock().getRelative(signFace, 2);
@@ -147,7 +156,7 @@ public class PlayerListener implements Listener{
 							 }
 							 location.setY(location.getY()-1);
 							 
-							 for (int j = 0; j <= i; ++j)
+							 for (int j = 0; j <= jToInt; ++j)
 							 {
 								 b = location.getBlock().getRelative(signFace, 4 + j);
 								 if (b.getTypeId() == 160)
@@ -162,4 +171,3 @@ public class PlayerListener implements Listener{
 			 }
 		}
 	}
-}
