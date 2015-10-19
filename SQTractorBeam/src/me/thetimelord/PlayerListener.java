@@ -41,6 +41,7 @@ public class PlayerListener implements Listener{
 				 boolean foundGlass2 = false;
 				 boolean foundGlowstone = false;
 				 boolean alreadySwitched = false;
+				 boolea stop = false;
 				 byte glassType = 0;
 				 Player player = event.getPlayer();
 				 org.bukkit.material.Sign signMat = (org.bukkit.material.Sign)event.getClickedBlock().getState().getData();
@@ -93,8 +94,9 @@ public class PlayerListener implements Listener{
 						 for (int i = 0; i < 20; ++i)
 						 {
 							 b = location.getBlock().getRelative(signFace, 4 + i);
-							 if (b.getTypeId() != 0)
+							 if ((b.getTypeId() != 0) && (!stop))
 							 {
+								 stop = true;
 								 signBlock.setLine(1, "{" + ChatColor.GREEN + "ONLINE" + ChatColor.BLACK + "}");
 								 signBlock.update(); 
 								 
