@@ -105,6 +105,12 @@ public class ContractCommand implements CommandExecutor {
 					case "delete":
 						removeContract(plr, fnlargs);
 						return;
+						
+					else
+					{
+						plr.sendMessage(ChatColor.RED + "Command not recognized. To see available contracts, do: " + ChatColor.BLUE + "/Contract available ${type}");
+						plr.sendMessage(ChatColor.RED + "To add a new contract, do: " + ChatColor.BLUE + "/Contract new ${type} ${number}");
+					}
 					}
 				}
 			});
