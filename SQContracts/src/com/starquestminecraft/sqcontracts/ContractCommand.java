@@ -14,7 +14,6 @@ import org.bukkit.entity.Player;
 
 import com.starquestminecraft.sqcontracts.contracts.Contract;
 import com.starquestminecraft.sqcontracts.database.ContractPlayerData;
-import com.starquestminecraft.sqcontracts.randomizer.config.ConfigRandomizer;
 import com.starquestminecraft.sqcontracts.util.ContractCompletionRunnable;
 import com.starquestminecraft.sqcontracts.util.StationUtils;
 import com.starquestminecraft.sqcontracts.util.UUIDUtils;
@@ -105,19 +104,15 @@ public class ContractCommand implements CommandExecutor {
 					case "delete":
 						removeContract(plr, fnlargs);
 						return;
-						
-					else
-					{
-						plr.sendMessage(ChatColor.RED + "Command not recognized. To see available contracts, do: " + ChatColor.BLUE + "/Contract available ${type}");
-						plr.sendMessage(ChatColor.RED + "To add a new contract, do: " + ChatColor.BLUE + "/Contract new ${type} ${number}");
-					}
 					}
 				}
 			});
 			return true;
+		} else {
+			plr.sendMessage(ChatColor.RED + "Command not recognized. To see available contracts, do: " + ChatColor.BLUE + "/Contract available ${type}");
+			plr.sendMessage(ChatColor.RED + "To add a new contract, do: " + ChatColor.BLUE + "/Contract new ${type} ${number}");
 		}
-		if (!valid)
-		{
+		if (!valid) {
 			plr.sendMessage(ChatColor.RED + "To see available contracts, do: " + ChatColor.BLUE + "/contract available <type>");
 			plr.sendMessage(ChatColor.RED + "To accept a new contract, do: " + ChatColor.BLUE + "/contract new <type> <#>");
 			plr.sendMessage(ChatColor.RED + "To list your current contracts, do: " + ChatColor.BLUE + "/contract list");
