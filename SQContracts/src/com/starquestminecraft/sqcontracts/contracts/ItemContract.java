@@ -24,6 +24,7 @@ public class ItemContract implements Contract {
 	 */
 	private static final long serialVersionUID = 1L;
 
+	//List of all items needed in contract
 	List<ItemHolder> items;
 	int reward;
 	String targetStation;
@@ -45,47 +46,30 @@ public class ItemContract implements Contract {
 
 	@Override
 	public CompletionStatus complete(Craft c) {
-		// CHECK THIS, IT'S DODGY
-		/*
-		 * CompletionStatus retval = CompletionStatus.INCOMPLETE;
-		 * CompletionStatus[] statuses = new CompletionStatus[items.length];
-		 * for(int n = 0; n < items.length; n++){ ItemStack i = items[n]; int
-		 * amountLeft =
-		 * InventoryUtil.removeItemsFromShipInventories(i.getType(),
-		 * i.getData().getData(), i.getAmount(), c); if(amountLeft ==
-		 * i.getAmount()){ statuses[n] = CompletionStatus.INCOMPLETE; } else if
-		 * (amountLeft > 0){ statuses[n] = CompletionStatus.PARTIAL; } else if
-		 * (amountLeft == 0){ statuses[n] = CompletionStatus.COMPLETE; } }
-		 * for(CompletionStatus s : statuses){ if(s ==
-		 * CompletionStatus.COMPLETE){ retval = CompletionStatus.COMPLETE; }
-		 * else if(s == CompletionStatus.PARTIAL){ retval =
-		 * CompletionStatus.PARTIAL; return retval; } } return retval;
-		 */
-
-		CompletionStatus retval = null;
+		//Changed the nature of complete method to avoid bugs and redundancy. Initial retval = INCOMPLETE rather than null. -Evan H.
+		CompletionStatus retval = CompletionStatus.INCOMPLETE;
 		for (int n = 0; n < items.size(); n++) {
 			ItemHolder i = items.get(n);
 			int amountLeft = InventoryUtil.removeItemsFromShipInventories(i.getType(), i.getData(), i.getAmount(), c);
 			if (amountLeft == 0) {
-				// this one is complete
+				//This part of contract (element n) is complete
 				items.remove(n);
 				n--;
-				if (retval == CompletionStatus.INCOMPLETE) {
-					// one incomplete and one complete is a partial
-					retval = CompletionStatus.PARTIAL;
-				} else if (retval == null) {
+				//Tests the list of parts of contract to determine completeness
+				if(items.size() == 0) {
+					//All parts of contract are complete
 					retval = CompletionStatus.COMPLETE;
 				}
-			} else if (amountLeft == i.getAmount()) {
-				if (retval == null) {
-					retval = CompletionStatus.INCOMPLETE;
-				}
-			} else {
-				// partial
-				i.setAmount(amountLeft);
-				if (retval != CompletionStatus.PARTIAL) {
+				else {
+					//Not all parts of contract are complete
 					retval = CompletionStatus.PARTIAL;
 				}
+			}
+			//Removed a redundant test ( if(amountLeft == i.getAmount) { ... } is unneeded when init retval = INCOMPLETE
+			else if (amountLeft != i.getAmount()) {
+				// If this element was partially completed
+				i.setAmount(amountLeft);
+				retval = CompletionStatus.PARTIAL;
 			}
 		}
 		return retval;

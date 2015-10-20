@@ -105,6 +105,12 @@ public class ContractCommand implements CommandExecutor {
 					case "delete":
 						removeContract(plr, fnlargs);
 						return;
+						
+					else
+					{
+						plr.sendMessage(ChatColor.RED + "Command not recognized. To see available contracts, do: " + ChatColor.BLUE + "/Contract available ${type}");
+						plr.sendMessage(ChatColor.RED + "To add a new contract, do: " + ChatColor.BLUE + "/Contract new ${type} ${number}");
+					}
 					}
 				}
 			});
@@ -112,7 +118,6 @@ public class ContractCommand implements CommandExecutor {
 		}
 		if (!valid)
 		{
-			plr.sendMessage(ChatColor.RED + "Invalid command");
 			plr.sendMessage(ChatColor.RED + "To see available contracts, do: " + ChatColor.BLUE + "/contract available <type>");
 			plr.sendMessage(ChatColor.RED + "To accept a new contract, do: " + ChatColor.BLUE + "/contract new <type> <#>");
 			plr.sendMessage(ChatColor.RED + "To list your current contracts, do: " + ChatColor.BLUE + "/contract list");
