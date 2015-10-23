@@ -6,39 +6,60 @@ public class DataUtils {
 
 	public static String formatItemName(Material type, short data) {
 		switch(type){
-		case WOOD:
 		case LOG:
+		case WOOD:
 		case SAPLING:
 		case WOOD_STEP:
 		case LEAVES:
 			return formatWoodData(data) + type.toString().toLowerCase();
+		case LOG_2:
+			return formatLogTwoData(data) + type.toString().toLowerCase();
 		case WOOL:
 		case CARPET:
 		case STAINED_GLASS:
 		case STAINED_GLASS_PANE:
 		case STAINED_CLAY:
 			return formatColorData(data) + " " + type.toString().toLowerCase();
+		case RAW_FISH:
+			return formatFishData(data);
+		case COOKED_FISH:
+			return formatCookedFishData(data);
+		case CLAY_BRICK:
+			return "brick";
+		case BRICK:
+			return "brick block";
 		default:
 			return formatDefaultBlock(type, data);
+		}
+	}
+	
+	private static String formatLogTwoData(short data) {
+		switch(data){
+		case 0:
+			return "acacia ";
+		case 1:
+			return "dark oak ";
+		default:
+			return "acacia ";
 		}
 	}
 	
 	private static String formatWoodData(short data) {
 		switch(data){
 		case 0:
-			return "oak";
+			return "oak ";
 		case 1:
-			return "spruce";
+			return "spruce ";
 		case 2:
-			return "birch";
+			return "birch ";
 		case 3:
-			return "jungle";
+			return "jungle ";
 		case 4:
-			return "acacia";
+			return "acacia ";
 		case 5:
-			return "dark oak";
+			return "dark oak ";
 		default:
-			return "oak";
+			return "oak ";
 		}
 	}
 
@@ -81,6 +102,32 @@ public class DataUtils {
 		}
 	}
 
+	private static String formatFishData(short data) {
+		switch(data){
+		case 0:
+			return "raw fish";
+		case 1:
+			return "raw salmon";
+		case 2:
+			return "clownfish";
+		case 3:
+			return "pufferfish";
+		default:
+			return "raw fish";
+		}
+	}
+	
+	private static String formatCookedFishData(short data) {
+		switch(data){
+		case 0:
+			return "cooked fish";
+		case 1:
+			return "cooked salmon";
+		default:
+			return "cooked fish";
+		}
+	}
+	
 	public static String formatDefaultBlock(Material type, short data){
 		String typeName = type.toString().toLowerCase();
 		if(data == 0) return typeName;
