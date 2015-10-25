@@ -98,7 +98,14 @@ public class ItemContract implements Contract {
 	private String printItems() {
 		String retval = "\n";
 		for (ItemHolder i : items) {
-			String itemLine = formatAmount(i.getAmount(), i) + " of " + DataUtils.formatItemName(i.getType(), i.getData());
+			String itemName = DataUtils.formatItemName(i.getType(), i.getData());
+				if(itemName == "acacia log_2"){
+					itemName = "acacia log";
+				}
+				if(itemName == "dark oak log_2"){
+					itemName = "dark oak log";
+				}
+			String itemLine = formatAmount(i.getAmount(), i) + " of " + itemName;
 			if(items.size() == 1) return itemLine;
 			retval = retval + itemLine + "\n";
 		}
