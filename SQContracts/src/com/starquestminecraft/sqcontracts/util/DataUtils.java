@@ -30,6 +30,13 @@ public class DataUtils {
 			return "brick";
 		case BRICK:
 			return "brick block";
+		case COAL:
+			if(data == 1){
+				return "charcoal";
+			}
+			else{
+				return "coal";
+			}
 		default:
 			return formatDefaultBlock(type, data);
 		}

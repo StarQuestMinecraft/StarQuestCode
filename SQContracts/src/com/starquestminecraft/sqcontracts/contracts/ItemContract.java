@@ -105,6 +105,9 @@ public class ItemContract implements Contract {
 				if(itemName == "dark oak log_2"){
 					itemName = "dark oak log";
 				}
+				if(itemName == "coal with data value 1"){
+					itemName = "charcoal";
+				}
 			String itemLine = formatAmount(i.getAmount(), i) + " of " + itemName;
 			if(items.size() == 1) return itemLine;
 			retval = retval + itemLine + "\n";
