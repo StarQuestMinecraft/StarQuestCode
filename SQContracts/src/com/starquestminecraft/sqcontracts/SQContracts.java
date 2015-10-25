@@ -86,7 +86,7 @@ public class SQContracts extends JavaPlugin implements Listener{
 			StarshipData d = e.getData();
 			ShipDataCore.createShipDataCore(e.getPlayer(), d);
 			UUID captain = d.getCaptain();
-			Bukkit.broadcastMessage(ChatColor.RED + e.getPlayer().getName() + "destroyed" + Bukkit.getOfflinePlayer(captain).getName() + "'s" + d.getType() + "Controls!");
+			Bukkit.broadcastMessage(ChatColor.RED + e.getPlayer().getName() + " destroyed " + Bukkit.getOfflinePlayer(captain).getName() + "'s " + d.getType() + " Controls!");
 		}
 	}
 }
