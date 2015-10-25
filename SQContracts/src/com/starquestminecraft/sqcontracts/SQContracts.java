@@ -87,6 +87,7 @@ public class SQContracts extends JavaPlugin implements Listener{
 			ShipDataCore.createShipDataCore(e.getPlayer(), d);
 			UUID captain = d.getCaptain();
 			Bukkit.broadcastMessage(ChatColor.RED + e.getPlayer().getName() + " destroyed " + Bukkit.getOfflinePlayer(captain).getName() + "'s " + d.getType() + " Controls!");
+			System.out.print("Debug: 4");
 		}
 		System.out.print("Debug: 3");
 	}
