@@ -7,13 +7,15 @@ public class DataUtils {
 	public static String formatItemName(Material type, short data) {
 		switch(type){
 		case LOG:
+			return formatLogOneData(data);
 		case WOOD:
+			return formatPlankData(data) + type.toString().toLowerCase();
 		case SAPLING:
 		case WOOD_STEP:
 		case LEAVES:
 			return formatWoodData(data) + type.toString().toLowerCase();
 		case LOG_2:
-			return formatLogTwoData(data) + type.toString().toLowerCase();
+			return formatLogTwoData(data);
 		case WOOL:
 		case CARPET:
 		case STAINED_GLASS:
@@ -33,33 +35,71 @@ public class DataUtils {
 		}
 	}
 	
-	private static String formatLogTwoData(short data) {
+	private static String formatPlankData(short data) {
 		switch(data){
 		case 0:
-			return "acacia ";
+			return "oak plank";
 		case 1:
-			return "dark oak ";
+			return "spruce plank";
+		case 2:
+			return "birch plank";
+		case 3:
+			return "jungle plank";
+		case 4:
+			return "acacia plank";
+		case 5:
+			return "dark oak plank";
 		default:
-			return "acacia ";
+			return "oak plank";
 		}
 	}
 	
 	private static String formatWoodData(short data) {
 		switch(data){
 		case 0:
-			return "oak ";
+			return "oak";
 		case 1:
-			return "spruce ";
+			return "spruce";
 		case 2:
-			return "birch ";
+			return "birch";
 		case 3:
-			return "jungle ";
+			return "jungle";
 		case 4:
-			return "acacia ";
+			return "acacia";
 		case 5:
-			return "dark oak ";
+			return "dark oak";
 		default:
-			return "oak ";
+			return "oak";
+		}
+	}
+	
+	private static String formatLogTwoData(short data) {
+		switch(data){
+		case 0:
+			return "acacia log";
+		case 1:
+			return "dark oak log";
+		default:
+			return "acacia log";
+		}
+	}
+	
+	private static String formatLogOneData(short data) {
+		switch(data){
+		case 0:
+			return "oak log";
+		case 1:
+			return "spruce log";
+		case 2:
+			return "birch log";
+		case 3:
+			return "jungle log";
+		case 4:
+			return "acacia log";
+		case 5:
+			return "dark oak log";
+		default:
+			return "oak log";
 		}
 	}
 
