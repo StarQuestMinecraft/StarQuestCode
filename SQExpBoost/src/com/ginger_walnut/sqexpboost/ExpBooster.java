@@ -1,5 +1,6 @@
 package com.ginger_walnut.sqexpboost;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.bukkit.Bukkit;
@@ -21,11 +22,18 @@ public class ExpBooster extends Thread{
 				
 				if (Main.expBoost != 1) {
 
-					List<Player> players = Bukkit.getServer().getWorlds().get(0).getPlayers();
+					Player[] players = Bukkit.getServer().getOnlinePlayers();
+					List<Player> playersList = new ArrayList<Player>();				
 					
-					for (int i = 0; i < players.size(); i++) {
+					for (int i = 0; i < players.length; i ++) {
 						
-						Player player = players.get(i);
+						playersList.add(players[i]);
+						
+					}
+					
+					for (int i = 0; i < playersList.size(); i++) {
+						
+						Player player = playersList.get(i);
 						
 						if (player.hasMetadata("lastExp")) {
 							
