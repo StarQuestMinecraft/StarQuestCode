@@ -1,0 +1,4 @@
+name: SQBlasters
+main: com.ginger_walnut.sqblasters.Main
+version: 1.0.0
+description: A plugin that changes bows to blasters

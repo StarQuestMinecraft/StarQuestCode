@@ -14,7 +14,6 @@ import org.bukkit.entity.Player;
 
 import com.starquestminecraft.sqcontracts.contracts.Contract;
 import com.starquestminecraft.sqcontracts.database.ContractPlayerData;
-import com.starquestminecraft.sqcontracts.randomizer.config.ConfigRandomizer;
 import com.starquestminecraft.sqcontracts.util.ContractCompletionRunnable;
 import com.starquestminecraft.sqcontracts.util.StationUtils;
 import com.starquestminecraft.sqcontracts.util.UUIDUtils;
@@ -74,9 +73,12 @@ public class ContractCommand implements CommandExecutor {
 				return true;
 			}
 		}
+		final Player plr = (Player) sender;
+		boolean valid = false;
 		if (commandArgs.contains(args[0]) && sender instanceof Player) {
-			final Player plr = (Player) sender;
+			//final Player plr = (Player) sender;
 			final String[] fnlargs = args;
+			valid = true;
 			Bukkit.getServer().getScheduler().runTaskAsynchronously(SQContracts.get(), new Runnable() {
 				public void run() {
 					switch (fnlargs[0]) {
@@ -104,9 +106,19 @@ public class ContractCommand implements CommandExecutor {
 						return;
 					}
 				}
-
 			});
 			return true;
+		} else {
+			plr.sendMessage(ChatColor.RED + "Command not recognized. To see available contracts, do: " + ChatColor.BLUE + "/Contract available ${type}");
+			plr.sendMessage(ChatColor.RED + "To add a new contract, do: " + ChatColor.BLUE + "/Contract new ${type} ${number}");
+		}
+		if (!valid) {
+			plr.sendMessage(ChatColor.RED + "To see available contracts, do: " + ChatColor.BLUE + "/contract available <type>");
+			plr.sendMessage(ChatColor.RED + "To accept a new contract, do: " + ChatColor.BLUE + "/contract new <type> <#>");
+			plr.sendMessage(ChatColor.RED + "To list your current contracts, do: " + ChatColor.BLUE + "/contract list");
+			plr.sendMessage(ChatColor.RED + "To remove a contract, do: " + ChatColor.BLUE + "/contract remove <#>");
+			plr.sendMessage(ChatColor.RED + "Be careful! Removing a contract after 1 hour costs half of it's reward!");
+			plr.sendMessage(ChatColor.RED + "To list wanted and privateer players, do: " + ChatColor.BLUE + "/contract wanted");
 		}
 		return false;
 	}

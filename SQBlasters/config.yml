@@ -1,0 +1,8 @@
+ammo per pack: 7
+#Damage in half of hearts
+damage: 2.0
+#Both reload and fire time are in ticks 20 ticks are in a second
+reload time: 25
+fire time: 10
+#0-6
+scope: 6
