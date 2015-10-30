@@ -1,8 +1,42 @@
-ammo per pack: 7
-#Damage in half of hearts
-damage: 2.0
-#Both reload and fire time are in ticks 20 ticks are in a second
-reload time: 25
-fire time: 10
-#0-6
-scope: 6
+blaster:
+  ammo per pack: 7
+  #Damage in half of hearts
+  damage: 4.0
+  #Both reload and fire time are in ticks 20 ticks are in a second
+  reload time: 25
+  fire time: 10
+  #0-6
+  scope: 4
+  #Life of the arrow after firing in ticks 20 ticks are in a second
+  arrow life: 100
+  #currently useless
+  special:
+sniper:
+  ammo per pack: 3
+  #Damage in half of hearts
+  damage: 9.0
+  #Both reload and fire time are in ticks 20 ticks are in a second
+  reload time: 100
+  fire time: 60
+  #0-6
+  scope: 6
+  #Life of the arrow after firing in ticks 20 ticks are in a second
+  arrow life: 150
+  automatic: false
+  #currently useless
+  special:
+automatic:
+  ammo per pack: 25
+  #Damage in half of hearts
+  damage: 1.0
+  #Both reload and fire time are in ticks 20 ticks are in a second
+  reload time: 50
+  fire time: 2
+  #0-6
+  scope: 2
+  #Life of the arrow after firing in ticks 20 ticks are in a second
+  arrow life: 80
+  automatic: true
+  #currently useless
+  special:
+    - automatic
