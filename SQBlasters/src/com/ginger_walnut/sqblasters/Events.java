@@ -60,7 +60,7 @@ public class Events implements Listener{
 					
 					if (bowFlame == 1) {
 					
-						arrow.setFireTicks(200);
+						arrow.setFireTicks(Main.getPluginConfig().getInt(bowLore.get(0).substring(10) + ".flame ticks"));
 					
 					}
 					
@@ -198,7 +198,7 @@ public class Events implements Listener{
 								
 								lore2.clear();
 								
-								lore2.add(ChatColor.GOLD + "Type: " + ChatColor.WHITE + "blaster");
+								lore2.add(ChatColor.GOLD + "Type: " + ChatColor.WHITE + type);
 								lore2.add(ChatColor.GOLD + "Ammo Per Pack: " + ChatColor.WHITE + ammoPerPack);
 								lore2.add(ChatColor.GOLD + "Ammo: " + ChatColor.WHITE + ammo);
 								lore2.add(ChatColor.GOLD + "Damage: " + ChatColor.WHITE + bowDamage);

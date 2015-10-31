@@ -136,7 +136,7 @@ public class Main extends JavaPlugin{
 		ItemStack blaster = new ItemStack(Material.BOW);
 		
 		List<String> lore = new ArrayList<String>();
-		ItemMeta meta = (ItemMeta) blaster.getItemMeta();
+		ItemMeta meta;
 		
 		double bowPower;
 		
@@ -144,7 +144,9 @@ public class Main extends JavaPlugin{
 		
 		if (metaData != null) {
 			
-			bowPower = metaData.getEnchantLevel(Enchantment.ARROW_DAMAGE);
+			meta = metaData;
+			
+			bowPower = meta.getEnchantLevel(Enchantment.ARROW_DAMAGE);
 			
 			bowDamagePrecentIncrease = 25 * bowPower; 
 			bowDamagePrecentIncrease = bowDamagePrecentIncrease / 100;
@@ -153,6 +155,8 @@ public class Main extends JavaPlugin{
 			blaster.addEnchantments(metaData.getEnchants());
 			
 		} else {
+			
+			meta = (ItemMeta) blaster.getItemMeta();
 			
 			bowDamagePrecentIncrease = 1;
 			
