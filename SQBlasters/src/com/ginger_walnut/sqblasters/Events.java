@@ -198,6 +198,12 @@ public class Events implements Listener{
 								
 								lore2.clear();
 								
+								if (!Main.getPluginConfig().getRoot().getKeys(false).contains(type)) {
+									
+									type = "blaster";
+									
+								}
+								
 								lore2.add(ChatColor.GOLD + "Type: " + ChatColor.WHITE + type);
 								lore2.add(ChatColor.GOLD + "Ammo Per Pack: " + ChatColor.WHITE + ammoPerPack);
 								lore2.add(ChatColor.GOLD + "Ammo: " + ChatColor.WHITE + ammo);
