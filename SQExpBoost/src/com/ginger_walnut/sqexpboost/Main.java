@@ -42,6 +42,8 @@ public class Main extends JavaPlugin {
 
 		(new ExpBooster()).run();
 		
+		this.getServer().getPluginManager().registerEvents(new Events(), this);
+		
 		List<Player> players = Bukkit.getServer().getWorlds().get(0).getPlayers();
 		
 		for (int i = 0; i < players.size(); i++) {
@@ -158,7 +160,7 @@ public class Main extends JavaPlugin {
 					
 				} else {
 						
-					sender.sendMessage(ChatColor.RED + " use /expboost help for help on how to use ExpBoost");
+					sender.sendMessage(ChatColor.RED + " use /expboost help for help on how to use SQExpBoost");
 						
 				}
 										
@@ -235,13 +237,13 @@ public class Main extends JavaPlugin {
 						
 					} else {
 						
-						sender.sendMessage(ChatColor.RED + "You do not have premission to subtract to the exp multiplier");
+						sender.sendMessage(ChatColor.RED + "You do not have premission to subtract from the exp multiplier");
 						
 					}
 					
 				} else {
 					
-					sender.sendMessage(ChatColor.RED + " use /expboost help for help on how to use ExpBoost");
+					sender.sendMessage(ChatColor.RED + "Use /expboost help for help on how to use SQExpBoost");
 						
 				}
 				

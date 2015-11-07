@@ -13,7 +13,7 @@ blaster:
   #currently useless
   special:
 sniper:
-  ammo per pack: 7
+  ammo per pack: 3
   #Damage in half of hearts
   damage: 12.0
   #In ticks and 20 ticks are in a second

@@ -19,6 +19,7 @@ import org.bukkit.event.entity.ProjectileLaunchEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -468,6 +469,16 @@ public class Events implements Listener{
 			}
 			
 		}
+		
+	}
+	
+	@EventHandler
+	public void onPlayerJoin (PlayerJoinEvent event) {
+		
+		Player player = event.getPlayer();
+
+		player.removeMetadata("reload_timer", Main.getPluginMain());
+		player.removeMetadata("fire_timer", Main.getPluginMain());
 		
 	}
 
