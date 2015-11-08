@@ -69,26 +69,23 @@ public class Main extends JavaPlugin {
 	
 	public static void printHelp (CommandSender sender, int type) {
 		
-		switch (type) {
-		
-			case 0:
-				
-				sender.sendMessage(ChatColor.GOLD + "-----------------------------------------------------");
-				sender.sendMessage(ChatColor.GOLD + "Current exp multiplier: " + ChatColor.BLUE + expBoost);
-				sender.sendMessage(ChatColor.GOLD + "-----------------------------------------------------");
-		
-			case 1:		
-				
-				sender.sendMessage(ChatColor.GOLD + "-----------------------------------------------------");
-				sender.sendMessage(ChatColor.GOLD + "Current exp multiplier: " + ChatColor.BLUE + expBoost);
-				sender.sendMessage(ChatColor.GOLD + "/expboost help" + ChatColor.BLUE + " - Shows this");
-				sender.sendMessage(ChatColor.GOLD + "/expboost set <multiplier>" + ChatColor.BLUE + " - Sets the exp multiplier ");
-				sender.sendMessage(ChatColor.GOLD + "/expboost add <multiplier>" + ChatColor.BLUE + " - Adds an amount to the multiplier");
-				sender.sendMessage(ChatColor.GOLD + "/expboost subtract <multiplier>" + ChatColor.BLUE + " - Subtracts an amount from the multiplier");
-				sender.sendMessage(ChatColor.GOLD + "-----------------------------------------------------");
+		if (type == 0) {
 			
-		}
-		
+			sender.sendMessage(ChatColor.GOLD + "-----------------------------------------------------");
+			sender.sendMessage(ChatColor.GOLD + "Current exp multiplier: " + ChatColor.BLUE + expBoost);
+			sender.sendMessage(ChatColor.GOLD + "-----------------------------------------------------");
+			
+		} else if (type == 1){
+			
+			sender.sendMessage(ChatColor.GOLD + "-----------------------------------------------------");
+			sender.sendMessage(ChatColor.GOLD + "Current exp multiplier: " + ChatColor.BLUE + expBoost);
+			sender.sendMessage(ChatColor.GOLD + "/expboost help" + ChatColor.BLUE + " - Shows this");
+			sender.sendMessage(ChatColor.GOLD + "/expboost set <multiplier>" + ChatColor.BLUE + " - Sets the exp multiplier ");
+			sender.sendMessage(ChatColor.GOLD + "/expboost add <multiplier>" + ChatColor.BLUE + " - Adds an amount to the multiplier");
+			sender.sendMessage(ChatColor.GOLD + "/expboost subtract <multiplier>" + ChatColor.BLUE + " - Subtracts an amount from the multiplier");
+			sender.sendMessage(ChatColor.GOLD + "-----------------------------------------------------");
+				
+		}		
 		
 	}
 	

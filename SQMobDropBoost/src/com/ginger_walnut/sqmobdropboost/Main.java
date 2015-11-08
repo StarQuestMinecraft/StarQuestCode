@@ -54,26 +54,23 @@ public class Main extends JavaPlugin {
 	
 	public static void printHelp (CommandSender sender, int type) {
 		
-		switch (type) {
-		
-			case 0:
-				
-				sender.sendMessage(ChatColor.GOLD + "-----------------------------------------------------");
-				sender.sendMessage(ChatColor.GOLD + "Current mob drop multiplier: " + ChatColor.BLUE + mobDropMultiplier);
-				sender.sendMessage(ChatColor.GOLD + "-----------------------------------------------------");
-		
-			case 1:		
-				
-				sender.sendMessage(ChatColor.GOLD + "-----------------------------------------------------");
-				sender.sendMessage(ChatColor.GOLD + "Current mob drop multiplier: " + ChatColor.BLUE + mobDropMultiplier);
-				sender.sendMessage(ChatColor.GOLD + "/mobdropboost help" + ChatColor.BLUE + " - Shows this");
-				sender.sendMessage(ChatColor.GOLD + "/mobdropboost set <multiplier>" + ChatColor.BLUE + " - Sets the exp multiplier ");
-				sender.sendMessage(ChatColor.GOLD + "/mobdropboost add <multiplier>" + ChatColor.BLUE + " - Adds an amount to the multiplier");
-				sender.sendMessage(ChatColor.GOLD + "/mobdropboost subtract <multiplier>" + ChatColor.BLUE + " - Subtracts an amount from the multiplier");
-				sender.sendMessage(ChatColor.GOLD + "-----------------------------------------------------");
+		if (type == 0) {
 			
-		}
-		
+			sender.sendMessage(ChatColor.GOLD + "-----------------------------------------------------");
+			sender.sendMessage(ChatColor.GOLD + "Current mob drop multiplier: " + ChatColor.BLUE + mobDropMultiplier);
+			sender.sendMessage(ChatColor.GOLD + "-----------------------------------------------------");
+			
+		} else if (type == 1) {
+			
+			sender.sendMessage(ChatColor.GOLD + "-----------------------------------------------------");
+			sender.sendMessage(ChatColor.GOLD + "Current mob drop multiplier: " + ChatColor.BLUE + mobDropMultiplier);
+			sender.sendMessage(ChatColor.GOLD + "/mobdropboost help" + ChatColor.BLUE + " - Shows this");
+			sender.sendMessage(ChatColor.GOLD + "/mobdropboost set <multiplier>" + ChatColor.BLUE + " - Sets the exp multiplier ");
+			sender.sendMessage(ChatColor.GOLD + "/mobdropboost add <multiplier>" + ChatColor.BLUE + " - Adds an amount to the multiplier");
+			sender.sendMessage(ChatColor.GOLD + "/mobdropboost subtract <multiplier>" + ChatColor.BLUE + " - Subtracts an amount from the multiplier");
+			sender.sendMessage(ChatColor.GOLD + "-----------------------------------------------------");
+			
+		}		
 		
 	}
 	
