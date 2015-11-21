@@ -1,14 +1,18 @@
 name: SQExpBoost
 main: com.ginger_walnut.sqexpboost.Main
-version: 1.0.2
+version: 1.0
 description: A plugin that adds the ability to boost exp drops.
 commands:
    expboost:
-      description: Manages SQExpBoost
+      description: Manages ExpBoost
    expboost help:
-      description: Shows the help for SQExpBoost
+      description: Shows the help for ExpBoost
    expboost set:
       description: Sets the base exp multiplier
+   expboost timeboost:
+      description: Manages time based exp multipliers
+   expboost timeboost set:
+      description: Sets a time based exp multiplier
 permissions:
    SQExpBoost.viewHelp:
       description: Premission node for viewing help

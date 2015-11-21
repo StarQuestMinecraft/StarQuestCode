@@ -1,7 +1,6 @@
 package com.dibujaron.DockingTube;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -10,6 +9,10 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.plugin.java.JavaPlugin;
 
 public class DockingTube{
 	Block baseblock;
@@ -31,18 +34,9 @@ public class DockingTube{
 		
 		baseblock = s.getBlock().getRelative(forward);
 		
-		List<Material> doors = new ArrayList<Material>();
-		doors.add(Material.WOODEN_DOOR);
-		doors.add(Material.BIRCH_DOOR);
-		doors.add(Material.SPRUCE_DOOR);
-		doors.add(Material.JUNGLE_DOOR);
-		doors.add(Material.ACACIA_DOOR);
-		doors.add(Material.DARK_OAK_DOOR);
-		doors.add(Material.IRON_DOOR);
-		
-		if (doors.contains(baseblock.getRelative(left).getType())){
+		if (baseblock.getRelative(left).getTypeId() == 64){
 			doorside = left;
-		} else if (doors.contains(baseblock.getRelative(right).getType())){
+		} else if (baseblock.getRelative(right).getTypeId() == 64){
 			doorside = right;
 		} else {
 			p.sendMessage("Not a valid docking tube.");
