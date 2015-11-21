@@ -168,6 +168,16 @@ public class SQSpace extends JavaPlugin implements Listener {
 				if(p.isFlying() && p.isSprinting()){
 						p.setSprinting(false);
 				}
+				if(p.getLocation().getY() > 256)
+				{
+					Location new_Y = p.getLocation().add(0, -1, 0);
+					p.teleport(new_Y);
+				}
+				else if(p.getLocation().getY() < 0)
+				{
+					Location new_Y = p.getLocation().add(0, 1, 0);
+					p.teleport(new_Y);
+				}
 			}
 		
 			this.checkIfSuffocating(p);
