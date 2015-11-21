@@ -42,6 +42,8 @@ public class Main extends JavaPlugin {
 
 		(new ExpBooster()).run();
 		
+		this.getServer().getPluginManager().registerEvents(new Events(), this);
+		
 		List<Player> players = Bukkit.getServer().getWorlds().get(0).getPlayers();
 		
 		for (int i = 0; i < players.size(); i++) {
@@ -67,26 +69,23 @@ public class Main extends JavaPlugin {
 	
 	public static void printHelp (CommandSender sender, int type) {
 		
-		switch (type) {
-		
-			case 0:
-				
-				sender.sendMessage(ChatColor.GOLD + "-----------------------------------------------------");
-				sender.sendMessage(ChatColor.GOLD + "Current exp multiplier: " + ChatColor.BLUE + expBoost);
-				sender.sendMessage(ChatColor.GOLD + "-----------------------------------------------------");
-		
-			case 1:		
-				
-				sender.sendMessage(ChatColor.GOLD + "-----------------------------------------------------");
-				sender.sendMessage(ChatColor.GOLD + "Current exp multiplier: " + ChatColor.BLUE + expBoost);
-				sender.sendMessage(ChatColor.GOLD + "/expboost help" + ChatColor.BLUE + " - Shows this");
-				sender.sendMessage(ChatColor.GOLD + "/expboost set <multiplier>" + ChatColor.BLUE + " - Sets the exp multiplier ");
-				sender.sendMessage(ChatColor.GOLD + "/expboost add <multiplier>" + ChatColor.BLUE + " - Adds an amount to the multiplier");
-				sender.sendMessage(ChatColor.GOLD + "/expboost subtract <multiplier>" + ChatColor.BLUE + " - Subtracts an amount from the multiplier");
-				sender.sendMessage(ChatColor.GOLD + "-----------------------------------------------------");
+		if (type == 0) {
 			
-		}
-		
+			sender.sendMessage(ChatColor.GOLD + "-----------------------------------------------------");
+			sender.sendMessage(ChatColor.GOLD + "Current exp multiplier: " + ChatColor.BLUE + expBoost);
+			sender.sendMessage(ChatColor.GOLD + "-----------------------------------------------------");
+			
+		} else if (type == 1){
+			
+			sender.sendMessage(ChatColor.GOLD + "-----------------------------------------------------");
+			sender.sendMessage(ChatColor.GOLD + "Current exp multiplier: " + ChatColor.BLUE + expBoost);
+			sender.sendMessage(ChatColor.GOLD + "/expboost help" + ChatColor.BLUE + " - Shows this");
+			sender.sendMessage(ChatColor.GOLD + "/expboost set <multiplier>" + ChatColor.BLUE + " - Sets the exp multiplier ");
+			sender.sendMessage(ChatColor.GOLD + "/expboost add <multiplier>" + ChatColor.BLUE + " - Adds an amount to the multiplier");
+			sender.sendMessage(ChatColor.GOLD + "/expboost subtract <multiplier>" + ChatColor.BLUE + " - Subtracts an amount from the multiplier");
+			sender.sendMessage(ChatColor.GOLD + "-----------------------------------------------------");
+				
+		}		
 		
 	}
 	
@@ -158,7 +157,7 @@ public class Main extends JavaPlugin {
 					
 				} else {
 						
-					sender.sendMessage(ChatColor.RED + " use /expboost help for help on how to use ExpBoost");
+					sender.sendMessage(ChatColor.RED + " use /expboost help for help on how to use SQExpBoost");
 						
 				}
 										
@@ -235,13 +234,13 @@ public class Main extends JavaPlugin {
 						
 					} else {
 						
-						sender.sendMessage(ChatColor.RED + "You do not have premission to subtract to the exp multiplier");
+						sender.sendMessage(ChatColor.RED + "You do not have premission to subtract from the exp multiplier");
 						
 					}
 					
 				} else {
 					
-					sender.sendMessage(ChatColor.RED + " use /expboost help for help on how to use ExpBoost");
+					sender.sendMessage(ChatColor.RED + "Use /expboost help for help on how to use SQExpBoost");
 						
 				}
 				
