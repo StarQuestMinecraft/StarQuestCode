@@ -30,8 +30,8 @@ public class ItemContractGenerator {
 	//pick a random price based on their level, some sort of log scale, += randomizer
 		
 		//with this equation you start at 10,000 and end up with 50000 at level 100
-		double priceBase = 80 * level + 1000;
-		
+		double priceBase = 85 * level + 1500;
+
 		//randomize the price first by a percentage and then by a range
 		//this ensures a good spread at both low and high levels
 		//min 9000, max 76000
