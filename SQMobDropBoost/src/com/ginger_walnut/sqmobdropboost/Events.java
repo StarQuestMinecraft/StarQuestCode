@@ -64,7 +64,6 @@ public class Events implements Listener{
 							ItemStack itemStack = drops.get(i);
 							
 							itemStack.setAmount(drops.get(i).getAmount() - 1);
-							
 							drops.set(i, itemStack);
 							
 						} else {
@@ -83,7 +82,7 @@ public class Events implements Listener{
 					
 				for (int j = 0; j < event.getDrops().size(); j ++) {
 					
-					entity.getWorld().dropItem(entity.getLocation(), new ItemStack(event.getDrops().get(j).getType(), event.getDrops().get(j).getAmount()));
+					entity.getWorld().dropItem(entity.getLocation(), event.getDrops().get(j));
 										
 				}
 

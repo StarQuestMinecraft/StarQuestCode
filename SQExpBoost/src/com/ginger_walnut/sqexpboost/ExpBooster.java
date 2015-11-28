@@ -49,9 +49,7 @@ public class ExpBooster extends Thread{
 								
 							}
 							
-							if (lastExp < player.getTotalExperience()) {
-								
-								System.out.print(4);								
+							if (lastExp < player.getTotalExperience()) {							
 								
 								float expGained  = player.getTotalExperience() - lastExp;
 								int expGive = (int) (expGained * (Main.expBoost - 1));

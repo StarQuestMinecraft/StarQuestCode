@@ -65,7 +65,7 @@ public class Main extends JavaPlugin {
 			sender.sendMessage(ChatColor.GOLD + "-----------------------------------------------------");
 			sender.sendMessage(ChatColor.GOLD + "Current mob drop multiplier: " + ChatColor.BLUE + mobDropMultiplier);
 			sender.sendMessage(ChatColor.GOLD + "/mobdropboost help" + ChatColor.BLUE + " - Shows this");
-			sender.sendMessage(ChatColor.GOLD + "/mobdropboost set <multiplier>" + ChatColor.BLUE + " - Sets the exp multiplier ");
+			sender.sendMessage(ChatColor.GOLD + "/mobdropboost set <multiplier>" + ChatColor.BLUE + " - Sets the mob drop multiplier ");
 			sender.sendMessage(ChatColor.GOLD + "/mobdropboost add <multiplier>" + ChatColor.BLUE + " - Adds an amount to the multiplier");
 			sender.sendMessage(ChatColor.GOLD + "/mobdropboost subtract <multiplier>" + ChatColor.BLUE + " - Subtracts an amount from the multiplier");
 			sender.sendMessage(ChatColor.GOLD + "-----------------------------------------------------");
@@ -159,7 +159,7 @@ public class Main extends JavaPlugin {
 							getConfig().set("mob drop multiplier", mobDropMultiplier);
 							this.saveConfig();
 								
-							Bukkit.getServer().broadcastMessage(ChatColor.GOLD + "MobDropBoost: The mob drop multiplier has been set to " + mobDropMultiplier);
+							Bukkit.getServer().broadcastMessage(ChatColor.GOLD + "SQMobDropBoost: The mob drop multiplier has been set to " + mobDropMultiplier);
 															
 						} catch (NumberFormatException error) {
 								
@@ -184,7 +184,7 @@ public class Main extends JavaPlugin {
 							getConfig().set("mob drop multiplier", mobDropMultiplier);
 							this.saveConfig();
 								
-							Bukkit.getServer().broadcastMessage(ChatColor.GOLD + "MobDropBoost: The mob drop multiplier has been set to " + mobDropMultiplier);
+							Bukkit.getServer().broadcastMessage(ChatColor.GOLD + "SQMobDropBoost: The mob drop multiplier has been set to " + mobDropMultiplier);
 															
 						} catch (NumberFormatException error) {
 								
@@ -209,7 +209,7 @@ public class Main extends JavaPlugin {
 							getConfig().set("mob drop multiplier", mobDropMultiplier);
 							this.saveConfig();
 								
-							Bukkit.getServer().broadcastMessage(ChatColor.GOLD + "MobDropBoost: The mob drop multiplier has been set to " + mobDropMultiplier);
+							Bukkit.getServer().broadcastMessage(ChatColor.GOLD + "SQMobDropBoost: The mob drop multiplier has been set to " + mobDropMultiplier);
 															
 						} catch (NumberFormatException error) {
 								
