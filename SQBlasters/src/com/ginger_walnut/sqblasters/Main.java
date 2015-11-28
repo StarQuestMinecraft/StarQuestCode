@@ -114,7 +114,7 @@ public class Main extends JavaPlugin{
 		player.sendMessage(ChatColor.GOLD + "/blaster help" + ChatColor.BLUE + " - Shows this");
 		player.sendMessage(ChatColor.GOLD + "/blaster create" + ChatColor.BLUE + " - Creates a new blaster ");
 		player.sendMessage(ChatColor.GOLD + "/blaster guide" + ChatColor.BLUE + " - Displays a guide for SQBlasters");
-		player.sendMessage(ChatColor.GOLD + "/blaster recipie" + ChatColor.BLUE + " - Displays the blaster crafting recipie");
+		player.sendMessage(ChatColor.GOLD + "/blaster recipe" + ChatColor.BLUE + " - Displays the blaster crafting recipe");
 		player.sendMessage(ChatColor.GOLD + "-----------------------------------------------------");
 		
 	}
@@ -122,7 +122,7 @@ public class Main extends JavaPlugin{
 	private static void printGuide (Player player) {
 		
 		player.sendMessage(ChatColor.GOLD + "-----------------------------------------------------");
-		player.sendMessage(ChatColor.BLUE + "To aquire a blaster, the first step that you need to follow is to craft a blaster with the recipie that you can find with the command /blaster recipie"); 
+		player.sendMessage(ChatColor.BLUE + "To aquire a blaster, the first step that you need to follow is to craft a blaster with the recipe that you can find with the command /blaster recipe"); 
 		player.sendMessage("");
 		player.sendMessage(ChatColor.BLUE + "The next step is to type /blaster create and then pick a type of blaster.  Each of the blaster have different stats so pick the one that is best suited for your purpose.");
 		player.sendMessage("");
@@ -209,7 +209,7 @@ public class Main extends JavaPlugin{
 	
 	private static void showRecipie (Player player) {
 		
-		Inventory inventory = Bukkit.createInventory(player, InventoryType.WORKBENCH, ChatColor.GOLD + "Blaster Recipie");
+		Inventory inventory = Bukkit.createInventory(player, InventoryType.WORKBENCH, ChatColor.GOLD + "Blaster Recipe");
 	
 		ItemStack blaster = new ItemStack(Material.BOW);
 		List<String> blasterLore = new ArrayList<String>();
@@ -352,7 +352,7 @@ public class Main extends JavaPlugin{
 					
 					printGuide(player);
 					
-				} else if (args[0].equalsIgnoreCase("recipie")) {
+				} else if (args[0].equalsIgnoreCase("recipe")) {
 					
 					showRecipie(player);
 					
