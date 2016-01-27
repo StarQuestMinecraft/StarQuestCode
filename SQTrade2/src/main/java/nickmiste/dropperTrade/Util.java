@@ -184,4 +184,10 @@ public class Util
 
 		player.openInventory(inv);
 	}
+	
+	public static boolean isDropperShopSign(Sign sign)
+	{
+		return sign.getLine(0).equals(ChatColor.DARK_GREEN + "Dropper Shop") ||
+				sign.getLine(0).equals(ChatColor.RED + "" + ChatColor.STRIKETHROUGH + "Dropper Shop");
+	}
 }

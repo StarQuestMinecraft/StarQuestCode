@@ -37,7 +37,7 @@ public class DropperTrade
 					}
 				}
 			}
-			else if (event.getClickedBlock().getState().getType().equals(Material.WALL_SIGN))
+			else if (event.getClickedBlock().getType().equals(Material.WALL_SIGN))
 			{
 				Sign sign = (Sign) (event.getClickedBlock().getState());
 				
@@ -58,6 +58,11 @@ public class DropperTrade
 						if (price > 50000)
 						{
 							event.getPlayer().sendMessage(ChatColor.DARK_RED + "The price per item may not exceed 50000 credits.");
+							return;
+						}
+						if (price < 0)
+						{
+							event.getPlayer().sendMessage(ChatColor.DARK_RED + "The price per item must not be negative.");
 							return;
 						}
 						
@@ -182,25 +187,28 @@ public class DropperTrade
 			{
 				if (!((Sign) event.getBlock().getState()).getLine(3).substring(2).equals(event.getPlayer().getName()))
 				{
-					if (Util.hasDropper(event.getBlock().getLocation()))
+					if (Util.isDropperShopSign((Sign) event.getBlock().getState()))
 					{
-						if (((Sign) event.getBlock().getState()).getLine(0).equals(ChatColor.DARK_GREEN + "Dropper Shop"))
+						if (Util.hasDropper(event.getBlock().getLocation()))
 						{
-							if (Util.isValid(event.getBlock().getLocation()))
+							if (((Sign) event.getBlock().getState()).getLine(0).equals(ChatColor.DARK_GREEN + "Dropper Shop"))
 							{
-								if (Bukkit.getPlayer(((Sign) event.getBlock().getState()).getLine(3).substring(2)).isOnline())
+								if (Util.isValid(event.getBlock().getLocation()))
 								{
-									Bukkit.getScheduler().scheduleSyncDelayedTask(SQTrade2.getInstance(), 
-											new SignCooldownTask((Sign) event.getBlock().getState()), 900);
-									event.setCancelled(true);
+									if (Bukkit.getPlayer(((Sign) event.getBlock().getState()).getLine(3).substring(2)).isOnline())
+									{
+										Bukkit.getScheduler().scheduleSyncDelayedTask(SQTrade2.getInstance(), 
+												new SignCooldownTask((Sign) event.getBlock().getState()), 900);
+										event.setCancelled(true);
+									}
+									else event.getPlayer().sendMessage(ChatColor.AQUA + "You were able to break this shop because its owner is offline.");
 								}
-								else event.getPlayer().sendMessage(ChatColor.AQUA + "You were able to break this shop because its owner is offline.");
+								else event.getPlayer().sendMessage(ChatColor.AQUA + "You were able to break this shop because it was invalid.");
 							}
-							else event.getPlayer().sendMessage(ChatColor.AQUA + "You were able to break this shop because it was invalid.");
+							else if (((Sign) event.getBlock().getState()).getLine(0).equals(ChatColor.RED + "" + ChatColor.STRIKETHROUGH + "Dropper Shop") &&
+									((Sign) event.getBlock().getState()).getLine(2).equals(ChatColor.DARK_RED + "Dropper Locked"))
+								event.setCancelled(true);
 						}
-						else if (((Sign) event.getBlock().getState()).getLine(0).equals(ChatColor.RED + "" + ChatColor.STRIKETHROUGH + "Dropper Shop") &&
-								((Sign) event.getBlock().getState()).getLine(2).equals(ChatColor.DARK_RED + "Dropper Locked"))
-							event.setCancelled(true);
 					}
 				}
 			}
