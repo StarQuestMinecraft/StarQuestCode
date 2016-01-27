@@ -1,4 +1,15 @@
 name: SQBlasters
 main: com.ginger_walnut.sqblasters.Main
-version: 1.0.0
+version: 1.1.4
 description: A plugin that changes bows to blasters
+commands:
+  blaster:
+    description: Manages SQBlasters
+  blaster help:
+    description: Displays help for SQBlasters
+  blaster create:
+    description: Creates a new blaster
+  blaster recipe:
+    description: Displays the recipes for blasters
+  blaster guide:
+    description: Displays the guide for SQBlasters
