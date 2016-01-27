@@ -1,0 +1,16 @@
+name: ${project.name}
+version: ${project.version}
+main: com.lawrencethefrog.nanfixer.NaNFixer
+
+commands:
+  nan:
+    description: Generic base command for plugin
+    usage: /nan <subcommand>
+    permission: ${project.name}.base
+    permission-message: You don't have permission to use this plugin!
+  nan fixplayer:
+    description: fixes NaN errors for a single player of specified UUID
+    usage: /nan fixUUID <UUID>
+    permission: ${project.name}.fixplayer
+    permission-message: You don't have permission to use this feature!
+    

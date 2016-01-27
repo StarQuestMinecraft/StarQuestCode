@@ -1,0 +1,14 @@
+#Boolean. If true, the plugin will attempt to automatically fix NaN errors when players get kicked for 'NaN in position (Hacking?)'. Required.
+Autofix: true
+#Integer. Ticks between player being kicked and NaN errors being fixed. Prevents player file from being locked while player is still online. Only required if Autofix is true.
+AutofixDelayTicks: 20
+#Either 'DELETE' or 'TELEPORT_COORDS'. Required.
+Mode: TELEPORT_COORDS
+#String. Name of world to teleport to. Only required if Mode is set to 'TELEPORT_COORDS'.
+TeleportWorld: world
+#Vector. Coordinates to teleport to. Only required if Mode is set to 'TELEPORT_COORDS'. Do not remove '==: Vector'.
+TeleportTo:
+  ==: Vector
+  x: 0.0
+  y: 65.0
+  z: 0.0
