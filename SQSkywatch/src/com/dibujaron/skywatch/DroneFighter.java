@@ -31,11 +31,11 @@ public class DroneFighter {
 		lastFired = System.currentTimeMillis();
 		Vector target = toTarget();
 		Vector target2 = target.clone().multiply(5);
-		System.out.println("addition: " + target2);
-		System.out.println("SOUND");
+		//System.out.println("addition: " + target2);
+		//System.out.println("SOUND");
 		//myGhast.getWorld().playSound(myGhast.getLocation(), Sound.GHAST_DEATH, 2.0f, (float) (Math.random() * 3.0f));
 		Location fireLoc = myGhast.getLocation().clone().add(target2);
-		System.out.println("fireloc: " + fireLoc);
+		//System.out.println("fireloc: " + fireLoc);
 		//Fireball f = (Fireball) myGhast.getWorld().spawnEntity(fireLoc, EntityType.FIREBALL);
 		//f.setDirection(target);
 		Projectile proj = myGhast.getWorld().spawn(fireLoc, Fireball.class);

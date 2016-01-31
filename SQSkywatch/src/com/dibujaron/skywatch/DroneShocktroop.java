@@ -116,9 +116,9 @@ public class DroneShocktroop {
 	private boolean isSafeSpace(Location l) {
 		if(l == null) return false;
 		Block b = l.getBlock();
-		System.out.println(b.getType());
-		System.out.println(b.getRelative(BlockFace.DOWN).getType());
-		System.out.println(b.getRelative(BlockFace.UP).getType());
+		//System.out.println(b.getType());
+		//System.out.println(b.getRelative(BlockFace.DOWN).getType());
+		//System.out.println(b.getRelative(BlockFace.UP).getType());
 		return isEmptyBlock(b) && !isEmptyBlock(b.getRelative(BlockFace.DOWN)) && isEmptyBlock(b.getRelative(BlockFace.UP));
 	}
 	
@@ -131,7 +131,7 @@ public class DroneShocktroop {
 	}
 
 	public boolean canFireAgain() {
-		System.out.println("test fire.");
+		//System.out.println("test fire.");
 		return System.currentTimeMillis() - lastFired > (5 * 1000);
 	}
 

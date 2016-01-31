@@ -29,9 +29,9 @@ public class PlayerTriggerHandler implements Listener{
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void onPlayerHit(EntityDamageByEntityEvent event){
 		if(event.isCancelled()) return;
-		System.out.println("Entity hit");
+		//System.out.println("Entity hit");
 		if(event.getDamager() instanceof Player && event.getEntity() instanceof Player && event.getDamager() != event.getEntity()){
-			System.out.println("Player hit!");
+			//System.out.println("Player hit!");
 			//it's pvp
 			triggerCheck((Player) event.getDamager(), (Player) event.getEntity(), event, event.getDamage());
 		}
@@ -120,11 +120,11 @@ public class PlayerTriggerHandler implements Listener{
 		boolean isDamagedWanted = damagedData.isWanted();
 		
 		if(isDamagerPrivateer && isDamagedWanted){
-			System.out.println("Should not trigger- damager is privateer and damagee is wanted!");
+			//System.out.println("Should not trigger- damager is privateer and damagee is wanted!");
 			return false;
 		}
 		if(isDamagerWanted && isDamagedPrivateer){
-			System.out.println("Should not trigger- damager is wanted and damagee is privateer!");
+			//System.out.println("Should not trigger- damager is wanted and damagee is privateer!");
 			return false;
 		}
 		return true;
