@@ -157,8 +157,7 @@ public class NaNFixer extends JavaPlugin implements Listener {
 			playerFile.delete();
 			sender.sendMessage("File deleted.");
 		}
-		if(fixMode == FixMode.TELEPORT_COORDS){
-			sender.sendMessage("The only mode currently suported is DELETE.");				
+		if(fixMode == FixMode.TELEPORT_COORDS){		
 			try {				
 				NBTInputStream nbtInputStream = new NBTInputStream(new FileInputStream(playerFile));
 				CompoundTag oldRootTag = (CompoundTag)nbtInputStream.readTag();
