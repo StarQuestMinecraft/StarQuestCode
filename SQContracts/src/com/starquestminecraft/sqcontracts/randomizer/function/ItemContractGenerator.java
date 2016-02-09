@@ -12,7 +12,7 @@ import com.starquestminecraft.sqcontracts.database.ContractPlayerData;
 import com.starquestminecraft.sqcontracts.util.StationUtils;
 
 public class ItemContractGenerator {
-	public static ItemContract generate(ContractPlayerData pData, Random generator, boolean blackMarket){
+	public static ItemContract generate(ContractPlayerData pData, Random generator, boolean blackMarket, String system){
 		
 	//get their relevant level
 		int level;
@@ -77,7 +77,7 @@ public class ItemContractGenerator {
 		}
 		
 	//pick a target station
-		String targetStation = StationUtils.getRandomStation(generator);
+		String targetStation = StationUtils.getRandomStation(generator, system);
 		priceFnl *= StationUtils.getModifierForStation(targetStation);
 		if(blackMarket){
 			priceFnl *= 1.5;

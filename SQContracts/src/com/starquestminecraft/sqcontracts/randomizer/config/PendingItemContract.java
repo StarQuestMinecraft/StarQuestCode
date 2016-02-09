@@ -37,10 +37,10 @@ public class PendingItemContract extends PendingContract{
 	
 
 	@Override
-	public Contract giveToPlayer(ContractPlayerData d, Random generator) {
+	public Contract giveToPlayer(ContractPlayerData d, Random generator, String system) {
 		UUID player = d.getPlayer();
 		int reward = getRandomBetween(generator, minReward, maxReward);
-		String targetStation = StationUtils.getRandomStation(generator);
+		String targetStation = StationUtils.getRandomStation(generator, system);
 		reward *= StationUtils.getModifierForStation(targetStation);
 		ArrayList<ItemHolder> stax = new ArrayList<ItemHolder>(pendingItems.size());
 		for(PendingItem i : pendingItems){

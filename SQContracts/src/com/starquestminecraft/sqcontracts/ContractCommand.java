@@ -25,6 +25,7 @@ public class ContractCommand implements CommandExecutor {
 
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String name, String[] args) {
+		System.out.print(0);
 		if (args.length < 1)
 			return false;
 		if (args[0].equals("admin")) {
@@ -76,6 +77,7 @@ public class ContractCommand implements CommandExecutor {
 		final Player plr = (Player) sender;
 		boolean valid = false;
 		if (commandArgs.contains(args[0]) && sender instanceof Player) {
+			System.out.print(1);
 			//final Player plr = (Player) sender;
 			final String[] fnlargs = args;
 			valid = true;
@@ -83,25 +85,33 @@ public class ContractCommand implements CommandExecutor {
 				public void run() {
 					switch (fnlargs[0]) {
 					case "new":
+						System.out.print(2);
 						handleNewCommand(plr, plr, fnlargs);
 						return;
 					case "available":
+						System.out.print(3);
 						handleAvailableCommand(plr, plr, fnlargs);
 						return;
 					case "list":
+						System.out.print(4);
 						displayContractList(plr, plr);
 						return;
 					case "complete":
+						System.out.print(5);
 						completeContract(plr, fnlargs);
 						return;
 					case "wanted":
+						System.out.print(6);
 						displayWantedList(plr, fnlargs);
 						return;
 					case "stats":
+						System.out.print(7);
 						displayStatsList(plr, fnlargs);
 						return;
 					case "remove":
+						System.out.print(8);
 					case "delete":
+						System.out.print(9);
 						removeContract(plr, fnlargs);
 						return;
 					}

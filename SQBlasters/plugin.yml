@@ -1,6 +1,6 @@
 name: SQBlasters
 main: com.ginger_walnut.sqblasters.Main
-version: 1.1.4
+version: 1.1.5
 description: A plugin that changes bows to blasters
 commands:
   blaster:
@@ -13,3 +13,7 @@ commands:
     description: Displays the recipes for blasters
   blaster guide:
     description: Displays the guide for SQBlasters
+permissions:
+   SQBlasters.spawnBlaster:
+      description: Premission node for spawning in a blaster
+      default: false

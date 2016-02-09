@@ -228,6 +228,7 @@ public class Events implements Listener{
 					ammoPerPack = Main.getPluginConfig().getInt(type + ".ammo per pack");
 					reloadTime = Main.getPluginConfig().getInt(type + ".reload time");
 					fireTime = Main.getPluginConfig().getInt(type + ".fire time");
+					List<String> special = Main.getPluginConfig().getStringList(type + ".special");
 					
 					if (!bowLore.get(0).substring(10).equals("new blaster")) {
 						
@@ -249,7 +250,7 @@ public class Events implements Listener{
 							
 						}
 
-						if (bowLore.get(0).substring(10).equals("automatic")) {
+						if (special.contains("automatic")) {
 								
 							if (player.hasMetadata("automatic")) {
 									

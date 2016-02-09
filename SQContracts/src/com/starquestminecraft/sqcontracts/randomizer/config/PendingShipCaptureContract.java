@@ -29,10 +29,10 @@ public class PendingShipCaptureContract extends PendingContract{
 	}
 
 	@Override
-	public Contract giveToPlayer(ContractPlayerData d, Random generator) {
+	public Contract giveToPlayer(ContractPlayerData d, Random generator, String system) {
 		UUID player = d.getPlayer();
 		int reward = getRandomBetween(generator, minReward, maxReward);
-		String targetStation = StationUtils.getRandomStation(generator);
+		String targetStation = StationUtils.getRandomStation(generator, system);
 		reward *= StationUtils.getModifierForStation(targetStation);
 		int amount = getRandomBetween(generator, amountMin, amountMax);
 		return new ShipCaptureContract(player, reward, targetClasses.toArray(new String[0]), amount, targetStation, blackMarket);
