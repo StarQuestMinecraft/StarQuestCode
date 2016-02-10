@@ -14,7 +14,6 @@ import org.bukkit.entity.Player;
 
 import com.starquestminecraft.sqcontracts.contracts.Contract;
 import com.starquestminecraft.sqcontracts.database.ContractPlayerData;
-import com.starquestminecraft.sqcontracts.randomizer.config.ConfigRandomizer;
 import com.starquestminecraft.sqcontracts.util.ContractCompletionRunnable;
 import com.starquestminecraft.sqcontracts.util.StationUtils;
 import com.starquestminecraft.sqcontracts.util.UUIDUtils;
@@ -26,6 +25,7 @@ public class ContractCommand implements CommandExecutor {
 
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String name, String[] args) {
+		System.out.print(0);
 		if (args.length < 1)
 			return false;
 		if (args[0].equals("admin")) {
@@ -74,39 +74,61 @@ public class ContractCommand implements CommandExecutor {
 				return true;
 			}
 		}
+		final Player plr = (Player) sender;
+		boolean valid = false;
 		if (commandArgs.contains(args[0]) && sender instanceof Player) {
-			final Player plr = (Player) sender;
+			System.out.print(1);
+			//final Player plr = (Player) sender;
 			final String[] fnlargs = args;
+			valid = true;
 			Bukkit.getServer().getScheduler().runTaskAsynchronously(SQContracts.get(), new Runnable() {
 				public void run() {
 					switch (fnlargs[0]) {
 					case "new":
+						System.out.print(2);
 						handleNewCommand(plr, plr, fnlargs);
 						return;
 					case "available":
+						System.out.print(3);
 						handleAvailableCommand(plr, plr, fnlargs);
 						return;
 					case "list":
+						System.out.print(4);
 						displayContractList(plr, plr);
 						return;
 					case "complete":
+						System.out.print(5);
 						completeContract(plr, fnlargs);
 						return;
 					case "wanted":
+						System.out.print(6);
 						displayWantedList(plr, fnlargs);
 						return;
 					case "stats":
+						System.out.print(7);
 						displayStatsList(plr, fnlargs);
 						return;
 					case "remove":
+						System.out.print(8);
 					case "delete":
+						System.out.print(9);
 						removeContract(plr, fnlargs);
 						return;
 					}
 				}
-
 			});
 			return true;
+		} else {
+			plr.sendMessage(ChatColor.RED + "Command not recognized. To see available contracts, do: " + ChatColor.BLUE + "/Contract available ${type}");
+			plr.sendMessage(ChatColor.RED + "To add a new contract, do: " + ChatColor.BLUE + "/Contract new ${type} ${number}");
+		}
+		if (!valid) {
+			plr.sendMessage(ChatColor.RED + "To see available contracts, do: " + ChatColor.BLUE + "/contract available <type>");
+			plr.sendMessage(ChatColor.RED + "To accept a new contract, do: " + ChatColor.BLUE + "/contract new <type> <#>");
+			plr.sendMessage(ChatColor.RED + "To list your current contracts, do: " + ChatColor.BLUE + "/contract list");
+			plr.sendMessage(ChatColor.RED + "To remove a contract, do: " + ChatColor.BLUE + "/contract remove <#>");
+			plr.sendMessage(ChatColor.RED + "Be careful! Removing a contract after 1 hour costs half of it's reward!");
+			plr.sendMessage(ChatColor.RED + "To list wanted and privateer players, do: " + ChatColor.BLUE + "/contract wanted");
 		}
 		return false;
 	}

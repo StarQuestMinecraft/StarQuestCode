@@ -21,9 +21,9 @@ public class PendingMoneyContract extends PendingContract{
 	}
 
 	@Override
-	public Contract giveToPlayer(ContractPlayerData d, Random generator) {
+	public Contract giveToPlayer(ContractPlayerData d, Random generator, String system) {
 		UUID player = d.getPlayer();
-		String targetStation = StationUtils.getRandomStation(generator);
+		String targetStation = StationUtils.getRandomStation(generator, system);
 		cost *= (1 / StationUtils.getModifierForStation(targetStation));
 		return new MoneyContract(player, targetStation, cost, cause);
 	}

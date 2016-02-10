@@ -1,7 +1,6 @@
 package us.higashiyama.george.SQSpace;
 
 import org.bukkit.ChatColor;
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -43,12 +42,10 @@ public class SuffocationTask extends BukkitRunnable {
 		if (this.p.isDead()) {
 			this.cancel(this.p);
 		}
-		if ((null != this.p.getInventory().getHelmet())
-				&& (this.OxygenLevel != this.p.getInventory().getHelmet().getEnchantmentLevel(Enchantment.OXYGEN))) {
-			this.cancel(this.p);
-		}
 		if (!this.canceled) {
+			double health = this.p.getHealth();
 			this.p.damage(1.0D);
+			this.p.setHealth(health-1.0D);
 		}
 	}
 }

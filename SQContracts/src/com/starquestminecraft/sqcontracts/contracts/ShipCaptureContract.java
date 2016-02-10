@@ -49,6 +49,8 @@ public class ShipCaptureContract implements Contract{
 				num = left;
 				return CompletionStatus.INCOMPLETE;
 			}
+			num = left;
+			Bukkit.getOfflinePlayer(player).getPlayer().sendMessage("This contract requires " + Integer.toString(num) + " more data cores.");
 			return CompletionStatus.PARTIAL;
 		}
 		return CompletionStatus.COMPLETE;

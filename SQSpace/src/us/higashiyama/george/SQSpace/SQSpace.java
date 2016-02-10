@@ -23,10 +23,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
-import com.sk89q.worldguard.protection.ApplicableRegionSet;
-import com.sk89q.worldguard.protection.regions.ProtectedRegion;
-
 public class SQSpace extends JavaPlugin implements Listener {
 
 	public static ArrayList<Player> Players = new ArrayList<Player>();
@@ -171,6 +167,16 @@ public class SQSpace extends JavaPlugin implements Listener {
 				}
 				if(p.isFlying() && p.isSprinting()){
 						p.setSprinting(false);
+				}
+				if(p.getLocation().getY() > 256)
+				{
+					Location new_Y = p.getLocation().add(0, -1, 0);
+					p.teleport(new_Y);
+				}
+				else if(p.getLocation().getY() < 0)
+				{
+					Location new_Y = p.getLocation().add(0, 1, 0);
+					p.teleport(new_Y);
 				}
 			}
 		

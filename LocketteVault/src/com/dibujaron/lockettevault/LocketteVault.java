@@ -1,5 +1,10 @@
 package com.dibujaron.lockettevault;
 
+import java.awt.List;
+import java.util.ArrayList;
+
+import net.md_5.bungee.api.ChatColor;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -12,6 +17,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.Event.Result;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.InventoryHolder;
@@ -19,8 +25,19 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 public class LocketteVault extends JavaPlugin implements Listener{
 	
+	ArrayList<Material> doors = new ArrayList<Material>();
+	
+
+	
 	public void onEnable(){
 		getServer().getPluginManager().registerEvents(this,this);
+		doors.add(Material.WOODEN_DOOR);
+		doors.add(Material.IRON_DOOR_BLOCK);
+		doors.add(Material.ACACIA_DOOR);
+		doors.add(Material.BIRCH_DOOR);
+		doors.add(Material.SPRUCE_DOOR);
+		doors.add(Material.DARK_OAK_DOOR);
+		doors.add(Material.JUNGLE_DOOR);		
 	}
 	
 	@EventHandler(priority = EventPriority.LOWEST)
@@ -32,13 +49,20 @@ public class LocketteVault extends JavaPlugin implements Listener{
 					event.setLine(1, "be locked.");
 				}
 		}
+		if(event.getBlock().getType().equals(Material.WALL_SIGN) || event.getBlock().getType().equals(Material.SIGN_POST) || event.getBlock().getType().equals(Material.SIGN)){
+			if(event.getLine(0).toLowerCase().contains("private") && (doors.contains(event.getBlock().getRelative(-1, 1, 0).getType()) || doors.contains(event.getBlock().getRelative(1, 1, 0).getType()) || doors.contains(event.getBlock().getRelative(0, 1, -1).getType()) || doors.contains(event.getBlock().getRelative(0, 1, 1).getType()))) {
+				event.setLine(0, "[?]");
+				event.setCancelled(true);
+				event.getPlayer().sendMessage(ChatColor.RED +"[Lockette] Conflict with an existing protected door.");
+			}
+		}
 	}
 	
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onPlayerInteract(PlayerInteractEvent event){
 		if(event.getAction() == Action.RIGHT_CLICK_BLOCK){
 			Material type = event.getClickedBlock().getType();
-			if(type == Material.WOODEN_DOOR || type == Material.IRON_DOOR_BLOCK){
+			if(doors.contains(type)){
 				if(event.getPlayer().hasPermission("lockette.admin.bypass")){
 					event.setUseInteractedBlock(Result.ALLOW);
 					event.setUseItemInHand(Result.ALLOW);
@@ -78,11 +102,11 @@ public class LocketteVault extends JavaPlugin implements Listener{
 		Block up = clickedBlock.getRelative(BlockFace.UP);
 		Material upType = up.getType();
 		Material downType = down.getType();
-		if(upType == Material.WOODEN_DOOR || upType == Material.IRON_DOOR_BLOCK){
+		if(doors.contains(upType)){
 			//sign is mounted on the low door
 			if(checkForBrokenSignAroundBlock(up) || checkForBrokenSignAroundBlock(clickedBlock)) return true;
 		}
-		else if(downType == Material.WOODEN_DOOR || downType == Material.IRON_DOOR_BLOCK){
+		else if(doors.contains(downType)){
 			//sign is mounted on high door
 			if(checkForBrokenSignAroundBlock(down) || checkForBrokenSignAroundBlock(clickedBlock)) return true;
 		}
@@ -115,6 +139,11 @@ public class LocketteVault extends JavaPlugin implements Listener{
 		}
 	}
 	
+	@EventHandler(priority = EventPriority.HIGHEST)
+	public void onBlockPlace(BlockPlaceEvent event){
+
+	}
+	
 	private boolean checkForDoor(Block block){
 		BlockFace dir = getGateDirection(block);
 		if(dir == null) return false;
@@ -122,16 +151,16 @@ public class LocketteVault extends JavaPlugin implements Listener{
 		if(front.getType() == Material.CHEST || front.getType() == Material.DROPPER || front.getType() == Material.DISPENSER || front.getType() == Material.FURNACE) return false;
 		
 		Block frontdown = front.getRelative(BlockFace.DOWN);
-		if(frontdown.getType()  == Material.IRON_DOOR_BLOCK || frontdown.getType() == Material.WOODEN_DOOR){
+		if(doors.contains(frontdown.getType())){
 			return true;
 		}
 		
-		if(front.getType() == Material.IRON_DOOR_BLOCK || front.getType() == Material.WOODEN_DOOR){
+		if(doors.contains(front.getType())){
 			return true;
 		}
 		
 		Block frontup = front.getRelative(BlockFace.UP);
-		if(frontup.getType()  == Material.IRON_DOOR_BLOCK || frontup.getType() == Material.WOODEN_DOOR){
+		if(doors.contains(frontup.getType())){
 			return true;
 		}
 		

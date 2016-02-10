@@ -11,7 +11,7 @@ import com.starquestminecraft.sqcontracts.util.StationUtils;
 public class CaptureContractGenerator {
 	
 	
-	public static ShipCaptureContract generate(ContractPlayerData pData, Random generator, boolean blackMarket){
+	public static ShipCaptureContract generate(ContractPlayerData pData, Random generator, boolean blackMarket, String system){
 		
 		int level;
 		if(blackMarket){
@@ -51,7 +51,7 @@ public class CaptureContractGenerator {
 			types[i] = data[i].getType();
 		}
 	//get station
-		String station = StationUtils.getRandomStation(generator);
+		String station = StationUtils.getRandomStation(generator, system);
 		priceFinal *= StationUtils.getModifierForStation(station);
 		if(priceFinal < 0) priceFinal *= -1;
 	//done

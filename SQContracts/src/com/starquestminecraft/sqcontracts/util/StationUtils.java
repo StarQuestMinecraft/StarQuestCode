@@ -1,5 +1,6 @@
 package com.starquestminecraft.sqcontracts.util;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
@@ -18,13 +19,23 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 
 public class StationUtils {
 	
-	static List<String> stations;
+	static List<String> alphaStations;
+	static List<String> betaStations;
+	static List<String> gammaStations;
 	static WorldGuardPlugin wg;
 	
 	public static void setUp(FileConfiguration c){
-		stations = c.getStringList("stations");
+		alphaStations = c.getStringList("alphaStations");
+		betaStations = c.getStringList("betaStations");
+		gammaStations = c.getStringList("gammaStations");
 		System.out.println("Stations:");
-		for(String s : stations){
+		for(String s : alphaStations){
+			System.out.println("    " + s);
+		}
+		for(String s : betaStations){
+			System.out.println("    " + s);
+		}
+		for(String s : gammaStations){
 			System.out.println("    " + s);
 		}
 		wg = ((WorldGuardPlugin) Bukkit.getPluginManager().getPlugin("WorldGuard"));
@@ -47,6 +58,10 @@ public class StationUtils {
 		java.util.Iterator<ProtectedRegion> i = regions.iterator();
 		while(i.hasNext()){
 			ProtectedRegion r = i.next();
+			List<String> stations = new ArrayList<String>();
+			stations.addAll(alphaStations);
+			stations.addAll(betaStations);
+			stations.addAll(gammaStations);
 			for(String s : stations){
 				if(r.getId().equals(s.toLowerCase())){
 					return s;
@@ -56,9 +71,19 @@ public class StationUtils {
 		return null;
 	}
 	
-	public static String getRandomStation(Random gen){
-		int index = gen.nextInt(stations.size());
-		return stations.get(index);
+	public static String getRandomStation(Random gen, String system){
+		if (system.equals("alpha")){
+			int index = gen.nextInt(alphaStations.size());
+			return alphaStations.get(index);
+		} else if (system.equals("beta")) {
+			int index = gen.nextInt(betaStations.size());
+			return betaStations.get(index);			
+		} else if (system.equals("gamma")) {
+			int index = gen.nextInt(gammaStations.size());
+			return gammaStations.get(index);			
+		} else {
+			return null;
+		}
 	}
 	
 	

@@ -1,0 +1,69 @@
+#multiplier of the mob drops
+mob drop multiplier: 1
+#entities that are effected
+entities:
+  - Cow
+  - Pig
+  - Sheep
+  - Chicken
+  - Enderman
+  - Zombie
+  - Skeleton
+  - Creeper
+# - Armor Stand
+# - Arrow
+# - Bat
+  - Blaze
+# - Boat
+  - Cave Spider
+# - Complex Part
+# - Dropped Item
+# - Egg
+# - Ender Crystal
+# - Ender Dragon
+# - Ender Pearl
+# - Ender Signal
+# - Endermite
+# - Experience Orb
+# - Falling Block
+# - Fireball
+# - Firework
+# - Fishing hook
+# - Giant
+  - Ghast
+  - Guardian
+# - EntityHorse
+# - Iron Golem
+# - Item Frame
+# - Leash Hitch
+# - Lighting
+  - Magma Cube
+# - Minecart
+# - Minecart Chest
+# - Minecart Furnace
+# - Minecart Command
+# - Minecart Hopper
+# - Minecart Mob Spawner
+# - Minecart Tnt
+# - Mushroom Cow
+# - Ocelot
+# - Painting
+  - Pig Zombie
+# - Player
+# - Primed TNT
+  - Rabbit
+# - Silverfish
+  - Slime
+# - Snowman
+  - Spider
+# - Splash Potion
+  - Sqiud
+# - Thrown Exp Bottler
+# - Unkown
+# - Villager
+# - Weather
+  - Witch
+# - Wither
+# - Wither Skull
+  - Wolf
+  

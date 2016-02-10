@@ -1,0 +1,72 @@
+name: SQBoosters
+main: com.ginger_walnut.sqboosters.SQBoosters
+version: 1.0
+description: A plugin that adds various boosters
+commands:
+   expboost:
+      description: Manages SQExpBoost
+   expboost help:
+      description: Shows the help for SQExpBoost
+   expboost set:
+      description: Sets the base exp multiplier
+   expboost subtract:
+      description: Subtracts from the exp multiplier
+   expboost add:
+      description: Adds to the exp multiplier
+   mobdropboost:
+      description: Manages SQMobDropBoost
+   mobdropboost help:
+      description: Shows the help for SQMobDropBoost
+   mobdropboost set:
+      description: Sets the base mob drop multiplier
+   mobdropboost subtract:
+      description: Subtracts from the mob drop multiplier
+   mobdropboost add:
+      description: Adds to the mob drop multiplier
+   sheepshearboost:
+      description: Manages SQSheepShearBoost
+   sheepshearboost help:
+      description: Shows the help for SQSheepShearBoost
+   sheepshearboost set:
+      description: Sets the sheep shearing multiplier
+   sheepshearboost subtract:
+      description: Subtracts from the sheep shearing multiplier
+   sheepshearboost add:
+      description: Adds to the sheep shearing multiplier
+permissions:
+   SQExpBoost.viewHelp:
+      description: Premission node for viewing help
+      default: false
+   SQExpBoost.setMultiplier:
+      description: Premission node for setting the exp multiplier
+      default: false
+   SQExpBoost.addMultiplier:
+      description: Premission node for adding to the exp multiplier
+      default: false
+   SQExpBoost.subtractMultiplier:
+      description: Premission node for subtracting to the exp multiplier
+      default: false
+   SQMobDropBoost.viewHelp:
+      description: Premission node for viewing help
+      default: false
+   SQMobDropBoost.setMultiplier:
+      description: Premission node for setting the mob drop multiplier
+      default: false
+   SQMobDropBoost.addMultiplier:
+      description: Premission node for adding to the mob drop multiplier
+      default: false
+   SQMobDropBoost.subtractMultiplier:
+      description: Premission node for subtracting to the mob drop multiplier
+      default: false
+   SQSheepShearBoost.viewHelp:
+      description: Premission node for viewing help
+      default: false
+   SQSheepShearBoost.setMultiplier:
+      description: Premission node for setting the sheep shearing multiplier
+      default: false
+   SQSheepShearBoost.addMultiplier:
+      description: Premission node for adding to the sheep shearing multiplier
+      default: false
+   SQSheepShearBoost.subtractMultiplier:
+      description: Premission node for subtracting to the sheep shearing multiplier
+      default: false

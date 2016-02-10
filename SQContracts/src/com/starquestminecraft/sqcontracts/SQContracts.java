@@ -1,11 +1,14 @@
 package com.starquestminecraft.sqcontracts;
 
 import java.io.File;
+import java.util.UUID;
 
 import net.countercraft.movecraft.database.StarshipData;
 import net.countercraft.movecraft.event.CraftSignBreakEvent;
+import net.md_5.bungee.api.ChatColor;
 import net.milkbowl.vault.economy.Economy;
 
+import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -82,6 +85,10 @@ public class SQContracts extends JavaPlugin implements Listener{
 		if(!e.isBrokenByOwner() && e.isWithinKillCooldown()){
 			StarshipData d = e.getData();
 			ShipDataCore.createShipDataCore(e.getPlayer(), d);
+			UUID captain = d.getCaptain();
+			Bukkit.broadcastMessage(ChatColor.RED + e.getPlayer().getName() + " destroyed " + Bukkit.getOfflinePlayer(captain).getName() + "'s " + d.getType() + " Controls!");
+			System.out.print("Debug: 4");
 		}
+		System.out.print("Debug: 3");
 	}
 }
