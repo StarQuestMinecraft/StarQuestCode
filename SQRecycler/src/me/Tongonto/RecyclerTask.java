@@ -333,14 +333,12 @@ public class RecyclerTask extends BukkitRunnable{
 			ItemStack producedItem = new ItemStack(Material.INK_SACK);
 			int ingredientCost = recyclerConfig.getInt("BONEVARS.bonecost");
 			int bonesProduced = recyclerConfig.getInt("BONEVARS.boneproduction");
-			Bukkit.broadcastMessage(":)" + Integer.toString(bonesProduced));
 			producedItem.setDurability((short) 15);
 			producedItem.setAmount(bonesProduced);
 			boolean dontGo = false;
 			
 				ItemStack theFurnaceStack = recyclerFurnace.getInventory().getResult();
 				if(theFurnaceStack != null){
-					Bukkit.broadcastMessage(Integer.toString(producedItem.getAmount()));
 					newAmount = theFurnaceStack.getAmount();
 					if(newAmount == ingredientCost && theFurnaceStack.getType() == ingredientItem.getType()){
 						recyclerFurnace.getInventory().setResult(air);
