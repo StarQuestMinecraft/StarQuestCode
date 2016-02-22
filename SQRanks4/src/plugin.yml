@@ -1,0 +1,11 @@
+name: SQRanks4
+main: com.starquestminecraft.SQRanks4.SQRanks4
+version: 0.1
+depend: 
+  - Vault
+commands:
+  buyrank:
+     description: Purchase a rank wih credits.
+     usage: /buyrank [rank name]
+     permission: SQRanks4.buyrank
+     permission-message: You don't have permission to use this command.

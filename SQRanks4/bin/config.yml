@@ -1,0 +1,21 @@
+ranks:
+  example1:
+    prereq: 
+    price: 1.0
+    skill: Mining
+    level: 1
+    group: example1
+  example2:
+    prereq: 
+    price: 15.0
+    skill: Woodcutting
+    level: 3
+    group: example2
+  example3:
+    prereq:
+      - example1
+      - example2
+    price: 20.0
+    skill: axes
+    level: 2
+    group: example3
