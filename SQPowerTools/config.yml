@@ -1,0 +1,65 @@
+charger:
+    fuel:
+        fuelID: 263
+        energy: 10000
+power tools:
+    light sword:
+        item: 276
+        durability: 10000
+        name: Light Sword
+        max energy: 100000
+        energy per use: 50
+        enchants:
+            looting:
+                enchant: 21
+                level: 1
+        attributes:
+            damage:
+                attribute: generic.attackDamage
+                amount: 8.0
+                operation: 0
+                slot: mainhand
+            attack speed:
+                attribute: generic.attackSpeed
+                amount: -2.1
+                operation: 0
+                slot: mainhand
+        recipe:
+            line1: e
+            line2: e
+            line3: s
+            ingredients:
+                e: 388
+                s: 280
+        lore:
+             - Sharpness III
+    light axe:
+        item: 279
+        durability: 10000
+        name: Light Axe
+        max energy: 100000
+        energy per use: 50
+        enchants:
+            looting:
+                enchant: 21
+                level: 1
+        attributes:
+            damage:
+                attribute: generic.attackDamage
+                amount: 10.0
+                operation: 0
+                slot: mainhand
+            attack speed:
+                attribute: generic.attackSpeed
+                amount: -2.7
+                operation: 0
+                slot: mainhand
+        recipe:
+            line1: ee
+            line2: es
+            line3: ' s'
+            ingredients:
+                e: 388
+                s: 280
+        lore:
+             - Sharpness III
