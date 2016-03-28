@@ -1,10 +1,15 @@
 package com.ginger_walnut.sqboosters.database;
 
 import java.sql.Connection;
+import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.List;
+
+import com.ginger_walnut.sqboosters.SQBoosters;
 
 public class DatabaseInterface {
 	
-	public void setMultiplier(String booster, int multiplier) {
+	public static void addMultiplier(String booster, int multiplier, String purchaser) {
 		
 		SQLDatabase database = new SQLDatabase();
 		
@@ -12,15 +17,7 @@ public class DatabaseInterface {
 		
 		try {
 			
-			if (database.checkRecordExists(con, booster)) {
-				
-				database.updateData(con, booster, multiplier);
-				
-			} else {
-				
-				database.writeData(con, booster, multiplier);
-				
-			}
+			database.writeData(con, booster, multiplier, purchaser);
 			
 		} catch (Exception e) {
 			
@@ -30,7 +27,7 @@ public class DatabaseInterface {
 		
 	}
 	
-	public int getMultiplier(String booster) {
+	public static void updateLocalCopy() {
 		
 		SQLDatabase database = new SQLDatabase();
 		
@@ -38,15 +35,23 @@ public class DatabaseInterface {
 		
 		try {
 			
-			if (database.checkRecordExists(con, booster)) {
+			ResultSet rs = database.readData(con);
+			
+			SQBoosters.databaseIDs.clear();
+			SQBoosters.databaseBoosters.clear();
+			SQBoosters.databaseMultipliers.clear();
+			SQBoosters.databasePurchasers.clear();
+			SQBoosters.databaseExpirationDates.clear();
+			SQBoosters.databaseExpirationTimes.clear();
+			
+			while (rs.next()) {
 				
-				return database.readData(con, booster);
-				
-			} else {
-				
-				database.writeData(con, booster, 1);
-				
-				return 1;
+				SQBoosters.databaseIDs.add(rs.getInt("ID"));
+				SQBoosters.databaseBoosters.add(rs.getString("booster"));
+				SQBoosters.databaseMultipliers.add(rs.getInt("multiplier"));
+				SQBoosters.databasePurchasers.add(rs.getString("purchaser"));
+				SQBoosters.databaseExpirationDates.add(rs.getDate("expirationdate"));
+				SQBoosters.databaseExpirationTimes.add(rs.getTime("expirationdate"));
 				
 			}
 			
@@ -54,9 +59,61 @@ public class DatabaseInterface {
 			
 			e.printStackTrace();
 			
-			return 1;
+		}	
+		
+	}
+	
+	public static int getMultiplier(String booster) {
+		
+		int multiplier = 1;
+		
+		for (int i = 0; i < SQBoosters.databaseBoosters.size(); i ++) {
+			
+			if (SQBoosters.databaseBoosters.get(i).equals(booster)) {
+				
+				multiplier = multiplier + SQBoosters.databaseMultipliers.get(i);
+				
+			}
 			
 		}
+		
+		return multiplier;
+		
+	}
+	
+	public static List<Integer> getMultiplierList(String booster) {
+		
+		List<Integer> multiplierList = new ArrayList<Integer>();
+		
+		for (int i = 0; i < SQBoosters.databaseBoosters.size(); i ++) {
+			
+			if (SQBoosters.databaseBoosters.get(i).equals(booster)) {
+				
+				multiplierList.add(SQBoosters.databaseMultipliers.get(i));
+				
+			}
+			
+		}
+		
+		return multiplierList;
+		
+	}
+	
+	public static List<String> getPurchaserList(String booster) {
+		
+		List<String> purchaserList = new ArrayList<String>();
+		
+		for (int i = 0; i < SQBoosters.databaseBoosters.size(); i ++) {
+			
+			if (SQBoosters.databaseBoosters.get(i).equals(booster)) {
+				
+				purchaserList.add(SQBoosters.databasePurchasers.get(i));
+				
+			}
+			
+		}
+		
+		return purchaserList;
 		
 	}
 	

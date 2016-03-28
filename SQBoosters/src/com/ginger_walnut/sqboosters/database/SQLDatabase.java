@@ -9,11 +9,9 @@ public class SQLDatabase {
 
 	BedspawnConnectionProvider con;
 
-	static final String CHECK_RECORD_EXISTS_SQL = "SELECT count(1) FROM boosters WHERE booster = ?";
-	static final String UPDATE_OBJECT_SQL = "UPDATE boosters SET multiplier = ? WHERE `booster` = ?";
-	static final String WRITE_OBJECT_SQL = "INSERT INTO boosters(booster, multiplier) VALUES (?, ?)";
-	static final String READ_OBJECT_SQL = "SELECT multiplier FROM boosters WHERE `booster`= ?";
-	static final String CREATE_TABLE = "CREATE TABLE IF NOT EXISTS boosters ( booster varchar(32), multiplier tinyint, primary key (booster))";
+	static final String WRITE_OBJECT_SQL = "INSERT INTO minecraft.boosters2(booster, multiplier, purchaser, expirationdate) VALUES (?, ?, ?, DATE_ADD(NOW(), INTERVAL 1 DAY))";
+	static final String READ_OBJECT_SQL = "SELECT * FROM minecraft.boosters2 WHERE `expirationdate` > NOW()";
+	static final String CREATE_TABLE = "CREATE TABLE IF NOT EXISTS minecraft.boosters2 (ID int NOT NULL AUTO_INCREMENT, booster varchar(32) NOT NULL, multiplier tinyint NOT NULL, purchaser varchar(32) NULL, expirationdate datetime NOT NULL, primary key (ID))";
 	
 	public SQLDatabase() {
 		
@@ -38,68 +36,25 @@ public class SQLDatabase {
 		
 	}
 
-	public void updateData(Connection conn, String booster, int multiplier) throws Exception {
-		
-		PreparedStatement pstmt = conn.prepareStatement(UPDATE_OBJECT_SQL);
 
-		// set input parameters
-		pstmt.setInt(1, multiplier);
-		pstmt.setString(2, booster);
-		
-		pstmt.executeUpdate();
-		
-	}
-
-	public void writeData(Connection conn, String booster, int multiplier) throws Exception {
+	public void writeData(Connection conn, String booster, int multiplier, String purchaser) throws Exception {
 		
 		PreparedStatement pstmt = conn.prepareStatement(WRITE_OBJECT_SQL);
 
-		// set input parameters
 		pstmt.setString(1, booster);
 		pstmt.setInt(2, multiplier);
+		pstmt.setString(3, purchaser);
 		
 		pstmt.executeUpdate();
 
 	}
 
-	public int readData(Connection conn, String booster) throws Exception {
+	public ResultSet readData(Connection conn) throws Exception {
 		
 		PreparedStatement pstmt = conn.prepareStatement(READ_OBJECT_SQL);
 		
-		pstmt.setString(1, booster);
-		
-		ResultSet rs = pstmt.executeQuery();
-		rs.next();
-	
-		int data = rs.getInt(1);
-		
-		return data;
-		
+		return pstmt.executeQuery();
 
-		
-	}
-	
-	public boolean checkRecordExists(Connection conn, String booster) throws Exception {
-		
-		PreparedStatement pstmt = conn.prepareStatement(CHECK_RECORD_EXISTS_SQL);
-		
-		pstmt.setString(1, booster);
-		
-		ResultSet rs = pstmt.executeQuery();
-		rs.next();
-	
-		int exists = rs.getInt(1);
-		
-		if (exists == 0) {
-			
-			return false;
-			
-		} else {
-			
-			return true;
-			
-		}
-		
 	}
 
 }

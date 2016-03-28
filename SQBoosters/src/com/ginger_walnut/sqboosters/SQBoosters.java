@@ -1,8 +1,9 @@
 package com.ginger_walnut.sqboosters;
 
+import java.sql.Time;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
-import java.util.Timer;
 import java.util.logging.Logger;
 
 import org.bukkit.Bukkit;
@@ -18,26 +19,32 @@ import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import com.ginger_walnut.sqboosters.database.DatabaseInterface;
+import com.greatmancode.craftconomy3.Common;
+import com.greatmancode.craftconomy3.tools.interfaces.Loader;
 
 public class SQBoosters extends JavaPlugin {
 
 	public final Logger logger = Logger.getLogger("Minecraft");
 	public static SQBoosters plugin;
-	public static int[] multipliers = new int[] {1, 1, 1};
-	public static boolean[] enabledBoosters = new boolean[] {false, false, false};
-	public static String[] configNames = new String[] {"expbooster", "mobdropbooster", "sheepshearingbooster"};
-	public static String[] permissionName = new String[] {"SQExpBoost", "SQMobDropBoost", "SQSheepShearBoost"};
-	public static String[] multiplierName = new String[] {"exp", "mob drop", "sheep shearing"};
+	public static int[] multipliers = new int[] {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
+	public static boolean[] enabledBoosters = new boolean[] {false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false};
+	public static String[] configNames = new String[] {"expbooster", "mobdropbooster", "sheepshearingbooster", "shopbooster", "speedbooster", "mcmmo-miningbooster", "mcmmo-woodcuttingbooster", "mcmmo-herbalism", "mcmmo-fishing", "mcmmo-excavation", "mcmmo-unarmed", "mcmmo-archery", "mcmmo-swords", "mcmmo-axes", "mcmmo-repair", "mcmmo-acrobatics", "mcmmo-alchemy", "mcmmo-piloting"};
+	public static String[] permissionName = new String[] {"SQExpBoost", "SQMobDropBoost", "SQSheepShearBoost", "SQShopBooster", "SQSpeedBooster", "SQMMO-MiningBooster", "SQMMO-WoodcuttingBooster", "SQMMO-HerbalismBooster", "SQMMO-FishingBooster", "SQMMO-ExcavationBooster", "SQMMO-UnarmedBooster", "SQMMO-ArcheryBooster", "SQMMO-SwordsBooster", "SQMMO-AxesBooster", "SQMMO-RepairBooster", "SQMMO-AcrobaticsBooster", "SQMMO-AlchemyBooster", "SQMMO-PilotingBooster"};
+	public static String[] multiplierName = new String[] {"exp", "mob drop", "sheep shearing", "shop", "speed", "MCMMO-mining", "MCMMO-woodcutting", "MCMMO-herbalism", "MCMMO-fishing", "MCMMO-excavation", "MCMMO-unarmed", "MCMMO-archery", "MCMMO-swords", "MCMMO-axes", "MCMMO-repair", "MCMMO-acrobatics", "MCMMO-alchemy", "MCMMO-piloting"};
 	
-	Timer timer = new Timer();
+	public static List<Integer> databaseIDs = new ArrayList<Integer>();
+	public static List<String> databaseBoosters = new ArrayList<String>();
+	public static List<Integer> databaseMultipliers = new ArrayList<Integer>();
+	public static List<String> databasePurchasers = new ArrayList<String>();
+	public static List<Date> databaseExpirationDates = new ArrayList<Date>();
+	public static List<Time> databaseExpirationTimes = new ArrayList<Time>();
+	
+	public static Common cc3;
 	
 	private static Plugin pluginMain;
 	
 	@Override
 	public void onDisable() {
-		
-		timer.cancel();
-		timer.purge();
 		
 		pluginMain = null;
 		
@@ -73,6 +80,8 @@ public class SQBoosters extends JavaPlugin {
 		
 		FileConfiguration config = getConfig();
 		
+		DatabaseInterface.updateLocalCopy();
+		
 		for (int i = 0; i < enabledBoosters.length; i ++) {
 			
 			enabledBoosters[i] = config.getBoolean(configNames[i]);
@@ -81,13 +90,19 @@ public class SQBoosters extends JavaPlugin {
 		
 		for (int i = 0; i < multipliers.length; i ++) {
 			
-			DatabaseInterface di = new DatabaseInterface();
-			
-			multipliers[i] = di.getMultiplier(multiplierName[i]);
+			multipliers[i] = DatabaseInterface.getMultiplier(configNames[i]);
 			
 		}
 		
-		timer.scheduleAtFixedRate(new DatabaseChecker(), 0, 300000);
+		Plugin cc3Plugin = Bukkit.getPluginManager().getPlugin("Craftconomy3");
+		
+		if (cc3Plugin != null) {
+			
+			cc3 = (Common) ((Loader) cc3Plugin).getCommon();
+			
+		}
+		
+		(new DatabaseChecker()).run();
 		
 	}
 	
@@ -103,6 +118,8 @@ public class SQBoosters extends JavaPlugin {
 			
 			sender.sendMessage(ChatColor.GOLD + "-----------------------------------------------------");
 			sender.sendMessage(ChatColor.GOLD + "Current " + multiplierName + " multiplier: " + ChatColor.BLUE + multipliers[multiplierPosition]);
+			sender.sendMessage(ChatColor.GOLD + "/" + commandName + " help" + ChatColor.BLUE + " - Shows this");
+			sender.sendMessage(ChatColor.GOLD + "/" + commandName + " view" + ChatColor.BLUE + " - Shows a brekadown of the current booster");
 			sender.sendMessage(ChatColor.GOLD + "-----------------------------------------------------");
 			
 		} else {
@@ -110,9 +127,9 @@ public class SQBoosters extends JavaPlugin {
 			sender.sendMessage(ChatColor.GOLD + "-----------------------------------------------------");
 			sender.sendMessage(ChatColor.GOLD + "Current " + multiplierName + " multiplier: " + ChatColor.BLUE + multipliers[multiplierPosition]);
 			sender.sendMessage(ChatColor.GOLD + "/" + commandName + " help" + ChatColor.BLUE + " - Shows this");
-			sender.sendMessage(ChatColor.GOLD + "/" + commandName + " set <multiplier>" + ChatColor.BLUE + " - Sets the exp multiplier ");
-			sender.sendMessage(ChatColor.GOLD + "/" + commandName + " add <multiplier>" + ChatColor.BLUE + " - Adds an amount to the multiplier");
-			sender.sendMessage(ChatColor.GOLD + "/" + commandName + " subtract <multiplier>" + ChatColor.BLUE + " - Subtracts an amount from the multiplier");
+			sender.sendMessage(ChatColor.GOLD + "/" + commandName + " add <multiplier> <purchaser>" + ChatColor.BLUE + " - Adds a booster with the specified purchaser ");
+			sender.sendMessage(ChatColor.GOLD + "/" + commandName + " add <multiplier>" + ChatColor.BLUE + " - Adds a booster with no purchaser");
+			sender.sendMessage(ChatColor.GOLD + "/" + commandName + " view" + ChatColor.BLUE + " - Shows a brekadown of the current booster");
 			sender.sendMessage(ChatColor.GOLD + "-----------------------------------------------------");
 				
 		}		
@@ -125,6 +142,21 @@ public class SQBoosters extends JavaPlugin {
 		commandNames.add("expboost");
 		commandNames.add("mobdropboost");
 		commandNames.add("sheepshearboost");
+		commandNames.add("shopboost");
+		commandNames.add("speedboost");
+		commandNames.add("mcmmo-miningboost");
+		commandNames.add("mcmmo-woodcuttingboost");
+		commandNames.add("mcmmo-herbalismboost");
+		commandNames.add("mcmmo-fishingboost");
+		commandNames.add("mcmmo-excavationboost");
+		commandNames.add("mcmmo-unarmedboost");
+		commandNames.add("mcmmo-archeryboost");
+		commandNames.add("mcmmo-swordsboost");
+		commandNames.add("mcmmo-axesboost");
+		commandNames.add("mcmmo-reapirboost");
+		commandNames.add("mcmmo-acrobaticsboost");
+		commandNames.add("mcmmo-alchemyboost");
+		commandNames.add("mcmmo-pilotingboost");
 		
 		if (commandNames.contains(commandLabel)) {
 			
@@ -140,23 +172,11 @@ public class SQBoosters extends JavaPlugin {
 				
 			}
 			
-			if (args.length == 0) {
+			if (enabledBoosters[arrayPos]) {
 				
-				if (sender.hasPermission(permissionName[arrayPos] + ".viewHelp") || sender instanceof ConsoleCommandSender) {
+				if (args.length == 0) {
 					
-					printHelp(sender, true, multiplierName[arrayPos], arrayPos, commandNames.get(arrayPos));
-					
-				} else {
-					
-					printHelp(sender, false, multiplierName[arrayPos], arrayPos, commandNames.get(arrayPos));
-						
-				}
-					
-			} else if (args.length == 1) {
-					
-				if (args[0].equalsIgnoreCase("help")) {
-
-					if (sender.hasPermission(permissionName[arrayPos] + ".viewHelp") || sender instanceof ConsoleCommandSender) {
+					if (sender.hasPermission("SQBoosters.viewHelp") || sender instanceof ConsoleCommandSender) {
 						
 						printHelp(sender, true, multiplierName[arrayPos], arrayPos, commandNames.get(arrayPos));
 						
@@ -165,139 +185,257 @@ public class SQBoosters extends JavaPlugin {
 						printHelp(sender, false, multiplierName[arrayPos], arrayPos, commandNames.get(arrayPos));
 							
 					}
-					
-				} else if (args[0].equalsIgnoreCase("set")) {
 						
-					if (sender.hasPermission(permissionName[arrayPos] + ".setMultiplier") || sender instanceof ConsoleCommandSender) {
+				} else if (args.length == 1) {
+						
+					if (args[0].equalsIgnoreCase("help")) {
+
+						if (sender.hasPermission("SQBoosters.viewHelp") || sender instanceof ConsoleCommandSender) {
 							
-						sender.sendMessage(ChatColor.RED + "Correct usage: /" + commandNames.get(arrayPos)  + " set <multiplier>");
+							printHelp(sender, true, multiplierName[arrayPos], arrayPos, commandNames.get(arrayPos));
 							
-					} else {
+						} else {
 							
-						sender.sendMessage(ChatColor.RED + "You do not have premission to set the " + multiplierName[arrayPos] + " multiplier");
-							
-					}
-						
-				} else if (args[0].equalsIgnoreCase("add")) {
-					
-					if (sender.hasPermission(permissionName[arrayPos] + ".addMultiplier") || sender instanceof ConsoleCommandSender) {
-						
-						sender.sendMessage(ChatColor.RED + "Correct usage: /" + commandNames.get(arrayPos)  + " add <multiplier>");
-						
-					} else {
-						
-						sender.sendMessage(ChatColor.RED + "You do not have premission to add to the " + multiplierName[arrayPos] + " multiplier");
-						
-					}
-										
-				} else if (args[0].equalsIgnoreCase("subtract")) {
-					
-					if (sender.hasPermission(permissionName[arrayPos] + ".subtractMultiplier") || sender instanceof ConsoleCommandSender) {
-						
-						sender.sendMessage(ChatColor.RED + "Correct usage: /" + commandNames.get(arrayPos)  + " subtract <multiplier>");
-						
-					} else {
-						
-						sender.sendMessage(ChatColor.RED + "You do not have premission to subtract to the " + multiplierName[arrayPos] + " multiplier");
-						
-					}
-					
-				} else {
-						
-					sender.sendMessage(ChatColor.RED + " use /" + commandNames.get(arrayPos)  + " help for help on how to use " + permissionName[arrayPos]);
-						
-				}
-										
-			} else if (args.length == 2) {
-						
-				if (args[0].equalsIgnoreCase("set")) {
-						
-					if (sender.hasPermission(permissionName[arrayPos] + ".setMultiplier") || sender instanceof ConsoleCommandSender) {
-						
-						try {
-							
-							multipliers[arrayPos] = Integer.parseInt(args[1]);
-							
-							DatabaseInterface di = new DatabaseInterface();
-							
-							di.setMultiplier(multiplierName[arrayPos], multipliers[arrayPos]);
-	
-							Bukkit.getServer().broadcastMessage(ChatColor.GOLD + permissionName[arrayPos] + ": The " + multiplierName[arrayPos] + " multiplier has been set to " + multipliers[arrayPos]);
-															
-						} catch (NumberFormatException error) {
-								
-							sender.sendMessage(ChatColor.RED + "Please input an Integer");
-								
-						}
-							
-					} else {
-							
-						sender.sendMessage(ChatColor.RED + "You do not have premission to set the " + multiplierName[arrayPos] + " multiplier");
-							
-					}
-					
-				}  else if (args[0].equalsIgnoreCase("add")) {
-					
-					if (sender.hasPermission(permissionName[arrayPos] + ".addMultiplier") || sender instanceof ConsoleCommandSender) {
-						
-						try {
-							
-							multipliers[arrayPos] = multipliers[arrayPos] + Integer.parseInt(args[1]);
-							
-							DatabaseInterface di = new DatabaseInterface();
-							
-							di.setMultiplier(multiplierName[arrayPos], multipliers[arrayPos]);
-								
-							Bukkit.getServer().broadcastMessage(ChatColor.GOLD + permissionName[arrayPos] + ": The " + multiplierName[arrayPos] + " multiplier has been set to " + multipliers[arrayPos]);
-															
-						} catch (NumberFormatException error) {
-								
-							sender.sendMessage(ChatColor.RED + "Please input an Integer");
+							printHelp(sender, false, multiplierName[arrayPos], arrayPos, commandNames.get(arrayPos));
 								
 						}
 						
-					} else {
+					} else if (args[0].equalsIgnoreCase("view")) {
 						
-						sender.sendMessage(ChatColor.RED + "You do not have premission to add to the " + multiplierName[arrayPos] + " multiplier");
+						sender.sendMessage(ChatColor.GOLD + "-----------------------------------------------------");
+						sender.sendMessage(ChatColor.GOLD + "Current " + multiplierName[arrayPos] + " multiplier: " + ChatColor.BLUE + multipliers[arrayPos]);
+						sender.sendMessage(ChatColor.BLUE + "multiplier - purchaser - expires in");
 						
-					}
+						for (int i = 0; i < databaseBoosters.size(); i ++) {
+							
+							if (databaseBoosters.get(i).equals(configNames[arrayPos])) {
+								
+								if (databasePurchasers.get(i) != null) {
+									
+									if (databaseExpirationDates.get(i).getDay() > new Date().getDay()) {
 										
-				} else if (args[0].equalsIgnoreCase("subtract")) {
-					
-					if (sender.hasPermission(permissionName[arrayPos] + ".subtractMultiplier") || sender instanceof ConsoleCommandSender) {
-						
-						try {
+										if (databaseExpirationTimes.get(i).getMinutes() > new Date().getMinutes()) {
+											
+											sender.sendMessage(ChatColor.BLUE + Integer.toString(databaseMultipliers.get(i)) + " - " + databasePurchasers.get(i) + " - " + Integer.toString(databaseExpirationTimes.get(i).getHours() - new Date().getHours() + 24) + " hours and " + Integer.toString(databaseExpirationTimes.get(i).getMinutes() - new Date().getMinutes()) + " minutes");
+											
+										} else {
+											
+											sender.sendMessage(ChatColor.BLUE + Integer.toString(databaseMultipliers.get(i)) + " - " + databasePurchasers.get(i) + " - " + Integer.toString(databaseExpirationTimes.get(i).getHours() - new Date().getHours() + 23) + " hours and " + Integer.toString(databaseExpirationTimes.get(i).getMinutes() - new Date().getMinutes() + 60) + " minutes");
+											
+										}
+
+										
+									} else if (databaseExpirationDates.get(i).getDay() == new Date().getDay()) {
+										
+										if (databaseExpirationTimes.get(i).getMinutes() > new Date().getMinutes()) {
+										
+											sender.sendMessage(ChatColor.BLUE + Integer.toString(databaseMultipliers.get(i)) + " - " + databasePurchasers.get(i) + " - " + Integer.toString(databaseExpirationTimes.get(i).getHours() - new Date().getHours()) + " hours and " + Integer.toString(databaseExpirationTimes.get(i).getMinutes() - new Date().getMinutes()) + " minutes");
+											
+										} else {
+											
+											sender.sendMessage(ChatColor.BLUE + Integer.toString(databaseMultipliers.get(i)) + " - " + databasePurchasers.get(i) + " - " + Integer.toString(databaseExpirationTimes.get(i).getHours() - new Date().getHours() - 1) + " hours and " + Integer.toString(databaseExpirationTimes.get(i).getMinutes() - new Date().getMinutes() + 60) + " minutes");
+											
+										}
+										
+									} else {
+										
+										sender.sendMessage(ChatColor.BLUE + Integer.toString(databaseMultipliers.get(i)) + " - " + databasePurchasers.get(i) + " - soon");
+										
+									}
+													
+								} else {
+									
+									if (databaseExpirationDates.get(i).getDay() > new Date().getDay()) {
+										
+										if (databaseExpirationTimes.get(i).getMinutes() > new Date().getMinutes()) {
+											
+											sender.sendMessage(ChatColor.BLUE + Integer.toString(databaseMultipliers.get(i)) + " - anonymous person - " + Integer.toString(databaseExpirationTimes.get(i).getHours() - new Date().getHours() + 24) + " hours and " + Integer.toString(databaseExpirationTimes.get(i).getMinutes() - new Date().getMinutes()) + " minutes");
+											
+										} else {
+											
+											sender.sendMessage(ChatColor.BLUE + Integer.toString(databaseMultipliers.get(i)) + " - anonymous person - " + Integer.toString(databaseExpirationTimes.get(i).getHours() - new Date().getHours() + 23) + " hours and " + Integer.toString(databaseExpirationTimes.get(i).getMinutes() - new Date().getMinutes() + 60) + " minutes");
+											
+										}
+
+										
+									} else if (databaseExpirationDates.get(i).getDay() == new Date().getDay()) {
+										
+										if (databaseExpirationTimes.get(i).getMinutes() > new Date().getMinutes()) {
+										
+											sender.sendMessage(ChatColor.BLUE + Integer.toString(databaseMultipliers.get(i)) + " - anonymous person - " + Integer.toString(databaseExpirationTimes.get(i).getHours() - new Date().getHours()) + " hours and " + Integer.toString(databaseExpirationTimes.get(i).getMinutes() - new Date().getMinutes()) + " minutes");
+											
+										} else {
+											
+											sender.sendMessage(ChatColor.BLUE + Integer.toString(databaseMultipliers.get(i)) + " - anonymous person - " + Integer.toString(databaseExpirationTimes.get(i).getHours() - new Date().getHours() - 1) + " hours and " + Integer.toString(databaseExpirationTimes.get(i).getMinutes() - new Date().getMinutes() + 60) + " minutes");
+											
+										}
+										
+									} else {
+										
+										sender.sendMessage(ChatColor.BLUE + Integer.toString(databaseMultipliers.get(i)) + " - anonymous person - soon");
+										
+									}
+									
+								}
+								
+							}
 							
-							multipliers[arrayPos] = multipliers[arrayPos] - Integer.parseInt(args[1]);
-							
-							if (multipliers[arrayPos] <= 0) {
-								
-								multipliers[arrayPos] = 1;
-								
-							}		
-							
-							DatabaseInterface di = new DatabaseInterface();
-							
-							di.setMultiplier(multiplierName[arrayPos], multipliers[arrayPos]);
-								
-							Bukkit.getServer().broadcastMessage(ChatColor.GOLD + permissionName[arrayPos] + ": The " + multiplierName[arrayPos] + " multiplier has been set to " + multipliers[arrayPos]);
-															
-						} catch (NumberFormatException error) {
-								
-							sender.sendMessage(ChatColor.RED + "Please input an Integer");
-								
 						}
 						
+						sender.sendMessage(ChatColor.GOLD + "-----------------------------------------------------");
+						
+					} else if (args[0].equalsIgnoreCase("add")) {
+						
+						if (sender.hasPermission("SQBoosters.addMultiplier") || sender instanceof ConsoleCommandSender) {
+							
+							sender.sendMessage(ChatColor.RED + "Correct usage: /" + commandNames.get(arrayPos)  + " add <multiplier>");
+							
+						} else {
+							
+							sender.sendMessage(ChatColor.RED + "You do not have premission to add to the " + multiplierName[arrayPos] + " multiplier");
+							
+						}
+											
+					} else {
+							
+						sender.sendMessage(ChatColor.RED + " use /" + commandNames.get(arrayPos)  + " help for help on how to use " + permissionName[arrayPos]);
+							
+					}
+											
+				} else if (args.length == 2) {
+							
+					if (args[0].equalsIgnoreCase("add")) {
+						
+						if (sender.hasPermission("SQBoosters.addMultiplier") || sender instanceof ConsoleCommandSender) {
+							
+							try {
+		
+								DatabaseInterface.addMultiplier(configNames[arrayPos], Integer.parseInt(args[1]), null);
+								
+								sender.sendMessage(ChatColor.GREEN + "The booster may take up to five minutes to register across every server");
+																
+							} catch (NumberFormatException error) {
+									
+								sender.sendMessage(ChatColor.RED + "Please input an Integer");
+									
+							}
+							
+						} else {
+							
+							sender.sendMessage(ChatColor.RED + "Use /" + commandNames.get(arrayPos)  + " help for help on how to use " + permissionName[arrayPos]);
+									
+						} 
+											
+					} else {
+					
+						sender.sendMessage(ChatColor.RED + "Use /" + commandNames.get(arrayPos)  + " help for help on how to use " + permissionName[arrayPos]);
+					
+					}
+						
+				} else if (args.length == 3) {
+					
+					if (args[0].equalsIgnoreCase("add")) {
+				
+						if (sender.hasPermission("SQBoosters.addMultiplier") || sender instanceof ConsoleCommandSender) {
+					
+							try {
+						
+								DatabaseInterface.addMultiplier(configNames[arrayPos],Integer.parseInt(args[1]), args[2]);
+							
+								sender.sendMessage(ChatColor.GREEN + "The booster may take up to five minutes to register across every server");
+														
+							} catch (NumberFormatException error) {
+								
+								sender.sendMessage(ChatColor.RED + "Please input an Integer");
+								
+								return false;
+							
+							}
+					
+						} else {
+					
+							sender.sendMessage(ChatColor.RED + "You do not have premission to add to the " + multiplierName[arrayPos] + " multiplier");
+					
+						}
+									
 					} else {
 						
-						sender.sendMessage(ChatColor.RED + "You do not have premission to subtract from the " + multiplierName[arrayPos] + " multiplier");
-						
-					}
-					
-				} else {
-					
 					sender.sendMessage(ChatColor.RED + "Use /" + commandNames.get(arrayPos)  + " help for help on how to use " + permissionName[arrayPos]);
+							
+					} 
+				
+				} else {
 						
+					sender.sendMessage(ChatColor.RED + "Use /" + commandNames.get(arrayPos)  + " help for help on how to use " + permissionName[arrayPos]);
+							
+				}
+				
+			} else {
+				
+				sender.sendMessage(ChatColor.RED + "That booster is not enabled");
+				
+			}
+	
+		} else if (commandLabel.equalsIgnoreCase("thank"))  {
+			
+			if (sender instanceof Player) {
+				
+				Player player = (Player) sender;
+
+				if (args.length == 0) {
+					
+					player.sendMessage(ChatColor.RED + "The correct use is /thank <person> <amount>");
+					
+				} else if (args.length == 1) {
+					
+					player.sendMessage(ChatColor.RED + "The correct use is /thank <person> <amount>");
+					
+				} else if (args.length == 2) {
+					
+					int amount = 0;
+					
+					if (!databasePurchasers.contains(args[0])) {
+						
+						player.sendMessage(ChatColor.RED + "That person must have an active booster");
+						
+					}
+					
+					try {
+						
+						amount = Integer.parseInt(args[1]);
+						
+					} catch (NumberFormatException e) {
+						
+						player.sendMessage(ChatColor.RED + "You must input a number");
+						
+						return false;
+						
+					}
+					
+					if (amount < 0) {
+						
+						amount = amount * -1;
+						
+					}
+					
+					if (SQBoosters.cc3.getAccountManager().getAccount(player.getName()).hasEnough(amount, player.getWorld().getName(), "credit")) {
+							
+						SQBoosters.cc3.getAccountManager().getAccount(player.getName()).withdraw(amount, player.getWorld().getName(), "credit");
+						SQBoosters.cc3.getAccountManager().getAccount(args[0]).deposit(amount, player.getWorld().getName(), "credit");
+						
+						Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "ee say " + ChatColor.GOLD + player.getName() + " has thanked " + args[0] + " with " + args[1] + " credits");
+								
+					} else {
+						
+						player.sendMessage(ChatColor.RED + "You do not have enough money");
+						
+						
+					}
+					
+				} else {
+					
+					player.sendMessage(ChatColor.RED + "The correct use is /thank <person> <amount>");
+					
 				}
 				
 			}
@@ -305,6 +443,41 @@ public class SQBoosters extends JavaPlugin {
 		}
 
 		return false;	
+		
+	}
+	
+	public static int getSellBooster() {
+		
+		return multipliers[3];
+		
+	}
+	
+	public static int getSpeedBooster() {
+		
+		return multipliers[4];
+		
+	}
+	
+	public static int getMCMMOBooster(String skill) {
+		
+		switch(skill) {
+		
+			case "mining": return multipliers[5];
+			case "woodcutting": return multipliers[6];
+			case "herbalism": return multipliers[7];
+			case "fishing": return multipliers[8];
+			case "excavation": return multipliers[9];
+			case "unarmed": return multipliers[10];
+			case "archery": return multipliers[11];
+			case "swords": return multipliers[12];
+			case "axes": return multipliers[13];
+			case "repair": return multipliers[14];
+			case "acrobatics": return multipliers[15];
+			case "alchemy": return multipliers[16];
+			case "piloting": return multipliers[17];
+			default: return 1;
+		
+		}
 		
 	}
 	

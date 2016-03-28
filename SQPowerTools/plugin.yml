@@ -1,6 +1,6 @@
 name: SQPowerTools
 main: com.ginger_walnut.sqpowertools.SQPowerTools
-version: 1.0
+version: 1.0.1
 description: A plugin that adds custom items
 commands:
   sqpowertools:

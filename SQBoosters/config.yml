@@ -1,6 +1,21 @@
 expbooster: true
 mobdropbooster: true
 sheepshearingbooster: true
+shopbooster: true
+speedbooster: true
+mcmmo-miningbooster: true
+mcmmo-woodcuttingbooster: true
+mcmmo-herbalismbooster: true
+mcmmo-fishingbooster: true
+mcmmo-excavationbooster: true
+mcmmo-unarmedbooster: true
+mcmmo-archerybooster: true
+mcmmo-swordsbooster: true
+mcmmo-axesbooster: true
+mcmmo-repairbooster: true
+mcmmo-acrobaticsbooster: true
+mcmmo-alchemybooster: true
+mcmmo-pilotingbooster: true
 
 #entities that are effected by the mobdropbooster
 entities:

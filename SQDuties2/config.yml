@@ -1,0 +1,14 @@
+base groups:
+  - trMod
+  - mod
+  - srMod
+  - manager
+  - jrdev
+  - developer
+duty groups:
+  - trmod_duty
+  - mod_duty
+  - srmod_duty
+  - manager_duty
+  - developer_duty
+  - developer_duty

@@ -669,7 +669,7 @@ public class SQPowerTools extends JavaPlugin{
 		
 		for (int i = 0; i < powerToolNames.size(); i ++) {
 			
-			if (powerToolNames.get(i).equals(name)) {
+			if (powerToolNames.get(i).equals(name)) {  
 				
 				ItemStack powerTool = new ItemStack(powerToolMaterials.get(i));
 				

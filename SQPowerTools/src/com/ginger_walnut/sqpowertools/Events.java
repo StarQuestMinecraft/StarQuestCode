@@ -39,7 +39,41 @@ public class Events implements Listener{
 
 		if (player.getInventory().getItemInMainHand() != null) {
 			
-			ItemStack handItem = player.getInventory().getItemInMainHand();
+			ItemStack handItem = player.getInventory().getItemInMainHand();			
+			
+			if (handItem.getType().equals(Material.DIAMOND_PICKAXE) || handItem.getType().equals(Material.DIAMOND_SPADE) || handItem.getType().equals(Material.DIAMOND_SWORD) || handItem.getType().equals(Material.DIAMOND_AXE) || handItem.getType().equals(Material.DIAMOND_HOE)) {
+				
+				boolean unbreakable = false;
+				
+				if (handItem.hasItemMeta()) {
+					
+					unbreakable = handItem.getItemMeta().spigot().isUnbreakable();
+					
+				}
+				
+				if (!unbreakable) {
+					
+					System.out.print(handItem.getDurability());
+					
+					if (handItem.getDurability() >= 1541) {
+						
+						if (handItem.getDurability() >= 1551) {
+							
+							player.sendMessage(ChatColor.RED + "Your tool has broken");
+							
+							player.setItemInHand(new ItemStack(Material.AIR));
+							
+						} else {
+							
+							player.sendMessage(ChatColor.RED + "Your tool will break in " + (1551 - handItem.getDurability()) + " uses");
+							
+						}
+
+					}
+					
+				}
+				
+			}
 			
 			if (handItem.hasItemMeta()) {
 				
@@ -99,6 +133,38 @@ public class Events implements Listener{
 			if (player.getInventory().getItemInMainHand() != null) {
 				
 				ItemStack handItem = player.getInventory().getItemInMainHand();
+				
+				if (handItem.getType().equals(Material.DIAMOND_PICKAXE) || handItem.getType().equals(Material.DIAMOND_SPADE) || handItem.getType().equals(Material.DIAMOND_SWORD) || handItem.getType().equals(Material.DIAMOND_AXE) || handItem.getType().equals(Material.DIAMOND_HOE)) {
+					
+					boolean unbreakable = false;
+					
+					if (handItem.hasItemMeta()) {
+						
+						unbreakable = handItem.getItemMeta().spigot().isUnbreakable();
+						
+					}
+					
+					if (!unbreakable) {
+						
+						if (handItem.getDurability() >= 1541) {
+							
+							if (handItem.getDurability() >= 1551) {
+								
+								player.sendMessage(ChatColor.RED + "Your tool has broken");
+								
+								player.setItemInHand(new ItemStack(Material.AIR));
+								
+							} else {
+								
+								player.sendMessage(ChatColor.RED + "Your tool will break in " + (1551 - handItem.getDurability()) + " uses");
+								
+							}
+
+						}
+						
+					}
+					
+				}
 				
 				if (handItem.hasItemMeta()) {
 					
