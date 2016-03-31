@@ -64,7 +64,7 @@ public class SQSmoothCraft extends JavaPlugin{
 	public static List<Double> shipBlockWeights = new ArrayList<Double>();
 	
 	public static FileConfiguration config = null;
-	
+	//Testing gitHub, ignore this.
 	@Override
 	public void onDisable() {
 		
