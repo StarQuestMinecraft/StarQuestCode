@@ -113,7 +113,7 @@ public class ShipDetection {
 							
 							if (inventory.getContents()[i].getType().equals(Material.COAL)) {
 								
-								fuel = fuel + (100 * inventory.getContents()[i].getAmount());
+								fuel = fuel + (SQSmoothCraft.config.getInt("utilities.reactor.fuel per coal") * inventory.getContents()[i].getAmount());
 
 							} else {
 								

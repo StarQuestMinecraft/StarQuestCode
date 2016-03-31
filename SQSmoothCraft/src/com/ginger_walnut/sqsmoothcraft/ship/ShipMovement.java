@@ -6,7 +6,6 @@ import java.util.List;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.boss.BossBar;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitScheduler;
@@ -70,7 +69,7 @@ public class ShipMovement extends Thread {
 								
 							ship.speedBar.setProgress(ship.speed / ship.maxSpeed);
 							
-							ship.fuel = ship.fuel - ((.25f * (ship.speed / ship.maxSpeed)) * ship.reactorList.size());
+							ship.fuel = ship.fuel - ((((float) SQSmoothCraft.config.getDouble("utilities.reactor.fuel per second") / 20) * (ship.speed / ship.maxSpeed)) * ship.reactorList.size() * ship.reactorList.size());
 							
 							if (ship.fuel < 0.0f) {
 								
@@ -82,7 +81,7 @@ public class ShipMovement extends Thread {
 							
 							if (ship.fuel > 0.0f) {
 							
-								if (pilot.getItemInHand().getType().equals(Material.WATCH)) {
+								if (pilot.getInventory().getItemInMainHand().getType().equals(Material.WATCH)) {
 								
 									if (!(shipYaw == pilotYaw)) {
 										
@@ -522,23 +521,7 @@ public class ShipMovement extends Thread {
 									
 							} else { 
 								
-								if (ship.getSpeed() == 0.0f) {
-									
-								} else if (ship.getSpeed() < 0.0f) {
-										
-									ship.setSpeed(0.0f);
-										
-								} else {
-										
-									ship.setSpeed(ship.getSpeed() - (ship.getAcceleration() / 5));
-										
-								}
-								
-								if (ship.getSpeed() < 0.0f) {
-									
-									ship.setSpeed(0.0f);
-									
-								}
+								ship.decelerate(.2f);
 									
 							}
 						
@@ -712,8 +695,6 @@ public class ShipMovement extends Thread {
 						Ship ship = (Ship) SQSmoothCraft.stoppedShipMap.get(i);
 					
 						shipBlocks.addAll(ship.getShipBlocks());
-					
-						Location location = ship.getLocation();
 
 						double yaw = Math.toRadians(ship.yawDirection);
 						double pitch = Math.toRadians(ship.pitchDirection);

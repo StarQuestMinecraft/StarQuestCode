@@ -1,10 +1,6 @@
 package com.ginger_walnut.sqsmoothcraft.ship;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.EntityType;

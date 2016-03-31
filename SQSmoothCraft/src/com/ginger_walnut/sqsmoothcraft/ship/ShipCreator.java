@@ -34,7 +34,7 @@ public class ShipCreator extends Thread{
 				
 				for (int i = 0; i < ship.getShipBlocks().size(); i ++) {
 					
-					if (ship.getShipBlocks().get(i).getArmorStand().getHelmet().getType().equals(Material.COAL_BLOCK)) {
+					if (ship.getShipBlocks().get(i).getArmorStand().getHelmet().getType().equals(Material.getMaterial(SQSmoothCraft.config.getString("weapons.cannon.material")))) {
 						
 						cannonList.add(ship.getShipBlocks().get(i));
 						
@@ -46,7 +46,7 @@ public class ShipCreator extends Thread{
 				
 				for (int i = 0; i < ship.getShipBlocks().size(); i ++) {
 					
-					if (ship.getShipBlocks().get(i).getArmorStand().getHelmet().getType().equals(Material.DISPENSER)) {
+					if (ship.getShipBlocks().get(i).getArmorStand().getHelmet().getType().equals(Material.getMaterial(SQSmoothCraft.config.getString("weapons.missile launcher.material")))) {
 						
 						missleList.add(ship.getShipBlocks().get(i));
 						
@@ -58,7 +58,7 @@ public class ShipCreator extends Thread{
 				
 				for (int i = 0; i < ship.getShipBlocks().size(); i ++) {
 					
-					if (ship.getShipBlocks().get(i).getArmorStand().getHelmet().getType().equals(Material.DROPPER)) {
+					if (ship.getShipBlocks().get(i).getArmorStand().getHelmet().getType().equals(Material.getMaterial(SQSmoothCraft.config.getString("utilities.reactor.material")))) {
 						
 						reactorList.add(ship.getShipBlocks().get(i));
 						

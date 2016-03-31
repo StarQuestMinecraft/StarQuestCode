@@ -138,6 +138,21 @@ public class ShipUtils {
 		
 		player.getInventory().setItem(3, decel);
 		
+		ItemStack explosive = new ItemStack(Material.SULPHUR);
+		ItemMeta explosiveMeta = explosive.getItemMeta();
+		
+		explosiveMeta.setDisplayName("Cannon Explosive Mode");
+		
+		List<String> explosiveLore = new ArrayList<String>();
+		explosiveLore.add(ChatColor.DARK_PURPLE + "Right click this to toggle explosive mode");
+		explosiveLore.add(ChatColor.DARK_PURPLE + "for the main cannons");
+		
+		explosiveMeta.setLore(explosiveLore);
+		
+		explosive.setItemMeta(explosiveMeta);
+		
+		player.getInventory().setItem(4, explosive);
+		
 		ItemStack missle = new ItemStack(Material.WATCH);
 		ItemMeta missleMeta = missle.getItemMeta();
 		

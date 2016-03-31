@@ -13,9 +13,17 @@ import net.minecraft.server.v1_9_R1.PlayerConnection;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Sound;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.craftbukkit.v1_9_R1.entity.CraftPlayer;
+import org.bukkit.entity.Arrow;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Fireball;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.metadata.FixedMetadataValue;
+import org.bukkit.util.Vector;
 import org.inventivetalent.bossbar.BossBar;
 import org.inventivetalent.bossbar.BossBarAPI;
 
@@ -87,6 +95,8 @@ public class Ship {
 	BossBar fuelBar = null;
 
 	boolean alternatingBlockDirection = false;
+	
+	boolean explosiveMode = false;
 	
 	public Ship (List<ShipBlock> shipBlocks, ShipBlock firstMainBlock, Player firstCaptain, float firstMaxSpeed, float firstMaxYawRate, float maxAcceleration, float firstFuel) {
 		
@@ -582,7 +592,7 @@ public class Ship {
 				
 				SQSmoothCraft.shipMap.remove(captain.getUniqueId());
 				
-				captain.teleport(location.getWorld().getBlockAt(new Location (location.getWorld(), mainBlock.getLocation().getBlockX() + .5, mainBlock.getLocation().getBlockY() + .5, mainBlock.getLocation().getBlockZ() + .5)).getRelative(0, 1, 0).getLocation());
+				captain.teleport(location.getWorld().getBlockAt(new Location (location.getWorld(), mainBlock.getLocation().getBlockX() + .5, mainBlock.getLocation().getBlockY(), mainBlock.getLocation().getBlockZ() + .5)).getRelative(0, 1, 0).getLocation());
 				
 			} else {
 				
@@ -645,5 +655,301 @@ public class Ship {
 		mainBlock.stand.eject();
 		
 	}
+	
+	public void fireMissles() {
 		
+		if (captain.hasMetadata("missile_cooldown")) {
+			
+			captain.sendMessage(ChatColor.RED + "The missle launchers are on cooldown");
+			
+		} else {
+			
+			new CooldownHandler(captain, "missile_cooldown", SQSmoothCraft.config.getInt("weapons.missile launcher.cooldown")).runTaskTimer(SQSmoothCraft.getPluginMain(), 0, 1);
+			
+			World world = captain.getWorld();
+			
+			Location captainLocation = captain.getLocation();
+			
+			if (fuel > 0.0f) {
+			
+				for (int i = 0; i < missleList.size(); i ++) {
+					
+					Location blockLocation = missleList.get(i).getLocation();
+					Location location = blockLocation.toVector().add(captainLocation.getDirection().multiply(4)).toLocation(world, captainLocation.getYaw(), captainLocation.getPitch());
+					
+					Fireball fireball = (Fireball) world.spawnEntity(location, EntityType.FIREBALL);
+					
+					fireball.setYield((float) SQSmoothCraft.config.getDouble("weapons.missile launcher.explosion power"));
+					
+					Vector newVelocity = captain.getLocation().getDirection();
+					
+					newVelocity.multiply(4);
+					
+					fireball.setVelocity(newVelocity);
+					
+					fireball.setMetadata("damage", new FixedMetadataValue(SQSmoothCraft.getPluginMain(), SQSmoothCraft.config.getInt("weapons.missile launcher.damage")));
+					fireball.setMetadata("no_pickup", new FixedMetadataValue(SQSmoothCraft.getPluginMain(), true));
+					fireball.setMetadata("carry_over", new FixedMetadataValue(SQSmoothCraft.getPluginMain(), SQSmoothCraft.config.getBoolean("weapons.missile launcher.carry over")));
+					
+					new ProjectileSmoother(fireball, newVelocity).runTaskTimer(SQSmoothCraft.getPluginMain(), 0, 1);
+					
+					world.playSound(blockLocation, Sound.ENTITY_GHAST_SHOOT, 2, 1);
+					
+				}
+				
+			}
+			
+		}
+		
+	}
+	
+	public void fireCannons() {
+		
+		if (!explosiveMode) {
+			
+			if (captain.hasMetadata("cannon_cooldown")) {
+				
+				captain.sendMessage(ChatColor.RED + "The cannons are on cooldown");
+				
+			} else {
+				
+				new CooldownHandler(captain, "cannon_cooldown", SQSmoothCraft.config.getInt("weapons.cannon.cooldown")).runTaskTimer(SQSmoothCraft.getPluginMain(), 0, 1);
+				
+				World world = captain.getWorld();
+				
+				Location captainLocation = captain.getLocation();
+				
+				if (fuel > 0.0f) {
+				
+					for (int i = 0; i < cannonList.size(); i ++) {
+						
+						Location blockLocation = cannonList.get(i).getLocation();
+						Location location = blockLocation.toVector().add(captainLocation.getDirection().multiply(4)).toLocation(world, captainLocation.getYaw(), captainLocation.getPitch());
+						
+						Arrow arrow = (Arrow) world.spawnEntity(location, EntityType.ARROW);
+						
+						Vector newVelocity = captainLocation.getDirection();
+						
+						newVelocity.multiply(4);
+						
+						arrow.setVelocity(newVelocity);
+						
+						arrow.setMetadata("damage", new FixedMetadataValue(SQSmoothCraft.getPluginMain(), SQSmoothCraft.config.getInt("weapons.cannon.damage")));
+						arrow.setMetadata("no_pickup", new FixedMetadataValue(SQSmoothCraft.getPluginMain(), true));
+						arrow.setMetadata("carry_over", new FixedMetadataValue(SQSmoothCraft.getPluginMain(), SQSmoothCraft.config.getBoolean("weapons.cannon.carry over")));
+						
+						new ProjectileSmoother(arrow, newVelocity).runTaskTimer(SQSmoothCraft.getPluginMain(), 0, 1);
+						
+						world.playSound(blockLocation, Sound.ENTITY_ARROW_SHOOT, 2, 1);
+						
+					}
+					
+				}
+				
+			}
+			
+		} else {
+			
+			if (captain.hasMetadata("cannon_explosive_cooldown")) {
+				
+				captain.sendMessage(ChatColor.RED + "The cannons are on cooldown");
+				
+			} else {
+				
+				new CooldownHandler(captain, "cannon_explosive_cooldown", SQSmoothCraft.config.getInt("weapons.cannon.explosive mode cooldown")).runTaskTimer(SQSmoothCraft.getPluginMain(), 0, 1);
+				
+				World world = captain.getWorld();
+				
+				Location captainLocation = captain.getLocation();
+				
+				if (fuel > 0.0f) {
+				
+					for (int i = 0; i < cannonList.size(); i ++) {
+						
+						Location blockLocation = cannonList.get(i).getLocation();
+						Location location = blockLocation.toVector().add(captainLocation.getDirection().multiply(4)).toLocation(world, captainLocation.getYaw(), captainLocation.getPitch());
+						
+						Arrow arrow = (Arrow) world.spawnEntity(location, EntityType.ARROW);
+						
+						Vector newVelocity = captainLocation.getDirection();
+						
+						newVelocity.multiply(4);
+						
+						arrow.setVelocity(newVelocity);
+						
+						arrow.setMetadata("damage", new FixedMetadataValue(SQSmoothCraft.getPluginMain(), SQSmoothCraft.config.getInt("weapons.cannon.damage")));
+						arrow.setMetadata("no_pickup", new FixedMetadataValue(SQSmoothCraft.getPluginMain(), true));
+						arrow.setMetadata("carry_over", new FixedMetadataValue(SQSmoothCraft.getPluginMain(), SQSmoothCraft.config.getBoolean("weapons.cannon.carry over")));
+						
+						arrow.setMetadata("explosive", new FixedMetadataValue(SQSmoothCraft.getPluginMain(), true));
+						
+						new ProjectileSmoother(arrow, newVelocity).runTaskTimer(SQSmoothCraft.getPluginMain(), 0, 1);
+						
+						world.playSound(blockLocation, Sound.ENTITY_ARROW_SHOOT, 2, 1);
+						
+					}
+					
+				}
+				
+			}
+			
+		}
+		
+	}	
+	
+	public void accelerate(float multiplier) {
+		
+		if (fuel > 0.0f) {
+			
+			if (speed == maxSpeed) {
+			
+			} else if (speed > maxSpeed){
+					
+				speed = maxSpeed;
+				
+			} else {
+					
+				speed = speed + (acceleration * multiplier);
+					
+			}
+			
+		}
+		
+	}
+	
+	public void decelerate(float multiplier) {
+		
+		if (fuel > 0.0f) {
+			
+			if (speed == maxSpeed) {
+			
+			} else if (speed < 0){
+					
+				speed = 0;
+				
+			} else {
+					
+				speed = speed - (acceleration * multiplier);
+					
+			}
+			
+			if (speed < 0) {
+				
+				speed = 0;
+				
+			}
+			
+		}
+		
+	}
+	
+	public void toggleLock() {
+
+		ItemStack itemInHand = captain.getInventory().getItemInMainHand();
+			
+		if (itemInHand.getItemMeta().getDisplayName().equals("Direction Locker")) {
+				
+			if (lockedDirection) {
+					
+				lockedDirection = false;
+					
+				captain.sendMessage(ChatColor.GREEN + "The direction has been unlocked");
+					
+			} else {
+					
+				lockedDirection = true;
+					
+				captain.sendMessage(ChatColor.RED + "The direction has been locked");
+					
+			}
+
+		}
+			
+	}
+	
+	public void toggleExplosive() {
+
+		ItemStack itemInHand = captain.getInventory().getItemInMainHand();
+			
+		if (itemInHand.getItemMeta().getDisplayName().equals("Cannon Explosive Mode")) {
+				
+			if (explosiveMode) {
+					
+				explosiveMode = false;
+					
+				captain.sendMessage(ChatColor.RED + "Cannon explosive mode has been disabled");
+					
+			} else {
+					
+				explosiveMode = true;
+					
+				captain.sendMessage(ChatColor.GREEN + "Cannon explosive mode has been enabled");
+					
+			}
+
+		}
+			
+	}
+	
+	public boolean rightClickControls() {
+		
+		ItemStack itemInHand = captain.getInventory().getItemInMainHand();
+		
+		if (itemInHand.getType().equals(Material.WATCH)) {
+			
+			if (itemInHand.getItemMeta().getDisplayName().equals("Accelerator")) {
+				
+				accelerate(1);
+				
+			} else if (itemInHand.getItemMeta().getDisplayName().equals("Decelerator")) {
+					
+				decelerate(1);
+					
+			}
+			
+		} else if (itemInHand.getType().equals(Material.COMPASS)) {
+			
+			toggleLock();
+			
+		} else if (itemInHand.getType().equals(Material.WOOD_DOOR)) {
+
+			exit();
+				
+		} else if (itemInHand.getType().equals(Material.SULPHUR)) {
+			
+			toggleExplosive();
+			
+		} else {
+		
+			
+			return true;
+			
+		}
+		
+		return false;
+		
+	}
+	
+	public void leftClickControls() {
+		
+		ItemStack itemInHand = captain.getInventory().getItemInMainHand();
+		
+		if (itemInHand.getType().equals(Material.WATCH)) {
+
+			String name = itemInHand.getItemMeta().getDisplayName();
+					
+			if (name.equals("Main Control Device") || name.equals("Accelerator") || name.equals("Decelerator")) {
+						
+				fireCannons();
+						
+			} else if (name.equals("Missile Controler")) {
+						
+				fireMissles();
+						
+			}
+			
+		}
+		
+	}
+	
 }

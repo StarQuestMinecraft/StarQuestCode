@@ -1,3 +1,26 @@
+weapons:
+  cannon:
+    damage: 10
+    carry over: false
+    material: COAL_BLOCK
+    cooldown: 0
+    explosive mode cooldown: 50
+    explosion power: 1
+  missile launcher:
+    damage: 200
+    carry over: true
+    material: DISPENSER
+    cooldown: 60
+    explosion power: 2
+utilites:
+
+  reactor:
+
+    material: DROPPER
+
+    fuel per coal: 100
+
+    fuel per second: 5
 blocks:
   wool:
     material: WOOL

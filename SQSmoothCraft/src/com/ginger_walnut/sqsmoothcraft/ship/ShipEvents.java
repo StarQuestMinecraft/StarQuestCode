@@ -11,16 +11,11 @@ import net.minecraft.server.v1_9_R1.PacketPlayOutPlayerInfo;
 import net.minecraft.server.v1_9_R1.PacketPlayOutPlayerInfo.EnumPlayerInfoAction;
 import net.minecraft.server.v1_9_R1.PlayerConnection;
 
-import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.Sound;
-import org.bukkit.World;
 import org.bukkit.craftbukkit.v1_9_R1.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_9_R1.entity.CraftPlayer;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Arrow;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Fireball;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
@@ -28,6 +23,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
@@ -36,9 +32,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.event.player.PlayerToggleSneakEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.metadata.MetadataValue;
-import org.bukkit.util.Vector;
 
 import com.dibujaron.cardboardbox.Knapsack;
 import com.ginger_walnut.sqsmoothcraft.SQSmoothCraft;
@@ -56,6 +50,23 @@ public class ShipEvents implements Listener {
 	}
 	
 	@EventHandler
+	public void onProjectileHit(ProjectileHitEvent event) {
+		
+		if (event.getEntity() instanceof Arrow) {
+			
+			Arrow arrow = (Arrow) event.getEntity();
+			
+			if (arrow.hasMetadata("explosive")) {
+				
+				arrow.getLocation().getWorld().createExplosion(arrow.getLocation(), (float) SQSmoothCraft.config.getDouble("weapons.cannon.explosion power"));
+				
+			}
+	
+		}
+		
+	}
+	
+	@EventHandler
 	public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
 		
 		if (event.getDamager() instanceof Projectile) {
@@ -63,6 +74,18 @@ public class ShipEvents implements Listener {
 			Projectile projectile = (Projectile) event.getDamager();
 
 			if (projectile.hasMetadata("no_pickup")) {
+				
+				if (event.getDamager() instanceof Arrow) {
+					
+					Arrow arrow = (Arrow) event.getDamager();
+					
+					if (arrow.hasMetadata("explosive")) {
+						
+						arrow.getLocation().getWorld().createExplosion(arrow.getLocation(), (float) SQSmoothCraft.config.getDouble("weapons.cannon.explosion power"));
+						
+					}
+			
+				}
 				
 				if (event.getEntity() instanceof ArmorStand) {
 					
@@ -154,177 +177,21 @@ public class ShipEvents implements Listener {
 		
 		if (eAction == Action.LEFT_CLICK_AIR || eAction == Action.LEFT_CLICK_BLOCK) {
 			
-			if (player.getItemInHand().getType().equals(Material.WATCH)) {
+			if (SQSmoothCraft.shipMap.containsKey(player.getUniqueId())) {
 				
-				if (SQSmoothCraft.shipMap.containsKey(player.getUniqueId())) {
-				
-					if (SQSmoothCraft.shipMap.get(player.getUniqueId()).getMainBlock().getShip().getCaptain() != null) {
-						
-						String name = player.getItemInHand().getItemMeta().getDisplayName();
-						
-						if (name.equals("Main Control Device") || name.equals("Accelerator") || name.equals("Decelerator")) {
-							
-							World world = player.getWorld();
-							
-							Ship ship = SQSmoothCraft.shipMap.get(player.getUniqueId());
-							
-							if (ship.fuel > 0.0f) {
-							
-								for (int i = 0; i < ship.getCannons().size(); i ++) {
-									
-									Location blockLocation = ship.getCannons().get(i).getLocation();
-									Location location = blockLocation.toVector().add(player.getLocation().getDirection().multiply(4)).toLocation(player.getWorld(), player.getLocation().getYaw(), player.getLocation().getPitch());
-									
-									Arrow arrow = (Arrow) world.spawnEntity(location, EntityType.ARROW);
-									
-									Vector newVelocity = player.getLocation().getDirection();
-									
-									newVelocity.multiply(4);
-									
-									arrow.setVelocity(newVelocity);
-									
-									arrow.setMetadata("damage", new FixedMetadataValue(SQSmoothCraft.getPluginMain(), 10));
-									arrow.setMetadata("no_pickup", new FixedMetadataValue(SQSmoothCraft.getPluginMain(), true));
-									arrow.setMetadata("carry_over", new FixedMetadataValue(SQSmoothCraft.getPluginMain(), false));
-									
-									new ProjectileSmoother(arrow, newVelocity).runTaskTimer(SQSmoothCraft.getPluginMain(), 0, 1);
-									
-									player.getWorld().playSound(player.getLocation(), Sound.ENTITY_ARROW_SHOOT, 2, 1);
-									
-								}
-								
-							}
-							
-						} else if (name.equals("Missile Controler")) {
-							
-							if (player.hasMetadata("missle_cooldown")) {
-								
-								player.sendMessage(ChatColor.RED + "The missle launchers are on cooldown");
-								
-							} else {
-								
-								new CooldownHandler(player, "missle_cooldown", 100).runTaskTimer(SQSmoothCraft.getPluginMain(), 0, 1);
-								
-								World world = player.getWorld();
-								
-								Ship ship = SQSmoothCraft.shipMap.get(player.getUniqueId());
-								
-								if (ship.fuel > 0.0f) {
-								
-									for (int i = 0; i < ship.missleList.size(); i ++) {
-										
-										Location blockLocation = ship.missleList.get(i).getLocation();
-										Location location = blockLocation.toVector().add(player.getLocation().getDirection().multiply(4)).toLocation(player.getWorld(), player.getLocation().getYaw(), player.getLocation().getPitch());
-										
-										Fireball fireball = (Fireball) world.spawnEntity(location, EntityType.FIREBALL);
-										
-										fireball.setYield(1f);
-										
-										Vector newVelocity = player.getLocation().getDirection();
-										
-										newVelocity.multiply(4);
-										
-										fireball.setVelocity(newVelocity);
-										
-										fireball.setMetadata("damage", new FixedMetadataValue(SQSmoothCraft.getPluginMain(), 200));
-										fireball.setMetadata("no_pickup", new FixedMetadataValue(SQSmoothCraft.getPluginMain(), true));
-										fireball.setMetadata("carry_over", new FixedMetadataValue(SQSmoothCraft.getPluginMain(), true));
-										
-										new ProjectileSmoother(fireball, newVelocity).runTaskTimer(SQSmoothCraft.getPluginMain(), 0, 1);
-										
-										player.getWorld().playSound(player.getLocation(), Sound.ENTITY_GHAST_SHOOT, 2, 1);
-										
-									}
-									
-								}
-								
-							}
-							
-						}
-						
-					}
-
-				}
+				Ship ship = SQSmoothCraft.shipMap.get(player.getUniqueId());
+			
+				ship.leftClickControls();
 				
 			}
 			
 		} else if (eAction == Action.RIGHT_CLICK_AIR || eAction == Action.RIGHT_CLICK_BLOCK) {
 			
-			if (player.getItemInHand().getType().equals(Material.WATCH)) {
+			if (SQSmoothCraft.shipMap.containsKey(player.getUniqueId())) {
 				
-				if (SQSmoothCraft.shipMap.containsKey(player.getUniqueId())) {
-				
-					Ship ship = SQSmoothCraft.shipMap.get(player.getUniqueId());
-					
-					ItemStack itemInHand = event.getPlayer().getItemInHand();
-				
-					if (itemInHand.getItemMeta().getDisplayName().equals("Accelerator")) {
-					
-						if (ship.fuel > 0.0f) {
-						
-							if (ship.getSpeed() == ship.getMaxSpeed()) {
-							
-							} else if (ship.getSpeed() > ship.getMaxSpeed()){
-									
-								ship.setSpeed(ship.getMaxSpeed());
-								
-							} else {
-									
-								ship.setSpeed(ship.getSpeed() + ship.getAcceleration());
-									
-							}
-							
-						}
-					
-					} else if (itemInHand.getItemMeta().getDisplayName().equals("Decelerator")) {
-						
-						if (ship.fuel > 0.0f) {
-						
-							if (ship.getSpeed() == 0.0f) {
-						
-							} else if (ship.getSpeed() < 0.0f) {
-						
-								ship.setSpeed(0.0f);
-						
-							} else {
-						
-								ship.setSpeed(ship.getSpeed() - ship.getAcceleration());
-						
-							}
-							
-							if (ship.getSpeed() < 0.0f) {
-								
-								ship.setSpeed(0.0f);
-								
-							}
-							
-						}
-						
-					} else if (itemInHand.getItemMeta().getDisplayName().equals("Direction Locker")) {
-						
-						if (ship.lockedDirection) {
-							
-							ship.lockedDirection = false;
-							
-						} else {
-							
-							ship.lockedDirection = true;
-							
-						}
-
-					}
-					
-				}
-				
-			} else if (player.getItemInHand().getType().equals(Material.WOOD_DOOR)) {
-				
-				if (SQSmoothCraft.shipMap.containsKey(player.getUniqueId())) {
-					
-					Ship ship = SQSmoothCraft.shipMap.get(player.getUniqueId());
-					
-					ship.exit();
-					
-				}
+				Ship ship = SQSmoothCraft.shipMap.get(player.getUniqueId());
+			
+				ship.rightClickControls();
 				
 			}
 			
@@ -386,61 +253,7 @@ public class ShipEvents implements Listener {
 						
 					}
 					
-				} else if (event.getPlayer().getItemInHand().getType().equals(Material.WATCH)) {
-					
-					if (SQSmoothCraft.shipMap.containsKey(event.getPlayer().getUniqueId())) {
-					
-						Ship ship = SQSmoothCraft.shipMap.get(event.getPlayer().getUniqueId());
-						
-						ItemStack itemInHand = event.getPlayer().getItemInHand();
-					
-						if (itemInHand.getItemMeta().getDisplayName().equals("Accelerator")) {
-						
-							if (ship.fuel > 0.0f) {
-								
-								if (ship.getSpeed() == ship.getMaxSpeed()) {
-									
-								} else if (ship.getSpeed() > ship.getMaxSpeed()){
-											
-									ship.setSpeed(ship.getMaxSpeed());
-										
-								} else {
-											
-									ship.setSpeed(ship.getSpeed() + ship.getAcceleration());
-											
-								}
-								
-							}
-
-						} else if (itemInHand.getItemMeta().getDisplayName().equals("Decelerator")) {
-							
-							if (ship.fuel > 0.0f) {
-							
-								if (ship.getSpeed() == 0.0f) {
-							
-								} else if (ship.getSpeed() < 0.0f) {
-							
-									ship.setSpeed(0.0f);
-							
-								} else {
-							
-									ship.setSpeed(ship.getSpeed() - ship.getAcceleration());
-							
-								}
-								
-								if (ship.getSpeed() < 0.0f) {
-									
-									ship.setSpeed(0.0f);
-									
-								}
-								
-							}
-							
-						} 
-						
-					}
-					
-				} else if (event.getPlayer().getItemInHand().getType().equals(Material.WOOD_DOOR)) {
+				} else if (SQSmoothCraft.shipMap.containsValue(shipBlock.getShip())) {
 					
 					Player player = event.getPlayer();
 					
@@ -448,43 +261,14 @@ public class ShipEvents implements Listener {
 						
 						Ship ship = SQSmoothCraft.shipMap.get(player.getUniqueId());
 						
-						ship.exit();
-						
-					}
-					
-				} else if (event.getPlayer().getItemInHand().getType().equals(Material.COMPASS)) {
-					
-					if (SQSmoothCraft.shipMap.containsKey(event.getPlayer().getUniqueId())) {
-						
-						Ship ship = SQSmoothCraft.shipMap.get(event.getPlayer().getUniqueId());
-						
-						ItemStack itemInHand = event.getPlayer().getItemInHand();
-						
-						if (itemInHand.getItemMeta().getDisplayName().equals("Direction Locker")) {
+						if (ship.rightClickControls()) {
 							
-							if (ship.lockedDirection) {
-								
-								ship.lockedDirection = false;
-								
-								event.getPlayer().sendMessage(ChatColor.GREEN + "The direction has been unlocked");
-								
-							} else {
-								
-								ship.lockedDirection = true;
-								
-								event.getPlayer().sendMessage(ChatColor.RED + "The direction has been locked");
-								
-							}
-
+							event.setCancelled(true);
+							
 						}
-						
+
 					}
-					
-				}else {
-				
-					
-					event.setCancelled(true);
-					
+			
 				}
 				
 			}
@@ -493,40 +277,40 @@ public class ShipEvents implements Listener {
 		
 	}
 	
-	@EventHandler
-	public void onPlayerToggleSneak(PlayerToggleSneakEvent event) {
-
-		if (SQSmoothCraft.shipMap.containsKey(event.getPlayer().getUniqueId())) {
-			
-			if (SQSmoothCraft.shipMap.get(event.getPlayer().getUniqueId()).thirdPersonPlayer != null) {
-			
-				for (Player onlinePlayer : SQSmoothCraft.getPluginMain().getServer().getOnlinePlayers()) {
-				
-					PlayerConnection connection = ((CraftPlayer) onlinePlayer).getHandle().playerConnection;
-				
-					connection.sendPacket(new PacketPlayOutPlayerInfo(EnumPlayerInfoAction.REMOVE_PLAYER, (SQSmoothCraft.shipMap.get(event.getPlayer().getUniqueId()).thirdPersonPlayer)));
-					connection.sendPacket(new PacketPlayOutEntityDestroy((SQSmoothCraft.shipMap.get(event.getPlayer().getUniqueId()).thirdPersonPlayer.getId())));
+//	@EventHandler
+//	public void onPlayerToggleSneak(PlayerToggleSneakEvent event) {
+//
+//		if (SQSmoothCraft.shipMap.containsKey(event.getPlayer().getUniqueId())) {
+//			
+//			if (SQSmoothCraft.shipMap.get(event.getPlayer().getUniqueId()).thirdPersonPlayer != null) {
+//			
+//				for (Player onlinePlayer : SQSmoothCraft.getPluginMain().getServer().getOnlinePlayers()) {
+//				
+//					PlayerConnection connection = ((CraftPlayer) onlinePlayer).getHandle().playerConnection;
+//				
+//					connection.sendPacket(new PacketPlayOutPlayerInfo(EnumPlayerInfoAction.REMOVE_PLAYER, (SQSmoothCraft.shipMap.get(event.getPlayer().getUniqueId()).thirdPersonPlayer)));
+//					connection.sendPacket(new PacketPlayOutEntityDestroy((SQSmoothCraft.shipMap.get(event.getPlayer().getUniqueId()).thirdPersonPlayer.getId())));
 				
 //				onlinePlayer.showPlayer(event.getPlayer());
 				
-				}
-				
-			}
-			
-			SQSmoothCraft.shipMap.get(event.getPlayer().getUniqueId()).thirdPersonPlayer = null;
-			
-			SQSmoothCraft.stoppedShipMap.add(SQSmoothCraft.shipMap.get(event.getPlayer().getUniqueId()));
-			
-			SQSmoothCraft.shipMap.remove(event.getPlayer().getUniqueId());
-		
-			event.getPlayer().getInventory().clear();
-			event.getPlayer().getInventory().setArmorContents(null);
-			
-			SQSmoothCraft.knapsackMap.get(event.getPlayer().getUniqueId()).unpack(event.getPlayer());
-			
-		}
-		
-	}
+//				}
+//				
+//			}
+//			
+//			SQSmoothCraft.shipMap.get(event.getPlayer().getUniqueId()).thirdPersonPlayer = null;
+//			
+//			SQSmoothCraft.stoppedShipMap.add(SQSmoothCraft.shipMap.get(event.getPlayer().getUniqueId()));
+//			
+//			SQSmoothCraft.shipMap.remove(event.getPlayer().getUniqueId());
+//		
+//			event.getPlayer().getInventory().clear();
+//			event.getPlayer().getInventory().setArmorContents(null);
+//			
+//			SQSmoothCraft.knapsackMap.get(event.getPlayer().getUniqueId()).unpack(event.getPlayer());
+//			
+//		}
+//		
+//	}
 	
 	@EventHandler
 	public void onPlayerPickupItem(PlayerPickupItemEvent event) {

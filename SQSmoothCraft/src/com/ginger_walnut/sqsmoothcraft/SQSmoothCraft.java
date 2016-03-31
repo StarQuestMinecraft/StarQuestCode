@@ -1,5 +1,6 @@
 package com.ginger_walnut.sqsmoothcraft;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -62,6 +63,8 @@ public class SQSmoothCraft extends JavaPlugin{
 	public static List<Double> shipBlockHealths = new ArrayList<Double>();
 	public static List<Double> shipBlockWeights = new ArrayList<Double>();
 	
+	public static FileConfiguration config = null;
+	
 	@Override
 	public void onDisable() {
 		
@@ -107,6 +110,8 @@ public class SQSmoothCraft extends JavaPlugin{
 		PluginDescriptionFile pdfFile = this.getDescription();
 		this.logger.info(pdfFile.getName() + " has been disabled!");
 		
+		saveDefaultConfig();
+		
 	}
 	
 	@Override
@@ -119,10 +124,14 @@ public class SQSmoothCraft extends JavaPlugin{
 	
 		this.getServer().getPluginManager().registerEvents(new ShipEvents(), this);
 		
-		getConfig().options().copyDefaults(true);
-		saveConfig();
+		if (!new File(this.getDataFolder(), "config.yml").exists()) {
+			
+			saveDefaultConfig();
+			saveConfig();
+			
+		}		
 		
-		FileConfiguration config = getConfig();
+		config = getConfig();
 		
 		List<String> detectableBlocks = new ArrayList<String>();
 		
