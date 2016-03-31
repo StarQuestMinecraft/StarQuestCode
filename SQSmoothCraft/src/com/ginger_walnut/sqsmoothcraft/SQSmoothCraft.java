@@ -54,6 +54,7 @@ public class SQSmoothCraft extends JavaPlugin{
 	
 	public static HashMap<UUID, Ship> shipMap = new HashMap<UUID, Ship>();
 	public static ArrayList<Ship> stoppedShipMap = new ArrayList<Ship>();
+	public static List<ItemStack> controlItems = new ArrayList<ItemStack>();
 	
 	public final Logger logger = Logger.getLogger("Minecraft");
 	
@@ -64,8 +65,7 @@ public class SQSmoothCraft extends JavaPlugin{
 	public static List<Double> shipBlockWeights = new ArrayList<Double>();
 	
 	public static FileConfiguration config = null;
-	//Testing gitHub, ignore this. test test test more testing test test test
-	//testing again
+	
 	@Override
 	public void onDisable() {
 		
