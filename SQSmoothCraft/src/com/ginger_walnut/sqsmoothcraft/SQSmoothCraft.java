@@ -48,6 +48,7 @@ import com.ginger_walnut.sqsmoothcraft.ship.ShipLocation;
 import com.ginger_walnut.sqsmoothcraft.ship.ShipMovement;
 import com.ginger_walnut.sqsmoothcraft.ship.ShipTasks;
 import com.ginger_walnut.sqsmoothcraft.ship.ShipUtils;
+import com.martinjonsson01.sqsmoothcraft.missile.MissileListener;
 import com.mojang.authlib.GameProfile;
 
 public class SQSmoothCraft extends JavaPlugin{
@@ -56,6 +57,7 @@ public class SQSmoothCraft extends JavaPlugin{
 	
 	public static HashMap<UUID, Ship> shipMap = new HashMap<UUID, Ship>();
 	public static ArrayList<Ship> stoppedShipMap = new ArrayList<Ship>();
+	public static List<ItemStack> controlItems = new ArrayList<ItemStack>();
 	
 	public final Logger logger = Logger.getLogger("Minecraft");
 	
@@ -134,6 +136,7 @@ public class SQSmoothCraft extends JavaPlugin{
 		this.logger.info(pdfFile.getName() + " has been enabled!");
 	
 		this.getServer().getPluginManager().registerEvents(new ShipEvents(), this);
+		this.getServer().getPluginManager().registerEvents(new MissileListener(), this);
 		
 		if (!new File(this.getDataFolder(), "config.yml").exists()) {
 			

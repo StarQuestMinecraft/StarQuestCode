@@ -2,6 +2,7 @@ package com.ginger_walnut.sqsmoothcraft.ship;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ListIterator;
 
 import net.md_5.bungee.api.ChatColor;
 import net.minecraft.server.v1_9_R1.EntityPlayer;
@@ -25,6 +26,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
@@ -32,6 +34,7 @@ import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerToggleSneakEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.MetadataValue;
@@ -367,6 +370,7 @@ public class ShipEvents implements Listener {
 			
 		}
 		
+<<<<<<< HEAD
 		if (SQSmoothCraft.guiNames.contains(event.getInventory().getName())) {
 			
 			if (event.getCurrentItem().hasItemMeta()) {
@@ -521,12 +525,60 @@ public class ShipEvents implements Listener {
 						
 					}
 					
+=======
+	}
+	
+	@EventHandler
+	public void onPlayerDeath(PlayerDeathEvent e){
+		
+		if (SQSmoothCraft.shipMap.containsKey(e.getEntity().getUniqueId())) {
+			
+			Ship ship = SQSmoothCraft.shipMap.get(e.getEntity().getUniqueId());
+			ListIterator<ItemStack> litr = e.getDrops().listIterator();
+			
+			while(litr.hasNext()) {
+				
+				ItemStack item = litr.next();
+				
+				if(SQSmoothCraft.controlItems.contains(item)) {
+					
+					litr.remove();
+					
+				}
+				
+			}
+			
+			ship.exit();
+			
+			for (ItemStack item : e.getEntity().getInventory().getContents()) {
+				
+				if (item != null) {
+					
+					e.getEntity().getLocation().getWorld().dropItemNaturally(e.getEntity().getLocation(), item);
+>>>>>>> 9770e81adb36b8a9d7c027af49b027acd3fa534a
 				}
 				
 			}
 			
 		}
+<<<<<<< HEAD
 
+=======
+	}
+	
+	@EventHandler
+	public void onPlayerQuit(PlayerQuitEvent e) {
+		
+		if (SQSmoothCraft.shipMap.containsKey(e.getPlayer().getUniqueId())){
+			
+			Ship ship = SQSmoothCraft.shipMap.get(e.getPlayer().getUniqueId());
+			ship.exit();
+			ship.setSpeed(0);
+			ship.blockify();
+			
+		}
+		
+>>>>>>> 9770e81adb36b8a9d7c027af49b027acd3fa534a
 	}
 	
 }

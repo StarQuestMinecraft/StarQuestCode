@@ -105,6 +105,7 @@ public class ShipUtils {
 		mcd.setItemMeta(mcdMeta);
 		
 		player.getInventory().setItem(1, mcd);
+		SQSmoothCraft.controlItems.add(mcd);
 		
 		ItemStack accel = new ItemStack(Material.WATCH);
 		ItemMeta accelMeta = accel.getItemMeta();
@@ -121,6 +122,7 @@ public class ShipUtils {
 		accel.setItemMeta(accelMeta);
 		
 		player.getInventory().setItem(2, accel);
+		SQSmoothCraft.controlItems.add(accel);
 		
 		ItemStack decel = new ItemStack(Material.WATCH);
 		ItemMeta decelMeta = decel.getItemMeta();
@@ -137,6 +139,7 @@ public class ShipUtils {
 		decel.setItemMeta(decelMeta);
 		
 		player.getInventory().setItem(3, decel);
+		SQSmoothCraft.controlItems.add(decel);
 		
 		ItemStack explosive = new ItemStack(Material.SULPHUR);
 		ItemMeta explosiveMeta = explosive.getItemMeta();
@@ -152,6 +155,7 @@ public class ShipUtils {
 		explosive.setItemMeta(explosiveMeta);
 		
 		player.getInventory().setItem(4, explosive);
+		SQSmoothCraft.controlItems.add(explosive);
 		
 		ItemStack missle = new ItemStack(Material.WATCH);
 		ItemMeta missleMeta = missle.getItemMeta();
@@ -168,6 +172,7 @@ public class ShipUtils {
 		missle.setItemMeta(missleMeta);
 		
 		player.getInventory().setItem(5, missle);
+		SQSmoothCraft.controlItems.add(missle);
 		
 		ItemStack directionLock = new ItemStack(Material.COMPASS);
 		ItemMeta directionLockMeta = directionLock.getItemMeta();
@@ -183,6 +188,7 @@ public class ShipUtils {
 		directionLock.setItemMeta(directionLockMeta);
 		
 		player.getInventory().setItem(7, directionLock);
+		SQSmoothCraft.controlItems.add(directionLock);
 				
 		ItemStack exit = new ItemStack(Material.WOOD_DOOR);
 		ItemMeta exitMeta = exit.getItemMeta();
@@ -198,6 +204,7 @@ public class ShipUtils {
 		exit.setItemMeta(exitMeta);
 		
 		player.getInventory().setItem(8, exit);
+		SQSmoothCraft.controlItems.add(exit);
 		
 		player.getInventory().setHeldItemSlot(0);
 		
