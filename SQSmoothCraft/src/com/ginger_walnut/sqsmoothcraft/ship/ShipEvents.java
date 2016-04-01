@@ -370,7 +370,6 @@ public class ShipEvents implements Listener {
 			
 		}
 		
-<<<<<<< HEAD
 		if (SQSmoothCraft.guiNames.contains(event.getInventory().getName())) {
 			
 			if (event.getCurrentItem().hasItemMeta()) {
@@ -525,7 +524,12 @@ public class ShipEvents implements Listener {
 						
 					}
 					
-=======
+				}
+				
+			}
+
+		}
+			
 	}
 	
 	@EventHandler
@@ -555,15 +559,13 @@ public class ShipEvents implements Listener {
 				if (item != null) {
 					
 					e.getEntity().getLocation().getWorld().dropItemNaturally(e.getEntity().getLocation(), item);
->>>>>>> 9770e81adb36b8a9d7c027af49b027acd3fa534a
+					
 				}
 				
 			}
 			
 		}
-<<<<<<< HEAD
 
-=======
 	}
 	
 	@EventHandler
@@ -577,8 +579,7 @@ public class ShipEvents implements Listener {
 			ship.blockify();
 			
 		}
-		
->>>>>>> 9770e81adb36b8a9d7c027af49b027acd3fa534a
+
 	}
 	
 }
