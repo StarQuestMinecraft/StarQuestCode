@@ -1,7 +1,9 @@
 
 package us.higashiyama.george.SQSpace;
 
+import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -9,7 +11,6 @@ import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -20,25 +21,39 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType.SlotType;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class SQSpace extends JavaPlugin implements Listener {
 
-	public static ArrayList<Player> Players = new ArrayList<Player>();
+	public static ArrayList<Player> Players = new ArrayList<Player>();	
+	public static List<Player> noSuffacatePlayers = new ArrayList<Player>();
+	
+	public static List<String> spaceWorlds = new ArrayList<String>();
+	
 	public static SQSpace instance;
 
 	@Override
 	public void onDisable() {
-
+		saveDefaultConfig();	
 	}
 
 	@Override
 	public void onEnable() {
-
+		if (!new File(this.getDataFolder(), "config.yml").exists()) {
+			saveDefaultConfig();
+			saveConfig();
+		}	
+		
+		spaceWorlds = getConfig().getStringList("systems");
 		instance = this;
-		String planet = Bukkit.getServerName();
-		if ((planet.equals("Trinitos_Alpha")) || (planet.equals("Trinitos_Beta")) || (planet.equals("Trinitos_Gamma"))) {
+		boolean enabled = false;
+		for (World world : Bukkit.getServer().getWorlds()) {
+			if (spaceWorlds.contains(world.getName().toLowerCase())) {
+				enabled = true;				
+			}
+		}
+
+		if (enabled) {
 			System.out.println("Events registered!");
 			this.getServer().getPluginManager().registerEvents(this, this);
 		}
@@ -77,7 +92,7 @@ public class SQSpace extends JavaPlugin implements Listener {
 		// is in a "Space" area.
 		// It is only a Respiration / Perm check
 		boolean suffocating = false;
-		if (!p.hasPermission("SQSpace.nosuffocate") && !(p.getGameMode().equals(GameMode.CREATIVE)) && (isInSpace(p)) && (!this.hasSpaceArmor(p))
+		if (!p.hasPermission("SQSpace.nosuffocate") && !(p.getGameMode().equals(GameMode.CREATIVE)) && (isInSpace(p)) && (!this.hasSpaceArmor(p) && !noSuffacatePlayers.contains(p))
 				&& (!Players.contains(p))) {
 			Players.add(p);
 			p.sendMessage(ChatColor.AQUA + "[Space] " + ChatColor.RED + "You are now Suffocating!");
@@ -152,7 +167,7 @@ public class SQSpace extends JavaPlugin implements Listener {
 		if (this.hasSpaceArmor(p)) {
 			p.setRemainingAir(p.getMaximumAir());
 		}
-		if ((planet.startsWith("trinitos"))){
+		if (spaceWorlds.contains(planet)){
 			
 			if(p.getGameMode().equals(GameMode.SURVIVAL)){
 				if ((isInSpace(p)) && (!p.isFlying()) && (p.getLocation().getY() < 256)) {

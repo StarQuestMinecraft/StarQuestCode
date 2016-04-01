@@ -10,6 +10,8 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitScheduler;
 
+import us.higashiyama.george.SQSpace.SQSpace;
+
 import com.ginger_walnut.sqsmoothcraft.SQSmoothCraft;
 
 public class ShipCreator extends Thread{
@@ -103,7 +105,10 @@ public class ShipCreator extends Thread{
 				
 				ship.acceleration = maxSpeed / 20;
 				
+				SQSpace.noSuffacatePlayers.add(pilot);
+				
 				pilot.sendMessage(ChatColor.GREEN + "Your ship has been registered!");
+				pilot.sendMessage(ChatColor.RED + "Make sure to disable your rotational lock when you are ready to turn your craft");
 				
 			}
 				

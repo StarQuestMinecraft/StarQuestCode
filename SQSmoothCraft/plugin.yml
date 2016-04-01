@@ -5,10 +5,13 @@ description: A plugin that adds smooth space ships
 depend: [ProtocolLib]
 commands:
   ship:
-    description: spawns a default ship
+    description: main command for SQSmoothCraft
   shipdetect:
     description: detects a ship
   shipundetect:
     description: undetects a ship
   ship3rdperson:
     description: puts a ship in 3rd person mode
+permissions:
+  SQSmoothCraft.spawnShip:
+    description: Permission node for spawning a default smoothcraft ship

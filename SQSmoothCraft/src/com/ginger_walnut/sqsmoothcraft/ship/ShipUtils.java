@@ -210,4 +210,18 @@ public class ShipUtils {
 		
 	}
 	
+	public static ItemStack createSpecialItem(ItemStack itemStack, List<String> lore, String name) {
+		
+		ItemMeta itemMeta = itemStack.getItemMeta();
+		
+		itemMeta.setDisplayName(name);
+		
+		itemMeta.setLore(lore);
+		
+		itemStack.setItemMeta(itemMeta);
+		
+		return itemStack;
+		
+	}
+	
 }

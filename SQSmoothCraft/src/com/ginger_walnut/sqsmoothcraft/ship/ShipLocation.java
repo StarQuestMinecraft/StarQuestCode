@@ -1,6 +1,5 @@
 package com.ginger_walnut.sqsmoothcraft.ship;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 
@@ -67,66 +66,7 @@ public class ShipLocation {
 		
 	}
 	
-	public Location toLocation () {
-		
-		Location location = null;
-		float yaw = 0.0f;
-		
-		if (mainShipBlock != null) {
-			
-			if (mainShipBlock.getArmorStand() != null) {
-				
-				if (mainShipBlock.getArmorStand().getPassenger() != null) {
-					
-					yaw = mainShipBlock.getArmorStand().getPassenger().getLocation().getYaw();
-					
-				} else {
-					
-					yaw = 0.0f;
-					
-				}
-
-				
-			} else {
-				
-				yaw = 0.0f;
-				
-			}
-			
-		} else {
-			
-			yaw = 0.0f;
-			
-		}
-			
-		if (mainShipBlock != null) {
-				
-			double yawRad = Math.toRadians(yaw);
-			double yawCos = Math.cos(yawRad);
-			double yawSin = Math.sin(yawRad);
-			
-//			location = new Location(mainShipBlock.getArmorStand().getWorld(), (0 + (x * Math.cos(Math.toRadians(yaw)))) * .625, (y * .625), (0 + (x * Math.sin(Math.toRadians(yaw)))) * .625).add(mainShipBlock.getLocation());
-			
-			location = new Location(mainShipBlock.getArmorStand().getWorld(), ((x * yawCos) - (z * yawSin)) * .625, (y * .625), ((z * yawCos) + (x * yawSin)) * .625).add(mainShipBlock.getLocation());
-			
-//			Location blockLocation = mainShipBlock.getLocation();
-//			location = blockLocation.toVector().add(player.getLocation().getDirection().multiply(4)).toLocation(player.getWorld(), player.getLocation().getYaw(), player.getLocation().getPitch());
-			
-
-			
-		} else {
-			
-			location = new Location(Bukkit.getWorlds().get(0), (((int) (x + (z) * Math.cos(yaw))) * .625), (y * .625), (((int) (z + (z * Math.sin(yaw)))) * .625)).add(new Location(Bukkit.getWorlds().get(0),0,0,0));
-			
-		}
-			
-		location.setYaw(0);
-		
-		return location;
-		
-	}
-	
-	public Location toLocation (Ship ship, double yawCos, double yawSin, double pitchCos, double pitchSin) {
+	public Location toLocation (Location shipLocation, double yawCos, double yawSin, double pitchCos, double pitchSin) {
 		
 		Location location = null;
 			
@@ -135,10 +75,10 @@ public class ShipLocation {
 				//(((x * yawCos) - (z * yawSin)) - (yawSin * ((y * pitchSin) - (z * Math.abs(pitchSin))))) * .625, 
 				//((y * pitchCos) - (z * pitchSin)) * .625, 
 				//(((z * yawCos) + (x * yawSin)) + (yawCos * ((y * pitchSin) - (z * Math.abs(pitchSin))))) * .625).add(ship.getLocation());
-		location = new Location(ship.getLocation().getWorld(),
+		location = new Location(shipLocation.getWorld(),
 			((yawSin * pitchSin * y * -1) - (yawSin * pitchCos * z) + (yawCos * x)) * .625, 
 			((y * pitchCos) - (z * pitchSin)) * .625, 
-			((yawCos * pitchSin * y) + (yawCos * pitchCos * z) + (yawSin * x)) * .625).add(ship.getLocation());
+			((yawCos * pitchSin * y) + (yawCos * pitchCos * z) + (yawSin * x)) * .625).add(shipLocation);
 				
 		location.setYaw(0);
 		location.setPitch(0);

@@ -46,7 +46,7 @@ public class ShipMovement extends Thread {
 					ShipBlock mainBlock = mainBlocks.get(i);
 
 					if (SQSmoothCraft.shipMap.containsValue(mainBlock.getShip())) {
-
+						
 						Player pilot = (Player) mainBlock.getShip().getCaptain();
 						
 						Ship ship = SQSmoothCraft.shipMap.get(pilot.getUniqueId());
@@ -560,23 +560,7 @@ public class ShipMovement extends Thread {
 						
 						Ship ship = mainBlock.getShip();
 						
-						if (ship.getSpeed() == 0.0f) {
-							
-						} else if (ship.getSpeed() < 0.0f) {
-								
-							ship.setSpeed(0.0f);
-								
-						} else {
-								
-							ship.setSpeed(ship.getSpeed() - (ship.getAcceleration() / 5));
-								
-						}
-						
-						if (ship.getSpeed() < 0.0f) {
-							
-							ship.setSpeed(0.0f);
-							
-						}
+						ship.decelerate(.2f);
 							
 						double yawSin = ship.getAdjustedYawSin();
 						double yawCos = ship.getAdjustedYawCos();
@@ -643,7 +627,7 @@ public class ShipMovement extends Thread {
 						
 						ShipLocation shipLocation = shipBlocks.get(j).getShipLocation();
 							
-						Location locationShip = shipLocation.toLocation(ship, yawCos, yawSin, pitchCos, pitchSin);
+						Location locationShip = shipLocation.toLocation(ship.getLocation(), yawCos, yawSin, pitchCos, pitchSin);
 							
 						if (locationShip.getWorld().getBlockAt(locationShip).getRelative(0, 1, 0).getType().equals(Material.AIR)) {
 								
@@ -715,7 +699,7 @@ public class ShipMovement extends Thread {
 							
 							ShipLocation shipLocation = shipBlocks.get(j).getShipLocation();
 							
-							stand.teleport(shipLocation.toLocation(ship, yawCos, yawSin, pitchCos, pitchSin));
+							stand.teleport(shipLocation.toLocation(ship.getLocation(), yawCos, yawSin, pitchCos, pitchSin));
 							stand.setVelocity(new Vector(0, 0, 0));
 
 							stand.setHeadPose(eulerAngle);

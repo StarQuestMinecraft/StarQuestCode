@@ -42,6 +42,9 @@ public class SuffocationTask extends BukkitRunnable {
 		if (this.p.isDead()) {
 			this.cancel(this.p);
 		}
+		if (this.plugin.noSuffacatePlayers.contains(this.p)) {
+			this.cancel(this.p);
+		}
 		if (!this.canceled) {
 			double health = this.p.getHealth();
 			this.p.damage(1.0D);

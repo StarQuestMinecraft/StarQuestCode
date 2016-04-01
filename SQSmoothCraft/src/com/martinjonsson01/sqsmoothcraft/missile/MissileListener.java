@@ -1,6 +1,5 @@
 package com.martinjonsson01.sqsmoothcraft.missile;
 
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.block.Block;
 import org.bukkit.block.Dispenser;

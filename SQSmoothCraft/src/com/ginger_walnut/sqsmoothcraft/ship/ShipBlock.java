@@ -43,7 +43,7 @@ public class ShipBlock {
 
 		} else {
 			
-			stand = (ArmorStand) shipLocation.getWorld().spawnEntity((shipLocation.toLocation()), EntityType.ARMOR_STAND);
+			stand = (ArmorStand) shipLocation.getWorld().spawnEntity((shipLocation.toLocation(SQSmoothCraft.nextShipLocation, SQSmoothCraft.nextShipYawCos, SQSmoothCraft.nextShipYawSin, SQSmoothCraft.nextShipPitchCos, SQSmoothCraft.nextShipPitchSin)), EntityType.ARMOR_STAND);
 			
 			stand.setHelmet(block);
 			stand.setVisible(false);
@@ -75,7 +75,7 @@ public class ShipBlock {
 		
 		mainBlock = mainShipBlock;
 		
-		stand = (ArmorStand) shipLocation.getWorld().spawnEntity((shipLocation.toLocation()), EntityType.ARMOR_STAND);
+		stand = (ArmorStand) shipLocation.getWorld().spawnEntity((shipLocation.toLocation(SQSmoothCraft.nextShipLocation, SQSmoothCraft.nextShipYawCos, SQSmoothCraft.nextShipYawSin, SQSmoothCraft.nextShipPitchCos, SQSmoothCraft.nextShipPitchSin)), EntityType.ARMOR_STAND);
 			
 		stand.setHelmet(block);
 		stand.setVisible(false);
