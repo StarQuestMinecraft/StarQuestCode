@@ -22,6 +22,7 @@ public class ShipDetection {
 	static List<Block> attemptableBlocksFrom = new ArrayList<Block>();
 	static List<Block> detectedBlocks = new ArrayList<Block>();
 	
+	@SuppressWarnings("deprecation")
 	public static boolean detectShip(Block startingBlock, Player player) {
 		
 		player.sendMessage(ChatColor.GREEN + "Registering Your Ship...");

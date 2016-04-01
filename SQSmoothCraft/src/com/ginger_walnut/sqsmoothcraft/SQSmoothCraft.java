@@ -8,35 +8,16 @@ import java.util.UUID;
 import java.util.logging.Logger;
 
 import net.md_5.bungee.api.ChatColor;
-import net.minecraft.server.v1_9_R1.EntityPlayer;
-import net.minecraft.server.v1_9_R1.MinecraftServer;
-import net.minecraft.server.v1_9_R1.PacketPlayOutAttachEntity;
-import net.minecraft.server.v1_9_R1.PacketPlayOutEntityDestroy;
-import net.minecraft.server.v1_9_R1.PacketPlayOutNamedEntitySpawn;
-import net.minecraft.server.v1_9_R1.PacketPlayOutPlayerInfo;
-import net.minecraft.server.v1_9_R1.PlayerConnection;
-import net.minecraft.server.v1_9_R1.PlayerInteractManager;
-import net.minecraft.server.v1_9_R1.WorldServer;
-
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.craftbukkit.v1_9_R1.CraftServer;
-import org.bukkit.craftbukkit.v1_9_R1.CraftWorld;
-import org.bukkit.craftbukkit.v1_9_R1.entity.CraftEntity;
-import org.bukkit.craftbukkit.v1_9_R1.entity.CraftPlayer;
-import org.bukkit.craftbukkit.v1_9_R1.inventory.CraftItemStack;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
-
 import com.dibujaron.cardboardbox.Knapsack;
 import com.ginger_walnut.sqsmoothcraft.ship.Ship;
 import com.ginger_walnut.sqsmoothcraft.ship.ShipBlock;
@@ -46,8 +27,8 @@ import com.ginger_walnut.sqsmoothcraft.ship.ShipLocation;
 import com.ginger_walnut.sqsmoothcraft.ship.ShipMovement;
 import com.ginger_walnut.sqsmoothcraft.ship.ShipTasks;
 import com.ginger_walnut.sqsmoothcraft.ship.ShipUtils;
+import com.martinjonsson01.sqsmoothcraft.missile.Missile;
 import com.martinjonsson01.sqsmoothcraft.missile.MissileListener;
-import com.mojang.authlib.GameProfile;
 
 public class SQSmoothCraft extends JavaPlugin{
 
@@ -126,6 +107,8 @@ public class SQSmoothCraft extends JavaPlugin{
 	
 		this.getServer().getPluginManager().registerEvents(new ShipEvents(), this);
 		this.getServer().getPluginManager().registerEvents(new MissileListener(), this);
+		
+		Missile.setupMissileAmmoRecipe();
 		
 		if (!new File(this.getDataFolder(), "config.yml").exists()) {
 			

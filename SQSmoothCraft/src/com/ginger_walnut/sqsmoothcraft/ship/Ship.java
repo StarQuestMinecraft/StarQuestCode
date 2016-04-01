@@ -495,6 +495,7 @@ public class Ship {
 	
 	}
 	
+	@SuppressWarnings("deprecation")
 	public boolean blockify() {
 		
 		float yaw = location.getYaw();
