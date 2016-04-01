@@ -18,6 +18,7 @@ import net.minecraft.server.v1_9_R1.PlayerConnection;
 import net.minecraft.server.v1_9_R1.PlayerInteractManager;
 import net.minecraft.server.v1_9_R1.WorldServer;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
@@ -30,6 +31,7 @@ import org.bukkit.craftbukkit.v1_9_R1.entity.CraftPlayer;
 import org.bukkit.craftbukkit.v1_9_R1.inventory.CraftItemStack;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
@@ -64,6 +66,15 @@ public class SQSmoothCraft extends JavaPlugin{
 	public static List<Double> shipBlockWeights = new ArrayList<Double>();
 	
 	public static FileConfiguration config = null;
+
+	public static double nextShipYawCos = 0;
+	public static double nextShipYawSin = 0;
+	public static double nextShipPitchCos = 0;
+	public static double nextShipPitchSin = 0;
+	
+	public static Location nextShipLocation = null;
+	
+	public static List<String> guiNames = new ArrayList<String>();
 	
 	@Override
 	public void onDisable() {
@@ -163,116 +174,75 @@ public class SQSmoothCraft extends JavaPlugin{
 		
 		if (commandLabel.equals("ship")) {
 			
-			List<ShipBlock> blockList = new ArrayList<ShipBlock>();
+			Inventory inventory = Bukkit.createInventory(player, 27, ChatColor.BLUE + "SQSmoothCraft - Ship");
 			
-			Location location = player.getLocation();
-			location.setY(location.getY() - 1);
+			ItemStack exit = new ItemStack(Material.WOOD_DOOR);
 			
-			ItemStack blueWool = new ItemStack (Material.WOOL);
-			ItemStack whiteWool = new ItemStack (Material.WOOL);
+			List<String> lore = new ArrayList<String>();
+			lore.add(ChatColor.DARK_PURPLE + "Click this to exit the ship");
+			lore.add(ChatColor.RED + "" + ChatColor.MAGIC + "Contraband");
 			
-			ItemStack dispenser = new ItemStack(Material.DISPENSER);
+			exit = ShipUtils.createSpecialItem(exit, lore, "Exit Ship");
 			
-			ItemStack glass = new ItemStack (Material.GLASS);
-			ItemStack seaLamp = new ItemStack(Material.SEA_LANTERN);
+			ItemStack spawn = new ItemStack(Material.MONSTER_EGG);
 			
-			ItemStack coal = new ItemStack(Material.COAL_BLOCK);
+			lore = new ArrayList<String>();
+			lore.add(ChatColor.DARK_PURPLE + "Click this to spawn a ship");
+			lore.add(ChatColor.RED + "" + ChatColor.MAGIC + "Contraband");
 			
-			blueWool.setDurability((short) 11);
-			whiteWool.setDurability((short) 0);
+			spawn = ShipUtils.createSpecialItem(spawn, lore, "Spawn Ship");
 			
-			blockList.add(new ShipBlock(location, new ShipLocation(0, 0, 0, null), whiteWool));
-			blockList.add(new ShipBlock(new ShipLocation(0, 0, 1, blockList.get(0)), dispenser, blockList.get(0)));
-			blockList.add(new ShipBlock(new ShipLocation(0, 0, -1, blockList.get(0)), whiteWool, blockList.get(0)));
-			blockList.add(new ShipBlock(new ShipLocation(0, 0,-2, blockList.get(0)), whiteWool, blockList.get(0)));
-			blockList.add(new ShipBlock(new ShipLocation(1, 0, 0, blockList.get(0)), blueWool, blockList.get(0)));
-			blockList.add(new ShipBlock(new ShipLocation(1, 0, 1, blockList.get(0)), coal, blockList.get(0)));
-			blockList.add(new ShipBlock(new ShipLocation(1, 0, -1, blockList.get(0)), blueWool, blockList.get(0)));
-			blockList.add(new ShipBlock(new ShipLocation(-1, 0, 0, blockList.get(0)), blueWool, blockList.get(0)));
-			blockList.add(new ShipBlock(new ShipLocation(-1, 0, 1, blockList.get(0)), coal, blockList.get(0)));
-			blockList.add(new ShipBlock(new ShipLocation(-1, 0, -1, blockList.get(0)), blueWool, blockList.get(0)));
-			blockList.add(new ShipBlock(new ShipLocation(0, 1, 2, blockList.get(0)), glass, blockList.get(0)));
-			blockList.add(new ShipBlock(new ShipLocation(1, 1, 1, blockList.get(0)), glass, blockList.get(0)));
-			blockList.add(new ShipBlock(new ShipLocation(-1, 1, 1, blockList.get(0)), glass, blockList.get(0)));
-			blockList.add(new ShipBlock(new ShipLocation(-1, 1, 0, blockList.get(0)), blueWool, blockList.get(0)));
-			blockList.add(new ShipBlock(new ShipLocation(1, 1, 0, blockList.get(0)), blueWool, blockList.get(0)));
-			blockList.add(new ShipBlock(new ShipLocation(-1, 1, -1, blockList.get(0)), blueWool, blockList.get(0)));
-			blockList.add(new ShipBlock(new ShipLocation(1, 1, -1, blockList.get(0)), blueWool, blockList.get(0)));
-			blockList.add(new ShipBlock(new ShipLocation(-2, 1, 0, blockList.get(0)), blueWool, blockList.get(0)));
-			blockList.add(new ShipBlock(new ShipLocation(2, 1, 0, blockList.get(0)), blueWool, blockList.get(0)));
-			blockList.add(new ShipBlock(new ShipLocation(-1, 1, -1, blockList.get(0)), blueWool, blockList.get(0)));
-			blockList.add(new ShipBlock(new ShipLocation(1, 1, -1, blockList.get(0)), blueWool, blockList.get(0)));
-			blockList.add(new ShipBlock(new ShipLocation(-2, 1, -1, blockList.get(0)), blueWool, blockList.get(0)));
-			blockList.add(new ShipBlock(new ShipLocation(2, 1, -1, blockList.get(0)), blueWool, blockList.get(0)));
-			blockList.add(new ShipBlock(new ShipLocation(3, 1, -1, blockList.get(0)), blueWool, blockList.get(0)));
-			blockList.add(new ShipBlock(new ShipLocation(-3, 1, -1, blockList.get(0)), blueWool, blockList.get(0)));
-			blockList.add(new ShipBlock(new ShipLocation(1, 1, -2, blockList.get(0)), blueWool, blockList.get(0)));
-			blockList.add(new ShipBlock(new ShipLocation(-1, 1, -2, blockList.get(0)), blueWool, blockList.get(0)));
-			blockList.add(new ShipBlock(new ShipLocation(0, 1, -1, blockList.get(0)), new ItemStack(Material.DROPPER), blockList.get(0)));
-			blockList.add(new ShipBlock(new ShipLocation(0, 1, -2, blockList.get(0)), seaLamp, blockList.get(0)));
-			blockList.add(new ShipBlock(new ShipLocation(0, 2, 1, blockList.get(0)), glass, blockList.get(0)));
-			blockList.add(new ShipBlock(new ShipLocation(-1, 2, 0, blockList.get(0)), glass, blockList.get(0)));
-			blockList.add(new ShipBlock(new ShipLocation(1, 2, 0, blockList.get(0)), glass, blockList.get(0)));
-			blockList.add(new ShipBlock(new ShipLocation(1, 2, -1, blockList.get(0)), blueWool, blockList.get(0)));
-			blockList.add(new ShipBlock(new ShipLocation(-1, 2, -1, blockList.get(0)), blueWool, blockList.get(0)));
-			blockList.add(new ShipBlock(new ShipLocation(1, 2, -2, blockList.get(0)), blueWool, blockList.get(0)));
-			blockList.add(new ShipBlock(new ShipLocation(-1, 2, -2, blockList.get(0)), blueWool, blockList.get(0)));
-			blockList.add(new ShipBlock(new ShipLocation(1, 2, -3, blockList.get(0)), blueWool, blockList.get(0)));
-			blockList.add(new ShipBlock(new ShipLocation(-1, 2, -3, blockList.get(0)), blueWool, blockList.get(0)));
-			blockList.add(new ShipBlock(new ShipLocation(0, 2, -2, blockList.get(0)), seaLamp, blockList.get(0)));
-			blockList.add(new ShipBlock(new ShipLocation(0, 3, 0, blockList.get(0)), glass, blockList.get(0)));
-			blockList.add(new ShipBlock(new ShipLocation(0, 3, -1, blockList.get(0)), whiteWool, blockList.get(0)));
-			blockList.add(new ShipBlock(new ShipLocation(0, 3, -2, blockList.get(0)), whiteWool, blockList.get(0)));
-			blockList.add(new ShipBlock(new ShipLocation(0, 3, -3, blockList.get(0)), whiteWool, blockList.get(0)));
-				
-			new Ship(blockList, blockList.get(0), player, 1f, 6.0f, 0.05f, 100000);
+			ItemStack detect = new ItemStack(Material.PISTON_BASE);
 			
-			Knapsack knapsack = new Knapsack(player);
+			lore = new ArrayList<String>();
+			lore.add(ChatColor.DARK_PURPLE + "Click this to detect a ship");
+			lore.add(ChatColor.RED + "" + ChatColor.MAGIC + "Contraband");
 			
-			knapsackMap.put(player.getUniqueId(), knapsack);
+			detect = ShipUtils.createSpecialItem(detect, lore, "Detect Ship");
 			
-			ShipUtils.setPlayerShipInventory(player);
+			ItemStack undetect = new ItemStack(Material.PISTON_STICKY_BASE);
+			 
+			lore = new ArrayList<String>();
+			lore.add(ChatColor.DARK_PURPLE + "Click this to undetect a ship");
+			lore.add(ChatColor.RED + "" + ChatColor.MAGIC + "Contraband");
 			
-		} else 
-		if (commandLabel.equals("shipdetect")) {
+			undetect = ShipUtils.createSpecialItem(undetect, lore, "Undetect Ship");
 			
-			Location location = player.getLocation();
+			ItemStack options = new ItemStack(Material.REDSTONE);
+			 
+			lore = new ArrayList<String>();
+			lore.add(ChatColor.DARK_PURPLE + "Click this to optomize your SmoothCraft");
+			lore.add(ChatColor.DARK_PURPLE + "experience");
+			lore.add(ChatColor.RED + "" + ChatColor.MAGIC + "Contraband");
 			
-			location.add(0, -1, 0);
+			options = ShipUtils.createSpecialItem(options, lore, "Options");
 			
-			boolean failed = ShipDetection.detectShip(location.getWorld().getBlockAt(location), player);
-			
-			if (!failed) {
-				
-				Knapsack knapsack = new Knapsack(player);
-				
-				knapsackMap.put(player.getUniqueId(), knapsack);
-				
-				ShipUtils.setPlayerShipInventory(player);
-				
-			}
-
-		} else if (commandLabel.equals("shipundetect")) {
+			inventory.setItem(8, options);
 			
 			if (shipMap.containsKey(player.getUniqueId())) {
 				
-				Ship ship = shipMap.get(player.getUniqueId());
-				
-				boolean succesful = ship.blockify();
-				
-				if (succesful) {
-					
-					ship.exit();
-					
-				}
+				inventory.setItem(1, undetect);
+				inventory.setItem(26, exit);
 				
 			} else {
 				
-				player.sendMessage(ChatColor.RED + "You must be in a ship to undetect");
+				inventory.setItem(0, detect);
+				
+				if (player.hasPermission("SQSmoothCraft.spawnShip")) {
+					
+					inventory.setItem(18, spawn);
+					
+				}
 				
 			}
 			
-		} 
+			guiNames.add(ChatColor.BLUE + "SQSmoothCraft - Ship");
+			
+			player.openInventory(inventory);
+			
+			
+			
+		}
 //		else if (commandLabel.equals("ship3rdperson")) {
 //		
 //			

@@ -1,6 +1,6 @@
 name: SQSpace
 main: us.higashiyama.george.SQSpace.SQSpace
-version: 1.2.1
+version: 1.2.2
 depend: [WorldEdit, WorldGuard]
 
 permissions:

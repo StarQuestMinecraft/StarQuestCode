@@ -1,5 +1,9 @@
 package com.ginger_walnut.sqsmoothcraft.ship;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.ArmorStand;
@@ -43,7 +47,7 @@ public class ShipBlock {
 
 		} else {
 			
-			stand = (ArmorStand) shipLocation.getWorld().spawnEntity((shipLocation.toLocation()), EntityType.ARMOR_STAND);
+			stand = (ArmorStand) shipLocation.getWorld().spawnEntity((shipLocation.toLocation(SQSmoothCraft.nextShipLocation, SQSmoothCraft.nextShipYawCos, SQSmoothCraft.nextShipYawSin, SQSmoothCraft.nextShipPitchCos, SQSmoothCraft.nextShipPitchSin)), EntityType.ARMOR_STAND);
 			
 			stand.setHelmet(block);
 			stand.setVisible(false);
@@ -75,7 +79,7 @@ public class ShipBlock {
 		
 		mainBlock = mainShipBlock;
 		
-		stand = (ArmorStand) shipLocation.getWorld().spawnEntity((shipLocation.toLocation()), EntityType.ARMOR_STAND);
+		stand = (ArmorStand) shipLocation.getWorld().spawnEntity((shipLocation.toLocation(SQSmoothCraft.nextShipLocation, SQSmoothCraft.nextShipYawCos, SQSmoothCraft.nextShipYawSin, SQSmoothCraft.nextShipPitchCos, SQSmoothCraft.nextShipPitchSin)), EntityType.ARMOR_STAND);
 			
 		stand.setHelmet(block);
 		stand.setVisible(false);

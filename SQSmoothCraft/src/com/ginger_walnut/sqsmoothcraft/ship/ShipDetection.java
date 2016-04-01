@@ -92,6 +92,12 @@ public class ShipDetection {
 			ItemStack mainItemStack = new ItemStack(startingBlock.getType());
 			mainItemStack.setDurability(startingBlock.getData());
 			
+			SQSmoothCraft.nextShipLocation = player.getLocation();
+			SQSmoothCraft.nextShipYawCos = Math.cos(Math.toRadians(player.getLocation().getYaw()));
+			SQSmoothCraft.nextShipYawSin = Math.cos(Math.toRadians(player.getLocation().getYaw()));
+			SQSmoothCraft.nextShipPitchCos = Math.cos(Math.toRadians(player.getLocation().getYaw()));
+			SQSmoothCraft.nextShipPitchSin = Math.cos(Math.toRadians(player.getLocation().getYaw()));
+			
 			blockList.add(new ShipBlock(location, new ShipLocation(0, 0, 0, null), mainItemStack));
 			
 			startingBlock.setType(Material.AIR);

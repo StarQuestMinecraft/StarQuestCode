@@ -27,6 +27,8 @@ import org.bukkit.util.Vector;
 import org.inventivetalent.bossbar.BossBar;
 import org.inventivetalent.bossbar.BossBarAPI;
 
+import us.higashiyama.george.SQSpace.SQSpace;
+
 import com.ginger_walnut.sqsmoothcraft.SQSmoothCraft;
 
 public class Ship {
@@ -115,6 +117,9 @@ public class Ship {
 		
 		yawSin = Math.sin(Math.toRadians(captain.getLocation().getYaw()));
 		yawCos = Math.cos(Math.toRadians(captain.getLocation().getYaw()));
+		
+		pitchSin = Math.sin(Math.toRadians(captain.getLocation().getPitch()));
+		pitchCos = Math.cos(Math.toRadians(captain.getLocation().getPitch()));
 		
 		adjustedPitchSin = Math.sin(Math.toRadians(captain.getLocation().getPitch()));
 		adjustedPitchCos = Math.cos(Math.toRadians(captain.getLocation().getPitch()));
@@ -614,6 +619,8 @@ public class Ship {
 	
 	public void exit() {
 		
+		SQSpace.noSuffacatePlayers.remove(captain);
+		
 		Ship ship = SQSmoothCraft.shipMap.get(captain.getUniqueId());
 			
 		if (thirdPersonPlayer != null) {
@@ -801,9 +808,7 @@ public class Ship {
 		
 		if (fuel > 0.0f) {
 			
-			if (speed == maxSpeed) {
-			
-			} else if (speed > maxSpeed){
+			if (speed >= maxSpeed){
 					
 				speed = maxSpeed;
 				
@@ -821,9 +826,7 @@ public class Ship {
 		
 		if (fuel > 0.0f) {
 			
-			if (speed == maxSpeed) {
-			
-			} else if (speed < 0){
+			if (speed <= 0){
 					
 				speed = 0;
 				
