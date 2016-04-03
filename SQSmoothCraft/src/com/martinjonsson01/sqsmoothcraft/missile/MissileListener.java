@@ -71,7 +71,7 @@ public class MissileListener implements Listener {
 							Vector vector = targetLoc.toVector().normalize().subtract(currentLoc.toVector().normalize());
 							vector = vector.multiply(.5f);
 							fireball.setDirection(vector);
-							//fireball.setVelocity(vector);
+							fireball.setVelocity(fireball.getDirection());
 							
 							
 						}
