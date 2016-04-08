@@ -28,8 +28,6 @@ public class ShipCreator extends Thread{
 				ship.getCaptain().setSneaking(false);
 				ship.getMainBlock().getShipLocation().setMainBlock(ship.getMainBlock());
 				
-				SQSmoothCraft.shipMap.put(pilot.getUniqueId(), ship);
-				
 				ship.getMainBlock().getArmorStand().setPassenger(pilot);
 				
 				List<ShipBlock> cannonList = new ArrayList<ShipBlock>();
@@ -107,12 +105,14 @@ public class ShipCreator extends Thread{
 				
 				SQSpace.noSuffacatePlayers.add(pilot);
 				
+				SQSmoothCraft.shipMap.put(pilot.getUniqueId(), ship);
+				
 				pilot.sendMessage(ChatColor.GREEN + "Your ship has been registered!");
 				pilot.sendMessage(ChatColor.RED + "Make sure to disable your rotational lock when you are ready to turn your craft");
 				
 			}
 				
-		}, 0);
+		}, 1);
 	
 	}
 	

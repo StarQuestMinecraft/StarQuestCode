@@ -205,6 +205,10 @@ public class ShipMovement extends Thread {
 							
 						Location locationShip = shipLocation.toLocation(ship.getLocation(), yawCos, yawSin, pitchCos, pitchSin);
 						
+						double x = locationShip.getX();
+						double y = locationShip.getY();
+						double z = locationShip.getZ();
+						
 						Location detectionLocation = locationShip;
 						detectionLocation.add(0, 1.625, 0);
 						
@@ -257,6 +261,10 @@ public class ShipMovement extends Thread {
 						
 						//if (clear) {						
 						if (detectionLocation.getWorld().getBlockAt(detectionLocation).getType().equals(Material.AIR)) {
+							
+							locationShip.setX(x);
+							locationShip.setY(y);
+							locationShip.setZ(z);
 							
 							stand.teleport(locationShip);
 							
