@@ -80,7 +80,7 @@ public class ShipBlock {
 		stand.setHelmet(block);
 		stand.setVisible(false);
 		stand.setBasePlate(false);
-			
+		
 		stand.setHeadPose(mainBlock.getArmorStand().getHeadPose());
 		stand.setRightLegPose(new EulerAngle(3.1415, 0, 0));
 		stand.setLeftLegPose(new EulerAngle(3.1415, 0, 0));
