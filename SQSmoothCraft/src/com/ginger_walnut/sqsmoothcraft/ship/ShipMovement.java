@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.ArmorStand;
@@ -11,6 +12,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.util.EulerAngle;
 import org.bukkit.util.Vector;
+import org.inventivetalent.particle.ParticleEffect;
 
 import com.ginger_walnut.sqsmoothcraft.SQSmoothCraft;
 
@@ -51,19 +53,23 @@ public class ShipMovement extends Thread {
 						
 						Ship ship = SQSmoothCraft.shipMap.get(pilot.getUniqueId());
 						
-						float shipYaw = ship.getLocation().getYaw();
-						float shipDirectionYaw = (float) ship.yawDirection;
+						float shipYaw = (float) ship.movingDirection.yaw;
+						float shipDirectionYaw = (float) ship.pointingDirection.yaw;
 						float pilotYaw = pilot.getLocation().getYaw();
 						
-						float shipPitch = ship.getLocation().getPitch();
-						float shipDirectionPitch = (float) ship.pitchDirection;
+						float shipPitch = (float) ship.movingDirection.pitch;
+						float shipDirectionPitch = (float) ship.pointingDirection.pitch;
 						float pilotPitch = pilot.getLocation().getPitch();
 							
 						Location location = ship.getLocation();
+						
+						location.setYaw(shipYaw);
+						location.setPitch(shipPitch);
+						
 						Location directionLocation = ship.getLocation();
 						
-						directionLocation.setYaw((float) ship.yawDirection);
-						directionLocation.setPitch((float) ship.pitchDirection);
+						directionLocation.setYaw((float) ship.pointingDirection.yaw);
+						directionLocation.setPitch((float) ship.pointingDirection.pitch);
 							
 						if (pilot != null) {
 								
@@ -80,442 +86,13 @@ public class ShipMovement extends Thread {
 							ship.fuelBar.setProgress(ship.fuel / ship.startingFuel);
 							
 							if (ship.fuel > 0.0f) {
-							
+
 								if (pilot.getInventory().getItemInMainHand().getType().equals(Material.WATCH)) {
 								
-									if (!(shipYaw == pilotYaw)) {
-										
-										if (pilotYaw < 0) {
-												
-											pilotYaw = pilotYaw * -1;
-												
-											pilotYaw = 360 - pilotYaw;
-												
-										}
-											
-										if (shipYaw < 0) {
-												
-											shipYaw = shipYaw * -1;
-												
-											shipYaw = 360 - shipYaw;
-												
-										}
-		
-										if (shipYaw > pilotYaw) {
-												
-											float way1 = (360 - shipYaw) + pilotYaw;
-											float way2 = shipYaw - pilotYaw;
-												
-											if (way1 > way2) {
-													
-												if (way2 >= ship.getMaxYawRate()) {
-		
-													location.setYaw(shipYaw - ship.getMaxYawRate());
-														
-													if (location.getYaw() < 0) {
-															
-														location.setYaw(360 - location.getYaw());
-															
-													}
-					
-												} else {
-		
-													location.setYaw(shipYaw - way2);
-														
-													if (location.getYaw() < 0) {
-															
-														location.setYaw(360 -location.getYaw());
-															
-													}
-		
-												}
-													
-											} else {
-													
-												if (way1 >= ship.getMaxYawRate()) {
-		
-													location.setYaw(shipYaw + ship.getMaxYawRate());
-					
-												} else {
-		
-													location.setYaw(shipYaw + way1);
-		
-												}
-													
-											}
-												
-										} else {
-												
-											float way1 = (360 - pilotYaw) + shipYaw;
-											float way2 = pilotYaw - shipYaw;
-												
-											if (way1 > way2) {
-													
-												if (way2 >= ship.getMaxYawRate()) {
-		
-													location.setYaw(shipYaw + ship.getMaxYawRate());
-					
-												} else {
-		
-													location.setYaw(shipYaw + way2);
-		
-												}
-													
-											} else {
-													
-												if (way1 >= ship.getMaxYawRate()) {
-		
-													location.setYaw(shipYaw - ship.getMaxYawRate());
-														
-													if (location.getYaw() < 0) {
-															
-														location.setYaw(360 -location.getYaw());
-															
-													}
-					
-												} else {
-		
-													location.setYaw(shipYaw - way1);
-														
-													if (location.getYaw() < 0) {
-															
-														location.setYaw(360 -location.getYaw());
-															
-													}
-		
-												}
-													
-											}
-												
-										}
-											
-									}
-									
-									if (!(shipPitch == pilotPitch)) {
-	
-										if (pilotPitch < 0) {
-												
-											pilotPitch = pilotPitch * -1;
-												
-											pilotPitch = 360 - pilotPitch;
-												
-										}
-											
-										if (shipPitch < 0) {
-												
-											shipPitch = shipPitch * -1;
-												
-											shipPitch = 360 - shipPitch;
-												
-										}
-		
-										if (shipPitch > pilotPitch) {
-												
-											float way1 = (360 - shipPitch) + pilotPitch;
-											float way2 = shipPitch - pilotPitch;
-												
-											if (way1 > way2) {
-													
-												if (way2 >= ship.getMaxYawRate()) {
-		
-													location.setPitch(shipPitch - ship.getMaxYawRate());
-														
-													if (location.getPitch() < 0) {
-															
-														location.setPitch(360 - location.getPitch());
-															
-													}
-					
-												} else {
-		
-													location.setPitch(shipPitch - way2);
-														
-													if (location.getPitch() < 0) {
-															
-														location.setPitch(360 -location.getPitch());
-															
-													}
-		
-												}
-													
-											} else {
-													
-												if (way1 >= ship.getMaxYawRate()) {
-		
-													location.setPitch(shipPitch + ship.getMaxYawRate());
-					
-												} else {
-		
-													location.setPitch(shipPitch + way1);
-		
-												}
-													
-											}
-												
-										} else {
-												
-											float way1 = (360 - pilotPitch) + shipPitch;
-											float way2 = pilotPitch - shipPitch;
-												
-											if (way1 > way2) {
-													
-												if (way2 >= ship.getMaxYawRate()) {
-		
-													location.setPitch(shipPitch + ship.getMaxYawRate());
-					
-												} else {
-		
-													location.setPitch(shipPitch + way2);
-		
-												}
-													
-											} else {
-													
-												if (way1 >= ship.getMaxYawRate()) {
-		
-													location.setPitch(shipPitch - ship.getMaxYawRate());
-														
-													if (location.getPitch() < 0) {
-															
-														location.setPitch(360 -location.getPitch());
-															
-													}
-					
-												} else {
-		
-													location.setPitch(shipPitch - way1);
-														
-													if (location.getPitch() < 0) {
-															
-														location.setPitch(360 -location.getPitch());
-															
-													}
-		
-												}
-													
-											}
-												
-										}
-											
-									}
-									
-									if (!(shipDirectionYaw == pilotYaw)) {
-										
-										if (pilotYaw < 0) {
-												
-											pilotYaw = pilotYaw * -1;
-												
-											pilotYaw = 360 - pilotYaw;
-												
-										}
-											
-										if (shipDirectionYaw < 0) {
-												
-											shipDirectionYaw = shipDirectionYaw * -1;
-												
-											shipDirectionYaw = 360 - shipDirectionYaw;
-												
-										}
-		
-										if (shipDirectionYaw > pilotYaw) {
-												
-											float way1 = (360 - shipDirectionYaw) + pilotYaw;
-											float way2 = shipDirectionYaw - pilotYaw;
-												
-											if (way1 > way2) {
-													
-												if (way2 >= ship.getMaxYawRate()) {
-		
-													directionLocation.setYaw(shipDirectionYaw - ship.getMaxYawRate());
-														
-													if (directionLocation.getYaw() < 0) {
-															
-														directionLocation.setYaw(360 - directionLocation.getYaw());
-															
-													}
-					
-												} else {
-		
-													directionLocation.setYaw(shipDirectionYaw - way2);
-														
-													if (directionLocation.getYaw() < 0) {
-															
-														directionLocation.setYaw(360 - directionLocation.getYaw());
-															
-													}
-		
-												}
-													
-											} else {
-													
-												if (way1 >= ship.getMaxYawRate()) {
-		
-													directionLocation.setYaw(shipDirectionYaw + ship.getMaxYawRate());
-					
-												} else {
-		
-													directionLocation.setYaw(shipDirectionYaw + way1);
-		
-												}
-													
-											}
-												
-										} else {
-												
-											float way1 = (360 - pilotYaw) + shipDirectionYaw;
-											float way2 = pilotYaw - shipDirectionYaw;
-												
-											if (way1 > way2) {
-													
-												if (way2 >= ship.getMaxYawRate()) {
-		
-													directionLocation.setYaw(shipDirectionYaw + ship.getMaxYawRate());
-					
-												} else {
-		
-													directionLocation.setYaw(shipDirectionYaw + way2);
-		
-												}
-													
-											} else {
-													
-												if (way1 >= ship.getMaxYawRate()) {
-		
-													directionLocation.setYaw(shipDirectionYaw - ship.getMaxYawRate());
-														
-													if (directionLocation.getYaw() < 0) {
-															
-														directionLocation.setYaw(360 - directionLocation.getYaw());
-															
-													}
-					
-												} else {
-		
-													directionLocation.setYaw(shipDirectionYaw - way1);
-														
-													if (directionLocation.getYaw() < 0) {
-															
-														directionLocation.setYaw(360 - directionLocation.getYaw());
-															
-													}
-		
-												}
-													
-											}
-												
-										}
-											
-									}
-									
-									if (!(shipDirectionPitch == pilotPitch)) {
-	
-										if (pilotPitch < 0) {
-												
-											pilotPitch = pilotPitch * -1;
-												
-											pilotPitch = 360 - pilotPitch;
-												
-										}
-											
-										if (shipDirectionPitch < 0) {
-												
-											shipDirectionPitch = shipDirectionPitch * -1;
-												
-											shipDirectionPitch = 360 - shipDirectionPitch;
-												
-										}
-		
-										if (shipPitch > pilotPitch) {
-												
-											float way1 = (360 - shipDirectionPitch) + pilotPitch;
-											float way2 = shipDirectionPitch - pilotPitch;
-												
-											if (way1 > way2) {
-													
-												if (way2 >= ship.getMaxYawRate()) {
-		
-													directionLocation.setPitch(shipDirectionPitch - ship.getMaxYawRate());
-														
-													if (directionLocation.getPitch() < 0) {
-															
-														directionLocation.setPitch(360 - directionLocation.getPitch());
-															
-													}
-					
-												} else {
-		
-													directionLocation.setPitch(shipDirectionPitch - way2);
-														
-													if (directionLocation.getPitch() < 0) {
-															
-														directionLocation.setPitch(360 - directionLocation.getPitch());
-															
-													}
-		
-												}
-													
-											} else {
-													
-												if (way1 >= ship.getMaxYawRate()) {
-		
-													directionLocation.setPitch(shipDirectionPitch + ship.getMaxYawRate());
-					
-												} else {
-		
-													directionLocation.setPitch(shipDirectionPitch + way1);
-		
-												}
-													
-											}
-												
-										} else {
-												
-											float way1 = (360 - pilotPitch) + shipDirectionPitch;
-											float way2 = pilotPitch - shipDirectionPitch;
-												
-											if (way1 > way2) {
-													
-												if (way2 >= ship.getMaxYawRate()) {
-		
-													directionLocation.setPitch(shipDirectionPitch + ship.getMaxYawRate());
-					
-												} else {
-		
-													directionLocation.setPitch(shipDirectionPitch + way2);
-		
-												}
-													
-											} else {
-													
-												if (way1 >= ship.getMaxYawRate()) {
-		
-													directionLocation.setPitch(shipDirectionPitch - ship.getMaxYawRate());
-														
-													if (directionLocation.getPitch() < 0) {
-															
-														directionLocation.setPitch(360 - directionLocation.getPitch());
-															
-													}
-					
-												} else {
-		
-													directionLocation.setPitch(shipDirectionPitch - way1);
-														
-													if (directionLocation.getPitch() < 0) {
-															
-														directionLocation.setPitch(360 - directionLocation.getPitch());
-															
-													}
-		
-												}
-													
-											}
-												
-										}
-											
-									}
-									
-									ship.setLocation(location);
+									location.setYaw(slowRotation(shipYaw, pilotYaw, ship.getMaxYawRate()));
+									location.setPitch(slowRotation(shipPitch, pilotPitch, ship.getMaxYawRate()));
+									directionLocation.setYaw(slowRotation(shipDirectionYaw, pilotYaw, ship.getMaxYawRate()));
+									directionLocation.setPitch(slowRotation(shipDirectionPitch, pilotPitch, ship.getMaxYawRate()));
 									
 								}
 									
@@ -527,34 +104,35 @@ public class ShipMovement extends Thread {
 						
 						}
 						
-						double yawSin = ship.getAdjustedYawSin();
-						double yawCos = ship.getAdjustedYawCos();
+						double yawSin = ship.movingDirection.adjustedYawSin;
+						double yawCos = ship.movingDirection.adjustedYawCos;
 						
-						double pitchSin = ship.getAdjustedPitchSin();
-						double pitchCos = ship.getAdjustedPitchCos();
+						double pitchSin = ship.movingDirection.adjustedPitchSin;
+						double pitchCos = ship.movingDirection.adjustedPitchCos;
+
+						ship.setLastDirections();
+						
+						ship.lastLocation.setX(ship.location.getX());
+						ship.lastLocation.setY(ship.location.getY());
+						ship.lastLocation.setZ(ship.location.getZ());
 						
 						Vector shipDirection = new Vector(pitchSin * yawCos, pitchCos, pitchSin * yawSin);
-						
+
 						shipDirection.multiply(ship.getSpeed());
 							
 						Location newLocation = ship.location.toVector().add(shipDirection).toLocation(pilot.getWorld());
-						
+
 						ship.setLocation(newLocation);
 						
-						ship.setMovingYaw(location.getYaw());
-						ship.setMovingPitch(location.getPitch());
+						ship.movingDirection.setYaw(location.getYaw());
+						ship.movingDirection.setPitch(location.getPitch());
 						
 						if (!ship.lockedDirection) {				
 							
-							ship.setDirectionYaw(directionLocation.getYaw());
-							ship.setDirectionPitch(directionLocation.getPitch());
+							ship.pointingDirection.setYaw(directionLocation.getYaw());
+							ship.pointingDirection.setPitch(directionLocation.getPitch());
 							
 						}
-						
-						ship.lastLocation = ship.location;
-						
-//						ship.lastLocation.setYaw(ship.location.getYaw());
-//						ship.lastLocation.setPitch(ship.location.getPitch());
 							
 					} else {
 						
@@ -562,27 +140,25 @@ public class ShipMovement extends Thread {
 						
 						ship.decelerate(.2f);
 							
-						double yawSin = ship.getAdjustedYawSin();
-						double yawCos = ship.getAdjustedYawCos();
+						double yawSin = ship.movingDirection.adjustedYawSin;
+						double yawCos = ship.movingDirection.adjustedYawCos;
 						
-						double pitchSin = ship.getAdjustedPitchSin();
-						double pitchCos = ship.getAdjustedPitchCos();
+						double pitchSin = ship.movingDirection.adjustedPitchSin;
+						double pitchCos = ship.movingDirection.adjustedPitchCos;
+						
+						ship.setLastDirections();
+						
+						ship.lastLocation.setX(ship.location.getX());
+						ship.lastLocation.setY(ship.location.getY());
+						ship.lastLocation.setZ(ship.location.getZ());
 						
 						Vector shipDirection = new Vector(pitchSin * yawCos, pitchCos, pitchSin * yawSin);
 						
 						shipDirection.multiply(ship.getSpeed());
 							
 						Location newLocation = ship.getLocation().toVector().add(shipDirection).toLocation(ship.getMainBlock().getShipLocation().getWorld());
-							
-						newLocation.setYaw(ship.getLocation().getYaw());
-						newLocation.setPitch(ship.getLocation().getPitch());	
 						
 						ship.setLocation(newLocation);
-						
-						ship.lastLocation = ship.location;
-						
-//						ship.lastLocation.setYaw(ship.location.getYaw());
-//						ship.lastLocation.setPitch(ship.location.getPitch());
 						
 					}
 					
@@ -596,14 +172,14 @@ public class ShipMovement extends Thread {
 					
 					shipBlocks.addAll(ship.getShipBlocks());
 
-					double yaw = Math.toRadians(ship.yawDirection);
-					double pitch = Math.toRadians(ship.pitchDirection);
+					double yaw = Math.toRadians(ship.pointingDirection.yaw);
+					double pitch = Math.toRadians(ship.pointingDirection.pitch);
 					
-					double yawCos = ship.yawCos;
-					double yawSin = ship.yawSin;
+					double yawCos = ship.pointingDirection.yawCos;
+					double yawSin = ship.pointingDirection.yawSin;
 					
-					double pitchCos = ship.pitchCos;
-					double pitchSin = ship.pitchSin;
+					double pitchCos = ship.pointingDirection.pitchCos;
+					double pitchSin = ship.pointingDirection.pitchSin;
 					
 					EulerAngle eulerAngle = null;
 	
@@ -622,30 +198,89 @@ public class ShipMovement extends Thread {
 //					}
 					
 					for (int j = 0; j < shipBlocks.size(); j ++) {
-						
+
 						ArmorStand stand = shipBlocks.get(j).getArmorStand();
 						
 						ShipLocation shipLocation = shipBlocks.get(j).getShipLocation();
 							
 						Location locationShip = shipLocation.toLocation(ship.getLocation(), yawCos, yawSin, pitchCos, pitchSin);
+						
+						Location detectionLocation = locationShip;
+						detectionLocation.add(0, 1.625, 0);
+						
+/*						Location detectionLocation = locationShip;
+						detectionLocation.add(.3125, 1.3125, .3125);
+						
+						List<Location> detectionLocations = new ArrayList<Location>();
+						
+						detectionLocations.add(detectionLocation);
+						
+						detectionLocation = locationShip;
+						detectionLocation.add(-.3125, 1.3125, .3125);
+						detectionLocations.add(detectionLocation);
+						
+						detectionLocation = locationShip;
+						detectionLocation.add(.3125, 1.3125, -.3125);
+						detectionLocations.add(detectionLocation);
+						
+						detectionLocation = locationShip;
+						detectionLocation.add(-.3125, 1.3125, -.3125);
+						detectionLocations.add(detectionLocation);
+						
+						detectionLocation = locationShip;
+						detectionLocation.add(.3125, 1.9375, .3125);
+						detectionLocations.add(detectionLocation);
+						
+						detectionLocation = locationShip;
+						detectionLocation.add(-.3125, 1.9375, .3125);
+						detectionLocations.add(detectionLocation);
+						
+						detectionLocation = locationShip;
+						detectionLocation.add(.3125, 1.9375, -.3125);
+						detectionLocations.add(detectionLocation);
+						
+						detectionLocation = locationShip;
+						detectionLocation.add(-.3125, 1.9375, -.3125);
+						detectionLocations.add(detectionLocation);
+						
+						boolean clear = true;
+						
+						for (Location detectLocation : detectionLocations) {
 							
-						if (locationShip.getWorld().getBlockAt(locationShip).getRelative(0, 1, 0).getType().equals(Material.AIR)) {
+							if (!detectLocation.getWorld().getBlockAt(detectLocation).getType().equals(Material.AIR)) {
+							
+								clear = false;
 								
+							}
+							
+						}*/
+						
+						//if (clear) {						
+						if (detectionLocation.getWorld().getBlockAt(detectionLocation).getType().equals(Material.AIR)) {
+							
 							stand.teleport(locationShip);
-							stand.setVelocity(locationShip.toVector().subtract(stand.getLocation().toVector()));
+							
+							if (locationShip.getWorld().getBlockAt(locationShip).getType().equals(Material.AIR)) {
+
+								stand.setVelocity(locationShip.toVector().subtract(stand.getLocation().toVector()));
+
+							} else {
 								
+								if (shipBlocks.get(j).mainBlock.equals(shipBlocks.get(j))) {
+								
+									stand.setVelocity(locationShip.toVector().subtract(stand.getLocation().toVector()));
+								
+								}
+								
+							}
+
 						} else {
 							
-							ship.location = ship.lastLocation;
+							ship.location.setX(ship.lastLocation.getX());
+							ship.location.setY(ship.lastLocation.getY());
+							ship.location.setZ(ship.lastLocation.getZ());
 							
-//							ship.setYaw(ship.lastLocation.getYaw());
-//							ship.setPitch(ship.lastLocation.getPitch());
-//							
-//							yawCos = ship.yawCos;
-//							yawSin = ship.yawSin;
-//							
-//							pitchCos = ship.pitchCos;
-//							pitchSin = ship.pitchSin;
+							ship.revetDirections();
 
 							double health = shipBlocks.get(j).health;
 							double speed = ship.speed;
@@ -680,14 +315,14 @@ public class ShipMovement extends Thread {
 					
 						shipBlocks.addAll(ship.getShipBlocks());
 
-						double yaw = Math.toRadians(ship.yawDirection);
-						double pitch = Math.toRadians(ship.pitchDirection);
+						double yaw = Math.toRadians(ship.pointingDirection.yaw);
+						double pitch = Math.toRadians(ship.pointingDirection.pitch);
 						
-						double yawCos = ship.getYawCos();
-						double yawSin = ship.getYawSin();
+						double yawCos = ship.pointingDirection.yawCos;
+						double yawSin = ship.pointingDirection.yawSin;
 						
-						double pitchCos = ship.pitchCos;
-						double pitchSin = ship.pitchSin;
+						double pitchCos = ship.pointingDirection.pitchCos;
+						double pitchSin = ship.pointingDirection.pitchSin;
 					
 						for (int j = 0; j < shipBlocks.size(); j ++) {
 						
@@ -715,6 +350,122 @@ public class ShipMovement extends Thread {
 			}			
 			
 		}, 0, 0);
+		
+	}
+	
+	static float slowRotation(float currentDegree, float targetDegree, float maxChange) {
+
+		float newDegree = currentDegree;
+		
+		if (currentDegree != targetDegree) {
+			
+			if (targetDegree < 0) {
+				
+				targetDegree = targetDegree * -1;
+					
+				targetDegree = 360 - targetDegree;
+					
+			}
+				
+			if (currentDegree < 0) {
+					
+				currentDegree = currentDegree * -1;
+					
+				currentDegree = 360 - currentDegree;
+					
+			}
+
+			if (currentDegree > targetDegree) {
+					
+				float way1 = (360 - currentDegree) + targetDegree;
+				float way2 = currentDegree - targetDegree;
+					
+				if (way1 > way2) {
+						
+					if (way2 >= maxChange) {
+
+						newDegree = currentDegree - maxChange;
+							
+						if (newDegree < 0) {
+								
+							newDegree = 360 - newDegree;
+								
+						}
+
+					} else {
+
+						newDegree = currentDegree - way2;
+							
+						if (newDegree < 0) {
+							
+							newDegree = 360 - newDegree;
+								
+						}
+
+					}
+						
+				} else {
+						
+					if (way1 >= maxChange) {
+
+						newDegree = currentDegree + maxChange;
+
+					} else {
+
+						newDegree = currentDegree + way1;
+
+					}
+						
+				}
+					
+			} else {
+					
+				float way1 = (360 - targetDegree) + currentDegree;
+				float way2 = targetDegree - currentDegree;
+					
+				if (way1 > way2) {
+						
+					if (way2 >= maxChange) {
+
+						newDegree = currentDegree + maxChange;
+
+					} else {
+
+						newDegree = currentDegree + way2;
+
+					}
+						
+				} else {
+						
+					if (way1 >= maxChange) {
+
+						newDegree = currentDegree - maxChange;
+							
+						if (newDegree < 0) {
+							
+							newDegree = 360 - newDegree;
+								
+						}
+
+					} else {
+
+						newDegree = currentDegree - way1;
+							
+						if (newDegree < 0) {
+							
+							newDegree = 360 - newDegree;
+								
+						}
+
+					}
+						
+				}
+					
+			}
+			
+		}
+		
+		return newDegree;
 		
 	}
 

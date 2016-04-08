@@ -52,37 +52,11 @@ public class Ship {
 	
 	float maxYawRate = 0.0f;
 	
-//	float lastYaw = 0.0f;
-//	
+	ShipDirection pointingDirection = null;
+	ShipDirection movingDirection = null;
 	
-	double yawDirection = 0.0f;
-	double pitchDirection = 0.0f;
-	
-	double yawSin = 0.0f;
-	double yawCos = 0.0f;
-	
-//	double lastYawSin = 0.0f;
-//	double lastYawCos = 0.0f;
-//	
-//	float lastPitch = 0.0f;
-	
-	double pitchSin = 0.0f;
-	double pitchCos = 0.0f;
-	
-//	double lastPitchSin = 0.0f;
-//	double lastPitchCos = 0.0f;
-	
-	double adjustedPitchSin = 0.0f;
-	double adjustedPitchCos = 0.0f;
-	
-//	double lastAdjustedPitchSin = 0.0f;
-//	double lastAdjustedPitchCos = 0.0f;
-	
-	double adjustedYawSin = 0.0f;
-	double adjustedYawCos = 0.0f;
-	
-//	double lastAdjustedYawSin = 0.0f;
-//	double lastAdjustedYawCos = 0.0f;
+	ShipDirection lastPointingDirection = null;
+	ShipDirection lastMovingDirection = null;
 	
 	Location lastLocation = null;
 	
@@ -113,16 +87,14 @@ public class Ship {
 		location = captain.getLocation();
 		
 		location.add(0, -1, 0);
-		lastLocation = location;
 		
-		yawSin = Math.sin(Math.toRadians(captain.getLocation().getYaw()));
-		yawCos = Math.cos(Math.toRadians(captain.getLocation().getYaw()));
+		lastLocation = new Location(location.getWorld(), location.getX(), location.getY(), location.getZ());
 		
-		pitchSin = Math.sin(Math.toRadians(captain.getLocation().getPitch()));
-		pitchCos = Math.cos(Math.toRadians(captain.getLocation().getPitch()));
+		pointingDirection = new ShipDirection(captain.getLocation().getYaw(), captain.getLocation().getPitch());
+		movingDirection = new ShipDirection(captain.getLocation().getYaw(), captain.getLocation().getPitch());
 		
-		adjustedPitchSin = Math.sin(Math.toRadians(captain.getLocation().getPitch()));
-		adjustedPitchCos = Math.cos(Math.toRadians(captain.getLocation().getPitch()));
+		lastPointingDirection = new ShipDirection(captain.getLocation().getYaw(), captain.getLocation().getPitch());
+		lastMovingDirection = new ShipDirection(captain.getLocation().getYaw(), captain.getLocation().getPitch());
 		
 		acceleration = maxAcceleration;
 		
@@ -219,13 +191,6 @@ public class Ship {
 	
 	public void setLocation(Location newLocation) {
 		
-/*		if (location.getYaw() != newLocation.getYaw()) {
-			
-			yawSin = Math.sin(Math.toRadians(newLocation.getYaw()));
-			yawCos = Math.cos(Math.toRadians(newLocation.getYaw()));
-			
-		}*/
-		
 		location = newLocation;
 		
 	}
@@ -242,161 +207,57 @@ public class Ship {
 		
 	}
 	
-	public double getYawSin() {
+	public void setLastDirections() {
 		
-		return yawSin;
+		lastPointingDirection.adjustedPitchCos = pointingDirection.adjustedPitchCos;
+		lastPointingDirection.adjustedPitchSin = pointingDirection.adjustedPitchSin;
+		lastPointingDirection.adjustedYawCos = pointingDirection.adjustedYawCos;
+		lastPointingDirection.adjustedYawSin = pointingDirection.adjustedYawSin;
+		lastPointingDirection.pitchCos = pointingDirection.pitchCos;
+		lastPointingDirection.pitchSin = pointingDirection.pitchSin;
+		lastPointingDirection.yawCos = pointingDirection.yawCos;
+		lastPointingDirection.yawSin = pointingDirection.yawSin;
+		lastPointingDirection.yaw = pointingDirection.yaw;
+		lastPointingDirection.pitch = pointingDirection.pitch;	
 		
-	}
-	
-	public double getYawCos() {
-		
-		return yawCos;
-		
-	}
-	
-	public double getAdjustedYawSin() {
-		
-		return adjustedYawSin;
-		
-	}
-	
-	public double getAdjustedYawCos() {
-		
-		return adjustedYawCos;
-		
-	}
-	
-	public double getAdjustedPitchSin() {
-		
-		return adjustedPitchSin;
+		lastMovingDirection.adjustedPitchCos = movingDirection.adjustedPitchCos;
+		lastMovingDirection.adjustedPitchSin = movingDirection.adjustedPitchSin;
+		lastMovingDirection.adjustedYawCos = movingDirection.adjustedYawCos;
+		lastMovingDirection.adjustedYawSin = movingDirection.adjustedYawSin;
+		lastMovingDirection.pitchCos = movingDirection.pitchCos;
+		lastMovingDirection.pitchSin = movingDirection.pitchSin;
+		lastMovingDirection.yawCos = movingDirection.yawCos;
+		lastMovingDirection.yawSin = movingDirection.yawSin;
+		lastMovingDirection.yaw = movingDirection.yaw;
+		lastMovingDirection.pitch = movingDirection.pitch;
 		
 	}
 	
-	public double getAdjustedPitchCos() {
+	public void revetDirections() {
 		
-		return adjustedPitchCos;
+		pointingDirection.adjustedPitchCos = lastPointingDirection.adjustedPitchCos;
+		pointingDirection.adjustedPitchSin = lastPointingDirection.adjustedPitchSin;
+		pointingDirection.adjustedYawCos = lastPointingDirection.adjustedYawCos;
+		pointingDirection.adjustedYawSin = lastPointingDirection.adjustedYawSin;
+		pointingDirection.pitchCos = lastPointingDirection.pitchCos;
+		pointingDirection.pitchSin = lastPointingDirection.pitchSin;
+		pointingDirection.yawCos = lastPointingDirection.yawCos;
+		pointingDirection.yawSin = lastPointingDirection.yawSin;
+		pointingDirection.yaw = lastPointingDirection.yaw;
+		pointingDirection.pitch = lastPointingDirection.pitch;	
 		
-	}
-	
-	public void setDirectionYaw(float newYaw) {
-//		
-//		lastYaw = location.getYaw();
-//		
-//		lastYawSin = yawSin;
-//		lastYawCos = yawCos;
-//		
-//		lastAdjustedYawSin = adjustedYawSin;
-//		lastAdjustedYawCos = adjustedYawCos;
-		
-		if (newYaw != ((float) yawDirection)) {
-			
-			double radYaw = Math.toRadians(newYaw);
-			
-			yawSin = Math.sin(radYaw);
-			yawCos = Math.cos(radYaw);
-			
-			yawDirection = newYaw;
-			
-		}
+		movingDirection.adjustedPitchCos = lastMovingDirection.adjustedPitchCos;
+		movingDirection.adjustedPitchSin = lastMovingDirection.adjustedPitchSin;
+		movingDirection.adjustedYawCos = lastMovingDirection.adjustedYawCos;
+		movingDirection.adjustedYawSin = lastMovingDirection.adjustedYawSin;
+		movingDirection.pitchCos = lastMovingDirection.pitchCos;
+		movingDirection.pitchSin = lastMovingDirection.pitchSin;
+		movingDirection.yawCos = lastMovingDirection.yawCos;
+		movingDirection.yawSin = lastMovingDirection.yawSin;
+		movingDirection.yaw = lastMovingDirection.yaw;
+		movingDirection.pitch = lastMovingDirection.pitch;
 		
 	}
-	
-	public void setMovingYaw(float newYaw) {
-//		
-//		lastYaw = location.getYaw();
-//		
-//		lastYawSin = yawSin;
-//		lastYawCos = yawCos;
-//		
-//		lastAdjustedYawSin = adjustedYawSin;
-//		lastAdjustedYawCos = adjustedYawCos;
-		
-		if (newYaw != ((float) location.getYaw())) {
-
-			location.setYaw(newYaw);
-			
-			double radYaw = Math.toRadians(newYaw);
-			
-			adjustedYawSin = Math.sin(radYaw + 1.570796);
-			adjustedYawCos = Math.cos(radYaw + 1.570796);
-			
-		}
-		
-	}
-	
-	public void setDirectionPitch(float newPitch) {
-//		
-
-		
-//		lastPitch = location.getPitch();
-//		
-//		System.out.print(lastPitch);
-//		
-//		lastPitchSin = pitchSin;
-//		lastPitchCos = pitchCos;
-//		
-//		lastAdjustedPitchSin = adjustedPitchSin;
-//		lastAdjustedPitchCos = adjustedPitchCos;
-		
-		if (newPitch != ((float) pitchDirection)) {
-			
-			double radPitch = Math.toRadians(newPitch);
-			
-			pitchSin = Math.sin(radPitch);
-			pitchCos = Math.cos(radPitch);	
-			
-			pitchDirection = newPitch;
-			
-		}
-		
-	}
-	
-	public void setMovingPitch(float newPitch) {
-//		
-//		lastPitch = location.getPitch();
-//		
-//		System.out.print(lastPitch);
-//		
-//		lastPitchSin = pitchSin;
-//		lastPitchCos = pitchCos;
-//		
-//		lastAdjustedPitchSin = adjustedPitchSin;
-//		lastAdjustedPitchCos = adjustedPitchCos;
-		
-		if (newPitch != ((float) location.getPitch())) {
-			
-			location.setPitch(newPitch);
-			
-			double radPitch = Math.toRadians(newPitch);
-			
-			adjustedPitchSin = Math.sin(radPitch + 1.570796);
-			adjustedPitchCos = Math.cos(radPitch + 1.570796);
-			
-		}
-		
-	}
-	
-//	public void revertLocation() {
-//		
-//		location.setYaw(lastYaw);
-//		
-//		yawSin = lastYawSin;
-//		yawCos = lastYawCos;
-//		
-//		adjustedYawSin = lastAdjustedYawSin;
-//		adjustedYawCos = lastAdjustedYawCos;
-//		
-//		location.setPitch(lastPitch);
-//		
-//		pitchSin = lastPitchSin;
-//		pitchCos = lastPitchCos;
-//		
-//		adjustedPitchSin = lastAdjustedPitchSin;
-//		adjustedPitchCos = lastAdjustedPitchCos;
-//		
-//		location = lastLocation;
-//		
-//	}
 	
 	public void damage(ShipBlock shipBlock, double damage, boolean carryOver) {
 		
