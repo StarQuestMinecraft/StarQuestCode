@@ -7,15 +7,12 @@ import org.bukkit.block.Block;
 import org.bukkit.block.Dispenser;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Fireball;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.ShulkerBullet;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.util.Vector;
-
 import com.ginger_walnut.sqsmoothcraft.SQSmoothCraft;
 
 public class MissileListener implements Listener {
@@ -28,7 +25,7 @@ public class MissileListener implements Listener {
 		
 		if (e.getAction() != Action.RIGHT_CLICK_BLOCK)
 			return;
-		
+			
 		if (e.getClickedBlock().getState() instanceof Sign) {
 			
 			Sign s = (Sign) e.getClickedBlock().getState();
@@ -45,62 +42,58 @@ public class MissileListener implements Listener {
 			
 			if (s.getLine(1).equals(ChatColor.LIGHT_PURPLE + "[" + ChatColor.GOLD + "Missile" + ChatColor.LIGHT_PURPLE + "]")
 					&& s.getLine(2).equals(ChatColor.LIGHT_PURPLE + "[" + ChatColor.RED + "Heat Seeking" + ChatColor.LIGHT_PURPLE + "]")) {
-				
+					
 				Block ammoDispenserBlock = MissileDetection.getAmmoDispenser(s.getBlock());
 				Dispenser ammoDispenser = (Dispenser) ammoDispenserBlock.getState();
 				Inventory dispenserInv = ammoDispenser.getInventory();
 				
-				//Checks if the dispenser of the missile launcher has ammo, if so, then it launches the missile fireball thingy
+				// Checks if the dispenser of the missile launcher has ammo, if
+				// so, then it launches the missile Snowball thingy
 				if (dispenserInv.containsAtLeast(Missile.missileAmmo(), 1)) {
 					
-					dispenserInv.removeItem(Missile.missileAmmo()); //Removes one missile ammo from dispenser
+					dispenserInv.removeItem(Missile.missileAmmo()); 
+					// Removes
+					// one
+					// missile
+					// ammo from
+					// dispenser
 					
-					Fireball fireball = (Fireball) ammoDispenserBlock.getLocation().getWorld().spawnEntity(MissileDetection.inFrontOfDispenser(s.getBlock()).getLocation(), EntityType.FIREBALL);
+					ShulkerBullet shulkerBullet = (ShulkerBullet) ammoDispenserBlock.getLocation().getWorld().spawnEntity(MissileDetection.inFrontOfDispenser(s.getBlock()).getLocation(), EntityType.SHULKER_BULLET);
 					
-					fireball.setBounce(false);
-					fireball.setShooter(e.getPlayer());
-					fireball.getLocation().getYaw();
-					fireball.getLocation().getPitch();
-					Player p = e.getPlayer();
+					shulkerBullet.getLocation().setDirection(MissileDetection.getDirectionVector(s.getBlock()));
 					
-					Bukkit.getScheduler().scheduleSyncRepeatingTask(SQSmoothCraft.getPluginMain(), new Runnable(){
+					shulkerBullet.setVelocity(MissileDetection.getDirectionVector(s.getBlock()).normalize().multiply(2));
+					
+					shulkerBullet.setBounce(false);
+					shulkerBullet.setShooter(e.getPlayer());
+					shulkerBullet.setTarget(e.getPlayer());
+					
+					int updateshulkerBulletScheduler = Bukkit.getScheduler().scheduleSyncRepeatingTask(SQSmoothCraft.getPluginMain(), new Runnable() {
 						@Override
 						public void run() {
-							currentLoc = fireball.getLocation();
-							targetLoc = p.getLocation();
-							Vector vector = targetLoc.toVector().normalize().subtract(currentLoc.toVector().normalize());
-							vector = vector.multiply(.5f);
-							fireball.setDirection(vector);
-							fireball.setVelocity(fireball.getDirection());
 							
+							currentLoc = shulkerBullet.getLocation();
+							targetLoc = e.getPlayer().getLocation();
+							// Vector vector =
+							// targetLoc.toVector().subtract(currentLoc.toVector());
 							
+							shulkerBullet.setVelocity(shulkerBullet.getVelocity().multiply(2));
 						}
-					}, 21*2, 5); //21*2 because the this one needs to fire off after the one below does VVV
+					}, 2, 10);
 					
-					Bukkit.getScheduler().scheduleSyncDelayedTask(SQSmoothCraft.getPluginMain(), new Runnable(){
+					Bukkit.getScheduler().scheduleSyncDelayedTask(SQSmoothCraft.getPluginMain(), new Runnable() {
 						
 						@Override
 						public void run() {
 							
-							fireball.setVelocity(new Vector(0, 0, 0));
-							fireball.setDirection(new Vector(0, 0, 0));
-							
-						}
-						
-					}, 20*2);
-					
-					Bukkit.getScheduler().scheduleSyncDelayedTask(SQSmoothCraft.getPluginMain(), new Runnable(){
-						
-						@Override
-						public void run() {
-							
-							if(!fireball.isDead()){
+							if (!shulkerBullet.isDead()) {
 								e.getPlayer().sendMessage(ChatColor.RED + "The fuel of your heat seeking missile ran out.");
 							}
-							fireball.remove();
+							shulkerBullet.remove();
+							Bukkit.getScheduler().cancelTask(updateshulkerBulletScheduler);
 						}
 						
-					}, 20*10);
+					}, 20 * 10);
 				}
 				
 			}

@@ -227,6 +227,7 @@ public class SQSmoothCraft extends JavaPlugin{
 			
 			
 		}
+		
 //		else if (commandLabel.equals("ship3rdperson")) {
 //		
 //			
