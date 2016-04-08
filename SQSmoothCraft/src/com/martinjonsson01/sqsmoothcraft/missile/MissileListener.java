@@ -7,6 +7,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.Dispenser;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Player;
 import org.bukkit.entity.ShulkerBullet;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -51,12 +52,7 @@ public class MissileListener implements Listener {
 				// so, then it launches the missile Snowball thingy
 				if (dispenserInv.containsAtLeast(Missile.missileAmmo(), 1)) {
 					
-					dispenserInv.removeItem(Missile.missileAmmo()); 
-					// Removes
-					// one
-					// missile
-					// ammo from
-					// dispenser
+					
 					
 					ShulkerBullet shulkerBullet = (ShulkerBullet) ammoDispenserBlock.getLocation().getWorld().spawnEntity(MissileDetection.inFrontOfDispenser(s.getBlock()).getLocation(), EntityType.SHULKER_BULLET);
 					
@@ -66,7 +62,37 @@ public class MissileListener implements Listener {
 					
 					shulkerBullet.setBounce(false);
 					shulkerBullet.setShooter(e.getPlayer());
-					shulkerBullet.setTarget(e.getPlayer());
+					int detectionRange = SQSmoothCraft.config.getInt("weapons.heat seeking missile.detection range");
+					for (Player p : Bukkit.getServer().getOnlinePlayers()) {
+						
+						if (p.getLocation().distance(e.getPlayer().getLocation()) <= detectionRange) {
+							
+							// if(p is not in the same empire as e.getPlayer() )
+							
+							if (SQSmoothCraft.shipMap.containsKey(p.getUniqueId())) {
+								
+								if (p != e.getPlayer()) {
+									shulkerBullet.setTarget(p);
+									break;
+								}
+							}
+							
+						}
+						
+					}
+					
+					if(shulkerBullet.getTarget() == null) {
+						shulkerBullet.remove();
+						e.getPlayer().sendMessage(ChatColor.RED + "Could not find any targets in a " + detectionRange + " block range.");
+						return;
+					}
+					
+					dispenserInv.removeItem(Missile.missileAmmo()); 
+					// Removes
+					// one
+					// missile
+					// ammo from
+					// dispenser
 					
 					int updateshulkerBulletScheduler = Bukkit.getScheduler().scheduleSyncRepeatingTask(SQSmoothCraft.getPluginMain(), new Runnable() {
 						@Override
@@ -93,7 +119,7 @@ public class MissileListener implements Listener {
 							Bukkit.getScheduler().cancelTask(updateshulkerBulletScheduler);
 						}
 						
-					}, 20 * 10);
+					}, 20 * 30);//Should be 10 seconds, it's higher for testing purposes
 				}
 				
 			}

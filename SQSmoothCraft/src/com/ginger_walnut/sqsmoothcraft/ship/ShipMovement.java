@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.bukkit.Bukkit;
-import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.ArmorStand;
@@ -12,8 +11,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.util.EulerAngle;
 import org.bukkit.util.Vector;
-import org.inventivetalent.particle.ParticleEffect;
-
 import com.ginger_walnut.sqsmoothcraft.SQSmoothCraft;
 
 public class ShipMovement extends Thread {
