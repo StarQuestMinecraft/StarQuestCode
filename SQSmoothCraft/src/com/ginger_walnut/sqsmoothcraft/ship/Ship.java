@@ -11,16 +11,19 @@ import net.minecraft.server.v1_9_R1.PacketPlayOutPlayerInfo;
 import net.minecraft.server.v1_9_R1.PacketPlayOutPlayerInfo.EnumPlayerInfoAction;
 import net.minecraft.server.v1_9_R1.PlayerConnection;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.block.Dropper;
 import org.bukkit.craftbukkit.v1_9_R1.entity.CraftPlayer;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Fireball;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.util.Vector;
@@ -362,9 +365,9 @@ public class Ship {
 	}
 	
 	@SuppressWarnings("deprecation")
-	public boolean blockify() {
+	public boolean blockify(boolean remove) {
 		
-		float yaw = location.getYaw();
+		float yaw = (float) pointingDirection.yaw;
 		
 		if (yaw < 0) {
 			
@@ -447,6 +450,17 @@ public class Ship {
 				blocks.get(i).setType(materials.get(i));
 				blocks.get(i).setData((byte) (int) durabilitys.get(i));
 				
+				if (materials.get(i).equals(Material.getMaterial(SQSmoothCraft.config.getString("utilites.reactor.material")))) {
+					
+					Dropper dropper = (Dropper) blocks.get(i).getState();
+
+					ItemStack coal = new ItemStack(Material.COAL);
+					coal.setAmount((int) ((fuel / reactorList.size()) / SQSmoothCraft.config.getInt("utilites.reactor.fuel per coal")));
+					
+					dropper.getInventory().addItem(coal);
+					
+				}
+				
 			}
 			
 			for (ShipBlock shipBlock : blockList) {
@@ -455,15 +469,19 @@ public class Ship {
 				
 			}
 
-			if (SQSmoothCraft.shipMap.containsKey(captain.getUniqueId())) {
+			if (remove) {
 				
-				SQSmoothCraft.shipMap.remove(captain.getUniqueId());
-				
-				captain.teleport(location.getWorld().getBlockAt(new Location (location.getWorld(), mainBlock.getLocation().getBlockX() + .5, mainBlock.getLocation().getBlockY(), mainBlock.getLocation().getBlockZ() + .5)).getRelative(0, 1, 0).getLocation());
-				
-			} else {
-				
-				SQSmoothCraft.stoppedShipMap.remove(this);
+				if (SQSmoothCraft.shipMap.containsKey(captain.getUniqueId())) {
+					
+					SQSmoothCraft.shipMap.remove(captain.getUniqueId());
+					
+					captain.teleport(location.getWorld().getBlockAt(new Location (location.getWorld(), mainBlock.getLocation().getBlockX() + .5, mainBlock.getLocation().getBlockY(), mainBlock.getLocation().getBlockZ() + .5)).getRelative(0, 1, 0).getLocation());
+					
+				} else {
+					
+					SQSmoothCraft.stoppedShipMap.remove(this);
+					
+				}
 				
 			}
 			
@@ -479,7 +497,7 @@ public class Ship {
 		
 	}
 	
-	public void exit() {
+	public void exit(boolean remove) {
 		
 		SQSpace.noSuffacatePlayers.remove(captain);
 		
@@ -502,7 +520,7 @@ public class Ship {
 			
 		thirdPersonPlayer = null;
 			
-		if (SQSmoothCraft.shipMap.containsKey(captain.getUniqueId())) {
+		if (SQSmoothCraft.shipMap.containsKey(captain.getUniqueId()) && remove) {
 
 			SQSmoothCraft.stoppedShipMap.add(ship);
 				
@@ -776,17 +794,78 @@ public class Ship {
 			
 			toggleLock();
 			
-		} else if (itemInHand.getType().equals(Material.WOOD_DOOR)) {
+		} else if (itemInHand.getType().equals(Material.REDSTONE)) {
 
-			exit();
+			Inventory inventory = Bukkit.createInventory(captain, 27, ChatColor.BLUE + "SQSmoothCraft - Ship");
+			
+			ItemStack exit = new ItemStack(Material.WOOD_DOOR);
+			
+			List<String> lore = new ArrayList<String>();
+			lore.add(ChatColor.DARK_PURPLE + "Click this to exit the ship");
+			lore.add(ChatColor.RED + "" + ChatColor.MAGIC + "Contraband");
+			
+			exit = ShipUtils.createSpecialItem(exit, lore, "Exit Ship");
+			
+			ItemStack spawn = new ItemStack(Material.MONSTER_EGG);
+			
+			lore = new ArrayList<String>();
+			lore.add(ChatColor.DARK_PURPLE + "Click this to spawn a ship");
+			lore.add(ChatColor.RED + "" + ChatColor.MAGIC + "Contraband");
+			
+			spawn = ShipUtils.createSpecialItem(spawn, lore, "Spawn Ship");
+			
+			ItemStack detect = new ItemStack(Material.PISTON_BASE);
+			
+			lore = new ArrayList<String>();
+			lore.add(ChatColor.DARK_PURPLE + "Click this to detect a ship");
+			lore.add(ChatColor.RED + "" + ChatColor.MAGIC + "Contraband");
+			
+			detect = ShipUtils.createSpecialItem(detect, lore, "Detect Ship");
+			
+			ItemStack undetect = new ItemStack(Material.PISTON_STICKY_BASE);
+			 
+			lore = new ArrayList<String>();
+			lore.add(ChatColor.DARK_PURPLE + "Click this to undetect a ship");
+			lore.add(ChatColor.RED + "" + ChatColor.MAGIC + "Contraband");
+			
+			undetect = ShipUtils.createSpecialItem(undetect, lore, "Undetect Ship");
+			
+			ItemStack options = new ItemStack(Material.REDSTONE);
+			 
+			lore = new ArrayList<String>();
+			lore.add(ChatColor.DARK_PURPLE + "Click this to optimize your SmoothCraft");
+			lore.add(ChatColor.DARK_PURPLE + "experience - currently disabled");
+			lore.add(ChatColor.RED + "" + ChatColor.MAGIC + "Contraband");
+			
+			options = ShipUtils.createSpecialItem(options, lore, "Options");
+			
+			inventory.setItem(8, options);
+			
+			if (SQSmoothCraft.shipMap.containsKey(captain.getUniqueId())) {
+				
+				inventory.setItem(1, undetect);
+				inventory.setItem(26, exit);
+				
+			} else {
+				
+				inventory.setItem(0, detect);
+				
+				if (captain.hasPermission("SQSmoothCraft.spawnShip")) {
+					
+					inventory.setItem(18, spawn);
+					
+				}
+				
+			}
+			
+			captain.openInventory(inventory);
 				
 		} else if (itemInHand.getType().equals(Material.SULPHUR)) {
 			
 			toggleExplosive();
 			
 		} else {
-		
-			
+
 			return true;
 			
 		}

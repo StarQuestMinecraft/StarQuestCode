@@ -58,7 +58,7 @@ public class ShipCreator extends Thread{
 				
 				for (int i = 0; i < ship.getShipBlocks().size(); i ++) {
 					
-					if (ship.getShipBlocks().get(i).getArmorStand().getHelmet().getType().equals(Material.getMaterial(SQSmoothCraft.config.getString("utilities.reactor.material")))) {
+					if (ship.getShipBlocks().get(i).getArmorStand().getHelmet().getType().equals(Material.getMaterial(SQSmoothCraft.config.getString("utilites.reactor.material")))) {
 						
 						reactorList.add(ship.getShipBlocks().get(i));
 						
@@ -112,7 +112,7 @@ public class ShipCreator extends Thread{
 				
 			}
 				
-		}, 1);
+		}, 3);
 	
 	}
 	

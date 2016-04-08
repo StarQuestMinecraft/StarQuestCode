@@ -6,12 +6,6 @@ depend: [ProtocolLib]
 commands:
   ship:
     description: main command for SQSmoothCraft
-  shipdetect:
-    description: detects a ship
-  shipundetect:
-    description: undetects a ship
-  ship3rdperson:
-    description: puts a ship in 3rd person mode
 permissions:
   SQSmoothCraft.spawnShip:
     description: Permission node for spawning a default smoothcraft ship
