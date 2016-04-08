@@ -61,11 +61,11 @@ public class SQSmoothCraft extends JavaPlugin{
 	public void onDisable() {
 		
 		plugin = null;
-		
+
 		for (Ship ship : shipMap.values()) {
 			
-			boolean succesful = ship.blockify();
-			ship.exit();
+			boolean succesful = ship.blockify(false);
+			ship.exit(false);
 			
 			if (!succesful) {
 				
@@ -83,7 +83,7 @@ public class SQSmoothCraft extends JavaPlugin{
 		
 		for (Ship ship : stoppedShipMap) {
 			
-			boolean succesful = ship.blockify();
+			boolean succesful = ship.blockify(false);
 			
 			if (!succesful) {
 				
@@ -140,6 +140,8 @@ public class SQSmoothCraft extends JavaPlugin{
 			
 		}
 		
+		guiNames.add(ChatColor.BLUE + "SQSmoothCraft - Ship");
+		
 		(new ShipMovement()).run();
 		(new ShipTasks()).run();
 		
@@ -195,8 +197,8 @@ public class SQSmoothCraft extends JavaPlugin{
 			ItemStack options = new ItemStack(Material.REDSTONE);
 			 
 			lore = new ArrayList<String>();
-			lore.add(ChatColor.DARK_PURPLE + "Click this to optomize your SmoothCraft");
-			lore.add(ChatColor.DARK_PURPLE + "experience");
+			lore.add(ChatColor.DARK_PURPLE + "Click this to optimize your SmoothCraft");
+			lore.add(ChatColor.DARK_PURPLE + "experience - currently disabled");
 			lore.add(ChatColor.RED + "" + ChatColor.MAGIC + "Contraband");
 			
 			options = ShipUtils.createSpecialItem(options, lore, "Options");
@@ -220,12 +222,8 @@ public class SQSmoothCraft extends JavaPlugin{
 				
 			}
 			
-			guiNames.add(ChatColor.BLUE + "SQSmoothCraft - Ship");
-			
 			player.openInventory(inventory);
-			
-			
-			
+
 		}
 		
 //		else if (commandLabel.equals("ship3rdperson")) {

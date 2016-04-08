@@ -23,6 +23,7 @@ import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
@@ -238,7 +239,7 @@ public class ShipEvents implements Listener {
 						
 						event.getPlayer().sendMessage(ChatColor.RED + "The ship's main block is missing, decompiling");
 						
-						boolean succesful = shipBlock.ship.blockify();
+						boolean succesful = shipBlock.ship.blockify(true);
 						
 						if (!succesful) {
 						
@@ -280,41 +281,6 @@ public class ShipEvents implements Listener {
 		
 	}
 	
-//	@EventHandler
-//	public void onPlayerToggleSneak(PlayerToggleSneakEvent event) {
-//
-//		if (SQSmoothCraft.shipMap.containsKey(event.getPlayer().getUniqueId())) {
-//			
-//			if (SQSmoothCraft.shipMap.get(event.getPlayer().getUniqueId()).thirdPersonPlayer != null) {
-//			
-//				for (Player onlinePlayer : SQSmoothCraft.getPluginMain().getServer().getOnlinePlayers()) {
-//				
-//					PlayerConnection connection = ((CraftPlayer) onlinePlayer).getHandle().playerConnection;
-//				
-//					connection.sendPacket(new PacketPlayOutPlayerInfo(EnumPlayerInfoAction.REMOVE_PLAYER, (SQSmoothCraft.shipMap.get(event.getPlayer().getUniqueId()).thirdPersonPlayer)));
-//					connection.sendPacket(new PacketPlayOutEntityDestroy((SQSmoothCraft.shipMap.get(event.getPlayer().getUniqueId()).thirdPersonPlayer.getId())));
-				
-//				onlinePlayer.showPlayer(event.getPlayer());
-				
-//				}
-//				
-//			}
-//			
-//			SQSmoothCraft.shipMap.get(event.getPlayer().getUniqueId()).thirdPersonPlayer = null;
-//			
-//			SQSmoothCraft.stoppedShipMap.add(SQSmoothCraft.shipMap.get(event.getPlayer().getUniqueId()));
-//			
-//			SQSmoothCraft.shipMap.remove(event.getPlayer().getUniqueId());
-//		
-//			event.getPlayer().getInventory().clear();
-//			event.getPlayer().getInventory().setArmorContents(null);
-//			
-//			SQSmoothCraft.knapsackMap.get(event.getPlayer().getUniqueId()).unpack(event.getPlayer());
-//			
-//		}
-//		
-//	}
-	
 	@EventHandler
 	public void onPlayerPickupItem(PlayerPickupItemEvent event) {
 		
@@ -323,7 +289,24 @@ public class ShipEvents implements Listener {
 			event.setCancelled(true);
 
     	}
+		
+		if (SQSmoothCraft.shipMap.containsKey(event.getPlayer().getUniqueId())) {
+			
+			event.setCancelled(true);
+			
+		}
 
+	}
+	
+	@EventHandler
+	public void onBlockPlace(BlockPlaceEvent event) {
+		
+		if (SQSmoothCraft.shipMap.containsKey(event.getPlayer().getUniqueId())) {
+			
+			event.setCancelled(true);
+			
+		}
+		
 	}
 	
 	@EventHandler
@@ -486,11 +469,11 @@ public class ShipEvents implements Listener {
 								
 								Ship ship = SQSmoothCraft.shipMap.get(player.getUniqueId());
 								
-								boolean succesful = ship.blockify();
+								boolean succesful = ship.blockify(true);
 								
 								if (succesful) {
 									
-									ship.exit();
+									ship.exit(true);
 									
 								}
 								
@@ -508,7 +491,7 @@ public class ShipEvents implements Listener {
 								
 								Ship ship = SQSmoothCraft.shipMap.get(player.getUniqueId());
 								
-								ship.exit();
+								ship.exit(true);
 								
 							} else {
 								
@@ -550,7 +533,7 @@ public class ShipEvents implements Listener {
 				
 			}
 			
-			ship.exit();
+			ship.exit(true);
 			
 			for (ItemStack item : e.getEntity().getInventory().getContents()) {
 				
@@ -572,9 +555,9 @@ public class ShipEvents implements Listener {
 		if (SQSmoothCraft.shipMap.containsKey(e.getPlayer().getUniqueId())){
 			
 			Ship ship = SQSmoothCraft.shipMap.get(e.getPlayer().getUniqueId());
-			ship.exit();
+			ship.exit(true);
 			ship.setSpeed(0);
-			ship.blockify();
+			ship.blockify(true);
 			
 		}
 

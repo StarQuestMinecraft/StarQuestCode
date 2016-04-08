@@ -120,12 +120,8 @@ public class ShipDetection {
 							
 							if (inventory.getContents()[i].getType().equals(Material.COAL)) {
 								
-								fuel = fuel + (SQSmoothCraft.config.getInt("utilities.reactor.fuel per coal") * inventory.getContents()[i].getAmount());
+								fuel = fuel + (SQSmoothCraft.config.getInt("utilites.reactor.fuel per coal") * inventory.getContents()[i].getAmount());
 
-							} else {
-								
-								block.getLocation().getWorld().dropItem(block.getLocation(), inventory.getContents()[i]);
-								
 							}
 
 						}

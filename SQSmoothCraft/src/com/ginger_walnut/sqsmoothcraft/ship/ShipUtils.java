@@ -190,21 +190,21 @@ public class ShipUtils {
 		player.getInventory().setItem(7, directionLock);
 		SQSmoothCraft.controlItems.add(directionLock);
 				
-		ItemStack exit = new ItemStack(Material.WOOD_DOOR);
-		ItemMeta exitMeta = exit.getItemMeta();
+		ItemStack menu = new ItemStack(Material.REDSTONE);
+		ItemMeta menuMeta = menu.getItemMeta();
 		
-		exitMeta.setDisplayName("Exit");
+		menuMeta.setDisplayName("Menu");
 		
-		List<String> exitLore = new ArrayList<String>();
-		exitLore.add(ChatColor.DARK_PURPLE + "Right click with this in hand to exit");
-		exitLore.add(ChatColor.DARK_PURPLE + "your ship.");
+		List<String> menuLore = new ArrayList<String>();
+		menuLore.add(ChatColor.DARK_PURPLE + "Right click with this in hand to open");
+		menuLore.add(ChatColor.DARK_PURPLE + "the ship menu.");
 		
-		exitMeta.setLore(exitLore);
+		menuMeta.setLore(menuLore);
 		
-		exit.setItemMeta(exitMeta);
+		menu.setItemMeta(menuMeta);
 		
-		player.getInventory().setItem(8, exit);
-		SQSmoothCraft.controlItems.add(exit);
+		player.getInventory().setItem(8, menu);
+		SQSmoothCraft.controlItems.add(menu);
 		
 		player.getInventory().setHeldItemSlot(0);
 		

@@ -55,7 +55,7 @@ public class ShipTasks extends Thread {
 
 					} else {
 						
-						mainBlock.ship.exit();
+						mainBlock.ship.exit(true);
 							
 					}
 					

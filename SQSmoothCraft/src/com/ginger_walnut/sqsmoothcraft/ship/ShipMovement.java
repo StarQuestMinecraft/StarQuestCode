@@ -75,7 +75,7 @@ public class ShipMovement extends Thread {
 								
 							ship.speedBar.setProgress(ship.speed / ship.maxSpeed);
 							
-							ship.fuel = ship.fuel - ((((float) SQSmoothCraft.config.getDouble("utilities.reactor.fuel per second") / 20) * (ship.speed / ship.maxSpeed)) * ship.reactorList.size() * ship.reactorList.size());
+							ship.fuel = ship.fuel - ((((float) SQSmoothCraft.config.getDouble("utilites.reactor.fuel per second") / 20) * (ship.speed / ship.maxSpeed)) * ship.reactorList.size() * ship.reactorList.size());
 							
 							if (ship.fuel < 0.0f) {
 								
@@ -342,11 +342,119 @@ public class ShipMovement extends Thread {
 							
 							ShipLocation shipLocation = shipBlocks.get(j).getShipLocation();
 							
-							stand.teleport(shipLocation.toLocation(ship.getLocation(), yawCos, yawSin, pitchCos, pitchSin));
-							stand.setVelocity(new Vector(0, 0, 0));
+							Location locationShip = shipLocation.toLocation(ship.getLocation(), yawCos, yawSin, pitchCos, pitchSin);
+							
+							double x = locationShip.getX();
+							double y = locationShip.getY();
+							double z = locationShip.getZ();
+							
+							Location detectionLocation = locationShip;
+							detectionLocation.add(0, 1.625, 0);
+							
+	/*						Location detectionLocation = locationShip;
+							detectionLocation.add(.3125, 1.3125, .3125);
+							
+							List<Location> detectionLocations = new ArrayList<Location>();
+							
+							detectionLocations.add(detectionLocation);
+							
+							detectionLocation = locationShip;
+							detectionLocation.add(-.3125, 1.3125, .3125);
+							detectionLocations.add(detectionLocation);
+							
+							detectionLocation = locationShip;
+							detectionLocation.add(.3125, 1.3125, -.3125);
+							detectionLocations.add(detectionLocation);
+							
+							detectionLocation = locationShip;
+							detectionLocation.add(-.3125, 1.3125, -.3125);
+							detectionLocations.add(detectionLocation);
+							
+							detectionLocation = locationShip;
+							detectionLocation.add(.3125, 1.9375, .3125);
+							detectionLocations.add(detectionLocation);
+							
+							detectionLocation = locationShip;
+							detectionLocation.add(-.3125, 1.9375, .3125);
+							detectionLocations.add(detectionLocation);
+							
+							detectionLocation = locationShip;
+							detectionLocation.add(.3125, 1.9375, -.3125);
+							detectionLocations.add(detectionLocation);
+							
+							detectionLocation = locationShip;
+							detectionLocation.add(-.3125, 1.9375, -.3125);
+							detectionLocations.add(detectionLocation);
+							
+							boolean clear = true;
+							
+							for (Location detectLocation : detectionLocations) {
+								
+								if (!detectLocation.getWorld().getBlockAt(detectLocation).getType().equals(Material.AIR)) {
+								
+									clear = false;
+									
+								}
+								
+							}*/
+							
+							//if (clear) {						
+							if (detectionLocation.getWorld().getBlockAt(detectionLocation).getType().equals(Material.AIR)) {
+								
+								locationShip.setX(x);
+								locationShip.setY(y);
+								locationShip.setZ(z);
+								
+								stand.teleport(locationShip);
+								
+								if (locationShip.getWorld().getBlockAt(locationShip).getType().equals(Material.AIR)) {
+
+									stand.setVelocity(locationShip.toVector().subtract(stand.getLocation().toVector()));
+
+								} else {
+									
+									if (shipBlocks.get(j).mainBlock.equals(shipBlocks.get(j))) {
+									
+										stand.setVelocity(locationShip.toVector().subtract(stand.getLocation().toVector()));
+									
+									}
+									
+								}
+
+							} else {
+								
+								ship.location.setX(ship.lastLocation.getX());
+								ship.location.setY(ship.lastLocation.getY());
+								ship.location.setZ(ship.lastLocation.getZ());
+								
+								ship.revetDirections();
+
+								double health = shipBlocks.get(j).health;
+								double speed = ship.speed;
+									
+								if (health < (ship.speed * 500)) {
+										
+									ship.speed = (float) (ship.speed - (health / 1000));
+
+								} else {
+										
+									ship.speed = 0;
+										
+								}
+									
+								shipBlocks.get(j).ship.damage(shipBlocks.get(j), speed * 500, false);
+									
+							}
 
 							stand.setHeadPose(eulerAngle);
 						
+						}
+						
+						for (Player player : Bukkit.getOnlinePlayers()) {
+							
+							player.hidePlayer(ship.captain);
+							player.showPlayer(ship.captain);
+							
 						}
 					
 						shipBlocks.clear();
