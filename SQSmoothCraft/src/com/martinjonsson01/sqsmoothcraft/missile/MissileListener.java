@@ -1,5 +1,8 @@
 package com.martinjonsson01.sqsmoothcraft.missile;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -21,6 +24,9 @@ public class MissileListener implements Listener {
 	Location currentLoc = null;
 	Location targetLoc = null;
 	
+	public static List<Player> missileCoolDownList = new ArrayList<Player>();
+	
+	@SuppressWarnings("deprecation")
 	@EventHandler
 	public void onPlayerInteract(PlayerInteractEvent e) {
 		
@@ -52,7 +58,10 @@ public class MissileListener implements Listener {
 				// so, then it launches the missile Snowball thingy
 				if (dispenserInv.containsAtLeast(Missile.missileAmmo(), 1)) {
 					
-					
+					if(missileCoolDownList.contains(e.getPlayer())){
+						e.getPlayer().sendMessage(ChatColor.RED + "You are still on cooldown...");
+						return;
+					}
 					
 					ShulkerBullet shulkerBullet = (ShulkerBullet) ammoDispenserBlock.getLocation().getWorld().spawnEntity(MissileDetection.inFrontOfDispenser(s.getBlock()).getLocation(), EntityType.SHULKER_BULLET);
 					
@@ -62,37 +71,47 @@ public class MissileListener implements Listener {
 					
 					shulkerBullet.setBounce(false);
 					shulkerBullet.setShooter(e.getPlayer());
-					int detectionRange = SQSmoothCraft.config.getInt("weapons.heat seeking missile.detection range");
+					int detectionRange = SQSmoothCraft.config.getInt("weapons.heatseeking missile.detection range");
+					int cooldown = SQSmoothCraft.config.getInt("weapons.heatseeking missile.cooldown");
+					int fuelTime = SQSmoothCraft.config.getInt("weapons.heatseeking missile.fuelTime");
+					
 					for (Player p : Bukkit.getServer().getOnlinePlayers()) {
 						
 						if (p.getLocation().distance(e.getPlayer().getLocation()) <= detectionRange) {
 							
 							// if(p is not in the same empire as e.getPlayer() )
 							
-							if (SQSmoothCraft.shipMap.containsKey(p.getUniqueId())) {
-								
-								if (p != e.getPlayer()) {
-									shulkerBullet.setTarget(p);
-									break;
-								}
-							}
+								// if
+								// (SQSmoothCraft.shipMap.containsKey(p.getUniqueId()))
+								// {
+							
+									// if (p != e.getPlayer()) {
+										shulkerBullet.setTarget(p);
+										break;
+									// }
+								// }
 							
 						}
 						
 					}
-					
-					if(shulkerBullet.getTarget() == null) {
+					if (shulkerBullet.getTarget() == null) {
 						shulkerBullet.remove();
 						e.getPlayer().sendMessage(ChatColor.RED + "Could not find any targets in a " + detectionRange + " block range.");
 						return;
 					}
 					
-					dispenserInv.removeItem(Missile.missileAmmo()); 
+					dispenserInv.removeItem(Missile.missileAmmo());
 					// Removes
 					// one
 					// missile
 					// ammo from
 					// dispenser
+					
+				//	if(e.getPlayer().hasMetadata("hsmissileCooldown")){
+					//	e.getPlayer().sendMessage(ChatColor.RED + "You are still on cooldown...");
+					//	return;
+				//	}
+					
 					
 					int updateshulkerBulletScheduler = Bukkit.getScheduler().scheduleSyncRepeatingTask(SQSmoothCraft.getPluginMain(), new Runnable() {
 						@Override
@@ -119,7 +138,21 @@ public class MissileListener implements Listener {
 							Bukkit.getScheduler().cancelTask(updateshulkerBulletScheduler);
 						}
 						
-					}, 20 * 30);//Should be 10 seconds, it's higher for testing purposes
+					}, fuelTime * 20);
+					
+					missileCoolDownList.add(e.getPlayer());
+					Player cdPlayer = e.getPlayer();
+					
+					Bukkit.getScheduler().scheduleAsyncDelayedTask(SQSmoothCraft.getPluginMain(), new Runnable(){
+
+						@Override
+						public void run() {
+							
+							missileCoolDownList.remove(cdPlayer);
+							
+						}
+						
+					}, cooldown * 20);
 				}
 				
 			}

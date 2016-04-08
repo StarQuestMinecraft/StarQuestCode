@@ -115,7 +115,6 @@ public class SQSmoothCraft extends JavaPlugin{
 		this.logger.info(pdfFile.getName() + " has been enabled!");
 	
 		this.getServer().getPluginManager().registerEvents(new ShipEvents(), this);
-		this.getServer().getPluginManager().registerEvents(new MissileListener(), this);
 		
 		Missile.setupMissileAmmoRecipe();
 		
@@ -127,6 +126,8 @@ public class SQSmoothCraft extends JavaPlugin{
 		}		
 		
 		config = getConfig();
+
+		this.getServer().getPluginManager().registerEvents(new MissileListener(), this);
 		
 		List<String> detectableBlocks = new ArrayList<String>();
 		

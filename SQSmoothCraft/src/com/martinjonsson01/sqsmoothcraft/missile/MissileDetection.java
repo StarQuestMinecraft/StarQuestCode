@@ -23,6 +23,9 @@ public class MissileDetection {
 			if(sign.getRelative(direction).getRelative(BlockFace.WEST).getType() == Material.DISPENSER) launcherDirection = BlockFace.WEST;
 			if(sign.getRelative(direction).getRelative(BlockFace.SOUTH).getType() == Material.DISPENSER) launcherDirection = BlockFace.SOUTH;
 			
+			if(direction == null) return false;
+			if(launcherDirection == null) return false;
+			
 			if(sign.getRelative(direction).getRelative(launcherDirection).getType() == Material.DISPENSER){
 				if(sign.getRelative(direction).getRelative(launcherDirection).getRelative(BlockFace.UP).getType() == Material.DISPENSER){
 					if(sign.getRelative(direction).getRelative(BlockFace.UP).getType() == Material.WOOL){

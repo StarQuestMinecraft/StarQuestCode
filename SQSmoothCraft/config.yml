@@ -12,8 +12,10 @@ weapons:
     material: DISPENSER
     cooldown: 60
     explosion power: 2
-  heat seeking missile:
+  heatseeking missile:
     detection range: 100
+    cooldown: 5
+    fuelTime: 30
 utilites:
 
   reactor:
