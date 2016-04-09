@@ -352,7 +352,7 @@ public class ShipEvents implements Listener {
 		}
 		
 		if (SQSmoothCraft.guiNames.contains(event.getInventory().getName())) {
-			
+	
 			if (event.getCurrentItem().hasItemMeta()) {
 				
 				if (event.getCurrentItem().getItemMeta().hasLore()) {

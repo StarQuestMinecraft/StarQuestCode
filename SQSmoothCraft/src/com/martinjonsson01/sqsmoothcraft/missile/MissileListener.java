@@ -32,7 +32,7 @@ public class MissileListener implements Listener {
 		
 		if (e.getAction() != Action.RIGHT_CLICK_BLOCK)
 			return;
-			
+		
 		if (e.getClickedBlock().getState() instanceof Sign) {
 			
 			Sign s = (Sign) e.getClickedBlock().getState();
@@ -49,7 +49,7 @@ public class MissileListener implements Listener {
 			
 			if (s.getLine(1).equals(ChatColor.LIGHT_PURPLE + "[" + ChatColor.GOLD + "Missile" + ChatColor.LIGHT_PURPLE + "]")
 					&& s.getLine(2).equals(ChatColor.LIGHT_PURPLE + "[" + ChatColor.RED + "Heat Seeking" + ChatColor.LIGHT_PURPLE + "]")) {
-					
+				
 				Block ammoDispenserBlock = MissileDetection.getAmmoDispenser(s.getBlock());
 				Dispenser ammoDispenser = (Dispenser) ammoDispenserBlock.getState();
 				Inventory dispenserInv = ammoDispenser.getInventory();
@@ -81,15 +81,13 @@ public class MissileListener implements Listener {
 							
 							// if(p is not in the same empire as e.getPlayer() )
 							
-								// if
-								// (SQSmoothCraft.shipMap.containsKey(p.getUniqueId()))
-								// {
-							
-									// if (p != e.getPlayer()) {
-										shulkerBullet.setTarget(p);
-										break;
-									// }
-								// }
+							if (SQSmoothCraft.shipMap.containsKey(p.getUniqueId())) {
+								
+								if (p != e.getPlayer()) {
+									shulkerBullet.setTarget(p);
+									break;
+								}
+							}
 							
 						}
 						
@@ -107,10 +105,10 @@ public class MissileListener implements Listener {
 					// ammo from
 					// dispenser
 					
-				//	if(e.getPlayer().hasMetadata("hsmissileCooldown")){
+					//	if(e.getPlayer().hasMetadata("hsmissileCooldown")){
 					//	e.getPlayer().sendMessage(ChatColor.RED + "You are still on cooldown...");
 					//	return;
-				//	}
+					//	}
 					
 					
 					int updateshulkerBulletScheduler = Bukkit.getScheduler().scheduleSyncRepeatingTask(SQSmoothCraft.getPluginMain(), new Runnable() {
@@ -144,7 +142,7 @@ public class MissileListener implements Listener {
 					Player cdPlayer = e.getPlayer();
 					
 					Bukkit.getScheduler().scheduleAsyncDelayedTask(SQSmoothCraft.getPluginMain(), new Runnable(){
-
+						
 						@Override
 						public void run() {
 							
