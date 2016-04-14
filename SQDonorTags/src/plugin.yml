@@ -1,0 +1,12 @@
+name: SQDonorTags
+main: com.starquestminecraft.SQDonorTags.SQDonorTags
+version: 1.0
+depend: 
+  - Vault
+  - Craftconomy3
+commands:
+  donation:
+     description: Update a player's donation record
+     usage: /donation [UUID] [amount]
+     permission: SQDonorTags.donation
+     permission-message: You don't have permission to use this command.

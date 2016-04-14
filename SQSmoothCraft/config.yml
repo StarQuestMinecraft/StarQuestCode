@@ -6,20 +6,25 @@ weapons:
     cooldown: 0
     explosive mode cooldown: 50
     explosion power: 1
+
   missile launcher:
     damage: 200
     carry over: true
     material: DISPENSER
     cooldown: 60
     explosion power: 2
+    
+  heatseeking missile:
+    detection range: 100
+    cooldown: 5
+    fuelTime: 30
+    damage: 500
+    carry over: true
+
 utilites:
-
   reactor:
-
     material: DROPPER
-
     fuel per coal: 100
-
     fuel per second: 5
     catalyst: EYE_OF_ENDER
 blocks:
