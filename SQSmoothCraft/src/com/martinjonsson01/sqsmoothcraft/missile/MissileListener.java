@@ -17,6 +17,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.metadata.FixedMetadataValue;
+
 import com.ginger_walnut.sqsmoothcraft.SQSmoothCraft;
 
 public class MissileListener implements Listener {
@@ -55,7 +57,7 @@ public class MissileListener implements Listener {
 				Inventory dispenserInv = ammoDispenser.getInventory();
 				
 				// Checks if the dispenser of the missile launcher has ammo, if
-				// so, then it launches the missile Snowball thingy
+				// so, then it launches the missile
 				if (dispenserInv.containsAtLeast(Missile.missileAmmo(), 1)) {
 					
 					if(missileCoolDownList.contains(e.getPlayer())){
@@ -68,6 +70,12 @@ public class MissileListener implements Listener {
 					shulkerBullet.getLocation().setDirection(MissileDetection.getDirectionVector(s.getBlock()));
 					
 					shulkerBullet.setVelocity(MissileDetection.getDirectionVector(s.getBlock()).normalize().multiply(2));
+					
+					//shulkerBullet.setMetadata("Heat seeking missile", new FixedMetadataValue(SQSmoothCraft.getPluginMain(), "type 1"));
+					
+					shulkerBullet.setMetadata("damage", new FixedMetadataValue(SQSmoothCraft.getPluginMain(), SQSmoothCraft.config.getInt("weapons.heatseeking missile.damage")));
+					shulkerBullet.setMetadata("no_pickup", new FixedMetadataValue(SQSmoothCraft.getPluginMain(), true));
+					shulkerBullet.setMetadata("carry_over", new FixedMetadataValue(SQSmoothCraft.getPluginMain(), SQSmoothCraft.config.getBoolean("weapons.heatseeking missile.carry over")));
 					
 					shulkerBullet.setBounce(false);
 					shulkerBullet.setShooter(e.getPlayer());
@@ -157,5 +165,6 @@ public class MissileListener implements Listener {
 		}
 		
 	}
+	
 	
 }
