@@ -164,7 +164,7 @@ public class ShipMovement extends Thread {
 				List<ShipBlock> shipBlocks = new ArrayList<ShipBlock>();
 				
 				for (int i = 0; i < SQSmoothCraft.shipMap.size(); i ++) {
-				
+					
 					Ship ship = (Ship) SQSmoothCraft.shipMap.values().toArray()[i];
 					
 					shipBlocks.addAll(ship.getShipBlocks());
@@ -275,6 +275,10 @@ public class ShipMovement extends Thread {
 								
 									stand.setVelocity(locationShip.toVector().subtract(stand.getLocation().toVector()));
 								
+								} else {
+									
+									stand.setVelocity(new Vector(0, 0, 0));
+									
 								}
 								
 							}
@@ -414,6 +418,10 @@ public class ShipMovement extends Thread {
 									
 										stand.setVelocity(locationShip.toVector().subtract(stand.getLocation().toVector()));
 									
+									} else {
+										
+										stand.setVelocity(new Vector(0, 0, 0));
+										
 									}
 									
 								}

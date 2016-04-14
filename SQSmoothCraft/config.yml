@@ -2,7 +2,7 @@ weapons:
   cannon:
     damage: 10
     carry over: false
-    material: COAL_BLOCK
+    material: PISTON_BASE
     cooldown: 0
     explosive mode cooldown: 50
     explosion power: 1
@@ -12,8 +12,6 @@ weapons:
     material: DISPENSER
     cooldown: 60
     explosion power: 2
-  heat seeking missile:
-    detection range: 100
 utilites:
 
   reactor:
@@ -23,6 +21,7 @@ utilites:
     fuel per coal: 100
 
     fuel per second: 5
+    catalyst: EYE_OF_ENDER
 blocks:
   wool:
     material: WOOL
@@ -33,7 +32,7 @@ blocks:
     hp: 20
     weight: 1
   coal:
-    material: COAL_BLOCK
+    material: PISTON_BASE
     hp: 50
     weight: 20
   dispenser:

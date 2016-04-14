@@ -1,6 +1,6 @@
 name: SQSmoothCraft
 main: com.ginger_walnut.sqsmoothcraft.SQSmoothCraft
-version: 0.0.7
+version: 0.0.10
 description: A plugin that adds smooth space ships
 depend: [ProtocolLib]
 commands:

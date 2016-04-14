@@ -70,6 +70,8 @@ public class Ship {
 	float fuel = 0;
 	float startingFuel = 0;
 	
+	int catalysts = 0;
+	
 	BossBar speedBar = null;
 	BossBar fuelBar = null;
 
@@ -77,7 +79,7 @@ public class Ship {
 	
 	boolean explosiveMode = false;
 	
-	public Ship (List<ShipBlock> shipBlocks, ShipBlock firstMainBlock, Player firstCaptain, float firstMaxSpeed, float firstMaxYawRate, float maxAcceleration, float firstFuel) {
+	public Ship (List<ShipBlock> shipBlocks, ShipBlock firstMainBlock, Player firstCaptain, float firstMaxSpeed, float firstMaxYawRate, float maxAcceleration, float firstFuel, int firstCatalysts) {
 		
 		captain = firstCaptain;
 		blockList = shipBlocks;
@@ -109,6 +111,8 @@ public class Ship {
 		
 		fuel = firstFuel;
 		startingFuel = firstFuel;
+		
+		catalysts = firstCatalysts;
 		
 		(new ShipCreator()).run(this, captain);
 		
@@ -445,19 +449,41 @@ public class Ship {
 		
 		if (canDecompile) {
 			
+			boolean firstReactor = true;
+			
 			for (int i = 0; i < blocks.size(); i ++) {
 				
 				blocks.get(i).setType(materials.get(i));
 				blocks.get(i).setData((byte) (int) durabilitys.get(i));
 				
 				if (materials.get(i).equals(Material.getMaterial(SQSmoothCraft.config.getString("utilites.reactor.material")))) {
-					
-					Dropper dropper = (Dropper) blocks.get(i).getState();
 
+					Dropper dropper = (Dropper) blocks.get(i).getState();
+					
 					ItemStack coal = new ItemStack(Material.COAL);
 					coal.setAmount((int) ((fuel / reactorList.size()) / SQSmoothCraft.config.getInt("utilites.reactor.fuel per coal")));
 					
-					dropper.getInventory().addItem(coal);
+					if (coal.getAmount() > 0) {
+					
+						dropper.getInventory().addItem(coal);
+					
+					}
+					
+					if (firstReactor) {
+						
+						firstReactor = false;
+						
+						ItemStack catalyst = new ItemStack(Material.getMaterial(SQSmoothCraft.config.getString("utilites.reactor.catalyst")));
+						
+						catalyst.setAmount(catalysts);
+						
+						if (catalysts > 0) {
+							
+							dropper.getInventory().addItem(catalyst);
+							
+						}
+
+					}
 					
 				}
 				

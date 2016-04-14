@@ -38,6 +38,7 @@ public class ShipDetection {
 		boolean failed = false;
 		
 		float fuel = 0.0f;
+		int catalysts = 0;
 		
 		String failureReason = "";
 		
@@ -83,6 +84,58 @@ public class ShipDetection {
 			
 		}
 		
+		for (Block block : detectedBlocks) {
+			
+			ItemStack itemStack = new ItemStack(block.getType());
+			itemStack.setDurability(block.getData());
+			
+			if (block.getType().equals(Material.DROPPER)) {
+				
+				Dropper dropper = (Dropper) block.getState();
+				
+				Inventory inventory = dropper.getInventory();
+		
+				ItemStack[] contents = new ItemStack[9];
+				
+				for (int i = 0; i < inventory.getContents().length; i ++) {
+					
+					if (inventory.getContents()[i] != null) {
+						
+						if (inventory.getContents()[i].getType().equals(Material.COAL)) {
+							
+							fuel = fuel + (SQSmoothCraft.config.getInt("utilites.reactor.fuel per coal") * inventory.getContents()[i].getAmount());
+							
+							inventory.getContents()[i].setType(Material.AIR);
+							
+						}					
+						
+						if (inventory.getContents()[i].getType().equals(Material.getMaterial(SQSmoothCraft.config.getString("utilites.reactor.catalyst")))) {
+							
+							catalysts = catalysts + inventory.getContents()[i].getAmount();
+							
+							inventory.getContents()[i].setType(Material.AIR);
+		
+						}
+		
+					}
+					
+				}
+				
+			}
+			
+		}
+		
+		if (catalysts <= 0) {
+			
+			failed = true;
+			failureReason = "you must have atleast one catalyst in a reactor";
+			
+		} else {
+			
+			catalysts = catalysts - 1;
+			
+		}
+		
 		if (!failed) {
 			
 			List<ShipBlock> blockList = new ArrayList<ShipBlock>();
@@ -107,30 +160,6 @@ public class ShipDetection {
 				
 				ItemStack itemStack = new ItemStack(block.getType());
 				itemStack.setDurability(block.getData());
-				
-				if (block.getType().equals(Material.DROPPER)) {
-					
-					Dropper dropper = (Dropper) block.getState();
-					
-					Inventory inventory = dropper.getInventory();
-					
-					for (int i = 0; i < inventory.getContents().length; i ++) {
-						
-						if (inventory.getContents()[i] != null) {
-							
-							if (inventory.getContents()[i].getType().equals(Material.COAL)) {
-								
-								fuel = fuel + (SQSmoothCraft.config.getInt("utilites.reactor.fuel per coal") * inventory.getContents()[i].getAmount());
-
-							}
-
-						}
-						
-					}
-					
-					inventory.setContents(new ItemStack[9]);
-					
-				}
 				
 				float yaw = player.getLocation().getYaw();
 				
@@ -184,8 +213,8 @@ public class ShipDetection {
 				
 			}
 			
-			new Ship(blockList, blockList.get(0), player, maxSpeed, maxSpeed * 5, maxSpeed / 20, fuel);
-			
+			new Ship(blockList, blockList.get(0), player, maxSpeed, maxSpeed * 5, maxSpeed / 20, fuel, catalysts);
+
 		}
 		else {
 			

@@ -12,6 +12,7 @@ import org.bukkit.scheduler.BukkitScheduler;
 
 import us.higashiyama.george.SQSpace.SQSpace;
 
+import com.dibujaron.cardboardbox.Knapsack;
 import com.ginger_walnut.sqsmoothcraft.SQSmoothCraft;
 
 public class ShipCreator extends Thread{
@@ -104,6 +105,12 @@ public class ShipCreator extends Thread{
 				ship.acceleration = maxSpeed / 20;
 				
 				SQSpace.noSuffacatePlayers.add(pilot);
+				
+				Knapsack knapsack = new Knapsack(pilot);
+				
+				SQSmoothCraft.knapsackMap.put(pilot.getUniqueId(), knapsack);
+				
+				ShipUtils.setPlayerShipInventory(pilot);
 				
 				SQSmoothCraft.shipMap.put(pilot.getUniqueId(), ship);
 				

@@ -109,6 +109,8 @@ public class SQSmoothCraft extends JavaPlugin{
 	@Override
 	public void onEnable() {
 		
+		guiNames.add(ChatColor.BLUE + "SQSmoothCraft - Ship");
+		
 		plugin = this;
 		
 		PluginDescriptionFile pdfFile = this.getDescription();
@@ -139,8 +141,6 @@ public class SQSmoothCraft extends JavaPlugin{
 			shipBlockWeights.add(config.getDouble("blocks." + detectableBlock + ".weight"));
 			
 		}
-		
-		guiNames.add(ChatColor.BLUE + "SQSmoothCraft - Ship");
 		
 		(new ShipMovement()).run();
 		(new ShipTasks()).run();
