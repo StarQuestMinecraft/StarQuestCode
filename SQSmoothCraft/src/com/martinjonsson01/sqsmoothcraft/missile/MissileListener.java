@@ -34,7 +34,7 @@ public class MissileListener implements Listener {
 		
 		if (e.getAction() != Action.RIGHT_CLICK_BLOCK)
 			return;
-		
+			
 		if (e.getClickedBlock().getState() instanceof Sign) {
 			
 			Sign s = (Sign) e.getClickedBlock().getState();
@@ -51,7 +51,7 @@ public class MissileListener implements Listener {
 			
 			if (s.getLine(1).equals(ChatColor.LIGHT_PURPLE + "[" + ChatColor.GOLD + "Missile" + ChatColor.LIGHT_PURPLE + "]")
 					&& s.getLine(2).equals(ChatColor.LIGHT_PURPLE + "[" + ChatColor.RED + "Heat Seeking" + ChatColor.LIGHT_PURPLE + "]")) {
-				
+					
 				Block ammoDispenserBlock = MissileDetection.getAmmoDispenser(s.getBlock());
 				Dispenser ammoDispenser = (Dispenser) ammoDispenserBlock.getState();
 				Inventory dispenserInv = ammoDispenser.getInventory();
@@ -60,7 +60,7 @@ public class MissileListener implements Listener {
 				// so, then it launches the missile
 				if (dispenserInv.containsAtLeast(Missile.missileAmmo(), 1)) {
 					
-					if(missileCoolDownList.contains(e.getPlayer())){
+					if (missileCoolDownList.contains(e.getPlayer())) {
 						e.getPlayer().sendMessage(ChatColor.RED + "You are still on cooldown...");
 						return;
 					}
@@ -71,7 +71,9 @@ public class MissileListener implements Listener {
 					
 					shulkerBullet.setVelocity(MissileDetection.getDirectionVector(s.getBlock()).normalize().multiply(2));
 					
-					//shulkerBullet.setMetadata("Heat seeking missile", new FixedMetadataValue(SQSmoothCraft.getPluginMain(), "type 1"));
+					// shulkerBullet.setMetadata("Heat seeking missile", new
+					// FixedMetadataValue(SQSmoothCraft.getPluginMain(), "type
+					// 1"));
 					
 					shulkerBullet.setMetadata("damage", new FixedMetadataValue(SQSmoothCraft.getPluginMain(), SQSmoothCraft.config.getInt("weapons.heatseeking missile.damage")));
 					shulkerBullet.setMetadata("no_pickup", new FixedMetadataValue(SQSmoothCraft.getPluginMain(), true));
@@ -113,11 +115,6 @@ public class MissileListener implements Listener {
 					// ammo from
 					// dispenser
 					
-					//	if(e.getPlayer().hasMetadata("hsmissileCooldown")){
-					//	e.getPlayer().sendMessage(ChatColor.RED + "You are still on cooldown...");
-					//	return;
-					//	}
-					
 					
 					int updateshulkerBulletScheduler = Bukkit.getScheduler().scheduleSyncRepeatingTask(SQSmoothCraft.getPluginMain(), new Runnable() {
 						@Override
@@ -125,9 +122,7 @@ public class MissileListener implements Listener {
 							
 							currentLoc = shulkerBullet.getLocation();
 							targetLoc = e.getPlayer().getLocation();
-							// Vector vector =
-							// targetLoc.toVector().subtract(currentLoc.toVector());
-							
+						
 							shulkerBullet.setVelocity(shulkerBullet.getVelocity().multiply(2));
 						}
 					}, 2, 10);
@@ -149,7 +144,7 @@ public class MissileListener implements Listener {
 					missileCoolDownList.add(e.getPlayer());
 					Player cdPlayer = e.getPlayer();
 					
-					Bukkit.getScheduler().scheduleAsyncDelayedTask(SQSmoothCraft.getPluginMain(), new Runnable(){
+					Bukkit.getScheduler().scheduleAsyncDelayedTask(SQSmoothCraft.getPluginMain(), new Runnable() {
 						
 						@Override
 						public void run() {
@@ -165,6 +160,5 @@ public class MissileListener implements Listener {
 		}
 		
 	}
-	
 	
 }

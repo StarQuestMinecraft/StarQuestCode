@@ -10,13 +10,9 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.inventory.meta.ItemMeta;
 
-
 public class Missile {
 	
-	
-	
-	
-	public static ItemStack missileAmmo(){
+	public static ItemStack missileAmmo() {
 		
 		ItemStack missileAmmo = new ItemStack(Material.FIREBALL, 1);
 		ItemMeta im = missileAmmo.getItemMeta();
@@ -33,7 +29,7 @@ public class Missile {
 		
 	}
 	
-	public static void setupMissileAmmoRecipe(){
+	public static void setupMissileAmmoRecipe() {
 		
 		ShapedRecipe missileAmmoRecipe = new ShapedRecipe(missileAmmo());
 		missileAmmoRecipe.shape("*%*", "%F%", "*%*");
@@ -43,9 +39,5 @@ public class Missile {
 		Bukkit.getServer().addRecipe(missileAmmoRecipe);
 		
 	}
-	
-
-	
-	
 	
 }
