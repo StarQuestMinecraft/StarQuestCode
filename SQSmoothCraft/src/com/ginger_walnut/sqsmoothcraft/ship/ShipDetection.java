@@ -116,10 +116,18 @@ public class ShipDetection {
 							inventory.getContents()[i].setType(Material.AIR);
 		
 						}
+						
+						if (!inventory.getContents()[i].getType().equals(Material.COAL) && !inventory.getContents()[i].getType().equals(Material.getMaterial(SQSmoothCraft.config.getString("utilites.reactor.catalyst")))) {
+							
+							contents[i] = inventory.getContents()[i];
+							
+						}
 		
 					}
 					
 				}
+				
+				inventory.setContents(contents);
 				
 			}
 			
