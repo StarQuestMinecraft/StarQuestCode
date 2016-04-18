@@ -40,6 +40,7 @@ import org.bukkit.metadata.MetadataValue;
 
 import com.dibujaron.cardboardbox.Knapsack;
 import com.ginger_walnut.sqsmoothcraft.SQSmoothCraft;
+import com.ginger_walnut.sqsmoothcraft.gui.options.OptionGui;
 
 public class ShipEvents implements Listener {
 	
@@ -375,132 +376,12 @@ public class ShipEvents implements Listener {
 								
 								event.setCancelled(true);
 								
-								Player player = (Player) event.getWhoClicked();
-								
-								if (event.getCurrentItem().getItemMeta().getDisplayName().equals("Spawn Ship")) {
+								if (SQSmoothCraft.currentGui.containsKey(event.getWhoClicked())) {
 									
-									List<ShipBlock> blockList = new ArrayList<ShipBlock>();
-									
-									Location location = player.getLocation();
-									location.setY(location.getY() - 1);
-									
-									ItemStack blueWool = new ItemStack (Material.WOOL);
-									ItemStack whiteWool = new ItemStack (Material.WOOL);
-									
-									ItemStack dispenser = new ItemStack(Material.DISPENSER);
-									
-									ItemStack glass = new ItemStack (Material.GLASS);
-									ItemStack seaLamp = new ItemStack(Material.SEA_LANTERN);
-									
-									ItemStack coal = new ItemStack(Material.PISTON_BASE);
-									
-									blueWool.setDurability((short) 11);
-									whiteWool.setDurability((short) 0);
-									
-									SQSmoothCraft.nextShipLocation = location;
-									SQSmoothCraft.nextShipYawCos = Math.cos(Math.toRadians(player.getLocation().getYaw()));
-									SQSmoothCraft.nextShipYawSin = Math.cos(Math.toRadians(player.getLocation().getYaw()));
-									SQSmoothCraft.nextShipPitchCos = Math.cos(Math.toRadians(player.getLocation().getYaw()));
-									SQSmoothCraft.nextShipPitchSin = Math.cos(Math.toRadians(player.getLocation().getYaw()));
-									
-									blockList.add(new ShipBlock(location, new ShipLocation(0, 0, 0, null), whiteWool));
-									blockList.add(new ShipBlock(new ShipLocation(0, 0, 1, blockList.get(0)), dispenser, blockList.get(0)));
-									blockList.add(new ShipBlock(new ShipLocation(0, 0, -1, blockList.get(0)), whiteWool, blockList.get(0)));
-									blockList.add(new ShipBlock(new ShipLocation(0, 0,-2, blockList.get(0)), whiteWool, blockList.get(0)));
-									blockList.add(new ShipBlock(new ShipLocation(1, 0, 0, blockList.get(0)), blueWool, blockList.get(0)));
-									blockList.add(new ShipBlock(new ShipLocation(1, 0, 1, blockList.get(0)), coal, blockList.get(0)));
-									blockList.add(new ShipBlock(new ShipLocation(1, 0, -1, blockList.get(0)), blueWool, blockList.get(0)));
-									blockList.add(new ShipBlock(new ShipLocation(-1, 0, 0, blockList.get(0)), blueWool, blockList.get(0)));
-									blockList.add(new ShipBlock(new ShipLocation(-1, 0, 1, blockList.get(0)), coal, blockList.get(0)));
-									blockList.add(new ShipBlock(new ShipLocation(-1, 0, -1, blockList.get(0)), blueWool, blockList.get(0)));
-									blockList.add(new ShipBlock(new ShipLocation(0, 1, 2, blockList.get(0)), glass, blockList.get(0)));
-									blockList.add(new ShipBlock(new ShipLocation(1, 1, 1, blockList.get(0)), glass, blockList.get(0)));
-									blockList.add(new ShipBlock(new ShipLocation(-1, 1, 1, blockList.get(0)), glass, blockList.get(0)));
-									blockList.add(new ShipBlock(new ShipLocation(-1, 1, 0, blockList.get(0)), blueWool, blockList.get(0)));
-									blockList.add(new ShipBlock(new ShipLocation(1, 1, 0, blockList.get(0)), blueWool, blockList.get(0)));
-									blockList.add(new ShipBlock(new ShipLocation(-1, 1, -1, blockList.get(0)), blueWool, blockList.get(0)));
-									blockList.add(new ShipBlock(new ShipLocation(1, 1, -1, blockList.get(0)), blueWool, blockList.get(0)));
-									blockList.add(new ShipBlock(new ShipLocation(-2, 1, 0, blockList.get(0)), blueWool, blockList.get(0)));
-									blockList.add(new ShipBlock(new ShipLocation(2, 1, 0, blockList.get(0)), blueWool, blockList.get(0)));
-									blockList.add(new ShipBlock(new ShipLocation(-1, 1, -1, blockList.get(0)), blueWool, blockList.get(0)));
-									blockList.add(new ShipBlock(new ShipLocation(1, 1, -1, blockList.get(0)), blueWool, blockList.get(0)));
-									blockList.add(new ShipBlock(new ShipLocation(-2, 1, -1, blockList.get(0)), blueWool, blockList.get(0)));
-									blockList.add(new ShipBlock(new ShipLocation(2, 1, -1, blockList.get(0)), blueWool, blockList.get(0)));
-									blockList.add(new ShipBlock(new ShipLocation(3, 1, -1, blockList.get(0)), blueWool, blockList.get(0)));
-									blockList.add(new ShipBlock(new ShipLocation(-3, 1, -1, blockList.get(0)), blueWool, blockList.get(0)));
-									blockList.add(new ShipBlock(new ShipLocation(1, 1, -2, blockList.get(0)), blueWool, blockList.get(0)));
-									blockList.add(new ShipBlock(new ShipLocation(-1, 1, -2, blockList.get(0)), blueWool, blockList.get(0)));
-									blockList.add(new ShipBlock(new ShipLocation(0, 1, -1, blockList.get(0)), new ItemStack(Material.DROPPER), blockList.get(0)));
-									blockList.add(new ShipBlock(new ShipLocation(0, 1, -2, blockList.get(0)), seaLamp, blockList.get(0)));
-									blockList.add(new ShipBlock(new ShipLocation(0, 2, 1, blockList.get(0)), glass, blockList.get(0)));
-									blockList.add(new ShipBlock(new ShipLocation(-1, 2, 0, blockList.get(0)), glass, blockList.get(0)));
-									blockList.add(new ShipBlock(new ShipLocation(1, 2, 0, blockList.get(0)), glass, blockList.get(0)));
-									blockList.add(new ShipBlock(new ShipLocation(1, 2, -1, blockList.get(0)), blueWool, blockList.get(0)));
-									blockList.add(new ShipBlock(new ShipLocation(-1, 2, -1, blockList.get(0)), blueWool, blockList.get(0)));
-									blockList.add(new ShipBlock(new ShipLocation(1, 2, -2, blockList.get(0)), blueWool, blockList.get(0)));
-									blockList.add(new ShipBlock(new ShipLocation(-1, 2, -2, blockList.get(0)), blueWool, blockList.get(0)));
-									blockList.add(new ShipBlock(new ShipLocation(1, 2, -3, blockList.get(0)), blueWool, blockList.get(0)));
-									blockList.add(new ShipBlock(new ShipLocation(-1, 2, -3, blockList.get(0)), blueWool, blockList.get(0)));
-									blockList.add(new ShipBlock(new ShipLocation(0, 2, -2, blockList.get(0)), seaLamp, blockList.get(0)));
-									blockList.add(new ShipBlock(new ShipLocation(0, 3, 0, blockList.get(0)), glass, blockList.get(0)));
-									blockList.add(new ShipBlock(new ShipLocation(0, 3, -1, blockList.get(0)), whiteWool, blockList.get(0)));
-									blockList.add(new ShipBlock(new ShipLocation(0, 3, -2, blockList.get(0)), whiteWool, blockList.get(0)));
-									blockList.add(new ShipBlock(new ShipLocation(0, 3, -3, blockList.get(0)), whiteWool, blockList.get(0)));
-										
-									new Ship(blockList, blockList.get(0), player, 1f, 6.0f, 0.05f, 100000, 0);
-									
-									player.closeInventory();
-									
-								} else if (event.getCurrentItem().getItemMeta().getDisplayName().equals("Detect Ship")) {
-	
-									Location location = player.getLocation();
-									
-									location.add(0, -1, 0);
-									
-									boolean failed = ShipDetection.detectShip(location.getWorld().getBlockAt(location), player);
-									
-									player.closeInventory();
-									
-								} else if (event.getCurrentItem().getItemMeta().getDisplayName().equals("Undetect Ship")) {
-									
-									if (SQSmoothCraft.shipMap.containsKey(player.getUniqueId())) {
-										
-										Ship ship = SQSmoothCraft.shipMap.get(player.getUniqueId());
-										
-										boolean succesful = ship.blockify(true);
-										
-										if (succesful) {
-											
-											ship.exit(true);
-											
-										}
-										
-									} else {
-										
-										player.sendMessage(ChatColor.RED + "You must be in a ship to undetect");
-										
-									}
-									
-									player.closeInventory();
-									
-								} else if (event.getCurrentItem().getItemMeta().getDisplayName().equals("Exit Ship")) {
-									
-									if (SQSmoothCraft.shipMap.containsKey(player.getUniqueId())) {
-										
-										Ship ship = SQSmoothCraft.shipMap.get(player.getUniqueId());
-										
-										ship.exit(true);
-										
-									} else {
-										
-										player.sendMessage(ChatColor.RED + "You must be in a ship to exit one");
-										
-									}
-									
-									player.closeInventory();
+									SQSmoothCraft.currentGui.get(event.getWhoClicked()).clicked(event.getCurrentItem().getItemMeta().getDisplayName(), event.getSlot());
 									
 								}
-								
+
 							}
 							
 						}

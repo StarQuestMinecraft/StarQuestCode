@@ -224,4 +224,37 @@ public class ShipUtils {
 		
 	}
 	
+	public static float sin(float radians) {
+		
+		//System.out.print(square(2, 2));
+		
+		//return (radians - (square(radians, 3) / 6) + (square(radians, 5) / 120) - (square(radians, 7) / 5040) + (square(radians, 9) / 362880) - (square(radians, 11) / 39916800));
+		
+		return (float) Math.sin(radians);
+		
+	}
+	
+	public static float cos(float radians) {
+		
+		//return (1 - (square(radians, 2) / 2) + (square(radians, 4) / 24) - (square(radians, 6) / 24) + (square(radians, 8) / 40320) - (square(radians, 6) / 24));
+		
+		return (float) Math.cos(radians);
+		
+	}
+	
+	private static float square (float number, int power) {
+		
+		
+		float newNumber = 1;
+		
+		for (int i = 0; i < power; i++) {
+			
+			newNumber = newNumber * number;
+			
+		}
+		
+		return newNumber;
+		
+	}
+	
 }

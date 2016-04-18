@@ -8,6 +8,7 @@ import java.util.UUID;
 import java.util.logging.Logger;
 
 import net.md_5.bungee.api.ChatColor;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -20,7 +21,10 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
+
 import com.dibujaron.cardboardbox.Knapsack;
+import com.ginger_walnut.sqsmoothcraft.gui.Gui;
+import com.ginger_walnut.sqsmoothcraft.gui.MainGui;
 import com.ginger_walnut.sqsmoothcraft.ship.Ship;
 import com.ginger_walnut.sqsmoothcraft.ship.ShipBlock;
 import com.ginger_walnut.sqsmoothcraft.ship.ShipEvents;
@@ -56,6 +60,8 @@ public class SQSmoothCraft extends JavaPlugin{
 	public static Location nextShipLocation = null;
 	
 	public static List<String> guiNames = new ArrayList<String>();
+	
+	public static HashMap<Player, Gui> currentGui = new HashMap<Player, Gui>();
 	
 	@Override
 	public void onDisable() {
@@ -110,6 +116,7 @@ public class SQSmoothCraft extends JavaPlugin{
 	public void onEnable() {
 		
 		guiNames.add(ChatColor.BLUE + "SQSmoothCraft - Ship");
+		guiNames.add(ChatColor.BLUE + "SQSmoothCraft - Options");
 		
 		plugin = this;
 		
@@ -161,69 +168,8 @@ public class SQSmoothCraft extends JavaPlugin{
 		
 		if (commandLabel.equals("ship")) {
 			
-			Inventory inventory = Bukkit.createInventory(player, 27, ChatColor.BLUE + "SQSmoothCraft - Ship");
-			
-			ItemStack exit = new ItemStack(Material.WOOD_DOOR);
-			
-			List<String> lore = new ArrayList<String>();
-			lore.add(ChatColor.DARK_PURPLE + "Click this to exit the ship");
-			lore.add(ChatColor.RED + "" + ChatColor.MAGIC + "Contraband");
-			
-			exit = ShipUtils.createSpecialItem(exit, lore, "Exit Ship");
-			
-			ItemStack spawn = new ItemStack(Material.MONSTER_EGG);
-			
-			lore = new ArrayList<String>();
-			lore.add(ChatColor.DARK_PURPLE + "Click this to spawn a ship");
-			lore.add(ChatColor.RED + "" + ChatColor.MAGIC + "Contraband");
-			
-			spawn = ShipUtils.createSpecialItem(spawn, lore, "Spawn Ship");
-			
-			ItemStack detect = new ItemStack(Material.PISTON_BASE);
-			
-			lore = new ArrayList<String>();
-			lore.add(ChatColor.DARK_PURPLE + "Click this to detect a ship");
-			lore.add(ChatColor.RED + "" + ChatColor.MAGIC + "Contraband");
-			
-			detect = ShipUtils.createSpecialItem(detect, lore, "Detect Ship");
-			
-			ItemStack undetect = new ItemStack(Material.PISTON_STICKY_BASE);
-			 
-			lore = new ArrayList<String>();
-			lore.add(ChatColor.DARK_PURPLE + "Click this to undetect a ship");
-			lore.add(ChatColor.RED + "" + ChatColor.MAGIC + "Contraband");
-			
-			undetect = ShipUtils.createSpecialItem(undetect, lore, "Undetect Ship");
-			
-			ItemStack options = new ItemStack(Material.REDSTONE);
-			 
-			lore = new ArrayList<String>();
-			lore.add(ChatColor.DARK_PURPLE + "Click this to optimize your SmoothCraft");
-			lore.add(ChatColor.DARK_PURPLE + "experience - currently disabled");
-			lore.add(ChatColor.RED + "" + ChatColor.MAGIC + "Contraband");
-			
-			options = ShipUtils.createSpecialItem(options, lore, "Options");
-			
-			inventory.setItem(8, options);
-			
-			if (shipMap.containsKey(player.getUniqueId())) {
-				
-				inventory.setItem(1, undetect);
-				inventory.setItem(26, exit);
-				
-			} else {
-				
-				inventory.setItem(0, detect);
-				
-				if (player.hasPermission("SQSmoothCraft.spawnShip")) {
-					
-					inventory.setItem(18, spawn);
-					
-				}
-				
-			}
-			
-			player.openInventory(inventory);
+			MainGui gui = new MainGui(player);
+			gui.open();
 
 		}
 		

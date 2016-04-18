@@ -22,23 +22,23 @@ public class ShipDirection {
 		
 		yaw = firstYaw;
 		
-		double radYaw = Math.toRadians(yaw);
+		float radYaw = (float) Math.toRadians(yaw);
 		
-		yawCos = Math.cos(radYaw);
-		yawSin = Math.sin(radYaw);
+		yawCos = ShipUtils.cos(radYaw);
+		yawSin = ShipUtils.sin(radYaw);
 		
-		adjustedYawSin = Math.sin(radYaw + 1.570796);
-		adjustedYawCos = Math.cos(radYaw + 1.570796);
+		adjustedYawSin = ShipUtils.sin(radYaw + 1.570796f);
+		adjustedYawCos = ShipUtils.cos(radYaw + 1.570796f);
 		
 		pitch = firstPitch;
 		
-		double radPitch = Math.toRadians(pitch);
+		float radPitch = (float) Math.toRadians(pitch);
 		
-		pitchCos = Math.cos(radPitch);
-		pitchSin = Math.sin(radPitch);
+		pitchCos = ShipUtils.cos(radPitch);
+		pitchSin = ShipUtils.sin(radPitch);
 		
-		adjustedPitchSin = Math.sin(radPitch + 1.570796);
-		adjustedPitchCos = Math.cos(radPitch + 1.570796);
+		adjustedPitchSin = ShipUtils.sin(radPitch + 1.570796f);
+		adjustedPitchCos = ShipUtils.cos(radPitch + 1.570796f);
 		
 	}
 	
@@ -48,13 +48,13 @@ public class ShipDirection {
 			
 			yaw = newYaw;
 			
-			double radYaw = Math.toRadians(yaw);
+			float radYaw = (float) Math.toRadians(yaw);
 			
-			yawCos = Math.cos(radYaw);
-			yawSin = Math.sin(radYaw);
+			yawCos = ShipUtils.cos(radYaw);
+			yawSin = ShipUtils.sin(radYaw);
 			
-			adjustedYawSin = Math.sin(radYaw + 1.570796);
-			adjustedYawCos = Math.cos(radYaw + 1.570796);
+			adjustedYawSin = ShipUtils.sin(radYaw + 1.570796f);
+			adjustedYawCos = ShipUtils.cos(radYaw + 1.570796f);
 			
 		}
 
@@ -66,13 +66,13 @@ public class ShipDirection {
 		
 			pitch = newPitch;
 			
-			double radPitch = Math.toRadians(pitch);
+			float radPitch = (float) Math.toRadians(pitch);
 			
-			pitchCos = Math.cos(radPitch);
-			pitchSin = Math.sin(radPitch);
+			pitchCos = ShipUtils.cos(radPitch);
+			pitchSin = ShipUtils.sin(radPitch);
 			
-			adjustedPitchSin = Math.sin(radPitch + 1.570796);
-			adjustedPitchCos = Math.cos(radPitch + 1.570796);
+			adjustedPitchSin = ShipUtils.sin(radPitch + 1.570796f);
+			adjustedPitchCos = ShipUtils.cos(radPitch + 1.570796f);
 			
 		}
 			

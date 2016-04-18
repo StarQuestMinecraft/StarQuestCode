@@ -33,6 +33,7 @@ import org.inventivetalent.bossbar.BossBarAPI;
 import us.higashiyama.george.SQSpace.SQSpace;
 
 import com.ginger_walnut.sqsmoothcraft.SQSmoothCraft;
+import com.ginger_walnut.sqsmoothcraft.gui.MainGui;
 
 public class Ship {
 
@@ -822,69 +823,8 @@ public class Ship {
 			
 		} else if (itemInHand.getType().equals(Material.REDSTONE)) {
 
-			Inventory inventory = Bukkit.createInventory(captain, 27, ChatColor.BLUE + "SQSmoothCraft - Ship");
-			
-			ItemStack exit = new ItemStack(Material.WOOD_DOOR);
-			
-			List<String> lore = new ArrayList<String>();
-			lore.add(ChatColor.DARK_PURPLE + "Click this to exit the ship");
-			lore.add(ChatColor.RED + "" + ChatColor.MAGIC + "Contraband");
-			
-			exit = ShipUtils.createSpecialItem(exit, lore, "Exit Ship");
-			
-			ItemStack spawn = new ItemStack(Material.MONSTER_EGG);
-			
-			lore = new ArrayList<String>();
-			lore.add(ChatColor.DARK_PURPLE + "Click this to spawn a ship");
-			lore.add(ChatColor.RED + "" + ChatColor.MAGIC + "Contraband");
-			
-			spawn = ShipUtils.createSpecialItem(spawn, lore, "Spawn Ship");
-			
-			ItemStack detect = new ItemStack(Material.PISTON_BASE);
-			
-			lore = new ArrayList<String>();
-			lore.add(ChatColor.DARK_PURPLE + "Click this to detect a ship");
-			lore.add(ChatColor.RED + "" + ChatColor.MAGIC + "Contraband");
-			
-			detect = ShipUtils.createSpecialItem(detect, lore, "Detect Ship");
-			
-			ItemStack undetect = new ItemStack(Material.PISTON_STICKY_BASE);
-			 
-			lore = new ArrayList<String>();
-			lore.add(ChatColor.DARK_PURPLE + "Click this to undetect a ship");
-			lore.add(ChatColor.RED + "" + ChatColor.MAGIC + "Contraband");
-			
-			undetect = ShipUtils.createSpecialItem(undetect, lore, "Undetect Ship");
-			
-			ItemStack options = new ItemStack(Material.REDSTONE);
-			 
-			lore = new ArrayList<String>();
-			lore.add(ChatColor.DARK_PURPLE + "Click this to optimize your SmoothCraft");
-			lore.add(ChatColor.DARK_PURPLE + "experience - currently disabled");
-			lore.add(ChatColor.RED + "" + ChatColor.MAGIC + "Contraband");
-			
-			options = ShipUtils.createSpecialItem(options, lore, "Options");
-			
-			inventory.setItem(8, options);
-			
-			if (SQSmoothCraft.shipMap.containsKey(captain.getUniqueId())) {
-				
-				inventory.setItem(1, undetect);
-				inventory.setItem(26, exit);
-				
-			} else {
-				
-				inventory.setItem(0, detect);
-				
-				if (captain.hasPermission("SQSmoothCraft.spawnShip")) {
-					
-					inventory.setItem(18, spawn);
-					
-				}
-				
-			}
-			
-			captain.openInventory(inventory);
+			MainGui gui = new MainGui(captain);
+			gui.open();
 				
 		} else if (itemInHand.getType().equals(Material.SULPHUR)) {
 			
