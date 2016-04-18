@@ -119,6 +119,8 @@ public class SQSmoothCraft extends JavaPlugin{
 		this.getServer().getPluginManager().registerEvents(new ShipEvents(), this);
 		
 		Missile.setupMissileAmmoRecipe();
+		Missile.setupEMPMissileAmmoRecipe();
+		Missile.setupExplosiveMissileAmmoRecipe();
 		
 		if (!new File(this.getDataFolder(), "config.yml").exists()) {
 			
