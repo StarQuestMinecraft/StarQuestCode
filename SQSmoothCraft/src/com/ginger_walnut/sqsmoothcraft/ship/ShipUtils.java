@@ -242,6 +242,7 @@ public class ShipUtils {
 		
 	}
 	
+	@SuppressWarnings("unused")
 	private static float square (float number, int power) {
 		
 		

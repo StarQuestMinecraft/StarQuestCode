@@ -1,11 +1,13 @@
 name: SQSmoothCraft
 main: com.ginger_walnut.sqsmoothcraft.SQSmoothCraft
-version: 0.0.11
+version: 0.0.12
 description: A plugin that adds smooth space ships
 depend: [ProtocolLib]
 commands:
   ship:
     description: main command for SQSmoothCraft
+  hs:
+    description: main command for Heat Seeking Missiles
 permissions:
   SQSmoothCraft.spawnShip:
     description: Permission node for spawning a default smoothcraft ship

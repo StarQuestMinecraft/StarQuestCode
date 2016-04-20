@@ -11,6 +11,7 @@ import net.minecraft.server.v1_9_R1.PacketPlayOutPlayerInfo;
 import net.minecraft.server.v1_9_R1.PacketPlayOutPlayerInfo.EnumPlayerInfoAction;
 import net.minecraft.server.v1_9_R1.PlayerConnection;
 
+import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_9_R1.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_9_R1.entity.CraftPlayer;
 import org.bukkit.entity.ArmorStand;
@@ -26,6 +27,7 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -37,6 +39,7 @@ import org.bukkit.metadata.MetadataValue;
 
 import com.dibujaron.cardboardbox.Knapsack;
 import com.ginger_walnut.sqsmoothcraft.SQSmoothCraft;
+import com.martinjonsson01.sqsmoothcraft.missile.MissileGUI;
 
 public class ShipEvents implements Listener {
 	
@@ -381,6 +384,8 @@ public class ShipEvents implements Listener {
 			
 			if (SQSmoothCraft.guiNames.contains(event.getInventory().getName())) {
 				
+				if(event.getCurrentItem() == null) return;
+				
 				if (event.getCurrentItem().hasItemMeta()) {
 					
 					if (event.getCurrentItem().hasItemMeta()) {
@@ -398,7 +403,7 @@ public class ShipEvents implements Listener {
 
 									
 								}
-
+								
 							}
 							
 						}
@@ -409,6 +414,40 @@ public class ShipEvents implements Listener {
 				
 			}
 			
+		}
+		
+	}
+	
+	@EventHandler
+	public void onInventoryClose(InventoryCloseEvent e) {
+		
+		if (e.getInventory().getName() == null)
+			return;
+			
+		if (e.getInventory().getName().equals("Missile Recipe")) {
+			
+			if (e.getInventory().getItem(0) == null)
+				return;
+				
+			if (e.getInventory().getItem(0).getItemMeta().getDisplayName().equalsIgnoreCase(ChatColor.GOLD + "Heat Seeking Missile") ||
+					e.getInventory().getItem(0).getItemMeta().getDisplayName().equalsIgnoreCase(ChatColor.GOLD + "Heat Seeking EMP Missile") ||
+					e.getInventory().getItem(0).getItemMeta().getDisplayName().equalsIgnoreCase(ChatColor.GOLD + "Heat Seeking Explosive Missile")) {
+					
+				Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(SQSmoothCraft.getPluginMain(), new Runnable() {
+					
+					@Override
+					public void run() {
+						
+						Player p = (Player) e.getPlayer();
+						MissileGUI gui = new MissileGUI(p);
+						e.getInventory().clear();
+						gui.open();
+						
+					}
+					
+				}, 1);
+				
+			}
 		}
 		
 	}

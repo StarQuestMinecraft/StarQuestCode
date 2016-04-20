@@ -19,9 +19,10 @@ import com.ginger_walnut.sqsmoothcraft.ship.ShipBlock;
 import com.ginger_walnut.sqsmoothcraft.ship.ShipDetection;
 import com.ginger_walnut.sqsmoothcraft.ship.ShipLocation;
 import com.ginger_walnut.sqsmoothcraft.ship.ShipUtils;
+import com.martinjonsson01.sqsmoothcraft.missile.MissileGUI;
 
 public class MainGui extends Gui{
-
+	
 	public MainGui(Player player) {
 		
 		super(player);
@@ -58,7 +59,7 @@ public class MainGui extends Gui{
 		detect = ShipUtils.createSpecialItem(detect, lore, "Detect Ship");
 		
 		ItemStack undetect = new ItemStack(Material.PISTON_STICKY_BASE);
-		 
+		
 		lore = new ArrayList<String>();
 		lore.add(ChatColor.DARK_PURPLE + "Click this to undetect a ship");
 		lore.add(ChatColor.RED + "" + ChatColor.MAGIC + "Contraband");
@@ -66,7 +67,7 @@ public class MainGui extends Gui{
 		undetect = ShipUtils.createSpecialItem(undetect, lore, "Undetect Ship");
 		
 		ItemStack options = new ItemStack(Material.REDSTONE);
-		 
+		
 		lore = new ArrayList<String>();
 		lore.add(ChatColor.DARK_PURPLE + "Click this to optimize your SmoothCraft");
 		lore.add(ChatColor.DARK_PURPLE + "experience - currently disabled");
@@ -75,6 +76,16 @@ public class MainGui extends Gui{
 		options = ShipUtils.createSpecialItem(options, lore, "Options");
 		
 		inventory.setItem(8, options);
+		
+		ItemStack hsMissileList = new ItemStack(Material.FIREBALL);
+		
+		lore = new ArrayList<String>();
+		lore.add(ChatColor.DARK_PURPLE + "Click this to show a list of heat seeking missiles");
+		lore.add(ChatColor.RED + "" + ChatColor.MAGIC + "Contraband");
+		
+		hsMissileList = ShipUtils.createSpecialItem(hsMissileList, lore, "Heat Seeking Missile List");
+		
+		inventory.setItem(17, hsMissileList);
 		
 		if (SQSmoothCraft.shipMap.containsKey(owner.getUniqueId())) {
 			
@@ -180,13 +191,13 @@ public class MainGui extends Gui{
 			blockList.add(new ShipBlock(new ShipLocation(0, 3, -1, blockList.get(0)), whiteWool, blockList.get(0)));
 			blockList.add(new ShipBlock(new ShipLocation(0, 3, -2, blockList.get(0)), whiteWool, blockList.get(0)));
 			blockList.add(new ShipBlock(new ShipLocation(0, 3, -3, blockList.get(0)), whiteWool, blockList.get(0)));
-				
+			
 			new Ship(blockList, blockList.get(0), owner, 1f, 6.0f, 0.05f, 100000, 0);
 			
 			this.close();
 			
 		} else if (itemName.equals("Detect Ship")) {
-
+			
 			Location location = owner.getLocation();
 			
 			location.add(0, -1, 0);
@@ -236,6 +247,11 @@ public class MainGui extends Gui{
 		} else if (itemName.equals("Options")) {
 			
 			OptionGui gui = new OptionGui(owner);
+			gui.open();
+			
+		} else if (itemName.equals("Heat Seeking Missile List")){
+			
+			MissileGUI gui = new MissileGUI((Player) owner);
 			gui.open();
 			
 		}

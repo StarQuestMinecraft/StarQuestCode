@@ -78,7 +78,7 @@ public class Missile {
 		
 		ItemStack missileAmmo = new ItemStack(Material.FIREBALL, 1);
 		ItemMeta im = missileAmmo.getItemMeta();
-		im.setDisplayName(ChatColor.GOLD + "Heat Seeking explosive Missile");
+		im.setDisplayName(ChatColor.GOLD + "Heat Seeking Explosive Missile");
 		List<String> lore = new ArrayList<String>();
 		lore.add(ChatColor.LIGHT_PURPLE + "A heat seeking");
 		lore.add(ChatColor.BLUE + "explosive");
@@ -114,6 +114,8 @@ public class Missile {
 				
 				// if(target is not in the same empire as shooter )
 				
+				if(SQSmoothCraft.playerFriendList.get(shooter.getUniqueId()).contains(target.getUniqueId())) return null;
+				
 				if (SQSmoothCraft.shipMap.containsKey(target.getUniqueId())) {
 					
 					if (target != shooter) {
@@ -127,4 +129,6 @@ public class Missile {
 		return null;
 		
 	}
+	
+	
 }
