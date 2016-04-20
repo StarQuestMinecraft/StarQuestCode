@@ -18,12 +18,6 @@ public class Database {
 	public String world;
 	public int x, y, z;
 	public static String driverString = "com.mysql.jdbc.Driver";
-	public static String hostname = "192.99.20.8";
-	public static String port = "3306";
-	public static String db_name = "minecraft";
-	public static String username = "minecraft";
-	public static String password = "90jrd3v";
-	public static String dsn = ("jdbc:mysql://" + hostname + ":" + port + "/" + db_name);
 
 	public static void setUp() {
 

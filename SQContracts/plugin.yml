@@ -4,8 +4,7 @@ description: Contracts for your goods!
 author: dibujaron
 website: http://starquestminecraft.com
 main: com.starquestminecraft.sqcontracts.SQContracts
-depend:
-    - Movecraft
+depend: [Movecraft]
 
 commands:
    contract:
