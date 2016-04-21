@@ -57,13 +57,33 @@ public class SQRanks4 extends JavaPlugin implements Listener{
 				has_prereqs = false;
 			}
 		}
-
-		if(eco.has(player, price) && ExperienceAPI.getLevel(player, skill) >= level && has_prereqs){
+		
+		if(skill.equals("all")) {
+			if(eco.has(player, price) && ExperienceAPI.getPowerLevel(player) >= level && has_prereqs){
+				permission.playerAddGroup(player, group);
+				eco.withdrawPlayer(player, price);
+				player.sendMessage(ChatColor.GREEN + "You have bought the rank: " + args[0]);
+			}
+			else if(ExperienceAPI.getPowerLevel(player) < level){
+				player.sendMessage(ChatColor.GOLD + "This rank requires a total power level of at least " + Integer.toString(level));
+			}
+			else if(!eco.has(player, price)){
+				player.sendMessage(ChatColor.GOLD + "You cannot afford this rank, it costs " + Double.toString(price) + " credits");
+			}
+			else if(!has_prereqs){
+				player.sendMessage(ChatColor.GOLD + "You are missing one or more of the following prerequsite ranks:");
+				for(String rank : prereqs){
+					player.sendMessage(ChatColor.GOLD + rank);
+				}
+				
+			}
+		}
+		else if(eco.has(player, price) && ExperienceAPI.getLevel(player, skill) >= level && has_prereqs){
 			permission.playerAddGroup(player, group);
 			eco.withdrawPlayer(player, price);
 			player.sendMessage(ChatColor.GREEN + "You have bought the rank: " + args[0]);
 		}
-		else if(ExperienceAPI.getLevel((Player) sender, skill) < level){
+		else if(ExperienceAPI.getLevel(player, skill) < level){
 			player.sendMessage(ChatColor.GOLD + "This rank requires a " + skill + " level of at least " + Integer.toString(level));
 		}
 		else if(!eco.has(player, price)){
