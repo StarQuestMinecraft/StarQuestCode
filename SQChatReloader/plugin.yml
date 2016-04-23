@@ -1,0 +1,4 @@
+name: SQChatReloader
+main: com.ginger_walnut.sqchatreloader.SQChatReloader
+version: 1.0
+description: A plugin that reloads chat
