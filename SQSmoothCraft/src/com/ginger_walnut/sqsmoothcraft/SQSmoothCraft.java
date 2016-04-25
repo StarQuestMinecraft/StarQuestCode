@@ -63,6 +63,8 @@ public class SQSmoothCraft extends JavaPlugin{
 	
 	public static HashMap<UUID, List<UUID>> playerFriendList = new HashMap<UUID, List<UUID>>();
 	
+	public static boolean useEmpires = false;
+	
 	@Override
 	public void onDisable() {
 		
@@ -133,6 +135,13 @@ public class SQSmoothCraft extends JavaPlugin{
 		Missile.setupMissileAmmoRecipe();
 		Missile.setupEMPMissileAmmoRecipe();
 		Missile.setupExplosiveMissileAmmoRecipe();
+		
+		if(Bukkit.getServer().getPluginManager().getPlugin("SQEmpire") != null) {
+			
+			System.out.println("SQEmpires found! Enabling heat seeking missile integration...");
+			useEmpires = true;
+			
+		}
 		
 		if (!new File(this.getDataFolder(), "config.yml").exists()) {
 			
