@@ -1,7 +1,5 @@
 package com.starquestminecraft.sqcontracts.randomizer.function;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
 import java.util.UUID;
 
@@ -9,8 +7,6 @@ import com.starquestminecraft.sqcontracts.SQContracts;
 import com.starquestminecraft.sqcontracts.contracts.Contract;
 import com.starquestminecraft.sqcontracts.database.ContractPlayerData;
 import com.starquestminecraft.sqcontracts.randomizer.Randomizer;
-import com.starquestminecraft.sqcontracts.util.Weighable;
-import com.starquestminecraft.sqcontracts.util.WeightedRandom;
 
 public class FunctionRandomizer extends Randomizer{
 
@@ -44,29 +40,29 @@ public class FunctionRandomizer extends Randomizer{
 			retval[i] = generate(generator, pData, weights);
 		}*/
 		//String[] currencies = pData.getCurrencies().toArray(new String[0]);
-		for(int i = 0; i < retval.length; i++){
 			//String cType = currencies[generator.nextInt(currencies.length)];
-			retval[i] = generate(generator, pData, /*cType*/ type);
-		}
+		retval[0] = generate(generator, pData, /*cType*/ type, "alpha");
+		retval[1] = generate(generator, pData, /*cType*/ type, "beta");
+		retval[2] = generate(generator, pData, /*cType*/ type, "gamma");
 		return retval;
 	}
 
-	private Contract generate(Random generator, ContractPlayerData pData, String type) {
+	private Contract generate(Random generator, ContractPlayerData pData, String type, String system) {
 
 		//select one
 
 		
 		switch(type){
 		case "philanthropy":
-			return generateMoneyContract(generator, pData);
+			return generateMoneyContract(generator, pData, system);
 		case "smuggling":
-			return generateItemContract(generator, pData, true);
+			return generateItemContract(generator, pData, true, system);
 		case "trading":
-			return generateItemContract(generator, pData, false);
+			return generateItemContract(generator, pData, false, system);
 		case "infamy":
-			return generateShipCaptureContract(generator, pData, true);
+			return generateShipCaptureContract(generator, pData, true, system);
 		case "reputation":
-			return generateShipCaptureContract(generator, pData, false);
+			return generateShipCaptureContract(generator, pData, false, system);
 		}
 		return null;
 	}
@@ -83,16 +79,16 @@ public class FunctionRandomizer extends Randomizer{
 		return base + modifier;
 	}
 
-	private Contract generateShipCaptureContract(Random generator, ContractPlayerData pData, boolean blackMarket) {
-		return CaptureContractGenerator.generate(pData, generator, blackMarket);
+	private Contract generateShipCaptureContract(Random generator, ContractPlayerData pData, boolean blackMarket, String system) {
+		return CaptureContractGenerator.generate(pData, generator, blackMarket, system);
 	}
 
-	private Contract generateItemContract(Random generator, ContractPlayerData pData, boolean blackMarket) {
-		return ItemContractGenerator.generate(pData,generator, blackMarket);
+	private Contract generateItemContract(Random generator, ContractPlayerData pData, boolean blackMarket, String system) {
+		return ItemContractGenerator.generate(pData,generator, blackMarket, system);
 	}
 
-	private Contract generateMoneyContract(Random generator, ContractPlayerData pData) {
-		return MoneyContractGenerator.generate(pData, generator);
+	private Contract generateMoneyContract(Random generator, ContractPlayerData pData, String system) {
+		return MoneyContractGenerator.generate(pData, generator, system);
 	}
 	
 	public static int[] randSum(int n, double m, Random rand) {

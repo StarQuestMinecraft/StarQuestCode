@@ -1,11 +1,10 @@
 name: SQContracts
-version: 3.1.32
+version: 3.1.33
 description: Contracts for your goods!
 author: dibujaron
 website: http://starquestminecraft.com
 main: com.starquestminecraft.sqcontracts.SQContracts
-depend:
-    - Movecraft
+depend: [Movecraft]
 
 commands:
    contract:

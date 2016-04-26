@@ -57,11 +57,13 @@ planets:
     - "Dantooine"
     - "Sagittaron"
     
-stations:
+alphaStations:
     - Alpha_North
     - Alpha_West
+gammaStations:
     - Gamma_West
     - Gamma_South
+betaStations:
     - Beta_East
     - Beta_North
 contracts:

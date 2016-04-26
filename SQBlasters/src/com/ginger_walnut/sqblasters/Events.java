@@ -49,7 +49,7 @@ public class Events implements Listener{
 				
 				if (ammo != 0) {
 					
-					Bukkit.getWorlds().get(0).playSound(player.getLocation(), Sound.SHOOT_ARROW, 1, 1);
+					Bukkit.getWorlds().get(0).playSound(player.getLocation(), Sound.ENTITY_ARROW_SHOOT, 1, 1);
 					
 					Arrow arrow = player.launchProjectile(Arrow.class);
 				
@@ -228,6 +228,7 @@ public class Events implements Listener{
 					ammoPerPack = Main.getPluginConfig().getInt(type + ".ammo per pack");
 					reloadTime = Main.getPluginConfig().getInt(type + ".reload time");
 					fireTime = Main.getPluginConfig().getInt(type + ".fire time");
+					List<String> special = Main.getPluginConfig().getStringList(type + ".special");
 					
 					if (!bowLore.get(0).substring(10).equals("new blaster")) {
 						
@@ -249,7 +250,7 @@ public class Events implements Listener{
 							
 						}
 
-						if (bowLore.get(0).substring(10).equals("automatic")) {
+						if (special.contains("automatic")) {
 								
 							if (player.hasMetadata("automatic")) {
 									
@@ -378,6 +379,8 @@ public class Events implements Listener{
 				
 				double damage = 0;
 				
+				boolean anyDamage = false;
+				
 				List<MetadataValue> values = arrow.getMetadata("damage");
 				
 				for (MetadataValue value : values) {
@@ -386,11 +389,17 @@ public class Events implements Listener{
 						
 						damage = Double.parseDouble(value.value().toString());
 						
+						anyDamage = true;
+						
 					}
 					
 				}
 				
-				event.setDamage(damage);
+				if (anyDamage) {
+					
+					event.setDamage(damage);
+					
+				}
 				
 				arrow.remove();
 				

@@ -1,3 +1,10 @@
+/*
+ * Author: Ginger_Walnut
+ * Description: A spigot plugin for minecraf that adds blasters (bows that fire instantly on right click)
+ * Minecraft Version: 1.8
+ * 
+ */
+
 package com.ginger_walnut.sqblasters;
 
 import java.util.ArrayList;
@@ -115,6 +122,7 @@ public class Main extends JavaPlugin{
 		player.sendMessage(ChatColor.GOLD + "/blaster create" + ChatColor.BLUE + " - Creates a new blaster ");
 		player.sendMessage(ChatColor.GOLD + "/blaster guide" + ChatColor.BLUE + " - Displays a guide for SQBlasters");
 		player.sendMessage(ChatColor.GOLD + "/blaster recipe" + ChatColor.BLUE + " - Displays the blaster crafting recipe");
+		player.sendMessage(ChatColor.GOLD + "/blaster spawn" + ChatColor.BLUE + " - Spawns in a blaster - Moderator only!");
 		player.sendMessage(ChatColor.GOLD + "-----------------------------------------------------");
 		
 	}
@@ -356,7 +364,50 @@ public class Main extends JavaPlugin{
 					
 					showRecipie(player);
 					
+				} else if (args[0].equalsIgnoreCase("spawn")) {
+					
+					if (player.hasPermission("SQBlasters.spawnBlaster")) {
+						
+						player.closeInventory();
+						
+						int blasterTypesAmount = getPluginConfig().getRoot().getKeys(false).size();
+						
+						Inventory inventory; 
+						
+						if (blasterTypesAmount <= 9) {
+							
+							inventory = Bukkit.createInventory(player, 9, ChatColor.GOLD + "Blaster Selection");
+							
+						} else if (blasterTypesAmount > 9 && blasterTypesAmount <= 18) {
+							
+							inventory = Bukkit.createInventory(player, 18, ChatColor.GOLD + "Blaster Selection");
+							
+						} else {
+							
+							inventory = Bukkit.createInventory(player, 27, ChatColor.GOLD + "Blaster Selection");
+							
+						}
+						
+						List<String> blasterTypes = new ArrayList<String>();
+						
+						blasterTypes.addAll(Main.getPluginConfig().getRoot().getKeys(false));
+						
+						for (int i = 0; i < blasterTypesAmount; i ++) {
+							
+							inventory.setItem(i, createNewBlaster(blasterTypes.get(i), true, null));
+						
+						}
+						
+						player.openInventory(inventory);
+						
+					} else {
+						
+						player.sendMessage(ChatColor.RED + "You do not have permission to spawn in a blaster");
+						
+					}
+					
 				} else {
+				
 					
 					sender.sendMessage(ChatColor.RED + "Use /blaster help for help on how to use SQBlasters");
 					

@@ -12,7 +12,7 @@ public class MoneyContractGenerator {
 	
 	static List<String> causes;
 	static List<String> locations;
-	public static MoneyContract generate(ContractPlayerData pData, Random generator){
+	public static MoneyContract generate(ContractPlayerData pData, Random generator, String system){
 		
 		//generate money amount based on their level (x+21) ^ 3  + 10000
 		
@@ -24,7 +24,7 @@ public class MoneyContractGenerator {
 		String location = getLocation(generator);
 		String causemsg = cause + " on " + location;
 		
-		String station = StationUtils.getRandomStation(generator);
+		String station = StationUtils.getRandomStation(generator, system);
 		cost *= (1 / StationUtils.getModifierForStation(station));
 		return new MoneyContract(pData.getPlayer(), station, (int) cost, causemsg);
 		//generate a "cause" based on "afflictions" and planet names, e.g. "starving children" on "krystallos" or "earthquake relief" on "quavara"

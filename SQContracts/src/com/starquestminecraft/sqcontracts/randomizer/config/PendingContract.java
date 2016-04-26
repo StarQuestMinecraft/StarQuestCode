@@ -26,7 +26,7 @@ public abstract class PendingContract {
 		maxReward = c.getInt(key + ".maxReward");
 	}
 	
-	public abstract Contract giveToPlayer(ContractPlayerData d, Random generator);
+	public abstract Contract giveToPlayer(ContractPlayerData d, Random generator, String system);
 	
 	public boolean isValidContractForPlayer(ContractPlayerData d) {
 		for(String s : minBalances.keySet()){

@@ -353,26 +353,26 @@ public class SQSkywatch extends JavaPlugin implements Listener {
 				i.remove();
 				return;
 			}
-			System.out.println(Math.sqrt(f.distToTargetSquared()) + " blocks away.");
+			//System.out.println(Math.sqrt(f.distToTargetSquared()) + " blocks away.");
 			if (f.distToTargetSquared() > 50 * 50) {
 				// if we're too far away go closer.
 				Location l = f.getSafeLocationNearTarget();
 				if(l != null){
-					System.out.println("teleporting.");
+					//System.out.println("teleporting.");
 					f.myGhast.getWorld().playEffect(f.myGhast.getLocation(), Effect.ENDER_SIGNAL, 0);
 					f.myGhast.teleport(l);
 					f.myGhast.getWorld().playEffect(f.myGhast.getLocation(), Effect.ENDER_SIGNAL, 0);
 				}
 			}
 			if(f.canFireAgain()){
-				System.out.println("Firing!");
+				//System.out.println("Firing!");
 				f.fireOnTarget();
 			}
 		}
 		Iterator<DroneShocktroop> i2 = activeShocktroops.iterator();
 		while(i2.hasNext()){
 			DroneShocktroop t = i2.next();
-			System.out.println("Updating shocktroop.");
+			//System.out.println("Updating shocktroop.");
 			if(t.mySkeleton == null || t.mySkeleton.isDead()){
 				i2.remove();
 				return;
@@ -387,11 +387,11 @@ public class SQSkywatch extends JavaPlugin implements Listener {
 				i2.remove();
 				return;
 			}
-			System.out.println(Math.sqrt(t.distToTargetSquared()) + " blocks away.");
+			//System.out.println(Math.sqrt(t.distToTargetSquared()) + " blocks away.");
 			if (t.distToTargetSquared() > 50 * 50) {
 				Location l = t.getSafeLocationNearTarget();
 				if(l != null){
-					System.out.println("teleporting.");
+					//System.out.println("teleporting.");
 					t.mySkeleton.teleport(l);
 				}
 			}
@@ -426,11 +426,11 @@ public class SQSkywatch extends JavaPlugin implements Listener {
 				DroneFighter f = getFighter(g);
 				if (f == null) {
 					g.remove();
-					System.out.println("f for ghast is null, removing!");
+					//System.out.println("f for ghast is null, removing!");
 					event.setCancelled(true);
 				} else {
 					event.setCancelled(true);
-					System.out.println("Dud fire!");
+					//System.out.println("Dud fire!");
 				}
 			}
 		}
@@ -444,10 +444,10 @@ public class SQSkywatch extends JavaPlugin implements Listener {
 				DroneShocktroop troop = getShocktroop(s);
 				if(troop == null){
 					s.remove();
-					System.out.println("troop for named skeleton is null, removing!");
+					//System.out.println("troop for named skeleton is null, removing!");
 					event.setCancelled(true);
 				} else {
-					System.out.println("Allowed fire!");
+					//System.out.println("Allowed fire!");
 				}
 			}
 		}
