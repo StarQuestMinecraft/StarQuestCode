@@ -1,0 +1,41 @@
+#This plugin supports dynmap markers. However, only markers for planets that are registered in a 'markers' marker set will be moved.
+
+#Database
+Host_Name: localhost
+Database_Name: minecraft
+Port: 3306
+Username: minecraft
+Password: lolnope
+TableName: SQORBITS_PLANETS_TEMPTEST
+
+#Planets are listed in the 'Planets' section below. Example planet given. 
+Planets: 
+ #The name of the planet determines the name of the region, the dynmap marker name, and the name of the planet in movecraft config files
+ Bosquevine: 
+   #Floating-points. Coordinates of the sun at the centre of the solar system.
+   SunCoords:  
+    x: 0.0
+    z: 0.0
+   #String. The name of the system/server where this planet is. (The plugin with this ID will move this planet)
+   SystemName: Regalis
+   #String. The name of the world where this planet is. (The planet will be pasted into this world)
+   WorldName: Regalis
+   #Integer. y-level that the (centre of the) planet orbits at. 
+   OrbitCenterY: 100
+   #Floating-point. Measured in degrees moved round the sun each update. Measured anticlockwise.
+   Speed: 5.0
+   #Floating-point. Distance of planet from sun in blocks.
+   BlocksFromSun: 100.0 
+   #Integers. Relative co-ordinates of the corners of the WG region from the planet center.
+   RelativeRegionMinCorner: 
+    x: -1
+    y: -1
+    z: -1
+   RelativeRegionMaxCorner: 
+    x: 1
+    y: 1
+    z: 1        
+   #String. Path of .schematic file where planet structure is stored. Will be fetched FROM THE SPIGOT SERVER, not the main bungee server
+   SchematicPath: 'A:/Path/To/A/File.schematic'
+   #Double. Initial rotation of planet if it isn't already in the DB.
+   InitialRotation: 315.0
