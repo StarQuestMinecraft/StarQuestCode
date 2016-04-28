@@ -144,7 +144,7 @@ public class ShipEvents implements Listener {
 								}
 							}
 							
-							shipBlock.ship.damage(shipBlock, shipDamage, carryOver);
+							shipBlock.ship.damage(shipBlock, shipDamage, carryOver, projectile.getLocation());
 							
 							projectile.remove();
 							
@@ -214,7 +214,7 @@ public class ShipEvents implements Listener {
 				
 				Ship ship = SQSmoothCraft.shipMap.get(player.getUniqueId());
 				
-				ship.rightClickControls();
+				ship.rightClickControls(player);
 				
 			}
 			
@@ -284,7 +284,7 @@ public class ShipEvents implements Listener {
 						
 						Ship ship = SQSmoothCraft.shipMap.get(player.getUniqueId());
 						
-						if (ship.rightClickControls()) {
+						if (ship.rightClickControls(player)) {
 							
 							event.setCancelled(true);
 							
@@ -381,6 +381,7 @@ public class ShipEvents implements Listener {
 		}
 		
 		if (item != null) {
+			
 			
 			if (SQSmoothCraft.guiNames.contains(event.getInventory().getName())) {
 				

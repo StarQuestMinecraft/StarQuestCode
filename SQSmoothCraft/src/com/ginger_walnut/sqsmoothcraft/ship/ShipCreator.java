@@ -16,7 +16,7 @@ import com.dibujaron.cardboardbox.Knapsack;
 import com.ginger_walnut.sqsmoothcraft.SQSmoothCraft;
 
 public class ShipCreator extends Thread{
-
+	
 	public void run(final Ship ship, final Player pilot) {
 		
 		BukkitScheduler scheduler = Bukkit.getServer().getScheduler();
@@ -25,7 +25,7 @@ public class ShipCreator extends Thread{
 			
 			@Override
 			public void run() {
-
+				
 				ship.getCaptain().setSneaking(false);
 				ship.getMainBlock().getShipLocation().setMainBlock(ship.getMainBlock());
 				
@@ -66,7 +66,19 @@ public class ShipCreator extends Thread{
 					}
 					
 				}
-
+				
+				List<ShipBlock> emFieldGenList = new ArrayList<ShipBlock>();
+				
+				for (int i = 0; i < ship.getShipBlocks().size(); i ++) {
+					
+					if (ship.getShipBlocks().get(i).getArmorStand().getHelmet().getType().equals(Material.getMaterial(SQSmoothCraft.config.getString("utilites.emFieldGenerator.material")))) {
+						
+						emFieldGenList.add(ship.getShipBlocks().get(i));
+						
+					}
+					
+				}
+				
 				for (ShipBlock shipBlock : ship.getShipBlocks()) {
 					
 					shipBlock.ship = ship;
@@ -77,7 +89,8 @@ public class ShipCreator extends Thread{
 				ship.setCannons(cannonList);
 				ship.missleList = missleList;
 				ship.reactorList = reactorList;
-
+				ship.emFieldGenList = emFieldGenList;
+				
 				float maxSpeed = 0f;
 				
 				double averageWeight = 0;
@@ -95,6 +108,13 @@ public class ShipCreator extends Thread{
 				if (maxSpeed > 1) {
 					
 					maxSpeed = 1;
+					
+				}
+				
+				if(ship.emFieldGenList.size() >= 1) {
+					
+					ship.shieldHealth = SQSmoothCraft.config.getDouble("utilites.emFieldGenerator.fieldPower");
+					
 					
 				}
 				
@@ -116,11 +136,12 @@ public class ShipCreator extends Thread{
 				
 				pilot.sendMessage(ChatColor.GREEN + "Your ship has been registered!");
 				pilot.sendMessage(ChatColor.RED + "Make sure to disable your rotational lock when you are ready to turn your craft");
+				pilot.sendMessage("EM Field Generators: " + ship.emFieldGenList.size());
 				
 			}
-				
+			
 		}, 3);
-	
+		
 	}
 	
 }

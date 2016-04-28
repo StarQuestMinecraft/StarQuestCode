@@ -11,6 +11,7 @@ import net.minecraft.server.v1_9_R1.PacketPlayOutPlayerInfo;
 import net.minecraft.server.v1_9_R1.PacketPlayOutPlayerInfo.EnumPlayerInfoAction;
 import net.minecraft.server.v1_9_R1.PlayerConnection;
 
+import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -34,13 +35,16 @@ import com.ginger_walnut.sqsmoothcraft.SQSmoothCraft;
 import com.ginger_walnut.sqsmoothcraft.gui.MainGui;
 
 public class Ship {
-
+	
 	Player captain = null;
 	
 	public List<ShipBlock> blockList = null;
 	public List<ShipBlock> cannonList = null;	
 	public List<ShipBlock> missleList = null;
 	public List<ShipBlock> reactorList = null;
+	public List<ShipBlock> emFieldGenList = null;
+	
+	public double shieldHealth = 0;
 	
 	ShipBlock mainBlock = null;
 	
@@ -73,7 +77,7 @@ public class Ship {
 	
 	BossBar speedBar = null;
 	BossBar fuelBar = null;
-
+	
 	boolean alternatingBlockDirection = false;
 	
 	boolean explosiveMode = false;
@@ -265,8 +269,30 @@ public class Ship {
 		
 	}
 	
-	public void damage(ShipBlock shipBlock, double damage, boolean carryOver) {
+	public void damage(ShipBlock shipBlock, double damage, boolean carryOver, Location shieldParticleLoc) {
 		
+		if(shipBlock.ship.shieldHealth <= SQSmoothCraft.config.getInt("utilites.emFieldGenerator.fieldPower") && !(shipBlock.ship.shieldHealth <= 0)) {
+			
+			shipBlock.ship.shieldHealth = shipBlock.ship.shieldHealth - damage;
+			
+			if(shieldParticleLoc != null) {
+				
+				shieldParticleLoc.getWorld().playEffect(shieldParticleLoc.add(0, 0, 0), Effect.MAGIC_CRIT, 100);
+				shieldParticleLoc.getWorld().playEffect(shieldParticleLoc.add(0, 1, 0), Effect.MAGIC_CRIT, 100);
+				shieldParticleLoc.getWorld().playEffect(shieldParticleLoc.add(0, -1, 0), Effect.MAGIC_CRIT, 100);
+				shieldParticleLoc.getWorld().playEffect(shieldParticleLoc.add(1, 0, 0), Effect.MAGIC_CRIT, 100);
+				shieldParticleLoc.getWorld().playEffect(shieldParticleLoc.add(-1, 0, 0), Effect.MAGIC_CRIT, 100);
+				shieldParticleLoc.getWorld().playEffect(shieldParticleLoc.add(0, 0, 1), Effect.MAGIC_CRIT, 100);
+				shieldParticleLoc.getWorld().playEffect(shieldParticleLoc.add(0, 0, -1), Effect.MAGIC_CRIT, 100);
+			//	shieldParticleLoc.getWorld().playSound(shieldParticleLoc, Sound.BLOCK_ANVIL_PLACE, 1.0f, 3.0f);
+				shieldParticleLoc.getWorld().playSound(shieldParticleLoc, Sound.BLOCK_FIRE_EXTINGUISH, 1.0f, 0.5f);
+				
+			}
+			
+			shipBlock.ship.captain.sendMessage(ChatColor.GOLD + "" + ChatColor.BOLD + "[EM Field] " + "Field strength at: " + shipBlock.ship.shieldHealth);
+			return;
+			
+		}
 		shipBlock.health = shipBlock.health - damage;
 		
 		if (shipBlock.health <= 0) {
@@ -286,6 +312,12 @@ public class Ship {
 			if (shipBlock.stand.getHelmet().getType().equals(Material.DISPENSER)) {
 				
 				shipBlock.ship.missleList.remove(shipBlock);
+				
+			}
+			
+			if(shipBlock.stand.getHelmet().getType().equals(Material.GOLD_BLOCK)) {
+				
+				shipBlock.ship.emFieldGenList.remove(shipBlock);
 				
 			}
 			
@@ -310,7 +342,7 @@ public class Ship {
 			}
 			
 			maxYawRate = maxSpeed * 5;
-					
+			
 			acceleration = maxSpeed / 20;
 			
 			shipBlock.stand.remove();
@@ -342,7 +374,7 @@ public class Ship {
 					} else if (shipBlock.loc.x == block.loc.x && shipBlock.loc.y == block.loc.y - 1 && shipBlock.loc.z == block.loc.z) {
 						
 						surroundingBlocks.add(block);
-
+						
 					} else if (shipBlock.loc.x == block.loc.x && shipBlock.loc.y == block.loc.y && shipBlock.loc.z == block.loc.z + 1) {
 						
 						surroundingBlocks.add(block);
@@ -350,21 +382,21 @@ public class Ship {
 					} else if (shipBlock.loc.x == block.loc.x && shipBlock.loc.y == block.loc.y && shipBlock.loc.z == block.loc.z - 1) {
 						
 						surroundingBlocks.add(block);
-
+						
 					}
 					
 				}
 				
 				for (ShipBlock block : surroundingBlocks) {
-
-					block.ship.damage(block, remainingDamage / surroundingBlocks.size(), true);
+					
+					block.ship.damage(block, remainingDamage / surroundingBlocks.size(), true, null);
 					
 				}
 				
 			}
 			
 		}
-	
+		
 	}
 	
 	@SuppressWarnings("deprecation")
@@ -375,9 +407,9 @@ public class Ship {
 		if (yaw < 0) {
 			
 			yaw = yaw * -1;
-				
+			
 			yaw = 360 - yaw;
-				
+			
 		}
 		
 		List<Block> blocks = new ArrayList<Block>();
@@ -456,16 +488,16 @@ public class Ship {
 				blocks.get(i).setData((byte) (int) durabilitys.get(i));
 				
 				if (materials.get(i).equals(Material.getMaterial(SQSmoothCraft.config.getString("utilites.reactor.material")))) {
-
+					
 					Dropper dropper = (Dropper) blocks.get(i).getState();
 					
 					ItemStack coal = new ItemStack(Material.COAL);
 					coal.setAmount((int) ((fuel / reactorList.size()) / SQSmoothCraft.config.getInt("utilites.reactor.fuel per coal")));
 					
 					if (coal.getAmount() > 0) {
-					
+						
 						dropper.getInventory().addItem(coal);
-					
+						
 					}
 					
 					if (firstReactor) {
@@ -481,7 +513,7 @@ public class Ship {
 							dropper.getInventory().addItem(catalyst);
 							
 						}
-
+						
 					}
 					
 				}
@@ -493,7 +525,7 @@ public class Ship {
 				shipBlock.stand.remove();
 				
 			}
-
+			
 			if (remove) {
 				
 				if (SQSmoothCraft.shipMap.containsKey(captain.getUniqueId())) {
@@ -527,9 +559,9 @@ public class Ship {
 		SQSpace.noSuffacatePlayers.remove(captain);
 		
 		Ship ship = SQSmoothCraft.shipMap.get(captain.getUniqueId());
-			
+		
 		if (thirdPersonPlayer != null) {
-				
+			
 			for (Player onlinePlayer : SQSmoothCraft.getPluginMain().getServer().getOnlinePlayers()) {
 				
 				PlayerConnection connection = ((CraftPlayer) onlinePlayer).getHandle().playerConnection;
@@ -537,18 +569,18 @@ public class Ship {
 				connection.sendPacket(new PacketPlayOutPlayerInfo(EnumPlayerInfoAction.REMOVE_PLAYER, thirdPersonPlayer));
 				connection.sendPacket(new PacketPlayOutEntityDestroy(thirdPersonPlayer.getId()));
 				
-//			onlinePlayer.showPlayer(event.getPlayer());
+				//			onlinePlayer.showPlayer(event.getPlayer());
 				
 			}
-				
+			
 		}
-			
+		
 		thirdPersonPlayer = null;
-			
+		
 		if (SQSmoothCraft.shipMap.containsKey(captain.getUniqueId()) && remove) {
-
+			
 			SQSmoothCraft.stoppedShipMap.add(ship);
-				
+			
 			SQSmoothCraft.shipMap.remove(captain.getUniqueId());
 			
 		}
@@ -583,7 +615,7 @@ public class Ship {
 			Location captainLocation = captain.getLocation();
 			
 			if (fuel > 0.0f) {
-			
+				
 				for (int i = 0; i < missleList.size(); i ++) {
 					
 					Location blockLocation = missleList.get(i).getLocation();
@@ -632,7 +664,7 @@ public class Ship {
 				Location captainLocation = captain.getLocation();
 				
 				if (fuel > 0.0f) {
-				
+					
 					for (int i = 0; i < cannonList.size(); i ++) {
 						
 						Location blockLocation = cannonList.get(i).getLocation();
@@ -675,7 +707,7 @@ public class Ship {
 				Location captainLocation = captain.getLocation();
 				
 				if (fuel > 0.0f) {
-				
+					
 					for (int i = 0; i < cannonList.size(); i ++) {
 						
 						Location blockLocation = cannonList.get(i).getLocation();
@@ -714,13 +746,13 @@ public class Ship {
 		if (fuel > 0.0f) {
 			
 			if (speed >= maxSpeed){
-					
+				
 				speed = maxSpeed;
 				
 			} else {
-					
+				
 				speed = speed + (acceleration * multiplier);
-					
+				
 			}
 			
 		}
@@ -732,13 +764,13 @@ public class Ship {
 		if (fuel > 0.0f) {
 			
 			if (speed <= 0){
-					
+				
 				speed = 0;
 				
 			} else {
-					
+				
 				speed = speed - (acceleration * multiplier);
-					
+				
 			}
 			
 			if (speed < 0) {
@@ -752,54 +784,54 @@ public class Ship {
 	}
 	
 	public void toggleLock() {
-
+		
 		ItemStack itemInHand = captain.getInventory().getItemInMainHand();
-			
+		
 		if (itemInHand.getItemMeta().getDisplayName().equals("Direction Locker")) {
-				
-			if (lockedDirection) {
-					
-				lockedDirection = false;
-					
-				captain.sendMessage(ChatColor.GREEN + "The direction has been unlocked");
-					
-			} else {
-					
-				lockedDirection = true;
-					
-				captain.sendMessage(ChatColor.RED + "The direction has been locked");
-					
-			}
-
-		}
 			
+			if (lockedDirection) {
+				
+				lockedDirection = false;
+				
+				captain.sendMessage(ChatColor.GREEN + "The direction has been unlocked");
+				
+			} else {
+				
+				lockedDirection = true;
+				
+				captain.sendMessage(ChatColor.RED + "The direction has been locked");
+				
+			}
+			
+		}
+		
 	}
 	
 	public void toggleExplosive() {
-
+		
 		ItemStack itemInHand = captain.getInventory().getItemInMainHand();
-			
+		
 		if (itemInHand.getItemMeta().getDisplayName().equals("Cannon Explosive Mode")) {
-				
-			if (explosiveMode) {
-					
-				explosiveMode = false;
-					
-				captain.sendMessage(ChatColor.RED + "Cannon explosive mode has been disabled");
-					
-			} else {
-					
-				explosiveMode = true;
-					
-				captain.sendMessage(ChatColor.GREEN + "Cannon explosive mode has been enabled");
-					
-			}
-
-		}
 			
+			if (explosiveMode) {
+				
+				explosiveMode = false;
+				
+				captain.sendMessage(ChatColor.RED + "Cannon explosive mode has been disabled");
+				
+			} else {
+				
+				explosiveMode = true;
+				
+				captain.sendMessage(ChatColor.GREEN + "Cannon explosive mode has been enabled");
+				
+			}
+			
+		}
+		
 	}
 	
-	public boolean rightClickControls() {
+	public boolean rightClickControls(Player p) {
 		
 		ItemStack itemInHand = captain.getInventory().getItemInMainHand();
 		
@@ -810,9 +842,9 @@ public class Ship {
 				accelerate(1);
 				
 			} else if (itemInHand.getItemMeta().getDisplayName().equals("Decelerator")) {
-					
+				
 				decelerate(1);
-					
+				
 			}
 			
 		} else if (itemInHand.getType().equals(Material.COMPASS)) {
@@ -820,16 +852,21 @@ public class Ship {
 			toggleLock();
 			
 		} else if (itemInHand.getType().equals(Material.REDSTONE)) {
-
+			
 			MainGui gui = new MainGui(captain);
 			gui.open();
-				
+			
 		} else if (itemInHand.getType().equals(Material.SULPHUR)) {
 			
 			toggleExplosive();
 			
-		} else {
+		} else if (itemInHand.getType().equals(Material.STAINED_GLASS)) {
 
+			p.sendMessage(ChatColor.GOLD + "" + ChatColor.BOLD + "[EM Field] " + "Field strength currently at: " + SQSmoothCraft.shipMap.get(p.getUniqueId()).shieldHealth);
+			
+		} else {
+			
+			
 			return true;
 			
 		}
@@ -843,17 +880,17 @@ public class Ship {
 		ItemStack itemInHand = captain.getInventory().getItemInMainHand();
 		
 		if (itemInHand.getType().equals(Material.WATCH)) {
-
+			
 			String name = itemInHand.getItemMeta().getDisplayName();
-					
+			
 			if (name.equals("Main Control Device") || name.equals("Accelerator") || name.equals("Decelerator")) {
-						
+				
 				fireCannons();
-						
+				
 			} else if (name.equals("Missile Controler")) {
-						
+				
 				fireMissles();
-						
+				
 			}
 			
 		}

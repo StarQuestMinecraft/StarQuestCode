@@ -85,7 +85,7 @@ public class MainGui extends Gui{
 		
 		hsMissileList = ShipUtils.createSpecialItem(hsMissileList, lore, "Heat Seeking Missile List");
 		
-		inventory.setItem(17, hsMissileList);
+		inventory.setItem(26, hsMissileList);
 		
 		if (SQSmoothCraft.shipMap.containsKey(owner.getUniqueId())) {
 			
@@ -253,6 +253,10 @@ public class MainGui extends Gui{
 			
 			MissileGUI gui = new MissileGUI((Player) owner);
 			gui.open();
+			
+		}else if (itemName.equals("EM Field Info")) {
+			
+			owner.sendMessage(ChatColor.GOLD + "" + ChatColor.BOLD + "[EM Field] " + "Field strength currently at: " + SQSmoothCraft.shipMap.get(owner.getUniqueId()).shieldHealth);
 			
 		}
 		
