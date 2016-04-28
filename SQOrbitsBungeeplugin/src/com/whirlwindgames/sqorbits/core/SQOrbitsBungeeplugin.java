@@ -107,6 +107,12 @@ public class SQOrbitsBungeeplugin extends Plugin {
 		}
     	deleteOldPlanets();
     	updateDB();  	
+    	try {
+			connection.close();
+		} catch (SQLException e) {
+			print("An error occurred whilst closing the SQL connection. Stack trace:");
+			e.printStackTrace();
+		}
     }
     
 	private void updateDB() {
@@ -216,7 +222,7 @@ public class SQOrbitsBungeeplugin extends Plugin {
 	}
 
 	private void print(String msg) {
-		getProxy().getLogger().info(chatPrefix+msg);
+		getProxy().getLogger().info(chatPrefix+" "+msg);
 	}
 
 	private void setupFromConfig() throws BadConfigException { 		

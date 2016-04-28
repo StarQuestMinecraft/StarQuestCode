@@ -1,7 +1,7 @@
 #This plugin supports dynmap markers. However, only markers for planets that are registered in a 'markers' marker set will be moved.
 
 #Database
-Host_Name: localhost
+Host_Name: play.starquestminecraft.com
 Database_Name: minecraft
 Port: 3306
 Username: minecraft
