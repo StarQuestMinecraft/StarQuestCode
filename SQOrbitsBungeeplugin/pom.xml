@@ -6,7 +6,7 @@
 
     <groupId>com.whirlwindgames.sqorbits.core</groupId>
     <artifactId>SQOrbitsBungeeplugin</artifactId>
-    <version>1.1</version>
+    <version>1.2</version>
     <name>SQOrbitsBungeeplugin</name>
 
     <repositories>
@@ -26,7 +26,7 @@
                 <directory>${basedir}</directory>
                 <includes>
                     <include>plugin.yml</include>
-                    <include>config.yml</include>
+                    <include>defaultConfig.yml</include>
                 </includes>                 
             </resource>
         </resources>
