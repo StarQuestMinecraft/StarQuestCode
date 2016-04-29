@@ -98,19 +98,66 @@ public class ShipSpawnerCore extends JavaPlugin implements Listener {
 						int originX = startBlock.getBlockX();
 						int originY = startBlock.getBlockY();
 						int originZ = startBlock.getBlockZ();
-
-						for (int X = 0; X < cc.getWidth(); X++) {
-							for (int Y = 0; Y < cc.getHeight(); Y++) {
-								for (int Z = 0; Z < cc.getLength(); Z++) {
-									Location l = new Location(startBlock.getWorld(), originX + X, originY + Y, originZ + Z);
-									Material type = l.getBlock().getType();
-									if (!(type == Material.AIR || type == Material.SPONGE || type == Material.PISTON_MOVING_PIECE)) {
-										event.getPlayer().sendMessage("Ship spawn area is obstructed. Try a different spawner, or hit the clear button.");
-										return;
+						if(direction.equals(BlockFace.SOUTH)) {
+							for (int X = 0; X < cc.getWidth(); X++) {
+								for (int Y = 0; Y < cc.getHeight(); Y++) {
+									for (int Z = 0; Z < cc.getLength(); Z++) {
+										Location l = new Location(startBlock.getWorld(), originX + X, originY + Y, originZ + Z);
+										Material type = l.getBlock().getType();
+										if (!(type == Material.AIR || type == Material.SPONGE || type == Material.PISTON_MOVING_PIECE)) {
+											event.getPlayer().sendMessage("Ship spawn area is obstructed. Try a different spawner, or hit the clear button.");
+											return;
+										}
 									}
 								}
 							}
 						}
+						
+						if(direction.equals(BlockFace.NORTH)) {
+							for (int X = 0; X < cc.getWidth(); X++) {
+								for (int Y = 0; Y < cc.getHeight(); Y++) {
+									for (int Z = 0; Z < cc.getLength(); Z++) {
+										Location l = new Location(startBlock.getWorld(), originX + X, originY + Y, originZ - Z);
+										Material type = l.getBlock().getType();
+										if (!(type == Material.AIR || type == Material.SPONGE || type == Material.PISTON_MOVING_PIECE)) {
+											event.getPlayer().sendMessage("Ship spawn area is obstructed. Try a different spawner, or hit the clear button.");
+											return;
+										}
+									}
+								}
+							}
+						}
+						
+						if(direction.equals(BlockFace.EAST)) {
+							for (int X = 0; X < cc.getWidth(); X++) {
+								for (int Y = 0; Y < cc.getHeight(); Y++) {
+									for (int Z = 0; Z < cc.getLength(); Z++) {
+										Location l = new Location(startBlock.getWorld(), originX + X, originY + Y, originZ - Z);
+										Material type = l.getBlock().getType();
+										if (!(type == Material.AIR || type == Material.SPONGE || type == Material.PISTON_MOVING_PIECE)) {
+											event.getPlayer().sendMessage("Ship spawn area is obstructed. Try a different spawner, or hit the clear button.");
+											return;
+										}
+									}
+								}
+							}
+						}
+						
+						if(direction.equals(BlockFace.WEST)) {
+							for (int X = 0; X < cc.getWidth(); X++) {
+								for (int Y = 0; Y < cc.getHeight(); Y++) {
+									for (int Z = 0; Z < cc.getLength(); Z++) {
+										Location l = new Location(startBlock.getWorld(), originX - X, originY + Y, originZ - Z);
+										Material type = l.getBlock().getType();
+										if (!(type == Material.AIR || type == Material.SPONGE || type == Material.PISTON_MOVING_PIECE)) {
+											event.getPlayer().sendMessage("Ship spawn area is obstructed. Try a different spawner, or hit the clear button.");
+											return;
+										}
+									}
+								}
+							}
+						}
+						
 						cc.paste(session, v, true);
 						byte data = parseWoolDataColor(s);
 						for (int X = 0; X < cc.getWidth(); X++) {
@@ -140,7 +187,7 @@ public class ShipSpawnerCore extends JavaPlugin implements Listener {
 						event.getPlayer().sendMessage("Enjoy your new ship!");
 						economy.withdrawPlayer(event.getPlayer().getName(), price);
 						event.getPlayer().sendMessage(price + " " + economy.currencyNamePlural() + " have been withdrawn from your account.");
-						event.getPlayer().getWorld().playSound(startBlock, Sound.PISTON_EXTEND, 2.0F, 1.0F);
+						event.getPlayer().getWorld().playSound(startBlock, Sound.BLOCK_PISTON_EXTEND, 2.0F, 1.0F);
 						ShipSpawnerCore.data.put(s.getLocation(), System.currentTimeMillis());
 						event.getPlayer().sendMessage("Be sure to move your ship away from the spawner quickly! After" + ChatColor.RED + " five minutes " + ChatColor.WHITE + "your ship can be deleted!");
 
