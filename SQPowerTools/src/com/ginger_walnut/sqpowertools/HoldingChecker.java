@@ -30,38 +30,6 @@ public class HoldingChecker extends Thread{
 						
 						ItemStack handItem = player.getInventory().getItemInMainHand();
 						
-						if (handItem.getType().equals(Material.DIAMOND_PICKAXE) || handItem.getType().equals(Material.DIAMOND_SPADE) || handItem.getType().equals(Material.DIAMOND_SWORD) || handItem.getType().equals(Material.DIAMOND_AXE) || handItem.getType().equals(Material.DIAMOND_HOE)) {
-							
-							boolean unbreakable = false;
-							
-							if (handItem.hasItemMeta()) {
-								
-								unbreakable = handItem.getItemMeta().spigot().isUnbreakable();
-								
-							}
-							
-							if (!unbreakable) {
-								
-								if (handItem.getDurability() >= 1541) {
-									
-									if (handItem.getDurability() >= 1551) {
-										
-										player.sendMessage(ChatColor.RED + "Your tool has broken");
-										
-										player.setItemInHand(new ItemStack(Material.AIR));
-										
-									} else {
-										
-										player.sendMessage(ChatColor.RED + "Your tool will break in " + (1551 - handItem.getDurability()) + " uses");
-										
-									}
-
-								}
-								
-							}
-							
-						}
-						
 						if (handItem.hasItemMeta()) {
 							
 							if (handItem.getItemMeta().hasLore()) {
@@ -69,9 +37,6 @@ public class HoldingChecker extends Thread{
 								List<String> lore = handItem.getItemMeta().getLore();
 								
 								if (lore.contains(ChatColor.DARK_PURPLE + "Power Tool")) {
-
-									handItem = SQPowerTools.fixPowerTool(handItem);
-									player.getInventory().setItemInMainHand(handItem);
 
 									int energy = SQPowerTools.getEnergy(handItem);
 									
@@ -114,6 +79,20 @@ public class HoldingChecker extends Thread{
 											
 										}
 										
+										for (int j = 0; j < SQPowerTools.powerToolEffects.get(pos).size(); j ++) {
+											
+											if (SQPowerTools.powerToolEffects.get(pos).get(j) != null) {
+												
+												if (SQPowerTools.powerToolEffectCases.get(pos).get(j) == 5) {
+
+													effects.add(new PotionEffect(EffectUtils.getEffectFromId(SQPowerTools.powerToolEffects.get(pos).get(j)), SQPowerTools.powerToolEffectDurations.get(pos).get(j) * 20 + 1, SQPowerTools.powerToolEffectLevels.get(pos).get(j)));
+													
+												}
+												
+											}
+											
+										}
+										
 										for (int i = 0; i < effects.size(); i ++) {
 											
 											if (player.hasPotionEffect(effects.get(i).getType())) {
@@ -141,7 +120,7 @@ public class HoldingChecker extends Thread{
 					
 					for (int i = 0; i < armorContents.length; i ++) {
 						
-						if (armorContents[i].getAmount() != 0) {
+						if (armorContents[i] != null) {
 							
 							ItemStack armor = armorContents[i];
 							
@@ -151,18 +130,9 @@ public class HoldingChecker extends Thread{
 									
 									if (armor.getItemMeta().getLore().contains(ChatColor.DARK_PURPLE + "Power Tool")) {
 										
-										armor = SQPowerTools.fixPowerTool(armor);
-										
-										armorContents[i] = armor;
-										player.getInventory().setArmorContents(armorContents);		
-										
 										int energy = SQPowerTools.getEnergy(armor);
 										
-										if (energy == 0) {
-											
-											player.sendMessage(ChatColor.RED + "Your Power Tool is out of energy");
-											
-										} else {
+										if (energy != 0) {
 											
 											List<PotionEffect> effects = new ArrayList<PotionEffect>();
 											
@@ -195,6 +165,20 @@ public class HoldingChecker extends Thread{
 															}
 															
 														}
+														
+													}
+													
+												}
+												
+											}
+											
+											for (int j = 0; j < SQPowerTools.powerToolEffects.get(pos).size(); j ++) {
+												
+												if (SQPowerTools.powerToolEffects.get(pos).get(j) != null) {
+													
+													if (SQPowerTools.powerToolEffectCases.get(pos).get(j) == 5) {
+
+														effects.add(new PotionEffect(EffectUtils.getEffectFromId(SQPowerTools.powerToolEffects.get(pos).get(j)), SQPowerTools.powerToolEffectDurations.get(pos).get(j) * 20 + 1, SQPowerTools.powerToolEffectLevels.get(pos).get(j)));
 														
 													}
 													

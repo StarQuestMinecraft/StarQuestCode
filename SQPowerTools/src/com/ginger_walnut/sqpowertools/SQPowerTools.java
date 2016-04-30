@@ -898,34 +898,38 @@ public class SQPowerTools extends JavaPlugin{
 
 			    boolean needsToChange = false;
 			    
-			    for (int i = 0; i < modifiers.size(); i ++) {
-			    	
-			    	int attributePos = 0;
-			    	
-			    	if (powerToolAttributes.get(pos).contains(modifiers.get(i).get("Name").toString().substring(1, modifiers.get(i).get("Name").toString().toCharArray().length - 1))) {
-			    		
-			    		for (int j = 0; j < powerToolAttributes.get(pos).size(); j ++) {
-			    			
-			    			if (powerToolAttributes.get(pos).get(j).equals(modifiers.get(i).get("Name").toString().substring(1, modifiers.get(i).get("Name").toString().toCharArray().length - 1))) {
-			    				
-			    				attributePos = j;
-			    				
-			    			}
-			    			
-			    		}
-
-			    		if (!powerToolAmounts.get(pos).get(attributePos).equals(Float.parseFloat(modifiers.get(i).get("Amount").toString().substring(0, modifiers.get(i).get("Amount").toString().toCharArray().length - 1)))) {
-			    			
-			    			needsToChange = true;
-			    			
-			    		}
-
-			    		
-			    	} else {
-			    		
-			    		needsToChange = true;
-			    		
-			    	}
+			    if (modifiers != null) {
+			    
+				    for (int i = 0; i < modifiers.size(); i ++) {
+				    	
+				    	int attributePos = 0;
+				    	
+				    	if (powerToolAttributes.get(pos).contains(modifiers.get(i).get("Name").toString().substring(1, modifiers.get(i).get("Name").toString().toCharArray().length - 1))) {
+				    		
+				    		for (int j = 0; j < powerToolAttributes.get(pos).size(); j ++) {
+				    			
+				    			if (powerToolAttributes.get(pos).get(j).equals(modifiers.get(i).get("Name").toString().substring(1, modifiers.get(i).get("Name").toString().toCharArray().length - 1))) {
+				    				
+				    				attributePos = j;
+				    				
+				    			}
+				    			
+				    		}
+	
+				    		if (!powerToolAmounts.get(pos).get(attributePos).equals(Float.parseFloat(modifiers.get(i).get("Amount").toString().substring(0, modifiers.get(i).get("Amount").toString().toCharArray().length - 1)))) {
+				    			
+				    			needsToChange = true;
+				    			
+				    		}
+	
+				    		
+				    	} else {
+				    		
+				    		needsToChange = true;
+				    		
+				    	}
+					    
+				    }
 				    
 			    }
 

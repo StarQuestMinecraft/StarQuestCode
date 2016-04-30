@@ -263,7 +263,7 @@ public class Events implements Listener{
 							
 								if (event.getEntity() instanceof LivingEntity) {
 									
-									LivingEntity enemy = (LivingEntity) event.getDamager();
+									LivingEntity enemy = (LivingEntity) event.getEntity();
 									
 									for (int j = 0; j < otherEffects.size(); j ++) {
 										
@@ -355,11 +355,11 @@ public class Events implements Listener{
 												
 												if (SQPowerTools.powerToolModEffects.get(pos).get(j).get(k) != null) {
 													
-													if (SQPowerTools.powerToolModEffectCases.get(pos).get(j).get(k) == 3) {
+													if (SQPowerTools.powerToolModEffectCases.get(pos).get(j).get(k) == 1) {
 
 														selfEffects.add(new PotionEffect(EffectUtils.getEffectFromId(SQPowerTools.powerToolModEffects.get(pos).get(j).get(k)), SQPowerTools.powerToolModEffectDurations.get(pos).get(j).get(k) * 20, SQPowerTools.powerToolModEffectLevels.get(pos).get(j).get(k)));
 														
-													} else if (SQPowerTools.powerToolModEffectCases.get(pos).get(j).get(k) == 4) {
+													} else if (SQPowerTools.powerToolModEffectCases.get(pos).get(j).get(k) == 2) {
 
 														otherEffects.add(new PotionEffect(EffectUtils.getEffectFromId(SQPowerTools.powerToolModEffects.get(pos).get(j).get(k)), SQPowerTools.powerToolModEffectDurations.get(pos).get(j).get(k) * 20, SQPowerTools.powerToolModEffectLevels.get(pos).get(j).get(k)));
 														
@@ -377,11 +377,11 @@ public class Events implements Listener{
 										
 										if (SQPowerTools.powerToolEffects.get(pos).get(j) != null) {
 											
-											if (SQPowerTools.powerToolEffectCases.get(pos).get(j) == 3) {
+											if (SQPowerTools.powerToolEffectCases.get(pos).get(j) == 1) {
 
 												selfEffects.add(new PotionEffect(EffectUtils.getEffectFromId(SQPowerTools.powerToolEffects.get(pos).get(j)), SQPowerTools.powerToolEffectDurations.get(pos).get(j) * 20, SQPowerTools.powerToolEffectLevels.get(pos).get(j)));
 												
-											} else if (SQPowerTools.powerToolEffectCases.get(pos).get(j) == 4) {
+											} else if (SQPowerTools.powerToolEffectCases.get(pos).get(j) == 2) {
 
 												otherEffects.add(new PotionEffect(EffectUtils.getEffectFromId(SQPowerTools.powerToolEffects.get(pos).get(j)), SQPowerTools.powerToolEffectDurations.get(pos).get(j) * 20, SQPowerTools.powerToolEffectLevels.get(pos).get(j)));
 												
@@ -405,7 +405,7 @@ public class Events implements Listener{
 								
 									if (event.getEntity() instanceof LivingEntity) {
 										
-										LivingEntity enemy = (LivingEntity) event.getDamager();
+										LivingEntity enemy = (LivingEntity) event.getEntity();
 										
 										for (int j = 0; j < otherEffects.size(); j ++) {
 											
@@ -642,11 +642,11 @@ public class Events implements Listener{
 											
 											if (SQPowerTools.powerToolModEffects.get(pos).get(i).get(j) != null) {
 												
-												if (SQPowerTools.powerToolModEffectCases.get(pos).get(i).get(j) == 1) {
+												if (SQPowerTools.powerToolModEffectCases.get(pos).get(i).get(j) == 3) {
 
 													selfEffects.add(new PotionEffect(EffectUtils.getEffectFromId(SQPowerTools.powerToolModEffects.get(pos).get(i).get(j)), SQPowerTools.powerToolModEffectDurations.get(pos).get(i).get(j) * 20 + 5, SQPowerTools.powerToolModEffectLevels.get(pos).get(i).get(j)));
 													
-												} else if (SQPowerTools.powerToolModEffectCases.get(pos).get(i).get(j) == 2) {
+												} else if (SQPowerTools.powerToolModEffectCases.get(pos).get(i).get(j) == 4) {
 
 													otherEffects.add(new PotionEffect(EffectUtils.getEffectFromId(SQPowerTools.powerToolModEffects.get(pos).get(i).get(j)), SQPowerTools.powerToolModEffectDurations.get(pos).get(i).get(j) * 20 + 5, SQPowerTools.powerToolModEffectLevels.get(pos).get(i).get(j)));
 													
@@ -664,11 +664,11 @@ public class Events implements Listener{
 									
 									if (SQPowerTools.powerToolEffects.get(pos).get(j) != null) {
 										
-										if (SQPowerTools.powerToolEffectCases.get(pos).get(j) == 1) {
+										if (SQPowerTools.powerToolEffectCases.get(pos).get(j) == 3) {
 
 											selfEffects.add(new PotionEffect(EffectUtils.getEffectFromId(SQPowerTools.powerToolEffects.get(pos).get(j)), SQPowerTools.powerToolEffectDurations.get(pos).get(j) * 20, SQPowerTools.powerToolEffectLevels.get(pos).get(j)));
 											
-										} else if (SQPowerTools.powerToolEffectCases.get(pos).get(j) == 2) {
+										} else if (SQPowerTools.powerToolEffectCases.get(pos).get(j) == 4) {
 
 											otherEffects.add(new PotionEffect(EffectUtils.getEffectFromId(SQPowerTools.powerToolEffects.get(pos).get(j)), SQPowerTools.powerToolEffectDurations.get(pos).get(j) * 20, SQPowerTools.powerToolEffectLevels.get(pos).get(j)));
 											
