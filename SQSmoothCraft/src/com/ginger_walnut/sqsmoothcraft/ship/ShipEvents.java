@@ -20,6 +20,7 @@ import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
+import org.bukkit.entity.Snowball;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
@@ -168,6 +169,24 @@ public class ShipEvents implements Listener {
 					
 				}
 				
+			} else {
+				if (event.getEntity() instanceof ArmorStand) {
+					
+					ArmorStand stand = (ArmorStand) event.getEntity();
+					
+					if (!stand.isVisible()) {
+						
+						if (projectile instanceof Snowball) {
+							
+							stand.remove();
+							stand = null;
+							
+						}
+						
+					}
+				
+				}
+				
 			}
 			
 		}
@@ -201,6 +220,12 @@ public class ShipEvents implements Listener {
 			}
 			
 		}
+		
+		if (eAction.equals(Action.RIGHT_CLICK_BLOCK)) {
+			
+			System.out.print(event.getClickedBlock().getData());
+			
+		}
 
 	}
 	
@@ -215,7 +240,7 @@ public class ShipEvents implements Listener {
 				
 				if (SQSmoothCraft.stoppedShipMap.contains(shipBlock.getShip())) {
 					
-					if (!shipBlock.getShip().getMainBlock().stand.isDead()) {
+					if (shipBlock.getShip().getMainBlock().stand != null) {
 						
 						event.setCancelled(true);
 						

@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.md_5.bungee.api.ChatColor;
-import net.md_5.bungee.api.chat.TextComponent;
 import net.minecraft.server.v1_9_R1.EntityPlayer;
 import net.minecraft.server.v1_9_R1.PacketPlayOutEntityDestroy;
 import net.minecraft.server.v1_9_R1.PacketPlayOutPlayerInfo;
@@ -18,17 +17,17 @@ import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.Dropper;
+import org.bukkit.boss.BarColor;
+import org.bukkit.boss.BarStyle;
+import org.bukkit.boss.BossBar;
 import org.bukkit.craftbukkit.v1_9_R1.entity.CraftPlayer;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Fireball;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.util.Vector;
-import org.inventivetalent.bossbar.BossBar;
-import org.inventivetalent.bossbar.BossBarAPI;
 
 import us.higashiyama.george.SQSpace.SQSpace;
 
@@ -104,10 +103,14 @@ public class Ship {
 		
 		acceleration = maxAcceleration;
 		
-		speedBar = BossBarAPI.addBar(captain, new TextComponent("Speed"), BossBarAPI.Color.BLUE, BossBarAPI.Style.NOTCHED_10, 0.0f);
+		speedBar = Bukkit.createBossBar("Speed", BarColor.BLUE, BarStyle.SEGMENTED_10);
+		speedBar.addPlayer(captain);
+		speedBar.setProgress(0.0);
 		speedBar.setVisible(true);
 		
-		fuelBar = BossBarAPI.addBar(captain, new TextComponent("Fuel"), BossBarAPI.Color.RED, BossBarAPI.Style.NOTCHED_10, 1.0f);
+		fuelBar = Bukkit.createBossBar("Fuel", BarColor.RED, BarStyle.SEGMENTED_10);
+		fuelBar.addPlayer(captain);
+		fuelBar.setProgress(0.0);
 		fuelBar.setVisible(true);
 		
 		fuel = firstFuel;
@@ -273,7 +276,7 @@ public class Ship {
 		
 		if (shipBlock.health <= 0) {
 			
-			if (shipBlock.stand.getHelmet().getType().equals(Material.COAL_BLOCK)) {
+			if (shipBlock.stand.getHelmet().getType().equals(Material.getMaterial(SQSmoothCraft.config.getString("weapons.cannon.material")))) {
 				
 				shipBlock.ship.cannonList.remove(shipBlock);
 				
@@ -316,6 +319,8 @@ public class Ship {
 			acceleration = maxSpeed / 20;
 			
 			shipBlock.stand.remove();
+			shipBlock.stand = null;
+			shipBlock = null;
 			
 		}
 		
@@ -394,7 +399,16 @@ public class Ship {
 				
 				blocks.add(location.getWorld().getBlockAt(blockLocation));		
 				materials.add(block.stand.getHelmet().getType());	
-				durabilitys.add(block.stand.getHelmet().getDurability());
+				
+				if (block.type.equals(BlockType.NORMAL)) {
+				
+					durabilitys.add(block.stand.getHelmet().getDurability());
+				
+				} else if (block.type.equals(BlockType.SLAB) || block.type.equals(BlockType.DIRECTIONAL)) {
+					
+					durabilitys.add((Short) block.data);
+					
+				}
 				
 			}
 			
@@ -406,7 +420,16 @@ public class Ship {
 				
 				blocks.add(location.getWorld().getBlockAt(blockLocation));		
 				materials.add(block.stand.getHelmet().getType());	
-				durabilitys.add(block.stand.getHelmet().getDurability());
+
+				if (block.type.equals(BlockType.NORMAL)) {
+					
+					durabilitys.add(block.stand.getHelmet().getDurability());
+				
+				} else if (block.type.equals(BlockType.SLAB) || block.type.equals(BlockType.DIRECTIONAL)) {
+					
+					durabilitys.add((Short) block.data);
+					
+				}
 				
 			}
 			
@@ -418,7 +441,16 @@ public class Ship {
 				
 				blocks.add(location.getWorld().getBlockAt(blockLocation));		
 				materials.add(block.stand.getHelmet().getType());	
-				durabilitys.add(block.stand.getHelmet().getDurability());
+
+				if (block.type.equals(BlockType.NORMAL)) {
+					
+					durabilitys.add(block.stand.getHelmet().getDurability());
+				
+				} else if (block.type.equals(BlockType.SLAB) || block.type.equals(BlockType.DIRECTIONAL)) {
+					
+					durabilitys.add((Short) block.data);
+					
+				}
 				
 			}
 			
@@ -430,7 +462,16 @@ public class Ship {
 				
 				blocks.add(location.getWorld().getBlockAt(blockLocation));		
 				materials.add(block.stand.getHelmet().getType());	
-				durabilitys.add(block.stand.getHelmet().getDurability());
+
+				if (block.type.equals(BlockType.NORMAL)) {
+					
+					durabilitys.add(block.stand.getHelmet().getDurability());
+				
+				} else if (block.type.equals(BlockType.SLAB) || block.type.equals(BlockType.DIRECTIONAL)) {
+					
+					durabilitys.add((Short) block.data);
+					
+				}
 				
 			}
 			
@@ -493,12 +534,17 @@ public class Ship {
 			for (ShipBlock shipBlock : blockList) {
 				
 				shipBlock.stand.remove();
+				shipBlock.stand = null;
+				shipBlock = null;
 				
 			}
 
 			if (remove) {
 				
 				if (SQSmoothCraft.shipMap.containsKey(captain.getUniqueId())) {
+					
+					Ship ship = SQSmoothCraft.shipMap.get(captain.getUniqueId());
+					ship = null;
 					
 					SQSmoothCraft.shipMap.remove(captain.getUniqueId());
 					
@@ -566,8 +612,16 @@ public class Ship {
 		
 		SQSmoothCraft.knapsackMap.get(captain.getUniqueId()).unpack(captain);
 		
-		mainBlock.stand.eject();
-		
+		if (mainBlock != null) {
+			
+			if (mainBlock.stand != null) {
+				
+				mainBlock.stand.eject();
+				
+			}
+			
+		}
+
 	}
 	
 	public void fireMissles() {

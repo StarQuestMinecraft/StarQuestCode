@@ -25,6 +25,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import com.dibujaron.cardboardbox.Knapsack;
 import com.ginger_walnut.sqsmoothcraft.gui.Gui;
 import com.ginger_walnut.sqsmoothcraft.gui.MainGui;
+import com.ginger_walnut.sqsmoothcraft.ship.BlockType;
 import com.ginger_walnut.sqsmoothcraft.ship.Ship;
 import com.ginger_walnut.sqsmoothcraft.ship.ShipBlock;
 import com.ginger_walnut.sqsmoothcraft.ship.ShipEvents;
@@ -49,6 +50,7 @@ public class SQSmoothCraft extends JavaPlugin{
 	public static List<Material> shipBlockTypes = new ArrayList<Material>();
 	public static List<Double> shipBlockHealths = new ArrayList<Double>();
 	public static List<Double> shipBlockWeights = new ArrayList<Double>();
+	public static List<BlockType> shipBlockAdjustments = new ArrayList<BlockType>();
 	
 	public static FileConfiguration config = null;
 
@@ -62,6 +64,7 @@ public class SQSmoothCraft extends JavaPlugin{
 	public static List<String> guiNames = new ArrayList<String>();
 	
 	public static HashMap<Player, Gui> currentGui = new HashMap<Player, Gui>();
+	public static HashMap<UUID, PlayerOptions> currentOptions = new HashMap<UUID, PlayerOptions>();
 	
 	@Override
 	public void onDisable() {
@@ -147,12 +150,13 @@ public class SQSmoothCraft extends JavaPlugin{
 			shipBlockTypes.add(Material.getMaterial(config.getString("blocks." + detectableBlock + ".material")));
 			shipBlockHealths.add(config.getDouble("blocks." + detectableBlock + ".hp"));
 			shipBlockWeights.add(config.getDouble("blocks." + detectableBlock + ".weight"));
+			shipBlockAdjustments.add(BlockType.getBlockType(config.getString("blocks." + detectableBlock + ".type")));
 			
 		}
-		
+
 		(new ShipMovement()).run();
 		(new ShipTasks()).run();
-		
+
 	}
 	
 	public static Plugin getPluginMain() {

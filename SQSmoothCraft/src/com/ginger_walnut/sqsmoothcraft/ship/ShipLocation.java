@@ -6,9 +6,9 @@ import org.bukkit.World;
 
 public class ShipLocation {
 
-	int x = 0;
-	int y = 0;
-	int z = 0;
+	double x = 0;
+	double y = 0;
+	double z = 0;
 	
 	ShipBlock mainShipBlock = null;
 	
@@ -48,19 +48,19 @@ public class ShipLocation {
 		
 	}
 	
-	public int getX () {
+	public double getX () {
 		
 		return x;
 		
 	}
 	
-	public int getY () {
+	public double getY () {
 		
 		return y;
 		
 	}
 	
-	public int getZ () {
+	public double getZ () {
 		
 		return z;
 		

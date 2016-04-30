@@ -22,11 +22,39 @@ public class ShipBlock {
 	public double health = 1;
 	public double weight = 1;
 	
-	public ShipBlock (Location location, ShipLocation shipLocation, ItemStack block) {
+	public BlockType type;
+	
+	public Object data;
+	
+	public ShipBlock (Location location, ShipLocation shipLocation, ItemStack block, BlockType firstType) {
 		
 		loc = shipLocation;
 
 		mainBlock = this;
+		
+		if (firstType.equals(BlockType.SLAB)) {
+			
+			data = block.getDurability();
+			
+			block.setDurability((short)0);
+			
+			if ((short) data >= 8) {
+				
+				loc.y = loc.y + .5;
+				
+			}
+			
+		}
+		
+		if (firstType.equals(BlockType.DIRECTIONAL)) {
+			
+			data = block.getDurability();
+			
+			block.setDurability((short)0);
+			
+		}
+		
+		type = firstType;
 		
 		if (location != null) {
 			
@@ -69,11 +97,35 @@ public class ShipBlock {
 	
 	}
 	
-	public ShipBlock (ShipLocation shipLocation, ItemStack block, ShipBlock mainShipBlock) {
+	public ShipBlock (ShipLocation shipLocation, ItemStack block, ShipBlock mainShipBlock, BlockType firstType) {
 		
 		loc = shipLocation;
 		
 		mainBlock = mainShipBlock;
+		
+		if (firstType.equals(BlockType.SLAB)) {
+			
+			data = block.getDurability();
+			
+			block.setDurability((short)0);
+			
+			if ((short) data >= 8) {
+				
+				loc.y = loc.y + .5;
+				
+			}
+			
+		}
+		
+		if (firstType.equals(BlockType.DIRECTIONAL)) {
+			
+			data = block.getDurability();
+			
+			block.setDurability((short)0);
+			
+		}
+		
+		type = firstType;
 		
 		stand = (ArmorStand) shipLocation.getWorld().spawnEntity((shipLocation.toLocation(SQSmoothCraft.nextShipLocation, SQSmoothCraft.nextShipYawCos, SQSmoothCraft.nextShipYawSin, SQSmoothCraft.nextShipPitchCos, SQSmoothCraft.nextShipPitchSin)), EntityType.ARMOR_STAND);
 			
@@ -130,7 +182,15 @@ public class ShipBlock {
 	
 	public Location getLocation () {
 		
-		return stand.getLocation();
+		if (stand != null) {
+		
+			return stand.getLocation();
+		
+		} else {
+			
+			return loc.toLocation(ship.getLocation(), ship.pointingDirection.yawCos, ship.pointingDirection.yawSin, ship.pointingDirection.pitchCos, ship.pointingDirection.pitchSin);
+			
+		}
 		
 	}
 	

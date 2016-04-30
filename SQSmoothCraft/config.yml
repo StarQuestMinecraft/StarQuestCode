@@ -32,35 +32,64 @@ blocks:
     material: WOOL
     hp: 30
     weight: 1
+    type: normal
   glass:
     material: GLASS
     hp: 20
     weight: 1
-  coal:
+    type: normal
+  piston:
     material: PISTON_BASE
     hp: 50
     weight: 20
+    type: directional
   dispenser:
     material: DISPENSER
     hp: 50
     weight: 20
+    type: directional
   reactor:
     material: DROPPER
     hp: 30
     weight: 1
+    type: directional
   diamond:
     material: DIAMOND_BLOCK
     hp: 200
     weight: 20
+    type: normal
   iron:
     material: IRON_BLOCK
     hp: 120
     weight: 10
+    type: normal
   clay:
     material: STAINED_CLAY
     hp: 70
     weight: 5
+    type: normal
   sea_Lantern:
     material: SEA_LANTERN
     hp: 20
     weight: 1
+    type: normal
+  stone_slab:
+    material: WOOD_STEP
+    hp: 40
+    weight: 2
+    type: slab
+  sign1:
+    material: SIGN
+    hp: 30
+    weight: 1
+    type: normal
+  sign2:
+    material: WALL_SIGN
+    hp: 30
+    weight: 1
+    type: normal
+  sign3:
+    material: SIGN_POST
+    hp: 30
+    weight: 1
+    type: normal
