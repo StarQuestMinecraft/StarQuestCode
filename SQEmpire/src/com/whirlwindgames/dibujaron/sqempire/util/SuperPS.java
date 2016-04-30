@@ -35,6 +35,20 @@ public class SuperPS {
 			e.printStackTrace();
 		}
 	}
+	public void setBoolean(int i, boolean g) {
+		try {
+			ps.setBoolean(i, g);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+	public void setLong(int i, long timestamp) {
+		try {
+			ps.setLong(i, timestamp);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
 	
 	public void setDuplicate(int firstIndex, int value){
 		try {
@@ -61,4 +75,6 @@ public class SuperPS {
 			e.printStackTrace();
 		}
 	}
+
+
 }

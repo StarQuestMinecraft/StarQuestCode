@@ -51,7 +51,6 @@ public class EntityListener implements Listener {
 		if ((event.getEntity().getType() == EntityType.WITHER) || (event.getEntity().getType() == EntityType.WITHER_SKULL || event.getEntity().getType() == EntityType.ARMOR_STAND)) {
 			return;
 		}
-
 		if (event.getSpawnReason() == CreatureSpawnEvent.SpawnReason.BREEDING) {
 			System.out.println("[SQPassives] breeding!");
 			event.getEntity().setCustomName(this.p.getRandomName(event.getEntity()));

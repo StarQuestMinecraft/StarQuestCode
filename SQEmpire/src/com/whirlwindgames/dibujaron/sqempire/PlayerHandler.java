@@ -35,12 +35,13 @@ public class PlayerHandler implements Listener{
 	
 	private void deductPowerOffline(){
 		AsyncUtil.crashIfNotAsync();
-		LinkedList<EmpirePlayer> playersToDeduct = EmpirePlayer.getPlayersOfflineMoreThan(SQEmpire.thisPlanet(), Settings.SAFE_POWERLOSS_TIME);
+		return;
+		/*LinkedList<EmpirePlayer> playersToDeduct = EmpirePlayer.getPlayersOfflineMoreThan(SQEmpire.thisPlanet(), Settings.SAFE_POWERLOSS_TIME);
 		for(EmpirePlayer p : playersToDeduct){
 			int currentPower = p.getPowerOnPlanet(SQEmpire.thisPlanet());
 			int newPower = currentPower - Settings.POWER_LOSS_PER_DAY;
 			if(newPower < 0) newPower = 0;
 			p.updatePowerOnPlanet(SQEmpire.thisPlanet(), newPower);
-		}
+		}*/
 	}
 }
