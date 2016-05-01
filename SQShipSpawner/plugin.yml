@@ -1,0 +1,4 @@
+name: ShipSpawner
+main: com.dibujaron.ShipSpawner.ShipSpawnerCore
+version: 1.2.0
+depend: [WorldEdit]

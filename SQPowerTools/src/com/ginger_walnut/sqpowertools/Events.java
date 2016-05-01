@@ -307,7 +307,7 @@ public class Events implements Listener{
 			
 			for (int i = 0; i < armorContents.length; i ++) {
 				
-				if (armorContents[i].getAmount() != 0) {
+				if (armorContents[i] != null) {
 					
 					ItemStack armor = armorContents[i];
 					
@@ -443,7 +443,7 @@ public class Events implements Listener{
 			
 			for (int i = 0; i < armorContents.length; i ++) {
 				
-				if (armorContents[i].getAmount() != 0) {
+				if (armorContents[i] != null) {
 					
 					ItemStack armor = armorContents[i];
 					
