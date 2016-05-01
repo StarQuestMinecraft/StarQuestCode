@@ -321,7 +321,7 @@ public class ShipMovement extends Thread {
 									
 							}
 								
-							shipBlocks.get(j).ship.damage(shipBlocks.get(j), speed * 500, false);
+							shipBlocks.get(j).ship.damage(shipBlocks.get(j), speed * 500, false, null);
 								
 						}
 						
@@ -464,7 +464,7 @@ public class ShipMovement extends Thread {
 										
 								}
 									
-								shipBlocks.get(j).ship.damage(shipBlocks.get(j), speed * 500, false);
+								shipBlocks.get(j).ship.damage(shipBlocks.get(j), speed * 500, false, null);
 									
 							}
 

@@ -15,7 +15,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import com.ginger_walnut.sqsmoothcraft.SQSmoothCraft;
 
 public class ShipUtils {
-
+	
 	public static ShipBlock getShipBlockFromArmorStand(ArmorStand stand) {
 		
 		List<ShipBlock> shipBlocks = new ArrayList<ShipBlock>();
@@ -70,15 +70,15 @@ public class ShipUtils {
 		
 		List<EntityPlayer> npcs = new ArrayList<EntityPlayer>();
 		
-			for (Ship ship : SQSmoothCraft.shipMap.values()) {
+		for (Ship ship : SQSmoothCraft.shipMap.values()) {
+			
+			if (ship.thirdPersonPlayer != null) {
 				
-				if (ship.thirdPersonPlayer != null) {
-					
-					npcs.add(ship.thirdPersonPlayer);
-					
-				}
+				npcs.add(ship.thirdPersonPlayer);
 				
 			}
+			
+		}
 		
 		return npcs;
 		
@@ -189,7 +189,7 @@ public class ShipUtils {
 		
 		player.getInventory().setItem(7, directionLock);
 		SQSmoothCraft.controlItems.add(directionLock);
-				
+		
 		ItemStack menu = new ItemStack(Material.REDSTONE);
 		ItemMeta menuMeta = menu.getItemMeta();
 		
@@ -205,6 +205,17 @@ public class ShipUtils {
 		
 		player.getInventory().setItem(8, menu);
 		SQSmoothCraft.controlItems.add(menu);
+		
+		ItemStack emFieldInfo = new ItemStack(Material.STAINED_GLASS);
+		
+		ArrayList<String> lore = new ArrayList<String>();
+		lore.add(ChatColor.DARK_PURPLE + "Click this to show the current strength of the EM field");
+		lore.add(ChatColor.RED + "" + ChatColor.MAGIC + "Contraband");
+		
+		emFieldInfo = ShipUtils.createSpecialItem(emFieldInfo, lore, "EM Field Info");
+		
+		player.getInventory().setItem(6, emFieldInfo);
+		SQSmoothCraft.controlItems.add(emFieldInfo);
 		
 		player.getInventory().setHeldItemSlot(0);
 		
@@ -242,6 +253,7 @@ public class ShipUtils {
 		
 	}
 	
+	@SuppressWarnings("unused")
 	private static float square (float number, int power) {
 		
 		

@@ -1,0 +1,10 @@
+queue: false
+waitserver: waitroom
+standardLimit: 20
+codes:
+    testcode:
+        hours: 5
+        expiry: 0
+    testcode2:
+        hours: 10
+        expiry: 0

@@ -1,6 +1,5 @@
 package com.ginger_walnut.sqsmoothcraft.ship;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
 
@@ -12,8 +11,7 @@ import net.minecraft.server.v1_9_R1.PacketPlayOutPlayerInfo;
 import net.minecraft.server.v1_9_R1.PacketPlayOutPlayerInfo.EnumPlayerInfoAction;
 import net.minecraft.server.v1_9_R1.PlayerConnection;
 
-import org.bukkit.Location;
-import org.bukkit.Material;
+import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_9_R1.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_9_R1.entity.CraftPlayer;
 import org.bukkit.entity.ArmorStand;
@@ -30,6 +28,7 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -41,7 +40,7 @@ import org.bukkit.metadata.MetadataValue;
 
 import com.dibujaron.cardboardbox.Knapsack;
 import com.ginger_walnut.sqsmoothcraft.SQSmoothCraft;
-import com.ginger_walnut.sqsmoothcraft.gui.options.OptionGui;
+import com.martinjonsson01.sqsmoothcraft.missile.MissileGUI;
 
 public class ShipEvents implements Listener {
 	
@@ -67,7 +66,7 @@ public class ShipEvents implements Listener {
 				arrow.getLocation().getWorld().createExplosion(arrow.getLocation(), (float) SQSmoothCraft.config.getDouble("weapons.cannon.explosion power"));
 				
 			}
-	
+			
 		}
 		
 	}
@@ -78,7 +77,7 @@ public class ShipEvents implements Listener {
 		if (event.getDamager() instanceof Projectile) {
 			
 			Projectile projectile = (Projectile) event.getDamager();
-
+			
 			if (projectile.hasMetadata("no_pickup")) {
 				
 				if (event.getDamager() instanceof Arrow) {
@@ -90,7 +89,7 @@ public class ShipEvents implements Listener {
 						arrow.getLocation().getWorld().createExplosion(arrow.getLocation(), (float) SQSmoothCraft.config.getDouble("weapons.cannon.explosion power"));
 						
 					}
-			
+					
 				}
 				
 				if (event.getEntity() instanceof ArmorStand) {
@@ -102,6 +101,18 @@ public class ShipEvents implements Listener {
 					if (shipBlock != null) {
 						
 						if (!shipBlock.invincible) {
+							
+							if(projectile.hasMetadata("type")){
+								
+								List<MetadataValue> mData = projectile.getMetadata("type");
+								
+								if(mData.get(0).asString().equals("emp")){
+									//Makes the captain of the ship exit the ship
+									ShipUtils.getShipBlockFromArmorStand(stand).getShip().exit(true);
+								}
+								
+								
+							}
 							
 							double shipDamage = 0;
 							
@@ -127,7 +138,14 @@ public class ShipEvents implements Listener {
 								
 							}
 							
-							shipBlock.ship.damage(shipBlock, shipDamage, carryOver);
+							if(projectile.hasMetadata("type")){
+								List<MetadataValue> mData = projectile.getMetadata("type");
+								if(mData.get(0).toString().equals("explosive")) {
+									shipDamage = shipDamage + 100;
+								}
+							}
+							
+							shipBlock.ship.damage(shipBlock, shipDamage, carryOver, projectile.getLocation());
 							
 							projectile.remove();
 							
@@ -140,7 +158,7 @@ public class ShipEvents implements Listener {
 					}
 					
 				} else {
-				
+					
 					double damage = 0;
 					
 					boolean anyDamage = false;
@@ -164,7 +182,7 @@ public class ShipEvents implements Listener {
 						event.setDamage(damage);
 						
 					}
-
+					
 					projectile.remove();
 					
 				}
@@ -190,7 +208,7 @@ public class ShipEvents implements Listener {
 			}
 			
 		}
-
+		
 	}
 	
 	@EventHandler
@@ -204,7 +222,7 @@ public class ShipEvents implements Listener {
 			if (SQSmoothCraft.shipMap.containsKey(player.getUniqueId())) {
 				
 				Ship ship = SQSmoothCraft.shipMap.get(player.getUniqueId());
-			
+				
 				ship.leftClickControls();
 				
 			}
@@ -214,19 +232,13 @@ public class ShipEvents implements Listener {
 			if (SQSmoothCraft.shipMap.containsKey(player.getUniqueId())) {
 				
 				Ship ship = SQSmoothCraft.shipMap.get(player.getUniqueId());
-			
-				ship.rightClickControls();
+				
+				ship.rightClickControls(player);
 				
 			}
 			
 		}
 		
-		if (eAction.equals(Action.RIGHT_CLICK_BLOCK)) {
-			
-			System.out.print(event.getClickedBlock().getData());
-			
-		}
-
 	}
 	
 	@EventHandler
@@ -256,7 +268,7 @@ public class ShipEvents implements Listener {
 						shipBlock.ship.fuelBar.setVisible(true);
 						
 						Knapsack knapsack = new Knapsack(event.getPlayer());
-					
+						
 						SQSmoothCraft.knapsackMap.put(event.getPlayer().getUniqueId(), knapsack);
 						
 						ShipUtils.setPlayerShipInventory(event.getPlayer());
@@ -268,13 +280,13 @@ public class ShipEvents implements Listener {
 						boolean succesful = shipBlock.ship.blockify(true);
 						
 						if (!succesful) {
-						
+							
 							for (ShipBlock block : shipBlock.ship.blockList) {
-							
-							block.getLocation().getWorld().dropItem(block.getLocation(), block.getArmorStand().getHelmet());
-							
-							block.getArmorStand().remove();
-							
+								
+								block.getLocation().getWorld().dropItem(block.getLocation(), block.getArmorStand().getHelmet());
+								
+								block.getArmorStand().remove();
+								
 							}
 							
 						}
@@ -291,14 +303,14 @@ public class ShipEvents implements Listener {
 						
 						Ship ship = SQSmoothCraft.shipMap.get(player.getUniqueId());
 						
-						if (ship.rightClickControls()) {
+						if (ship.rightClickControls(player)) {
 							
 							event.setCancelled(true);
 							
 						}
-
+						
 					}
-			
+					
 				}
 				
 			}
@@ -313,15 +325,15 @@ public class ShipEvents implements Listener {
 		if(event.getItem().hasMetadata("no_pickup")) {
 			
 			event.setCancelled(true);
-
-    	}
+			
+		}
 		
 		if (SQSmoothCraft.shipMap.containsKey(event.getPlayer().getUniqueId())) {
 			
 			event.setCancelled(true);
 			
 		}
-
+		
 	}
 	
 	@EventHandler
@@ -337,7 +349,7 @@ public class ShipEvents implements Listener {
 	
 	@EventHandler
 	public void onPlayerJoin(PlayerJoinEvent event) {
-
+		
 		PlayerConnection connection = ((CraftPlayer) event.getPlayer()).getHandle().playerConnection;
 		
 		List<EntityPlayer> npcs = ShipUtils.getAllShipNpcs();
@@ -349,10 +361,10 @@ public class ShipEvents implements Listener {
 			
 			connection.sendPacket(new PacketPlayOutAttachEntity(npc, ((CraftEntity) ShipUtils.getShipFromNpc(npc).getMainBlock().getArmorStand()).getHandle()));
 			
-//			event.getPlayer().hidePlayer(ShipUtils.getShipFromNpc(npc).getCaptain());
+			//			event.getPlayer().hidePlayer(ShipUtils.getShipFromNpc(npc).getCaptain());
 			
 		}
-	
+		
 	}
 	
 	@EventHandler
@@ -376,7 +388,7 @@ public class ShipEvents implements Listener {
 			event.setCancelled(true);
 			
 		}
-
+		
 		ItemStack item = null;
 		
 		item = event.getCurrentItem();
@@ -389,8 +401,11 @@ public class ShipEvents implements Listener {
 		
 		if (item != null) {
 			
+			
 			if (SQSmoothCraft.guiNames.contains(event.getInventory().getName())) {
-	
+				
+				if(event.getCurrentItem() == null) return;
+				
 				if (event.getCurrentItem().hasItemMeta()) {
 					
 					if (event.getCurrentItem().hasItemMeta()) {
@@ -403,22 +418,58 @@ public class ShipEvents implements Listener {
 								
 								if (SQSmoothCraft.currentGui.containsKey(event.getWhoClicked())) {
 									
+
 									SQSmoothCraft.currentGui.get(event.getWhoClicked()).clicked(event.getCurrentItem().getItemMeta().getDisplayName(), event.getSlot());
+
 									
 								}
-
+								
 							}
 							
 						}
 						
 					}
-	
+					
 				}
 				
 			}
 			
 		}
+		
+	}
 	
+	@EventHandler
+	public void onInventoryClose(final InventoryCloseEvent e) {
+		
+		if (e.getInventory().getName() == null)
+			return;
+			
+		if (e.getInventory().getName().equals("Missile Recipe")) {
+			
+			if (e.getInventory().getItem(0) == null)
+				return;
+				
+			if (e.getInventory().getItem(0).getItemMeta().getDisplayName().equalsIgnoreCase(ChatColor.GOLD + "Heat Seeking Missile") ||
+					e.getInventory().getItem(0).getItemMeta().getDisplayName().equalsIgnoreCase(ChatColor.GOLD + "Heat Seeking EMP Missile") ||
+					e.getInventory().getItem(0).getItemMeta().getDisplayName().equalsIgnoreCase(ChatColor.GOLD + "Heat Seeking Explosive Missile")) {
+					
+				Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(SQSmoothCraft.getPluginMain(), new Runnable() {
+					
+					@Override
+					public void run() {
+						
+						Player p = (Player) e.getPlayer();
+						MissileGUI gui = new MissileGUI(p);
+						e.getInventory().clear();
+						gui.open();
+						
+					}
+					
+				}, 1);
+				
+			}
+		}
+		
 	}
 	
 	@EventHandler
@@ -454,7 +505,7 @@ public class ShipEvents implements Listener {
 			}
 			
 		}
-
+		
 	}
 	
 	@EventHandler
@@ -468,7 +519,7 @@ public class ShipEvents implements Listener {
 			ship.blockify(true);
 			
 		}
-
+		
 	}
 	
 }

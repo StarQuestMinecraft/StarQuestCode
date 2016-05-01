@@ -27,6 +27,9 @@ utilites:
     fuel per coal: 100
     fuel per second: 5
     catalyst: EYE_OF_ENDER
+  emFieldGenerator:
+    material: GOLD_BLOCK
+    fieldPower: 1000.0
 blocks:
   wool:
     material: WOOL
@@ -53,6 +56,10 @@ blocks:
     hp: 30
     weight: 1
     type: directional
+  emFieldGenerator:
+    material: GOLD_BLOCK
+    hp: 1
+    weight: 20
   diamond:
     material: DIAMOND_BLOCK
     hp: 200
