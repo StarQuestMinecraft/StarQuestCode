@@ -8,6 +8,7 @@ import java.util.List;
 import net.countercraft.movecraft.listener.InteractListener;
 import net.milkbowl.vault.economy.Economy;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -61,7 +62,7 @@ public class ShipSpawnerCore extends JavaPlugin implements Listener {
 		if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
 			if (event.getClickedBlock().getType() == Material.WALL_SIGN) {
 				Sign s = (Sign) event.getClickedBlock().getState();
-				if (s.getLine(0).equals("[shipspawner]") && event.getPlayer().hasPermission("ShipSpawner.create")) {
+				if (s.getLine(0).equals("[shipspawner]")) {
 					String schematic = s.getLine(1);
 					String priceStr = s.getLine(2);
 					int price = Integer.parseInt(priceStr);
@@ -74,7 +75,7 @@ public class ShipSpawnerCore extends JavaPlugin implements Listener {
 				}
 				if (s.getLine(0).equals(ChatColor.AQUA + "Ship Spawner")) {
 					BlockFace direction = DirectionUtils.getSignDirection(event.getClickedBlock());
-					Location startBlock = s.getBlock().getRelative(direction, 2).getLocation();
+					final Location startBlock = s.getBlock().getRelative(direction, 2).getLocation();
 					BukkitWorld world = new BukkitWorld(startBlock.getWorld());
 					EditSession session = new EditSession(world, 1000);
 					WorldEditPlugin wep = ((WorldEditPlugin) getServer().getPluginManager().getPlugin("WorldEdit"));
@@ -99,10 +100,10 @@ public class ShipSpawnerCore extends JavaPlugin implements Listener {
 						int originY = startBlock.getBlockY();
 						int originZ = startBlock.getBlockZ();
 						
-						Vector v2 = generateFarPointVector(v,cc, startBlock, direction);
+						Vector v2 = generateFarPointVector(cc, startBlock, direction);
 						
-						CuboidSelection sr = new CuboidSelection(startBlock.getWorld(), v, v2);
-						Location minPoint = sr.getMinimumPoint();
+						final CuboidSelection sr = new CuboidSelection(startBlock.getWorld(), v, v2);
+						final Location minPoint = sr.getMinimumPoint();
 						for (int X = 0; X < sr.getWidth(); X++) {
 							for (int Y = 0; Y < sr.getHeight(); Y++) {
 								for (int Z = 0; Z < sr.getLength(); Z++) {
@@ -116,43 +117,53 @@ public class ShipSpawnerCore extends JavaPlugin implements Listener {
 								}
 							}
 						}
-						Vector mp = new Vector(minPoint.getX(), minPoint.getY(), minPoint.getZ());
+						
+						Vector mp = new Vector(s.getBlock().getX(), s.getBlock().getY(), s.getBlock().getZ());
 						cc.paste(session, mp, true);
 						for (int X = 0; X < sr.getWidth(); X++) {
 							for (int Y = 0; Y < sr.getHeight(); Y++) {
 								for (int Z = 0; Z < sr.getLength(); Z++) {
 									Location l = new Location(startBlock.getWorld(), minPoint.getX() + X, minPoint.getY() + Y, minPoint.getZ() + Z);
 									Block b = l.getBlock();
-									b.setType(Material.STONE);
 									Material type = b.getType();
 									if (type == Material.STONE && b.getData() != 0) {
 										System.out.println("Found stone!");
-										b.setType(Material.WALL_SIGN);
+										byte stoneData = b.getData();
+
+										int toSet = s.getBlock().getData();
+										if (stoneData == 1){
+											int sd = toSet;
+											if(sd == 4){
+												toSet = 5;
+											}
+											else if(sd == 5){
+												toSet = 4;
+											}
+											else if(sd == 2){
+												toSet = 3;
+											}
+											else if(sd == 3){
+												toSet = 2;
+											}
+										}
+										b.setTypeIdAndData(68, (byte) toSet, false);
 										Sign ss = (Sign) b.getState();
-										byte data = b.getData();
-										if(data == 1){
+										if(stoneData == 1){
 											ss.setLine(0, "Warship");
 											String name = event.getPlayer().getName();
 											if (name.length() > 15) name = name.substring(0, 15);
 											ss.setLine(1, name);
-										} else if(data == 3){
+											ss.update();
+										} else if(stoneData == 3){
 											ss.setLine( 0, "\\  ||  /" );
 											ss.setLine( 1, "==      ==" );
 											ss.setLine( 2, "/  ||  \\" );
-										} else if(data == 5){
+											ss.update();
+										} else if(stoneData == 5){
 											ss.setLine(0, ChatColor.BLUE + "AUTOPILOT");
 											ss.setLine(1, ChatColor.GREEN + "{DISABLED}");
+											ss.update();
 										}
-										ss.update();
-										byte toSet = data;
-										if(data == 1){
-											byte sd = s.getBlock().getData();
-											if(sd == 4) toSet = 5;
-											else if(sd == 5) toSet = 4;
-											else if(sd == 2) toSet = 3;
-											else if(sd == 3) toSet = 2;
-										}
-										b.setData(toSet);
 									}
 								}
 							}
@@ -244,7 +255,7 @@ public class ShipSpawnerCore extends JavaPlugin implements Listener {
 				int originY = startBlock.getBlockY();
 				int originZ = startBlock.getBlockZ();
 				
-				Vector v2 = generateFarPointVector(v,cc, startBlock, direction);
+				Vector v2 = generateFarPointVector(cc, startBlock, direction);
 				
 				CuboidSelection sr = new CuboidSelection(startBlock.getWorld(), v, v2);
 				Location minPoint = sr.getMinimumPoint();
@@ -275,16 +286,27 @@ public class ShipSpawnerCore extends JavaPlugin implements Listener {
 		}
 	}
 	
-	private Vector generateFarPointVector(Vector v, CuboidClipboard cc, Location o, BlockFace direction){
-		double x = cc.getWidth()*direction.getModX();
-		if(x == 0) x = cc.getWidth();
-		double z = cc.getLength()*direction.getModZ();
-		if(z == 0) z = cc.getLength();
-		double y = o.getY();
-		Vector v2 = new Vector(x+o.getX(),y+o.getY(),z+o.getZ());
-		return v2;
-	}
+	private Vector generateFarPointVector(CuboidClipboard cc, Location o, BlockFace direction){
+		if (direction.equals(BlockFace.NORTH)) {
+			double x = cc.getWidth() - 1;
+			double z = (cc.getLength() - 1) * -1;
+			double y = cc.getHeight() - 1;
+			return new Vector(x+o.getX(),y+o.getY(),z+o.getZ());
+		} else if (direction.equals(BlockFace.SOUTH)) {
+			double x = (cc.getWidth() - 1) * -1;
+			double z = cc.getLength() - 1;
+			double y = cc.getHeight() - 1;
+			return new Vector(x+o.getX(),y+o.getY(),z+o.getZ());
+		} else if (direction.equals(BlockFace.WEST)) {
+			double x = (cc.getWidth() - 1) * -1;
+			double z = (cc.getLength() - 1) * -1;
+			double y = cc.getHeight() - 1;
+			return new Vector(x+o.getX(),y+o.getY(),z+o.getZ());		
+		} else {
+			double x = cc.getWidth() - 1;
+			double z = cc.getLength() - 1;
+			double y = cc.getHeight() - 1;
+			return new Vector(x+o.getX(),y+o.getY(),z+o.getZ());		
+		}
+	}	
 }
-
-
-

@@ -28,6 +28,7 @@ public class SQEmpire extends JavaPlugin{
 		EmpireCommand e = new EmpireCommand();
 		getCommand("empire").setExecutor(e);
 		getCommand("playersendempire").setExecutor(e);
+		getCommand("empirereset").setExecutor(e);
 		thisPlanet = Planet.fromName(Bukkit.getServerName());
 		PluginManager pm = getServer().getPluginManager();
 		pm.registerEvents( new BetaListener(), this );

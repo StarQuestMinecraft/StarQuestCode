@@ -25,6 +25,10 @@ public class AsyncUtil {
 	public static void runSync(Runnable runnable) {
 		Bukkit.getScheduler().runTask(SQEmpire.getInstance(), runnable);
 	}
+	
+	public static void runSyncLater(Runnable runnable, long delay) {
+		Bukkit.getScheduler().scheduleSyncDelayedTask(SQEmpire.getInstance(), runnable, delay);
+	}
 	public static void scheduleAsync(long delay, long interval, Runnable r){
 		Bukkit.getScheduler().runTaskTimerAsynchronously(SQEmpire.getInstance(), r, delay, interval);
 	}
