@@ -101,6 +101,8 @@ public class ShipDetection {
 					
 					if (inventory.getContents()[i] != null) {
 						
+						System.out.print("test");
+						
 						if (inventory.getContents()[i].getType().equals(Material.COAL)) {
 							
 							fuel = fuel + (SQSmoothCraft.config.getInt("utilites.reactor.fuel per coal") * inventory.getContents()[i].getAmount());
@@ -160,7 +162,19 @@ public class ShipDetection {
 			SQSmoothCraft.nextShipPitchCos = Math.cos(Math.toRadians(player.getLocation().getYaw()));
 			SQSmoothCraft.nextShipPitchSin = Math.cos(Math.toRadians(player.getLocation().getYaw()));
 			
-			blockList.add(new ShipBlock(location, new ShipLocation(0, 0, 0, null), mainItemStack));
+			BlockType mainType = BlockType.NORMAL;
+			
+			for (int i = 0; i < SQSmoothCraft.shipBlockTypes.size(); i ++) {
+				
+				if (SQSmoothCraft.shipBlockTypes.get(i).equals(mainItemStack.getType())) {
+					
+					mainType = SQSmoothCraft.shipBlockAdjustments.get(i);
+					
+				}
+				
+			}
+			
+			blockList.add(new ShipBlock(location, new ShipLocation(0, 0, 0, null), mainItemStack, mainType));
 			
 			startingBlock.setType(Material.AIR);
 
@@ -179,21 +193,33 @@ public class ShipDetection {
 						
 				}
 				
+				BlockType blockType = BlockType.NORMAL;
+				
+				for (int i = 0; i < SQSmoothCraft.shipBlockTypes.size(); i ++) {
+					
+					if (SQSmoothCraft.shipBlockTypes.get(i).equals(itemStack.getType())) {
+						
+						blockType = SQSmoothCraft.shipBlockAdjustments.get(i);
+						
+					}
+					
+				}
+				
 				if (yaw >= 315 || yaw < 45) {
 					
-					blockList.add(new ShipBlock(new ShipLocation(block.getX() - startingBlock.getX(), block.getY() - startingBlock.getY(), block.getZ() - startingBlock.getZ(), blockList.get(0)), itemStack, blockList.get(0)));
+					blockList.add(new ShipBlock(new ShipLocation(block.getX() - startingBlock.getX(), block.getY() - startingBlock.getY(), block.getZ() - startingBlock.getZ(), blockList.get(0)), itemStack, blockList.get(0), blockType));
 					
 				} else if (yaw >= 225 && yaw < 315) {
 					
-					blockList.add(new ShipBlock(new ShipLocation(startingBlock.getZ() - block.getZ(), block.getY() - startingBlock.getY(), block.getX() - startingBlock.getX(), blockList.get(0)), itemStack, blockList.get(0)));
+					blockList.add(new ShipBlock(new ShipLocation(startingBlock.getZ() - block.getZ(), block.getY() - startingBlock.getY(), block.getX() - startingBlock.getX(), blockList.get(0)), itemStack, blockList.get(0), blockType));
 					
 				} else if (yaw >= 135 && yaw < 225) {
 
-					blockList.add(new ShipBlock(new ShipLocation(startingBlock.getX() - block.getX(), block.getY() - startingBlock.getY(), startingBlock.getZ() - block.getZ(), blockList.get(0)), itemStack, blockList.get(0)));
+					blockList.add(new ShipBlock(new ShipLocation(startingBlock.getX() - block.getX(), block.getY() - startingBlock.getY(), startingBlock.getZ() - block.getZ(), blockList.get(0)), itemStack, blockList.get(0), blockType));
 					
 				} else if (yaw >= 45 && yaw < 135) {
 
-					blockList.add(new ShipBlock(new ShipLocation(block.getZ() - startingBlock.getZ(), block.getY() - startingBlock.getY(), startingBlock.getX() - block.getX(), blockList.get(0)), itemStack, blockList.get(0)));
+					blockList.add(new ShipBlock(new ShipLocation(block.getZ() - startingBlock.getZ(), block.getY() - startingBlock.getY(), startingBlock.getX() - block.getX(), blockList.get(0)), itemStack, blockList.get(0), blockType));
 					
 				}
 				

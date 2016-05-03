@@ -11,6 +11,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
+import com.ginger_walnut.sqsmoothcraft.PlayerOptions;
 import com.ginger_walnut.sqsmoothcraft.SQSmoothCraft;
 import com.ginger_walnut.sqsmoothcraft.gui.Gui;
 import com.ginger_walnut.sqsmoothcraft.gui.MainGui;
@@ -25,11 +26,26 @@ public class OptionGui extends Gui{
 		
 		super(player);
 		
+		if (!SQSmoothCraft.currentOptions.containsKey(owner.getUniqueId())) {
+			
+			SQSmoothCraft.currentOptions.put(owner.getUniqueId(), new PlayerOptions(owner.getUniqueId()));
+			
+		}
+		
 		List<String> lore = new ArrayList<String>();
 		lore.add("If this is enabled, the direction lock");
 		lore.add("is on by default");
 		lore.add(ChatColor.RED + "" + ChatColor.MAGIC + "Contraband");
-		options.add(new Option(OptionType.BOOLEANTRUE, "Direction Lock", lore));
+		
+		if (SQSmoothCraft.currentOptions.get(owner.getUniqueId()).lockedDirection) {
+			
+			options.add(new Option(OptionType.BOOLEANTRUE, "Direction Lock", lore));
+			
+		} else {
+			
+			options.add(new Option(OptionType.BOOLEANFALSE, "Direction Lock", lore));
+			
+		}
 		
 		optionNames.add("Direction Lock");
 		
@@ -81,7 +97,7 @@ public class OptionGui extends Gui{
 			gui.setItem(26, bars);
 			
 		}
-
+		
 		owner.openInventory(gui);
 		
 		if (SQSmoothCraft.currentGui.containsKey(owner)) {
@@ -111,9 +127,21 @@ public class OptionGui extends Gui{
 				
 				options.get(slot - 9).type = OptionType.BOOLEANTRUE;
 				
+				if (slot == 9) {
+					
+					SQSmoothCraft.currentOptions.get(owner.getUniqueId()).lockedDirection = true;
+					
+				}
+	
 			} else if (options.get(slot - 9).type.equals(OptionType.BOOLEANTRUE)) {
 				
 				options.get(slot - 9).type = OptionType.BOOLEANFALSE;
+				
+				if (slot == 9) {
+					
+					SQSmoothCraft.currentOptions.get(owner.getUniqueId()).lockedDirection = false;
+					
+				}
 
 			}
 			

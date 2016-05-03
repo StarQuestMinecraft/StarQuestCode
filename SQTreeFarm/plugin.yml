@@ -1,0 +1,17 @@
+name: SQTreeFarm
+main: com.ginger_walnut.sqtreefarm.SQTreeFarm
+version: 1.0
+description: A plugin that adds tree farms
+commands:
+  treefarm:
+    description: command for managing treefarms
+permissions:
+   SQTreeFarm.createFarms:
+      description: Premission node for creating treefarms
+      default: op
+   SQTreeFarm.destroyFarms:
+      description: Premission node for destroying treefarms
+      default: op
+   SQTreeFarm.useFarms:
+      description: Premission node for using treefarms
+      default: yes

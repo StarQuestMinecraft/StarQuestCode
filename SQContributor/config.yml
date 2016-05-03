@@ -1,0 +1,16 @@
+groups:
+  level1:
+    group: donation1
+    amount: 5
+  level2:
+    group: donation2
+    amount: 25
+  level3:
+    group: donation3
+    amount: 50
+  level4:
+    group: donation4
+    amount: 100
+  level5:
+    group: donation5
+    amount: 250

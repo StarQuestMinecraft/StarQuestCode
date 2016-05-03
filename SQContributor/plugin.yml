@@ -1,0 +1,15 @@
+name: SQDonation
+main: com.ginger_walnut.sqdonation.SQDonation
+version: 1.0
+description: A plugin that adds tags for donating
+commands:
+   donation:
+      description: Manages SQDonation
+      aliases: [donations, donater, donaters, don]
+permissions:
+   SQDonation.viewHelp:
+      description: Premission node for viewing help
+      default: false
+   SQDonation.setAmount:
+      description: Premission node for changing the donation amount that somone has
+      default: false

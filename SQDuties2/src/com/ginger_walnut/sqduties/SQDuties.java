@@ -283,9 +283,15 @@ public class SQDuties extends JavaPlugin implements Listener{
 		
 		Player player = event.getPlayer();
 		
-		if ((boolean) playerInDuty(player)[0] || player.getName().equalsIgnoreCase("Ginger_Walnut")) {
+		if ((boolean) playerCanDuty(player)[0]) {
 			
-			player.chat("/perm refresh");
+			Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "bp reload");
+			
+			if ((boolean) playerInDuty(player)[0]) {
+				
+				player.setGameMode(GameMode.CREATIVE);
+				
+			}
 			
 		}
 		

@@ -8,6 +8,7 @@ import java.util.List;
 import net.countercraft.movecraft.listener.InteractListener;
 import net.milkbowl.vault.economy.Economy;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -32,6 +33,7 @@ import com.sk89q.worldedit.Vector;
 import com.sk89q.worldedit.blocks.BaseBlock;
 import com.sk89q.worldedit.bukkit.BukkitWorld;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
+import com.sk89q.worldedit.bukkit.selections.CuboidSelection;
 import com.sk89q.worldedit.schematic.SchematicFormat;
 import com.sk89q.worldedit.WorldEdit;
 
@@ -60,12 +62,12 @@ public class ShipSpawnerCore extends JavaPlugin implements Listener {
 		if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
 			if (event.getClickedBlock().getType() == Material.WALL_SIGN) {
 				Sign s = (Sign) event.getClickedBlock().getState();
-				if (s.getLine(0).equals("[shipspawner]") && event.getPlayer().hasPermission("ShipSpawner.create")) {
+				if (s.getLine(0).equals("[shipspawner]")) {
 					String schematic = s.getLine(1);
 					String priceStr = s.getLine(2);
 					int price = Integer.parseInt(priceStr);
 					s.setLine(0, ChatColor.AQUA + "Ship Spawner");
-					s.setLine(1, "Color: " + ChatColor.DARK_RED + "Red");
+					s.setLine(1, "-*+*-");
 					s.setLine(2, schematic);
 					s.setLine(3, price + " " + economy.currencyNamePlural());
 					s.update();
@@ -73,7 +75,7 @@ public class ShipSpawnerCore extends JavaPlugin implements Listener {
 				}
 				if (s.getLine(0).equals(ChatColor.AQUA + "Ship Spawner")) {
 					BlockFace direction = DirectionUtils.getSignDirection(event.getClickedBlock());
-					Location startBlock = s.getBlock().getRelative(direction, 2).getLocation();
+					final Location startBlock = s.getBlock().getRelative(direction, 2).getLocation();
 					BukkitWorld world = new BukkitWorld(startBlock.getWorld());
 					EditSession session = new EditSession(world, 1000);
 					WorldEditPlugin wep = ((WorldEditPlugin) getServer().getPluginManager().getPlugin("WorldEdit"));
@@ -86,7 +88,7 @@ public class ShipSpawnerCore extends JavaPlugin implements Listener {
 					File f;
 					Vector v = new Vector(startBlock.getX(), startBlock.getY(), startBlock.getZ());
 
-					if (economy.getBalance(event.getPlayer().getName()) < price) {
+					if (economy.getBalance(event.getPlayer()) < price) {
 						event.getPlayer().sendMessage("You do not have " + price + " " + economy.currencyNamePlural());
 						return;
 					}
@@ -94,53 +96,82 @@ public class ShipSpawnerCore extends JavaPlugin implements Listener {
 					try {
 						f = we.getSafeOpenFile(p, dir, fileName, "schematic", "schematic");
 						CuboidClipboard cc = SchematicFormat.MCEDIT.load(f);
-
 						int originX = startBlock.getBlockX();
 						int originY = startBlock.getBlockY();
 						int originZ = startBlock.getBlockZ();
-
-						for (int X = 0; X < cc.getWidth(); X++) {
-							for (int Y = 0; Y < cc.getHeight(); Y++) {
-								for (int Z = 0; Z < cc.getLength(); Z++) {
-									Location l = new Location(startBlock.getWorld(), originX + X, originY + Y, originZ + Z);
+						
+						Vector v2 = generateFarPointVector(cc, startBlock, direction);
+						
+						final CuboidSelection sr = new CuboidSelection(startBlock.getWorld(), v, v2);
+						final Location minPoint = sr.getMinimumPoint();
+						for (int X = 0; X < sr.getWidth(); X++) {
+							for (int Y = 0; Y < sr.getHeight(); Y++) {
+								for (int Z = 0; Z < sr.getLength(); Z++) {
+									Location l = new Location(startBlock.getWorld(), minPoint.getX() + X, minPoint.getY() + Y, minPoint.getZ() + Z);
 									Material type = l.getBlock().getType();
 									if (!(type == Material.AIR || type == Material.SPONGE || type == Material.PISTON_MOVING_PIECE)) {
 										event.getPlayer().sendMessage("Ship spawn area is obstructed. Try a different spawner, or hit the clear button.");
 										return;
 									}
+									
 								}
 							}
 						}
-						cc.paste(session, v, true);
-						byte data = parseWoolDataColor(s);
-						for (int X = 0; X < cc.getWidth(); X++) {
-							for (int Y = 0; Y < cc.getHeight(); Y++) {
-								for (int Z = 0; Z < cc.getLength(); Z++) {
-									Location l = new Location(startBlock.getWorld(), originX + X, originY + Y, originZ + Z);
-									Material type = l.getBlock().getType();
-									byte dataval = l.getBlock().getData();
-									if (type == Material.WOOL && dataval == 14) {
-										l.getBlock().setTypeIdAndData(l.getBlock().getTypeId(), data, false);
-									} else if (type == Material.STAINED_CLAY) {
-										l.getBlock().setType(Material.LADDER);
-									} else if (type == Material.WALL_SIGN) {
-										Sign sign = (Sign) l.getBlock().getState();
-										System.out.println("Found sign: " + s.getLine(0));
-										if (InteractListener.getCraftTypeFromString(s.getLine(0)) != null) {
-											System.out.println("Found craft sign.");
+						
+						Vector mp = new Vector(s.getBlock().getX(), s.getBlock().getY(), s.getBlock().getZ());
+						cc.paste(session, mp, true);
+						for (int X = 0; X < sr.getWidth(); X++) {
+							for (int Y = 0; Y < sr.getHeight(); Y++) {
+								for (int Z = 0; Z < sr.getLength(); Z++) {
+									Location l = new Location(startBlock.getWorld(), minPoint.getX() + X, minPoint.getY() + Y, minPoint.getZ() + Z);
+									Block b = l.getBlock();
+									Material type = b.getType();
+									if (type == Material.STONE && b.getData() != 0) {
+										System.out.println("Found stone!");
+										byte stoneData = b.getData();
+
+										int toSet = s.getBlock().getData();
+										if (stoneData == 1){
+											int sd = toSet;
+											if(sd == 4){
+												toSet = 5;
+											}
+											else if(sd == 5){
+												toSet = 4;
+											}
+											else if(sd == 2){
+												toSet = 3;
+											}
+											else if(sd == 3){
+												toSet = 2;
+											}
+										}
+										b.setTypeIdAndData(68, (byte) toSet, false);
+										Sign ss = (Sign) b.getState();
+										if(stoneData == 1){
+											ss.setLine(0, "Warship");
 											String name = event.getPlayer().getName();
 											if (name.length() > 15) name = name.substring(0, 15);
-											sign.setLine(1, name);
-											sign.update();
+											ss.setLine(1, name);
+											ss.update();
+										} else if(stoneData == 3){
+											ss.setLine( 0, "\\  ||  /" );
+											ss.setLine( 1, "==      ==" );
+											ss.setLine( 2, "/  ||  \\" );
+											ss.update();
+										} else if(stoneData == 5){
+											ss.setLine(0, ChatColor.BLUE + "AUTOPILOT");
+											ss.setLine(1, ChatColor.GREEN + "{DISABLED}");
+											ss.update();
 										}
 									}
 								}
 							}
 						}
 						event.getPlayer().sendMessage("Enjoy your new ship!");
-						economy.withdrawPlayer(event.getPlayer().getName(), price);
+						economy.withdrawPlayer(event.getPlayer(), price);
 						event.getPlayer().sendMessage(price + " " + economy.currencyNamePlural() + " have been withdrawn from your account.");
-						event.getPlayer().getWorld().playSound(startBlock, Sound.PISTON_EXTEND, 2.0F, 1.0F);
+						event.getPlayer().getWorld().playSound(startBlock, Sound.BLOCK_PISTON_EXTEND, 2.0F, 1.0F);
 						ShipSpawnerCore.data.put(s.getLocation(), System.currentTimeMillis());
 						event.getPlayer().sendMessage("Be sure to move your ship away from the spawner quickly! After" + ChatColor.RED + " five minutes " + ChatColor.WHITE + "your ship can be deleted!");
 
@@ -177,73 +208,6 @@ public class ShipSpawnerCore extends JavaPlugin implements Listener {
 
 				}
 			}
-		} else if (event.getAction() == Action.LEFT_CLICK_BLOCK) {
-			if (event.getClickedBlock().getType() == Material.WALL_SIGN) {
-				Sign s = (Sign) event.getClickedBlock().getState();
-				if (s.getLine(0).equals(ChatColor.AQUA + "Ship Spawner")) {
-					if (s.getLine(1).equals("Color: " + ChatColor.DARK_RED + "Red")) {
-						s.setLine(1, "Color: " + ChatColor.GOLD + "Orange");
-						s.update();
-						event.setCancelled(true);
-					} else if (s.getLine(1).equals("Color: " + ChatColor.GOLD + "Orange")) {
-						s.setLine(1, "Color: " + ChatColor.YELLOW + "Yellow");
-						s.update();
-						event.setCancelled(true);
-					} else if (s.getLine(1).equals("Color: " + ChatColor.YELLOW + "Yellow")) {
-						s.setLine(1, "Color: " + ChatColor.GREEN + "Lime");
-						s.update();
-						event.setCancelled(true);
-					} else if (s.getLine(1).equals("Color: " + ChatColor.GREEN + "Lime")) {
-						s.setLine(1, "Color: " + ChatColor.DARK_GREEN + "Green");
-						s.update();
-						event.setCancelled(true);
-					} else if (s.getLine(1).equals("Color: " + ChatColor.DARK_GREEN + "Green")) {
-						s.setLine(1, "Color: " + ChatColor.DARK_AQUA + "Cyan");
-						s.update();
-						event.setCancelled(true);
-					} else if (s.getLine(1).equals("Color: " + ChatColor.DARK_AQUA + "Cyan")) {
-						s.setLine(1, "Color: " + ChatColor.BLUE + "L. Blu");
-						s.update();
-						event.setCancelled(true);
-					} else if (s.getLine(1).equals("Color: " + ChatColor.BLUE + "L. Blu")) {
-						s.setLine(1, "Color: " + ChatColor.DARK_BLUE + "D. Blu");
-						s.update();
-						event.setCancelled(true);
-					} else if (s.getLine(1).equals("Color: " + ChatColor.DARK_BLUE + "D. Blu")) {
-						s.setLine(1, "Color: " + ChatColor.DARK_PURPLE + "Purple");
-						s.update();
-						event.setCancelled(true);
-					} else if (s.getLine(1).equals("Color: " + ChatColor.DARK_PURPLE + "Purple")) {
-						s.setLine(1, "Color: " + ChatColor.LIGHT_PURPLE + "Magent");
-						s.update();
-						event.setCancelled(true);
-					} else if (s.getLine(1).equals("Color: " + ChatColor.LIGHT_PURPLE + "Magent")) {
-						s.setLine(1, "Color: " + ChatColor.LIGHT_PURPLE + "Pink");
-						s.update();
-						event.setCancelled(true);
-					} else if (s.getLine(1).equals("Color: " + ChatColor.LIGHT_PURPLE + "Pink")) {
-						s.setLine(1, "Color: " + ChatColor.DARK_GRAY + "Brown");
-						s.update();
-						event.setCancelled(true);
-					} else if (s.getLine(1).equals("Color: " + ChatColor.DARK_GRAY + "Brown")) {
-						s.setLine(1, "Color: " + ChatColor.GRAY + "L. Gra");
-						s.update();
-						event.setCancelled(true);
-					} else if (s.getLine(1).equals("Color: " + ChatColor.GRAY + "L. Gra")) {
-						s.setLine(1, "Color: " + ChatColor.DARK_GRAY + "D. Gra");
-						s.update();
-						event.setCancelled(true);
-					} else if (s.getLine(1).equals("Color: " + ChatColor.DARK_GRAY + "D. Gra")) {
-						s.setLine(1, "Color: " + ChatColor.BLACK + "Black");
-						s.update();
-						event.setCancelled(true);
-					} else if (s.getLine(1).equals("Color: " + ChatColor.BLACK + "Black")) {
-						s.setLine(1, "Color: " + ChatColor.DARK_RED + "Red");
-						s.update();
-						event.setCancelled(true);
-					}
-				}
-			}
 		}
 	}
 
@@ -272,16 +236,39 @@ public class ShipSpawnerCore extends JavaPlugin implements Listener {
 		if((System.currentTimeMillis() - timestamp) > SPAWNER_TIMEOUT){
 			BlockFace direction = DirectionUtils.getSignDirection(spawner.getBlock());
 			Location startBlock = spawner.getBlock().getRelative(direction, 2).getLocation();
-			int originX = startBlock.getBlockX();
-			int originY = startBlock.getBlockY();
-			int originZ = startBlock.getBlockZ();
-			for (int X = 0; X < LENGTH; X++) {
-				for (int Y = 0; Y < HEIGHT; Y++) {
-					for (int Z = 0; Z < WIDTH; Z++) {
-						Location l = new Location(startBlock.getWorld(), originX + X, originY + Y, originZ + Z);
-						l.getBlock().setType(Material.AIR);
+			BukkitWorld world = new BukkitWorld(startBlock.getWorld());
+			EditSession session = new EditSession(world, 1000);
+			WorldEditPlugin wep = ((WorldEditPlugin) getServer().getPluginManager().getPlugin("WorldEdit"));
+			WorldEdit we = wep.getWorldEdit();
+			LocalConfiguration config = we.getConfiguration();
+			LocalPlayer p = wep.wrapPlayer(clicker);
+			String fileName = getSchematicName(spawner);
+			//int price = getPrice(spawner);
+			File dir = we.getWorkingDirectoryFile(config.saveDir);
+			File f;
+			Vector v = new Vector(startBlock.getX(), startBlock.getY(), startBlock.getZ());
+
+			try {
+				f = we.getSafeOpenFile(p, dir, fileName, "schematic", "schematic");
+				CuboidClipboard cc = SchematicFormat.MCEDIT.load(f);
+				int originX = startBlock.getBlockX();
+				int originY = startBlock.getBlockY();
+				int originZ = startBlock.getBlockZ();
+				
+				Vector v2 = generateFarPointVector(cc, startBlock, direction);
+				
+				CuboidSelection sr = new CuboidSelection(startBlock.getWorld(), v, v2);
+				Location minPoint = sr.getMinimumPoint();
+				for (int X = 0; X < sr.getWidth(); X++) {
+					for (int Y = 0; Y < sr.getHeight(); Y++) {
+						for (int Z = 0; Z < sr.getLength(); Z++) {
+							Location l = new Location(startBlock.getWorld(), minPoint.getX() + X, minPoint.getY() + Y, minPoint.getZ() + Z);
+							l.getBlock().setType(Material.AIR);
+						}
 					}
 				}
+			} catch (Exception e){
+				e.printStackTrace();
 			}
 			clicker.sendMessage("Spawner Cleared!");
 		} else {
@@ -298,40 +285,28 @@ public class ShipSpawnerCore extends JavaPlugin implements Listener {
 			return s.getLine(2);
 		}
 	}
-
-
-	public byte parseWoolDataColor(Sign s) {
-		if (s.getLine(1).equals("Color: " + ChatColor.DARK_RED + "Red")) {
-			return 14;
-		} else if (s.getLine(1).equals("Color: " + ChatColor.GOLD + "Orange")) {
-			return 1;
-		} else if (s.getLine(1).equals("Color: " + ChatColor.YELLOW + "Yellow")) {
-			return 4;
-		} else if (s.getLine(1).equals("Color: " + ChatColor.GREEN + "Lime")) {
-			return 5;
-		} else if (s.getLine(1).equals("Color: " + ChatColor.DARK_GREEN + "Green")) {
-			return 13;
-		} else if (s.getLine(1).equals("Color: " + ChatColor.DARK_AQUA + "Cyan")) {
-			return 9;
-		} else if (s.getLine(1).equals("Color: " + ChatColor.BLUE + "L. Blu")) {
-			return 3;
-		} else if (s.getLine(1).equals("Color: " + ChatColor.DARK_BLUE + "D. Blu")) {
-			return 11;
-		} else if (s.getLine(1).equals("Color: " + ChatColor.DARK_PURPLE + "Purple")) {
-			return 10;
-		} else if (s.getLine(1).equals("Color: " + ChatColor.LIGHT_PURPLE + "Magent")) {
-			return 2;
-		} else if (s.getLine(1).equals("Color: " + ChatColor.LIGHT_PURPLE + "Pink")) {
-			return 6;
-		} else if (s.getLine(1).equals("Color: " + ChatColor.DARK_GRAY + "Brown")) {
-			return 12;
-		} else if (s.getLine(1).equals("Color: " + ChatColor.GRAY + "L. Gra")) {
-			return 8;
-		} else if (s.getLine(1).equals("Color: " + ChatColor.DARK_GRAY + "D. Gra")) {
-			return 7;
-		} else if (s.getLine(1).equals("Color: " + ChatColor.BLACK + "Black")) {
-			return 15;
+	
+	private Vector generateFarPointVector(CuboidClipboard cc, Location o, BlockFace direction){
+		if (direction.equals(BlockFace.NORTH)) {
+			double x = cc.getWidth() - 1;
+			double z = (cc.getLength() - 1) * -1;
+			double y = cc.getHeight() - 1;
+			return new Vector(x+o.getX(),y+o.getY(),z+o.getZ());
+		} else if (direction.equals(BlockFace.SOUTH)) {
+			double x = (cc.getWidth() - 1) * -1;
+			double z = cc.getLength() - 1;
+			double y = cc.getHeight() - 1;
+			return new Vector(x+o.getX(),y+o.getY(),z+o.getZ());
+		} else if (direction.equals(BlockFace.WEST)) {
+			double x = (cc.getWidth() - 1) * -1;
+			double z = (cc.getLength() - 1) * -1;
+			double y = cc.getHeight() - 1;
+			return new Vector(x+o.getX(),y+o.getY(),z+o.getZ());		
+		} else {
+			double x = cc.getWidth() - 1;
+			double z = cc.getLength() - 1;
+			double y = cc.getHeight() - 1;
+			return new Vector(x+o.getX(),y+o.getY(),z+o.getZ());		
 		}
-		return 0;
-	}
+	}	
 }

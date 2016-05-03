@@ -3,19 +3,21 @@ package com.whirlwindgames.dibujaron.sqempire;
 import org.bukkit.ChatColor;
 
 public enum Empire {
-	NONE(0, ChatColor.DARK_GRAY, ChatColor.GRAY),
-	REQUIEM(1, ChatColor.DARK_RED, ChatColor.RED),
-	ARATOR(2, ChatColor.DARK_BLUE, ChatColor.BLUE),
-	YAVARI(3, ChatColor.DARK_PURPLE, ChatColor.LIGHT_PURPLE);
+	NONE(0, ChatColor.DARK_GRAY, ChatColor.GRAY, "None"),
+	ARATOR(1, ChatColor.DARK_BLUE, ChatColor.BLUE, "Arator"),
+	REQUIEM(2, ChatColor.DARK_RED, ChatColor.RED, "Requiem"),
+	YAVARI(3, ChatColor.DARK_PURPLE, ChatColor.LIGHT_PURPLE, "Yavari");
 	
 	int id;
 	ChatColor dark;
 	ChatColor light;
+	String name;
 	
-	Empire(int id, ChatColor dark, ChatColor light){
+	Empire(int id, ChatColor dark, ChatColor light, String name){
 		this.dark = dark;
 		this.light = light;
 		this.id = id;
+		this.name = name;
 	}
 	
 	public ChatColor getDarkColor(){
@@ -26,6 +28,10 @@ public enum Empire {
 		return light;
 	}
 	
+	public String getName(){
+		return name;
+	}
+	
 	public int getID(){
 		return id;
 	}
@@ -33,6 +39,14 @@ public enum Empire {
 	public static Empire fromID(int id){
 		for(Empire e : values()){
 			if(e.getID() == id){
+				return e;
+			}
+		}
+		return NONE;
+	}
+	public static Empire fromString(String s){
+		for(Empire e : values()){
+			if(e.getName().equalsIgnoreCase(s)){
 				return e;
 			}
 		}

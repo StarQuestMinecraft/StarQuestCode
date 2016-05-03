@@ -73,7 +73,7 @@ public class SQLDatabase {
 			byte[] knapsackBytes = convertToBytes(knapsack);
 			pstmt.setBinaryStream(2, convertToBinary(knapsackBytes), knapsackBytes.length);
 			
-			pstmt.setString(3, player.getServer().getServerName() + "," + player.getLocation().getWorld().getName() + "," + player.getLocation().getX() + "," + player.getLocation().getY() + "," + player.getLocation().getZ());
+			pstmt.setString(3, player.getServer().getServerName() + "," + player.getLocation().getWorld().getName() + "," + player.getLocation().getBlockX() + "," + player.getLocation().getBlockY() + "," + player.getLocation().getBlockZ());
 			
 			pstmt.executeUpdate();
 			
@@ -122,12 +122,12 @@ public class SQLDatabase {
 			double y = Double.parseDouble(parts[3]);
 			double z = Double.parseDouble(parts[4]);
 				
-			if (parts[0].equalsIgnoreCase(player.getServer().getName())) {
-					
+			if (parts[0].equalsIgnoreCase(player.getServer().getServerName())) {
+				
 				player.teleport(new Location(world, x, y, z));
 					
 			} else {
-					
+				
 				BungeePlayerHandler.sendPlayer(player, parts[0], parts[1], (int) x, (int) y, (int) z);
 					
 			}

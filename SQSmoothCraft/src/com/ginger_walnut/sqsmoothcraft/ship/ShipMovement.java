@@ -70,8 +70,12 @@ public class ShipMovement extends Thread {
 							
 						if (pilot != null) {
 								
-							ship.speedBar.setProgress(ship.speed / ship.maxSpeed);
-							
+							if ((ship.speed / ship.maxSpeed) < 1.0) {
+								
+								ship.speedBar.setProgress(ship.speed / ship.maxSpeed);
+								
+							}
+
 							ship.fuel = ship.fuel - ((((float) SQSmoothCraft.config.getDouble("utilites.reactor.fuel per second") / 20) * (ship.speed / ship.maxSpeed)) * ship.reactorList.size() * ship.reactorList.size());
 							
 							if (ship.fuel < 0.0f) {
@@ -79,8 +83,8 @@ public class ShipMovement extends Thread {
 								ship.fuel = 0.0f;
 								
 							}
-							
-							ship.fuelBar.setProgress(ship.fuel / ship.startingFuel);
+
+							ship.fuelBar.setProgress((ship.fuel / ship.startingFuel));
 							
 							if (ship.fuel > 0.0f) {
 
@@ -180,27 +184,40 @@ public class ShipMovement extends Thread {
 					
 					EulerAngle eulerAngle = null;
 	
-//					if (ship.alternatingBlockDirection) {
+					if (ship.alternatingBlockDirection) {
 						
 						eulerAngle = new EulerAngle(pitch, yaw, 0);
 						
-//						ship.alternatingBlockDirection = false;
-//						
-//					} else {
-//						
-//						eulerAngle = new EulerAngle(pitch * -1, yaw + 3.1415, 0);
-//						
-//						ship.alternatingBlockDirection = true;
-//						
-//					}
+						ship.alternatingBlockDirection = false;
+						
+					} else {
+						
+						eulerAngle = new EulerAngle(pitch, yaw + 6.283185, 0);
+						
+						ship.alternatingBlockDirection = true;
+						
+					}
 					
+					double arg1 = yawSin * pitchSin * -1;
+					double arg2 = yawSin * pitchCos;
+					double arg3 = yawCos * pitchSin;
+					double arg4 = yawCos * pitchCos;
+						
 					for (int j = 0; j < shipBlocks.size(); j ++) {
 
 						ArmorStand stand = shipBlocks.get(j).getArmorStand();
 						
 						ShipLocation shipLocation = shipBlocks.get(j).getShipLocation();
 							
-						Location locationShip = shipLocation.toLocation(ship.getLocation(), yawCos, yawSin, pitchCos, pitchSin);
+						//Location locationShip = shipLocation.toLocation(ship.getLocation(), yawCos, yawSin, pitchCos, pitchSin);
+						
+						Location locationShip = new Location(shipLocation.getWorld(),
+								((arg1 * shipLocation.y) - (arg2 * shipLocation.z) + (yawCos * shipLocation.x)) * .625, 
+								((shipLocation.y * pitchCos) - (shipLocation.z * pitchSin)) * .625, 
+								((arg3 * shipLocation.y) + (arg4 * shipLocation.z) + (yawSin * shipLocation.x)) * .625).add(ship.location);
+									
+						locationShip.setYaw(0);
+						locationShip.setPitch(0);
 						
 						double x = locationShip.getX();
 						double y = locationShip.getY();
@@ -304,7 +321,7 @@ public class ShipMovement extends Thread {
 									
 							}
 								
-							shipBlocks.get(j).ship.damage(shipBlocks.get(j), speed * 500, false);
+							shipBlocks.get(j).ship.damage(shipBlocks.get(j), speed * 500, false, null);
 								
 						}
 						
@@ -447,7 +464,7 @@ public class ShipMovement extends Thread {
 										
 								}
 									
-								shipBlocks.get(j).ship.damage(shipBlocks.get(j), speed * 500, false);
+								shipBlocks.get(j).ship.damage(shipBlocks.get(j), speed * 500, false, null);
 									
 							}
 
@@ -470,7 +487,7 @@ public class ShipMovement extends Thread {
 				
 			}			
 			
-		}, 0, 0);
+		}, 0, 1);
 		
 	}
 	

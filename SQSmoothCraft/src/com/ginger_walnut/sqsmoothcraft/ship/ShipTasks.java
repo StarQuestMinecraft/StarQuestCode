@@ -33,7 +33,7 @@ public class ShipTasks extends Thread {
 					
 					ShipBlock mainBlock = mainBlocks.get(i);
 					
-					if (!mainBlock.stand.isDead()) {
+					if (mainBlock.stand != null) {
 						
 						if (mainBlock.getShip().thirdPersonBlock != null) {
 														

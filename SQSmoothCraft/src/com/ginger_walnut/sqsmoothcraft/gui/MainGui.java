@@ -14,6 +14,7 @@ import org.bukkit.inventory.ItemStack;
 
 import com.ginger_walnut.sqsmoothcraft.SQSmoothCraft;
 import com.ginger_walnut.sqsmoothcraft.gui.options.OptionGui;
+import com.ginger_walnut.sqsmoothcraft.ship.BlockType;
 import com.ginger_walnut.sqsmoothcraft.ship.Ship;
 import com.ginger_walnut.sqsmoothcraft.ship.ShipBlock;
 import com.ginger_walnut.sqsmoothcraft.ship.ShipDetection;
@@ -85,7 +86,7 @@ public class MainGui extends Gui{
 		
 		hsMissileList = ShipUtils.createSpecialItem(hsMissileList, lore, "Heat Seeking Missile List");
 		
-		inventory.setItem(17, hsMissileList);
+		inventory.setItem(26, hsMissileList);
 		
 		if (SQSmoothCraft.shipMap.containsKey(owner.getUniqueId())) {
 			
@@ -148,50 +149,52 @@ public class MainGui extends Gui{
 			SQSmoothCraft.nextShipPitchCos = Math.cos(Math.toRadians(owner.getLocation().getYaw()));
 			SQSmoothCraft.nextShipPitchSin = Math.cos(Math.toRadians(owner.getLocation().getYaw()));
 			
-			blockList.add(new ShipBlock(location, new ShipLocation(0, 0, 0, null), whiteWool));
-			blockList.add(new ShipBlock(new ShipLocation(0, 0, 1, blockList.get(0)), dispenser, blockList.get(0)));
-			blockList.add(new ShipBlock(new ShipLocation(0, 0, -1, blockList.get(0)), whiteWool, blockList.get(0)));
-			blockList.add(new ShipBlock(new ShipLocation(0, 0,-2, blockList.get(0)), whiteWool, blockList.get(0)));
-			blockList.add(new ShipBlock(new ShipLocation(1, 0, 0, blockList.get(0)), blueWool, blockList.get(0)));
-			blockList.add(new ShipBlock(new ShipLocation(1, 0, 1, blockList.get(0)), coal, blockList.get(0)));
-			blockList.add(new ShipBlock(new ShipLocation(1, 0, -1, blockList.get(0)), blueWool, blockList.get(0)));
-			blockList.add(new ShipBlock(new ShipLocation(-1, 0, 0, blockList.get(0)), blueWool, blockList.get(0)));
-			blockList.add(new ShipBlock(new ShipLocation(-1, 0, 1, blockList.get(0)), coal, blockList.get(0)));
-			blockList.add(new ShipBlock(new ShipLocation(-1, 0, -1, blockList.get(0)), blueWool, blockList.get(0)));
-			blockList.add(new ShipBlock(new ShipLocation(0, 1, 2, blockList.get(0)), glass, blockList.get(0)));
-			blockList.add(new ShipBlock(new ShipLocation(1, 1, 1, blockList.get(0)), glass, blockList.get(0)));
-			blockList.add(new ShipBlock(new ShipLocation(-1, 1, 1, blockList.get(0)), glass, blockList.get(0)));
-			blockList.add(new ShipBlock(new ShipLocation(-1, 1, 0, blockList.get(0)), blueWool, blockList.get(0)));
-			blockList.add(new ShipBlock(new ShipLocation(1, 1, 0, blockList.get(0)), blueWool, blockList.get(0)));
-			blockList.add(new ShipBlock(new ShipLocation(-1, 1, -1, blockList.get(0)), blueWool, blockList.get(0)));
-			blockList.add(new ShipBlock(new ShipLocation(1, 1, -1, blockList.get(0)), blueWool, blockList.get(0)));
-			blockList.add(new ShipBlock(new ShipLocation(-2, 1, 0, blockList.get(0)), blueWool, blockList.get(0)));
-			blockList.add(new ShipBlock(new ShipLocation(2, 1, 0, blockList.get(0)), blueWool, blockList.get(0)));
-			blockList.add(new ShipBlock(new ShipLocation(-1, 1, -1, blockList.get(0)), blueWool, blockList.get(0)));
-			blockList.add(new ShipBlock(new ShipLocation(1, 1, -1, blockList.get(0)), blueWool, blockList.get(0)));
-			blockList.add(new ShipBlock(new ShipLocation(-2, 1, -1, blockList.get(0)), blueWool, blockList.get(0)));
-			blockList.add(new ShipBlock(new ShipLocation(2, 1, -1, blockList.get(0)), blueWool, blockList.get(0)));
-			blockList.add(new ShipBlock(new ShipLocation(3, 1, -1, blockList.get(0)), blueWool, blockList.get(0)));
-			blockList.add(new ShipBlock(new ShipLocation(-3, 1, -1, blockList.get(0)), blueWool, blockList.get(0)));
-			blockList.add(new ShipBlock(new ShipLocation(1, 1, -2, blockList.get(0)), blueWool, blockList.get(0)));
-			blockList.add(new ShipBlock(new ShipLocation(-1, 1, -2, blockList.get(0)), blueWool, blockList.get(0)));
-			blockList.add(new ShipBlock(new ShipLocation(0, 1, -1, blockList.get(0)), new ItemStack(Material.DROPPER), blockList.get(0)));
-			blockList.add(new ShipBlock(new ShipLocation(0, 1, -2, blockList.get(0)), seaLamp, blockList.get(0)));
-			blockList.add(new ShipBlock(new ShipLocation(0, 2, 1, blockList.get(0)), glass, blockList.get(0)));
-			blockList.add(new ShipBlock(new ShipLocation(-1, 2, 0, blockList.get(0)), glass, blockList.get(0)));
-			blockList.add(new ShipBlock(new ShipLocation(1, 2, 0, blockList.get(0)), glass, blockList.get(0)));
-			blockList.add(new ShipBlock(new ShipLocation(1, 2, -1, blockList.get(0)), blueWool, blockList.get(0)));
-			blockList.add(new ShipBlock(new ShipLocation(-1, 2, -1, blockList.get(0)), blueWool, blockList.get(0)));
-			blockList.add(new ShipBlock(new ShipLocation(1, 2, -2, blockList.get(0)), blueWool, blockList.get(0)));
-			blockList.add(new ShipBlock(new ShipLocation(-1, 2, -2, blockList.get(0)), blueWool, blockList.get(0)));
-			blockList.add(new ShipBlock(new ShipLocation(1, 2, -3, blockList.get(0)), blueWool, blockList.get(0)));
-			blockList.add(new ShipBlock(new ShipLocation(-1, 2, -3, blockList.get(0)), blueWool, blockList.get(0)));
-			blockList.add(new ShipBlock(new ShipLocation(0, 2, -2, blockList.get(0)), seaLamp, blockList.get(0)));
-			blockList.add(new ShipBlock(new ShipLocation(0, 3, 0, blockList.get(0)), glass, blockList.get(0)));
-			blockList.add(new ShipBlock(new ShipLocation(0, 3, -1, blockList.get(0)), whiteWool, blockList.get(0)));
-			blockList.add(new ShipBlock(new ShipLocation(0, 3, -2, blockList.get(0)), whiteWool, blockList.get(0)));
-			blockList.add(new ShipBlock(new ShipLocation(0, 3, -3, blockList.get(0)), whiteWool, blockList.get(0)));
-			
+
+			blockList.add(new ShipBlock(location, new ShipLocation(0, 0, 0, null), whiteWool, BlockType.NORMAL));
+			blockList.add(new ShipBlock(new ShipLocation(0, 0, 1, blockList.get(0)), dispenser, blockList.get(0), BlockType.NORMAL));
+			blockList.add(new ShipBlock(new ShipLocation(0, 0, -1, blockList.get(0)), whiteWool, blockList.get(0), BlockType.NORMAL));
+			blockList.add(new ShipBlock(new ShipLocation(0, 0,-2, blockList.get(0)), whiteWool, blockList.get(0), BlockType.NORMAL));
+			blockList.add(new ShipBlock(new ShipLocation(1, 0, 0, blockList.get(0)), blueWool, blockList.get(0), BlockType.NORMAL));
+			blockList.add(new ShipBlock(new ShipLocation(1, 0, 1, blockList.get(0)), coal, blockList.get(0), BlockType.NORMAL));
+			blockList.add(new ShipBlock(new ShipLocation(1, 0, -1, blockList.get(0)), blueWool, blockList.get(0), BlockType.NORMAL));
+			blockList.add(new ShipBlock(new ShipLocation(-1, 0, 0, blockList.get(0)), blueWool, blockList.get(0), BlockType.NORMAL));
+			blockList.add(new ShipBlock(new ShipLocation(-1, 0, 1, blockList.get(0)), coal, blockList.get(0), BlockType.NORMAL));
+			blockList.add(new ShipBlock(new ShipLocation(-1, 0, -1, blockList.get(0)), blueWool, blockList.get(0), BlockType.NORMAL));
+			blockList.add(new ShipBlock(new ShipLocation(0, 1, 2, blockList.get(0)), glass, blockList.get(0), BlockType.NORMAL));
+			blockList.add(new ShipBlock(new ShipLocation(0, 1, 3, blockList.get(0)), new ItemStack(Material.SIGN), blockList.get(0), BlockType.NORMAL));
+			blockList.add(new ShipBlock(new ShipLocation(1, 1, 1, blockList.get(0)), glass, blockList.get(0), BlockType.NORMAL));
+			blockList.add(new ShipBlock(new ShipLocation(-1, 1, 1, blockList.get(0)), glass, blockList.get(0), BlockType.NORMAL));
+			blockList.add(new ShipBlock(new ShipLocation(-1, 1, 0, blockList.get(0)), blueWool, blockList.get(0), BlockType.NORMAL));
+			blockList.add(new ShipBlock(new ShipLocation(1, 1, 0, blockList.get(0)), blueWool, blockList.get(0), BlockType.NORMAL));
+			blockList.add(new ShipBlock(new ShipLocation(-1, 1, -1, blockList.get(0)), blueWool, blockList.get(0), BlockType.NORMAL));
+			blockList.add(new ShipBlock(new ShipLocation(1, 1, -1, blockList.get(0)), blueWool, blockList.get(0), BlockType.NORMAL));
+			blockList.add(new ShipBlock(new ShipLocation(-2, 1, 0, blockList.get(0)), blueWool, blockList.get(0), BlockType.NORMAL));
+			blockList.add(new ShipBlock(new ShipLocation(2, 1, 0, blockList.get(0)), blueWool, blockList.get(0), BlockType.NORMAL));
+			blockList.add(new ShipBlock(new ShipLocation(-1, 1, -1, blockList.get(0)), blueWool, blockList.get(0), BlockType.NORMAL));
+			blockList.add(new ShipBlock(new ShipLocation(1, 1, -1, blockList.get(0)), blueWool, blockList.get(0), BlockType.NORMAL));
+			blockList.add(new ShipBlock(new ShipLocation(-2, 1, -1, blockList.get(0)), blueWool, blockList.get(0), BlockType.NORMAL));
+			blockList.add(new ShipBlock(new ShipLocation(2, 1, -1, blockList.get(0)), blueWool, blockList.get(0), BlockType.NORMAL));
+			blockList.add(new ShipBlock(new ShipLocation(3, 1, -1, blockList.get(0)), blueWool, blockList.get(0), BlockType.NORMAL));
+			blockList.add(new ShipBlock(new ShipLocation(-3, 1, -1, blockList.get(0)), blueWool, blockList.get(0), BlockType.NORMAL));
+			blockList.add(new ShipBlock(new ShipLocation(1, 1, -2, blockList.get(0)), blueWool, blockList.get(0), BlockType.NORMAL));
+			blockList.add(new ShipBlock(new ShipLocation(-1, 1, -2, blockList.get(0)), blueWool, blockList.get(0), BlockType.NORMAL));
+			blockList.add(new ShipBlock(new ShipLocation(0, 1, -1, blockList.get(0)), new ItemStack(Material.DROPPER), blockList.get(0), BlockType.NORMAL));
+			blockList.add(new ShipBlock(new ShipLocation(0, 1, -2, blockList.get(0)), seaLamp, blockList.get(0), BlockType.NORMAL));
+			blockList.add(new ShipBlock(new ShipLocation(0, 2, 1, blockList.get(0)), glass, blockList.get(0), BlockType.NORMAL));
+			blockList.add(new ShipBlock(new ShipLocation(-1, 2, 0, blockList.get(0)), glass, blockList.get(0), BlockType.NORMAL));
+			blockList.add(new ShipBlock(new ShipLocation(1, 2, 0, blockList.get(0)), glass, blockList.get(0), BlockType.NORMAL));
+			blockList.add(new ShipBlock(new ShipLocation(1, 2, -1, blockList.get(0)), blueWool, blockList.get(0), BlockType.NORMAL));
+			blockList.add(new ShipBlock(new ShipLocation(-1, 2, -1, blockList.get(0)), blueWool, blockList.get(0), BlockType.NORMAL));
+			blockList.add(new ShipBlock(new ShipLocation(1, 2, -2, blockList.get(0)), blueWool, blockList.get(0), BlockType.NORMAL));
+			blockList.add(new ShipBlock(new ShipLocation(-1, 2, -2, blockList.get(0)), blueWool, blockList.get(0), BlockType.NORMAL));
+			blockList.add(new ShipBlock(new ShipLocation(1, 2, -3, blockList.get(0)), blueWool, blockList.get(0), BlockType.NORMAL));
+			blockList.add(new ShipBlock(new ShipLocation(-1, 2, -3, blockList.get(0)), blueWool, blockList.get(0), BlockType.NORMAL));
+			blockList.add(new ShipBlock(new ShipLocation(0, 2, -2, blockList.get(0)), seaLamp, blockList.get(0), BlockType.NORMAL));
+			blockList.add(new ShipBlock(new ShipLocation(0, 3, 0, blockList.get(0)), glass, blockList.get(0), BlockType.NORMAL));
+			blockList.add(new ShipBlock(new ShipLocation(0, 3, -1, blockList.get(0)), whiteWool, blockList.get(0), BlockType.NORMAL));
+			blockList.add(new ShipBlock(new ShipLocation(0, 3, -2, blockList.get(0)), whiteWool, blockList.get(0), BlockType.NORMAL));
+			blockList.add(new ShipBlock(new ShipLocation(0, 3, -3, blockList.get(0)), whiteWool, blockList.get(0), BlockType.NORMAL));
+
 			new Ship(blockList, blockList.get(0), owner, 1f, 6.0f, 0.05f, 100000, 0);
 			
 			this.close();
@@ -253,6 +256,10 @@ public class MainGui extends Gui{
 			
 			MissileGUI gui = new MissileGUI((Player) owner);
 			gui.open();
+			
+		}else if (itemName.equals("EM Field Info")) {
+			
+			owner.sendMessage(ChatColor.GOLD + "" + ChatColor.BOLD + "[EM Field] " + "Field strength currently at: " + SQSmoothCraft.shipMap.get(owner.getUniqueId()).shieldHealth);
 			
 		}
 		

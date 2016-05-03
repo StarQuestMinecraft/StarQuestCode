@@ -49,6 +49,11 @@ public class SQPowerTools extends JavaPlugin{
 	public static List<List<String>> powerToolSlots = new ArrayList<List<String>>();
 	public static List<List<Integer>> powerToolOperations = new ArrayList<List<Integer>>();
 	
+	public static List<List<Integer>> powerToolEffects = new ArrayList<List<Integer>>();
+	public static List<List<Integer>> powerToolEffectLevels = new ArrayList<List<Integer>>();
+	public static List<List<Integer>> powerToolEffectDurations = new ArrayList<List<Integer>>();
+	public static List<List<Integer>> powerToolEffectCases = new ArrayList<List<Integer>>();
+	
 	public static List<Short> powerToolDurabilities = new ArrayList<Short>();
 		
 	public static List<Integer> powerToolEnergies = new ArrayList<Integer>();
@@ -68,6 +73,11 @@ public class SQPowerTools extends JavaPlugin{
 	public static List<List<List<Float>>> powerToolModAmounts = new ArrayList<List<List<Float>>>();
 	public static List<List<List<String>>> powerToolModSlots = new ArrayList<List<List<String>>>();
 	public static List<List<List<Integer>>> powerToolModOperations = new ArrayList<List<List<Integer>>>();
+	
+	public static List<List<List<Integer>>> powerToolModEffects = new ArrayList<List<List<Integer>>>();
+	public static List<List<List<Integer>>> powerToolModEffectLevels = new ArrayList<List<List<Integer>>>();
+	public static List<List<List<Integer>>> powerToolModEffectDurations = new ArrayList<List<List<Integer>>>();
+	public static List<List<List<Integer>>> powerToolModEffectCases = new ArrayList<List<List<Integer>>>();
 	
 	public static List<List<Map<Enchantment, Integer>>> powerToolModEnchants = new ArrayList<List<Map<Enchantment, Integer>>>();
 	
@@ -224,6 +234,36 @@ public class SQPowerTools extends JavaPlugin{
 				
 			}
 			
+			if (config.contains("power tools." + powerTool + ".potion")) {
+				
+				List<Integer> effects = new ArrayList<Integer>();
+				List<Integer> effectLevels = new ArrayList<Integer>();
+				List<Integer> effectDurations = new ArrayList<Integer>();
+				List<Integer> effectCases = new ArrayList<Integer>();
+
+				for (String effect : config.getConfigurationSection("power tools." + powerTool + ".potion").getKeys(false)) {
+					
+					effects.add(config.getInt("power tools." + powerTool + ".potion." + effect + ".effect"));
+					effectLevels.add(config.getInt("power tools." + powerTool + ".potion." + effect + ".level"));
+					effectDurations.add(config.getInt("power tools." + powerTool + ".potion." + effect + ".duration"));
+					effectCases.add(config.getInt("power tools." + powerTool + ".potion." + effect + ".case"));
+					
+				}
+				
+				powerToolEffects.add(effects);
+				powerToolEffectLevels.add(effectLevels);
+				powerToolEffectDurations.add(effectDurations);
+				powerToolEffectCases.add(effectCases);
+				
+			} else {
+				
+				powerToolEffects.add(new ArrayList<Integer>());
+				powerToolEffectLevels.add(new ArrayList<Integer>());
+				powerToolEffectDurations.add(new ArrayList<Integer>());
+				powerToolEffectCases.add(new ArrayList<Integer>());
+				
+			}
+			
 			if (config.contains("power tools." + powerTool + ".lore")) {
 				
 				powerToolLores.add(config.getStringList("power tools." + powerTool + ".lore"));
@@ -246,6 +286,11 @@ public class SQPowerTools extends JavaPlugin{
 				List<List<Float>> modAmounts = new ArrayList<List<Float>>();
 				List<List<Integer>> modOperations = new ArrayList<List<Integer>>();
 				List<List<String>> modSlots = new ArrayList<List<String>>();
+				
+				List<List<Integer>> modEffects = new ArrayList<List<Integer>>();
+				List<List<Integer>> modEffectLevels = new ArrayList<List<Integer>>();
+				List<List<Integer>> modEffectDurations = new ArrayList<List<Integer>>();
+				List<List<Integer>> modEffectCases = new ArrayList<List<Integer>>();
 				
 				List<Map<Enchantment, Integer>> modEnchants = new ArrayList<Map<Enchantment, Integer>>();
 				
@@ -291,6 +336,36 @@ public class SQPowerTools extends JavaPlugin{
 						
 					}
 					
+					if (config.contains("power tools." + powerTool + ".mods." + mod + ".effects.potion")) {
+						
+						List<Integer> effects = new ArrayList<Integer>();
+						List<Integer> effectLevels = new ArrayList<Integer>();
+						List<Integer> effectDurations = new ArrayList<Integer>();
+						List<Integer> effectCases = new ArrayList<Integer>();
+
+						for (String effect : config.getConfigurationSection("power tools." + powerTool + ".mods." + mod + ".effects.potion").getKeys(false)) {
+							
+							effects.add(config.getInt("power tools." + powerTool + ".mods." + mod + ".effects.potion." + effect + ".effect"));
+							effectLevels.add(config.getInt("power tools." + powerTool + ".mods." + mod + ".effects.potion." + effect + ".level"));
+							effectDurations.add(config.getInt("power tools." + powerTool + ".mods." + mod + ".effects.potion." + effect + ".duration"));
+							effectCases.add(config.getInt("power tools." + powerTool + ".mods." + mod + ".effects.potion." + effect + ".case"));
+							
+						}
+						
+						modEffects.add(effects);
+						modEffectLevels.add(effectLevels);
+						modEffectDurations.add(effectDurations);
+						modEffectCases.add(effectCases);
+						
+					} else {
+						
+						modEffects.add(new ArrayList<Integer>());
+						modEffectLevels.add(new ArrayList<Integer>());
+						modEffectDurations.add(new ArrayList<Integer>());
+						modEffectCases.add(new ArrayList<Integer>());
+						
+					}
+
 					if (config.contains("power tools." + powerTool + ".mods." + mod + ".effects.enchants")) {
 						
 						Map<Enchantment, Integer> enchants = new HashMap<Enchantment, Integer>();
@@ -341,6 +416,11 @@ public class SQPowerTools extends JavaPlugin{
 				powerToolModAmounts.add(modAmounts);
 				powerToolModOperations.add(modOperations);
 				powerToolModSlots.add(modSlots);
+				
+				powerToolModEffects.add(modEffects);
+				powerToolModEffectLevels.add(modEffectLevels);
+				powerToolModEffectDurations.add(modEffectDurations);
+				powerToolModEffectCases.add(modEffectCases);
 				
 				powerToolModEnchants.add(modEnchants);
 				
@@ -398,10 +478,6 @@ public class SQPowerTools extends JavaPlugin{
 				
 				for (int i = 0; i < ingredients.size(); i ++) {
 					
-					System.out.print(powerTool);
-					System.out.print(ingredients.get(i));
-					System.out.print(config.getInt("power tools." + powerTool + ".recipe.ingredients." + ingredients.get(i)));
-					
 					recipe.setIngredient(ingredients.get(i).toCharArray()[0], Material.getMaterial(config.getInt("power tools." + powerTool + ".recipe.ingredients." + ingredients.get(i))));
 					
 				}
@@ -419,6 +495,7 @@ public class SQPowerTools extends JavaPlugin{
 		}
 		
 		(new ChargerTask()).run();
+		(new HoldingChecker()).run();
 		
 	}
 	
@@ -821,34 +898,38 @@ public class SQPowerTools extends JavaPlugin{
 
 			    boolean needsToChange = false;
 			    
-			    for (int i = 0; i < modifiers.size(); i ++) {
-			    	
-			    	int attributePos = 0;
-			    	
-			    	if (powerToolAttributes.get(pos).contains(modifiers.get(i).get("Name").toString().substring(1, modifiers.get(i).get("Name").toString().toCharArray().length - 1))) {
-			    		
-			    		for (int j = 0; j < powerToolAttributes.get(pos).size(); j ++) {
-			    			
-			    			if (powerToolAttributes.get(pos).get(j).equals(modifiers.get(i).get("Name").toString().substring(1, modifiers.get(i).get("Name").toString().toCharArray().length - 1))) {
-			    				
-			    				attributePos = j;
-			    				
-			    			}
-			    			
-			    		}
-
-			    		if (!powerToolAmounts.get(pos).get(attributePos).equals(Float.parseFloat(modifiers.get(i).get("Amount").toString().substring(0, modifiers.get(i).get("Amount").toString().toCharArray().length - 1)))) {
-			    			
-			    			needsToChange = true;
-			    			
-			    		}
-
-			    		
-			    	} else {
-			    		
-			    		needsToChange = true;
-			    		
-			    	}
+			    if (modifiers != null) {
+			    
+				    for (int i = 0; i < modifiers.size(); i ++) {
+				    	
+				    	int attributePos = 0;
+				    	
+				    	if (powerToolAttributes.get(pos).contains(modifiers.get(i).get("Name").toString().substring(1, modifiers.get(i).get("Name").toString().toCharArray().length - 1))) {
+				    		
+				    		for (int j = 0; j < powerToolAttributes.get(pos).size(); j ++) {
+				    			
+				    			if (powerToolAttributes.get(pos).get(j).equals(modifiers.get(i).get("Name").toString().substring(1, modifiers.get(i).get("Name").toString().toCharArray().length - 1))) {
+				    				
+				    				attributePos = j;
+				    				
+				    			}
+				    			
+				    		}
+	
+				    		if (!powerToolAmounts.get(pos).get(attributePos).equals(Float.parseFloat(modifiers.get(i).get("Amount").toString().substring(0, modifiers.get(i).get("Amount").toString().toCharArray().length - 1)))) {
+				    			
+				    			needsToChange = true;
+				    			
+				    		}
+	
+				    		
+				    	} else {
+				    		
+				    		needsToChange = true;
+				    		
+				    	}
+					    
+				    }
 				    
 			    }
 

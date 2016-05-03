@@ -12,6 +12,8 @@ import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import com.ginger_walnut.sqsmoothcraft.SQSmoothCraft;
+import com.whirlwindgames.dibujaron.sqempire.Empire;
+import com.whirlwindgames.dibujaron.sqempire.database.object.EmpirePlayer;
 
 public class Missile {
 	
@@ -112,7 +114,21 @@ public class Missile {
 			
 			if (target.getLocation().distance(shooter.getLocation()) <= detectionRange) {
 				
-				// if(target is not in the same empire as shooter )
+				if(SQSmoothCraft.useEmpires) {
+					
+					EmpirePlayer empShooter = EmpirePlayer.getOnlinePlayer(shooter);
+					Empire shooterEmpire = empShooter.getEmpire();
+					
+					EmpirePlayer empTarget = EmpirePlayer.getOnlinePlayer(target);
+					Empire targetEmpire = empTarget.getEmpire();
+					
+					if(shooterEmpire.equals(targetEmpire)) {
+						
+						return null;
+						
+					}
+					
+				}
 				
 				if(SQSmoothCraft.playerFriendList.get(shooter.getUniqueId()).contains(target.getUniqueId())) return null;
 				

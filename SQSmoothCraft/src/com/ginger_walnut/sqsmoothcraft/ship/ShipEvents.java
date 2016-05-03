@@ -18,6 +18,7 @@ import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
+import org.bukkit.entity.Snowball;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
@@ -144,7 +145,7 @@ public class ShipEvents implements Listener {
 								}
 							}
 							
-							shipBlock.ship.damage(shipBlock, shipDamage, carryOver);
+							shipBlock.ship.damage(shipBlock, shipDamage, carryOver, projectile.getLocation());
 							
 							projectile.remove();
 							
@@ -186,6 +187,24 @@ public class ShipEvents implements Listener {
 					
 				}
 				
+			} else {
+				if (event.getEntity() instanceof ArmorStand) {
+					
+					ArmorStand stand = (ArmorStand) event.getEntity();
+					
+					if (!stand.isVisible()) {
+						
+						if (projectile instanceof Snowball) {
+							
+							stand.remove();
+							stand = null;
+							
+						}
+						
+					}
+				
+				}
+				
 			}
 			
 		}
@@ -214,7 +233,7 @@ public class ShipEvents implements Listener {
 				
 				Ship ship = SQSmoothCraft.shipMap.get(player.getUniqueId());
 				
-				ship.rightClickControls();
+				ship.rightClickControls(player);
 				
 			}
 			
@@ -233,7 +252,7 @@ public class ShipEvents implements Listener {
 				
 				if (SQSmoothCraft.stoppedShipMap.contains(shipBlock.getShip())) {
 					
-					if (!shipBlock.getShip().getMainBlock().stand.isDead()) {
+					if (shipBlock.getShip().getMainBlock().stand != null) {
 						
 						event.setCancelled(true);
 						
@@ -284,7 +303,7 @@ public class ShipEvents implements Listener {
 						
 						Ship ship = SQSmoothCraft.shipMap.get(player.getUniqueId());
 						
-						if (ship.rightClickControls()) {
+						if (ship.rightClickControls(player)) {
 							
 							event.setCancelled(true);
 							
@@ -382,6 +401,7 @@ public class ShipEvents implements Listener {
 		
 		if (item != null) {
 			
+			
 			if (SQSmoothCraft.guiNames.contains(event.getInventory().getName())) {
 				
 				if(event.getCurrentItem() == null) return;
@@ -419,7 +439,7 @@ public class ShipEvents implements Listener {
 	}
 	
 	@EventHandler
-	public void onInventoryClose(InventoryCloseEvent e) {
+	public void onInventoryClose(final InventoryCloseEvent e) {
 		
 		if (e.getInventory().getName() == null)
 			return;

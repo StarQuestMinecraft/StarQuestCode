@@ -1,4 +1,4 @@
 name: SQReconnect
 main: com.dibujaron.sqreconnect.SQReconnect
 version: 1.0.0
-depend: [SQDynamicWhitelist]
+depend: [SQGreeter]
