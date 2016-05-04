@@ -13,23 +13,26 @@ import org.bukkit.event.Listener;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import net.milkbowl.vault.chat.Chat;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
 
 public class SQRanks4 extends JavaPlugin implements Listener{
 	public static Permission permission;
 	public static Economy eco;
+	public static Chat chat;
 
 	public void onEnable(){
 		setupPermissions();
 		setupEconomy();
+		setupChat();
 		Bukkit.getPluginManager().registerEvents(this, this);
 		this.saveDefaultConfig();
 	}
 	
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args){
-		if(cmd.getName().equalsIgnoreCase("buyrank") && sender instanceof Player){
+		if(cmd.getName().equalsIgnoreCase("rankup") && sender instanceof Player){
 			return buyrank(sender, args);
 		}
 		return false;
@@ -37,19 +40,37 @@ public class SQRanks4 extends JavaPlugin implements Listener{
 	
 	public boolean buyrank(CommandSender sender, String[] args){
 		Player player = (Player) sender;
-		if(args.length != 1){
+		String[] ara_ranks = {"Arator0", "Arator1", "Arator2", "Arator3", "Arator4", "Arator5"};
+		String[] req_ranks = {"Requiem0", "Requiem1", "Requiem2", "Requiem3", "Requiem4", "Requiem5"};
+		String[] yav_ranks = {"Yavari0", "Yarari1", "Yavari2", "Yavari3", "Yavari4", "Yavari5"};
+
+		if(permission.playerInGroup(player, "Arator5") || permission.playerInGroup(player, "Requiem5") || permission.playerInGroup(player, "Yavari5")){
+			player.sendMessage(ChatColor.GOLD + "You are already at max rank");
 			return false;
 		}
-		if(getConfig().getString("ranks."+args[0]+".group") == null){
-			player.sendMessage(ChatColor.GOLD + "Rank not found");
-			return true;
+		
+		String current_rank = "", next_rank = "";
+		for(int i = 0; i < 6; i++){
+			if(permission.playerInGroup(player, ara_ranks[i])){
+				current_rank = ara_ranks[i];
+				next_rank = ara_ranks[i+1];
+			}
+			if(permission.playerInGroup(player, req_ranks[i])){
+				current_rank = req_ranks[i];
+				next_rank = req_ranks[i+1];
+			}
+			if(permission.playerInGroup(player, yav_ranks[i])){
+				current_rank = yav_ranks[i];
+				next_rank = yav_ranks[i+1];
+			}
 		}
 		
-		List <String> prereqs = getConfig().getStringList("ranks."+args[0]+".prereq");
-		double price = getConfig().getDouble("ranks."+args[0]+".price");
-		String skill = getConfig().getString("ranks."+args[0]+".skill");
-		int level = getConfig().getInt("ranks."+args[0]+".level");
-		String group = getConfig().getString("ranks."+args[0]+".group");
+		
+		List <String> prereqs = getConfig().getStringList("ranks."+next_rank+".prereq");
+		double price = getConfig().getDouble("ranks."+next_rank+".price");
+		String skill = getConfig().getString("ranks."+next_rank+".skill");
+		int level = getConfig().getInt("ranks."+next_rank+".level");
+		//String group = getConfig().getString("ranks."+next_rank+".group");
 		
 		boolean has_prereqs = true;
 		for(String rank : prereqs){
@@ -60,9 +81,10 @@ public class SQRanks4 extends JavaPlugin implements Listener{
 		
 		if(skill.equals("all")) {
 			if(eco.has(player, price) && ExperienceAPI.getPowerLevel(player) >= level && has_prereqs){
-				permission.playerAddGroup(player, group);
+				permission.playerRemoveGroup(player, current_rank);
+				permission.playerAddGroup(player, next_rank);
 				eco.withdrawPlayer(player, price);
-				player.sendMessage(ChatColor.GREEN + "You have bought the rank: " + args[0]);
+				player.sendMessage(ChatColor.GREEN + "You have bought the rank: " + chat.getGroupPrefix(player.getWorld(), next_rank));
 			}
 			else if(ExperienceAPI.getPowerLevel(player) < level){
 				player.sendMessage(ChatColor.GOLD + "This rank requires a total power level of at least " + Integer.toString(level));
@@ -73,15 +95,16 @@ public class SQRanks4 extends JavaPlugin implements Listener{
 			else if(!has_prereqs){
 				player.sendMessage(ChatColor.GOLD + "You are missing one or more of the following prerequsite ranks:");
 				for(String rank : prereqs){
-					player.sendMessage(ChatColor.GOLD + rank);
+					player.sendMessage(ChatColor.GOLD + chat.getGroupPrefix(player.getWorld(), rank));
 				}
 				
 			}
 		}
 		else if(eco.has(player, price) && ExperienceAPI.getLevel(player, skill) >= level && has_prereqs){
-			permission.playerAddGroup(player, group);
+			permission.playerRemoveGroup(player, current_rank);
+			permission.playerAddGroup(player, next_rank);
 			eco.withdrawPlayer(player, price);
-			player.sendMessage(ChatColor.GREEN + "You have bought the rank: " + args[0]);
+			player.sendMessage(ChatColor.GREEN + "You have bought the rank: " + chat.getGroupPrefix(player.getWorld(), next_rank));
 		}
 		else if(ExperienceAPI.getLevel(player, skill) < level){
 			player.sendMessage(ChatColor.GOLD + "This rank requires a " + skill + " level of at least " + Integer.toString(level));
@@ -92,7 +115,7 @@ public class SQRanks4 extends JavaPlugin implements Listener{
 		else if(!has_prereqs){
 			player.sendMessage(ChatColor.GOLD + "You are missing one or more of the following prerequsite ranks:");
 			for(String rank : prereqs){
-				player.sendMessage(ChatColor.GOLD + rank);
+				player.sendMessage(ChatColor.GOLD + chat.getGroupPrefix(player.getWorld(), rank));
 			}
 			
 		}
@@ -114,4 +137,10 @@ public class SQRanks4 extends JavaPlugin implements Listener{
 		}
 		return (eco != null);
 	}
+	
+	private boolean setupChat() {
+        RegisteredServiceProvider<Chat> chatProvider = getServer().getServicesManager().getRegistration(Chat.class);
+        chat = chatProvider.getProvider();
+        return chat != null;
+    }
 }

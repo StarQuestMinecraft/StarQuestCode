@@ -1,21 +1,16 @@
 ranks:
-  example1:
-    prereq: 
-    price: 1.0
-    skill: Mining
-    level: 1
-    group: example1
-  example2:
-    prereq: 
+  Requiem1:
+    prereq: Requiem0
+    price: 10.0
+    skill: all
+    level: 10
+  Requiem2:
+    prereq: Requiem1
     price: 15.0
-    skill: Woodcutting
-    level: 3
-    group: example2
-  example3:
-    prereq:
-      - example1
-      - example2
+    skill: all
+    level: 30
+  Requiem3:
+    prereq: Requiem2
     price: 20.0
-    skill: axes
-    level: 2
-    group: example3
+    skill: all
+    level: 50
