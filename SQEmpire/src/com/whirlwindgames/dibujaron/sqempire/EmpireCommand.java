@@ -52,6 +52,7 @@ public class EmpireCommand implements CommandExecutor{
 			EmpirePlayer ep = EmpirePlayer.getOnlinePlayer(p);
 			ep.setEmpire(Empire.NONE);
 			ep.publishData();
+			SQEmpire.economy.withdrawPlayer(p, SQEmpire.economy.getBalance(p));
 			SQEmpire.permission.playerAddGroup(p,"Guest");
 			Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "bungeeperms user " + p.getName() + " removegroup Yavari0");
 			Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "bungeeperms user " + p.getName() + " removegroup Arator0");

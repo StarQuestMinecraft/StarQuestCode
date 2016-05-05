@@ -16,13 +16,8 @@ import com.dibujaron.autorestart.tasks.TimeCheckTask;
 public class AutoRestart extends JavaPlugin {
 
 	public void onEnable() {
-		if (Bukkit.getServerName().equals("Trinitos_Alpha")) {
-			System.out.println("Server is Alpha, scheduling restart!");
-			getServer().getScheduler().scheduleSyncDelayedTask(this, new Runnable() {
-				public void run() {
-					command("ee chatreload");
-				}
-			}, 20 * 60 * 5L);
+		if (Bukkit.getServerName().equals("CoreSystem")) {
+			System.out.println("Server is Core, scheduling restart!");
 			// delay an hour and a half; there's no reason to check before then,
 			// and if you check too soon it'll restart loop.
 			// check every minute after that. players may get picky about their
@@ -34,7 +29,7 @@ public class AutoRestart extends JavaPlugin {
 
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-		if (cmd.getName().equalsIgnoreCase("restartall") && (sender.getName().equals("dibujaron") || sender instanceof ConsoleCommandSender)) {
+		if (cmd.getName().equalsIgnoreCase("restartall") && (sender.getName().equals("dibujaron") || sender.hasPermission("SQAutoRestart.restartall"))) {
 			if (args.length != 1) {
 				sender.sendMessage("put a time argument.");
 				return true;
@@ -72,7 +67,7 @@ public class AutoRestart extends JavaPlugin {
 
 	private static void executeBatch(String filename) {
 		try {
-			File dir = new File("C:\\SQ3\\BungeeUtils");
+			File dir = new File("C:\\SQ4\\BungeeUtils");
 			Runtime.getRuntime().exec("c:\\windows\\system32\\cmd.exe /d /c " + filename + ".bat", null, dir);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
