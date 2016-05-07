@@ -32,6 +32,9 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import com.ginger_walnut.sqpowertools.tasks.ChargerTask;
+import com.ginger_walnut.sqpowertools.tasks.HoldingTask;
+
 public class SQPowerTools extends JavaPlugin{
 
 	public final Logger logger = Logger.getLogger("Minecraft");
@@ -127,6 +130,9 @@ public class SQPowerTools extends JavaPlugin{
 			
 		}
 
+		(new ChargerTask()).run();
+		(new HoldingTask()).run();
+		
 		config = getConfig();
 		
 		powerToolNames = new ArrayList<String>();
@@ -493,9 +499,6 @@ public class SQPowerTools extends JavaPlugin{
 			}
 
 		}
-		
-		(new ChargerTask()).run();
-		(new HoldingChecker()).run();
 		
 	}
 	
@@ -933,6 +936,8 @@ public class SQPowerTools extends JavaPlugin{
 				    
 			    }
 
+			    needsToChange = true;
+			    
 			    if (needsToChange) {
 			    	
 			    	HashMap<String, Integer> modifierMap = getModifiers(powerTool);
@@ -957,6 +962,8 @@ public class SQPowerTools extends JavaPlugin{
 					for (int i = 0; i < powerToolNames.size(); i ++) {
 						
 						if (powerToolNames.get(i).equals(name)) {
+							
+							powerTool.setDurability((short)powerToolDurabilities.get(i));
 							
 							for (int j = 0; j < powerToolModNames.get(i).size(); j ++) {
 								

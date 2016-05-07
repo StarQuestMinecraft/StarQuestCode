@@ -1,4 +1,4 @@
-package com.ginger_walnut.sqpowertools;
+package com.ginger_walnut.sqpowertools.tasks;
 
 import java.util.List;
 
@@ -12,6 +12,9 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.scheduler.BukkitScheduler;
+
+import com.ginger_walnut.sqpowertools.Events;
+import com.ginger_walnut.sqpowertools.SQPowerTools;
 
 public class ChargerTask extends Thread{
 

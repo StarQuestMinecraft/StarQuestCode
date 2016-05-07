@@ -53,22 +53,47 @@ public class DatabaseChecker extends Thread {
 								boosterName = SQBoosters.permissionName[k];
 								multiplierName = SQBoosters.multiplierName[k];
 							
-								multiplier= SQBoosters.multipliers[k];
+								multiplier = SQBoosters.multipliers[k];
 							
 							}
 						
 						}
 					
-						if (SQBoosters.databasePurchasers.get(j) != null) {
-						
-							Bukkit.getServer().broadcastMessage(ChatColor.GOLD + boosterName + ": " + SQBoosters.databasePurchasers.get(j) + " has purchased a " + multiplierName + " booster and the multiplier is now " + multiplier);
-							Bukkit.getServer().broadcastMessage(ChatColor.GOLD + "You can thank them by giving them money using /thank " + SQBoosters.databasePurchasers.get(j) + " <amount>");
-						
+						if (multiplierName.equals("shop")) {
+							
+							double booster = multiplier;
+
+							if (booster != 1) {
+								
+								booster =  1 + Math.abs(SQBoosters.square(.5, (booster - 1)) - 2);
+								
+							}
+							
+							if (SQBoosters.databasePurchasers.get(j) != null) {
+								
+								Bukkit.getServer().broadcastMessage(ChatColor.GOLD + boosterName + ": " + SQBoosters.databasePurchasers.get(j) + " has purchased a " + multiplierName + " booster and the multiplier is now " + booster);
+								Bukkit.getServer().broadcastMessage(ChatColor.GOLD + "You can thank them by giving them money using /thank " + SQBoosters.databasePurchasers.get(j) + " <amount>");
+							
+							} else {
+							
+								Bukkit.getServer().broadcastMessage(ChatColor.GOLD + boosterName + ": An anonymous person has purchased a " + multiplierName + " and the multiplier is now " + booster);
+							
+							}	
+							
 						} else {
-						
-							Bukkit.getServer().broadcastMessage(ChatColor.GOLD + boosterName + ": An anonymous person has purchased a " + multiplierName + " and the multiplier is now " + multiplier);
-						
-						}	
+							
+							if (SQBoosters.databasePurchasers.get(j) != null) {
+								
+								Bukkit.getServer().broadcastMessage(ChatColor.GOLD + boosterName + ": " + SQBoosters.databasePurchasers.get(j) + " has purchased a " + multiplierName + " booster and the multiplier is now " + multiplier);
+								Bukkit.getServer().broadcastMessage(ChatColor.GOLD + "You can thank them by giving them money using /thank " + SQBoosters.databasePurchasers.get(j) + " <amount>");
+							
+							} else {
+							
+								Bukkit.getServer().broadcastMessage(ChatColor.GOLD + boosterName + ": An anonymous person has purchased a " + multiplierName + " and the multiplier is now " + multiplier);
+							
+							}	
+							
+						}
 				
 					}
 			
@@ -95,16 +120,41 @@ public class DatabaseChecker extends Thread {
 						
 						}
 					
-						if (oldDatabasePurchasers.get(j) != null) {
-						
-							Bukkit.getServer().broadcastMessage(ChatColor.GOLD + boosterName + ": The "+ multiplierName + " booster purchased by " + oldDatabasePurchasers.get(j) + " has expired and the multiplier is now " + multiplier);
-							Bukkit.getServer().broadcastMessage(ChatColor.GOLD + "You can nolonger thank " + oldDatabasePurchasers.get(j));
-						
+						if (multiplierName.equals("shop")) {
+							
+							double booster = multiplier;
+
+							if (booster != 1) {
+								
+								booster =  1 + Math.abs(SQBoosters.square(.5, (booster - 1)) - 2);
+								
+							}
+							
+							if (oldDatabasePurchasers.get(j) != null) {
+								
+								Bukkit.getServer().broadcastMessage(ChatColor.GOLD + boosterName + ": The "+ multiplierName + " booster purchased by " + oldDatabasePurchasers.get(j) + " has expired and the multiplier is now " + booster);
+								Bukkit.getServer().broadcastMessage(ChatColor.GOLD + "You can nolonger thank " + oldDatabasePurchasers.get(j));
+							
+							} else {
+							
+								Bukkit.getServer().broadcastMessage(ChatColor.GOLD + boosterName + ": The "+ multiplierName + " booster purchased by an anonymous person has expired and the multiplier is now " + booster);
+							
+							}
+							
 						} else {
 						
-							Bukkit.getServer().broadcastMessage(ChatColor.GOLD + boosterName + ": The "+ multiplierName + " booster purchased by an anonymous person has expired and the multiplier is now " + multiplier);
-						
-						}	
+							if (oldDatabasePurchasers.get(j) != null) {
+							
+								Bukkit.getServer().broadcastMessage(ChatColor.GOLD + boosterName + ": The "+ multiplierName + " booster purchased by " + oldDatabasePurchasers.get(j) + " has expired and the multiplier is now " + multiplier);
+								Bukkit.getServer().broadcastMessage(ChatColor.GOLD + "You can nolonger thank " + oldDatabasePurchasers.get(j));
+							
+							} else {
+							
+								Bukkit.getServer().broadcastMessage(ChatColor.GOLD + boosterName + ": The "+ multiplierName + " booster purchased by an anonymous person has expired and the multiplier is now " + multiplier);
+							
+							}
+							
+						}
 				
 					}
 			

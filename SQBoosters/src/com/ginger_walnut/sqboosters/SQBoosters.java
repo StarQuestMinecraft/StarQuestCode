@@ -114,25 +114,59 @@ public class SQBoosters extends JavaPlugin {
 	
 	public static void printHelp (CommandSender sender, boolean permission, String multiplierName, int multiplierPosition, String commandName) {
 		
-		if (!permission) {
-			
-			sender.sendMessage(ChatColor.GOLD + "-----------------------------------------------------");
-			sender.sendMessage(ChatColor.GOLD + "Current " + multiplierName + " multiplier: " + ChatColor.BLUE + multipliers[multiplierPosition]);
-			sender.sendMessage(ChatColor.GOLD + "/" + commandName + " help" + ChatColor.BLUE + " - Shows this");
-			sender.sendMessage(ChatColor.GOLD + "/" + commandName + " view" + ChatColor.BLUE + " - Shows a brekadown of the current booster");
-			sender.sendMessage(ChatColor.GOLD + "-----------------------------------------------------");
+		if (commandName != "shopboost") {
+		
+			if (!permission) {
+				
+				sender.sendMessage(ChatColor.GOLD + "-----------------------------------------------------");
+				sender.sendMessage(ChatColor.GOLD + "Current " + multiplierName + " multiplier: " + ChatColor.BLUE + multipliers[multiplierPosition]);
+				sender.sendMessage(ChatColor.GOLD + "/" + commandName + " help" + ChatColor.BLUE + " - Shows this");
+				sender.sendMessage(ChatColor.GOLD + "/" + commandName + " view" + ChatColor.BLUE + " - Shows a brekadown of the current booster");
+				sender.sendMessage(ChatColor.GOLD + "-----------------------------------------------------");
+				
+			} else {
+				
+				sender.sendMessage(ChatColor.GOLD + "-----------------------------------------------------");
+				sender.sendMessage(ChatColor.GOLD + "Current " + multiplierName + " multiplier: " + ChatColor.BLUE + multipliers[multiplierPosition]);
+				sender.sendMessage(ChatColor.GOLD + "/" + commandName + " help" + ChatColor.BLUE + " - Shows this");
+				sender.sendMessage(ChatColor.GOLD + "/" + commandName + " add <multiplier> <purchaser>" + ChatColor.BLUE + " - Adds a booster with the specified purchaser ");
+				sender.sendMessage(ChatColor.GOLD + "/" + commandName + " add <multiplier>" + ChatColor.BLUE + " - Adds a booster with no purchaser");
+				sender.sendMessage(ChatColor.GOLD + "/" + commandName + " view" + ChatColor.BLUE + " - Shows a brekadown of the current booster");
+				sender.sendMessage(ChatColor.GOLD + "-----------------------------------------------------");
+					
+			}	
 			
 		} else {
 			
-			sender.sendMessage(ChatColor.GOLD + "-----------------------------------------------------");
-			sender.sendMessage(ChatColor.GOLD + "Current " + multiplierName + " multiplier: " + ChatColor.BLUE + multipliers[multiplierPosition]);
-			sender.sendMessage(ChatColor.GOLD + "/" + commandName + " help" + ChatColor.BLUE + " - Shows this");
-			sender.sendMessage(ChatColor.GOLD + "/" + commandName + " add <multiplier> <purchaser>" + ChatColor.BLUE + " - Adds a booster with the specified purchaser ");
-			sender.sendMessage(ChatColor.GOLD + "/" + commandName + " add <multiplier>" + ChatColor.BLUE + " - Adds a booster with no purchaser");
-			sender.sendMessage(ChatColor.GOLD + "/" + commandName + " view" + ChatColor.BLUE + " - Shows a brekadown of the current booster");
-			sender.sendMessage(ChatColor.GOLD + "-----------------------------------------------------");
+			double booster = multipliers[3];
+
+			if (booster != 1) {
 				
-		}		
+				booster =  1 + Math.abs(square(.5, (booster - 1)) - 2);
+				
+			}
+			
+			if (!permission) {
+				
+				sender.sendMessage(ChatColor.GOLD + "-----------------------------------------------------");
+				sender.sendMessage(ChatColor.GOLD + "Current " + multiplierName + " multiplier: " + booster);
+				sender.sendMessage(ChatColor.GOLD + "/" + commandName + " help" + ChatColor.BLUE + " - Shows this");
+				sender.sendMessage(ChatColor.GOLD + "/" + commandName + " view" + ChatColor.BLUE + " - Shows a brekadown of the current booster");
+				sender.sendMessage(ChatColor.GOLD + "-----------------------------------------------------");
+				
+			} else {
+				
+				sender.sendMessage(ChatColor.GOLD + "-----------------------------------------------------");
+				sender.sendMessage(ChatColor.GOLD + "Current " + multiplierName + " multiplier: " + booster);
+				sender.sendMessage(ChatColor.GOLD + "/" + commandName + " help" + ChatColor.BLUE + " - Shows this");
+				sender.sendMessage(ChatColor.GOLD + "/" + commandName + " add <multiplier> <purchaser>" + ChatColor.BLUE + " - Adds a booster with the specified purchaser ");
+				sender.sendMessage(ChatColor.GOLD + "/" + commandName + " add <multiplier>" + ChatColor.BLUE + " - Adds a booster with no purchaser");
+				sender.sendMessage(ChatColor.GOLD + "/" + commandName + " view" + ChatColor.BLUE + " - Shows a brekadown of the current booster");
+				sender.sendMessage(ChatColor.GOLD + "-----------------------------------------------------");
+				
+			}
+			
+		}
 		
 	}
 	
@@ -446,15 +480,46 @@ public class SQBoosters extends JavaPlugin {
 		
 	}
 	
-	public static int getSellBooster() {
+	public static double getSellBooster() {
 		
-		return multipliers[3];
+		int booster = multipliers[3];
+
+		if (booster == 1) {
+			
+			return 1;
+			
+		} else {
+			
+			return 1 + Math.abs(square(.5, (booster - 1)) - 2);
+			
+		}
+		
+		
+	}
+	
+	public static double square(double num1, double num2) {
+		
+		double result = 1;
+		
+		for (int i = 0; i < (int) num2; i ++) {
+			
+			result = result * num1;
+			
+		}
+		
+		return result;
 		
 	}
 	
 	public static int getSpeedBooster() {
 		
 		return multipliers[4];
+		
+	}
+	
+	public static int getSheepShearBooster() {
+		
+		return multipliers[2];
 		
 	}
 	

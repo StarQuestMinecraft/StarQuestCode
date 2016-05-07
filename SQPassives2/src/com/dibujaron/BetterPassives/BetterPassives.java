@@ -24,6 +24,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 public class BetterPassives extends JavaPlugin {
 
+	public static FileConfiguration config;
+	
 	public void onEnable() {
 		getServer().getPluginManager().registerEvents(new PlayerListener(this), this);
 		getServer().getPluginManager().registerEvents(new EntityListener(this), this);
@@ -32,6 +34,8 @@ public class BetterPassives extends JavaPlugin {
 		saveDefaultConfig();
 		
 		Settings.loadSettings(getConfig());
+		
+		config = getConfig();
 	}
 
 	public void onDisable() {

@@ -1,4 +1,4 @@
-package com.ginger_walnut.sqpowertools;
+package com.ginger_walnut.sqpowertools.tasks;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -6,14 +6,15 @@ import java.util.List;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.Material;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.scheduler.BukkitScheduler;
 
-public class HoldingChecker extends Thread{
+import com.ginger_walnut.sqpowertools.SQPowerTools;
+import com.ginger_walnut.sqpowertools.utils.EffectUtils;
+
+public class HoldingTask extends Thread{
 	
 	public void run() {
 		

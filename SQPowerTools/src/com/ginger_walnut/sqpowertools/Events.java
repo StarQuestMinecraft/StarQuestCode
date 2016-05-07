@@ -1,5 +1,7 @@
 package com.ginger_walnut.sqpowertools;
 
+import io.netty.util.internal.ThreadLocalRandom;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -11,8 +13,10 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Sign;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Sheep;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
@@ -23,6 +27,7 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.inventory.InventoryType.SlotType;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerShearEntityEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -30,7 +35,104 @@ import org.bukkit.material.Attachable;
 import org.bukkit.material.MaterialData;
 import org.bukkit.potion.PotionEffect;
 
+import com.ginger_walnut.sqboosters.SQBoosters;
+import com.ginger_walnut.sqpowertools.tasks.ChargerTask;
+import com.ginger_walnut.sqpowertools.utils.EffectUtils;
+
 public class Events implements Listener{	
+	
+	@EventHandler
+	public static void onPlayerShearEntity(PlayerShearEntityEvent event) {
+		
+		if (event.getEntity() instanceof Sheep) {
+			
+			Sheep sheep = (Sheep) event.getEntity();
+			
+			Player player = (Player) event.getPlayer();
+			
+			if (player.getInventory().getItemInMainHand() != null) {
+				
+				ItemStack handItem = player.getInventory().getItemInMainHand();			
+				
+				if (handItem.hasItemMeta()) {
+					
+					if (handItem.getItemMeta().hasLore()) {
+						
+						List<String> lore = handItem.getItemMeta().getLore();
+						
+						if (lore.contains(ChatColor.DARK_PURPLE + "Power Tool")) {
+							
+							handItem = SQPowerTools.fixPowerTool(handItem);
+							player.getInventory().setItemInMainHand(handItem);
+
+							int energy = SQPowerTools.getEnergy(handItem);
+							int energyPerUse = SQPowerTools.getEnergyPerUse(SQPowerTools.getName(handItem));
+							
+							if (energy == 0) {
+								
+								event.setCancelled(true);
+								
+								player.sendMessage(ChatColor.RED + "Your Power Tool is out of energy");
+								
+							} else {
+								
+								List<Entity> entites = sheep.getNearbyEntities(1, 1, 1);
+								
+								for (Entity entity : entites) {
+									
+									if (entity instanceof Sheep) {
+										
+										Sheep sheep2 = (Sheep) entity;
+										
+										if (!sheep2.isSheared()) {
+										
+											sheep2.setSheared(true);
+											
+											int woolAmount = 0;
+											
+											for (int i = 0; i < SQBoosters.getSheepShearBooster(); i ++) {
+												
+												woolAmount = woolAmount + ThreadLocalRandom.current().nextInt(1, 4);
+												
+											}
+											
+											ItemStack wool = new ItemStack(Material.WOOL, woolAmount, sheep2.getColor().getData());
+											
+											player.getWorld().dropItem(player.getLocation(), wool);
+											
+										}
+										
+									}
+									
+								}
+								
+								if (energy <= energyPerUse) {
+									
+									handItem = SQPowerTools.setEnergy(handItem, 0);
+									player.getInventory().setItemInMainHand(handItem);
+									
+									player.sendMessage(ChatColor.RED + "Your Power Tool has run out of energy");
+									
+								} else {
+									
+									handItem = SQPowerTools.setEnergy(handItem, energy - energyPerUse);
+									player.getInventory().setItemInMainHand(handItem);
+									
+								}
+								
+							}
+							
+						}
+						
+					}
+					
+				}
+				
+			}
+						
+		}
+		
+	}
 	
 	@EventHandler
 	public static void onBlockBreak(BlockBreakEvent event) {
@@ -794,9 +896,17 @@ public class Events implements Listener{
 					
 					if (clicked.getItemMeta().getLore().contains(ChatColor.DARK_PURPLE + "Power Tool")) {
 						
+						if (inventory.getType().equals(InventoryType.ANVIL) || inventory.getType().equals(InventoryType.ENCHANTING)) {
+							
+							event.setCancelled(true);
+							
+						}
+						
 						if (inventory.getTitle().equals("Modifier")) {
 							
 							if (event.getSlot() == 16) {
+								
+								event.setCancelled(true);
 								
 								ItemStack powerTool = inventory.getItem(10);
 								

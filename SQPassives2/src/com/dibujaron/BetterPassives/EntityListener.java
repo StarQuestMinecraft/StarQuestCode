@@ -2,6 +2,7 @@ package com.dibujaron.BetterPassives;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -89,6 +90,14 @@ public class EntityListener implements Listener {
 				createRobot((Skeleton) e);
 			}
 			event.setCancelled(true);
+		}
+		if (Settings.getAllHostiles().contains(event.getEntityType())) {
+			int chance = BetterPassives.config.getInt("hostile chance");
+			Random rand = new Random();
+			if (rand.nextInt(101) > chance) {
+				event.setCancelled(true);
+			}
+			
 		}
 	}
 
