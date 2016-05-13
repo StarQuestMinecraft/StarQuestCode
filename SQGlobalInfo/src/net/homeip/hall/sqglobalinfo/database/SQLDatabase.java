@@ -16,7 +16,7 @@ public class SQLDatabase {
 	
 	private ConnectionProvider con;
 	
-	static final String CREATE_TABLE_SQL = "CREATE TABLE IF NOT EXISTS global_player_info (name varchar(16), uuid varchar(36), ip char(40), time DATETIME, online tinyint, world varchar(16), location varchar(32), primary key (name))";
+	static final String CREATE_TABLE_SQL = "CREATE TABLE IF NOT EXISTS global_player_info (name varchar(16), uuid varchar(36), ip varchar(40), time DATETIME, online tinyint, world varchar(16), location varchar(32), primary key (name))";
 	
 	static final String UPSERT_SQL = "INSERT INTO global_player_info (name, uuid, ip, time, online, world, location) VALUES (?, ?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE uuid = VALUES(uuid), ip = VALUES(ip), time = VALUES(time), online = VALUES(online), world = VALUES(world), location = VALUES(location)";
 	
@@ -42,7 +42,12 @@ public class SQLDatabase {
 	}
 	
  	public void updatePlayerData(String name, String uuid, String ip, Date time, boolean online, String world, String location) {
- 		System.out.println("Location: " + location);
+ 		System.out.println("World: \"" + world + "\"");
+ 		System.out.println("Location: \"" + location + "\"");
+ 		System.out.println("IP: \"" + ip + "\"");
+ 		System.out.println("Name: \"" + name.toLowerCase() + "\"");
+ 		System.out.println("UUID: \"" + uuid + "\"");
+ 		
  		int onlineInt;
  		if(online == true) {
  			onlineInt = 1;

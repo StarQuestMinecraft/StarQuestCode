@@ -10,6 +10,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -19,6 +20,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import net.homeip.hall.sqglobalinfo.database.SQLDatabase;
 import net.md_5.bungee.api.ChatColor;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 
 public class SQGlobalInfo extends JavaPlugin implements Listener {
@@ -39,13 +41,17 @@ public class SQGlobalInfo extends JavaPlugin implements Listener {
 		//Retrieves important information about player
 		String name = player.getName();
 		String uuid = player.getUniqueId().toString();
-		String ip = player.getAddress().getHostName();
+		String ip = player.getAddress().getAddress().getHostAddress();
 		Date time = new Date();
 		boolean online = false;
 		String world = player.getWorld().getName();
 		String location = getLocation(player);
 		//Upserts to database
-		getSQLDatabase().updatePlayerData(name, uuid, ip, time, online, world, location);
+		Bukkit.getScheduler().runTaskAsynchronously(this, new Runnable() {
+			public void run() {
+				getSQLDatabase().updatePlayerData(name, uuid, ip, time, online, world, location);
+			}
+		});
 	}
 	@EventHandler
 	public void onPlayerJoin(PlayerJoinEvent event) {
@@ -53,131 +59,157 @@ public class SQGlobalInfo extends JavaPlugin implements Listener {
 		//Retrieves important information about player
 		String name = player.getName();
 		String uuid = player.getUniqueId().toString();
-		String ip = player.getAddress().getHostName();
+		String ip = player.getAddress().getAddress().getHostAddress();
 		Date time = new Date();
 		boolean online = true;
 		String world = player.getWorld().getName();
 		String location = getLocation(player);
 		//Upserts to database
-		getSQLDatabase().updatePlayerData(name, uuid, ip, time, online, world, location);
+		Bukkit.getScheduler().runTaskAsynchronously(this, new Runnable() {
+			public void run() {
+				getSQLDatabase().updatePlayerData(name, uuid, ip, time, online, world, location);
+			}
+		});
+	}
+	@EventHandler
+	public void onPlayerKick(PlayerKickEvent event) {
+		Player player = event.getPlayer();
+		//Retrieves important information about player
+		String name = player.getName();
+		String uuid = player.getUniqueId().toString();
+		String ip = player.getAddress().getAddress().getHostAddress();
+		Date time = new Date();
+		boolean online = true;
+		String world = player.getWorld().getName();
+		String location = getLocation(player);
+		//Upserts to database
+		Bukkit.getScheduler().runTaskAsynchronously(this, new Runnable() {
+			public void run() {
+				getSQLDatabase().updatePlayerData(name, uuid, ip, time, online, world, location);
+			}
+		});
 	}
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-		if(cmd.getName().equalsIgnoreCase("gseen")) {
-			if(args.length > 0) {
-				String name = args[0];
-				//Prevents SQL injection hack
-				if(!(containsIllegalCharacters(name))) {
-					ArrayList<String> names = getSQLDatabase().getNames(name, getConnection());
-					if((names.size() > 0) && (!(names.get(0).equals(null)))) {
-						HashMap<String, Object> data = getSQLDatabase().getData(name, getConnection());
-						String uuid = (String) data.get("uuid");
-						String ip = (String) data.get("ip");
-						Date time = (Date) data.get("time");
-						boolean online = (Boolean) data.get("online");
-						String world = (String) data.get("world");
-						String location = (String) data.get("world");
-						name = names.get(0);
-						String formerNames = "";
-						for(int i = 1; i < names.size(); i++) {
-							formerNames += names.get(i);
-							if(!(names.size() == i + 1)) {
-								formerNames += ", ";
+		Bukkit.getScheduler().runTaskAsynchronously(this, new Runnable() {
+			public void run() {
+				if(cmd.getName().equalsIgnoreCase("gseen")) {
+					if(args.length > 0) {
+						String name = args[0];
+						//Prevents SQL injection hack
+						if(!(containsIllegalCharacters(name))) {
+							ArrayList<String> names = getSQLDatabase().getNames(name, getConnection());
+							if((names.size() > 0) && (!(names.get(0).equals(null)))) {
+								HashMap<String, Object> data = getSQLDatabase().getData(name, getConnection());
+								String uuid = (String) data.get("uuid");
+								String ip = (String) data.get("ip");
+								Date time = (Date) data.get("time");
+								boolean online = (Boolean) data.get("online");
+								String world = (String) data.get("world");
+								String location = (String) data.get("location");
+								name = names.get(0);
+								String formerNames = "";
+								for(int i = 1; i < names.size(); i++) {
+									formerNames += names.get(i);
+									if(!(names.size() == i + 1)) {
+										formerNames += ", ";
+									}
+								}
+								//sends message if given player is online
+								if(online == true) {
+									//sends message for staff
+									if(sender.hasPermission("sqduties.mod")) {
+										sender.sendMessage(ChatColor.GOLD + "Player " + ChatColor.RED + name + ChatColor.GOLD + " has been " + ChatColor.GREEN + "online " + ChatColor.GOLD + "for " + ChatColor.RED + getTimeElapsed(time, new Date()) + "\n" + ChatColor.GOLD + " - UUID: " + ChatColor.RED + uuid + "\n" + ChatColor.GOLD + " - Former Names: " + ChatColor.RED + formerNames + "\n" + ChatColor.GOLD + " - IP Address: " + ChatColor.RED + ip + "\n" + ChatColor.GOLD + " - Location: " + ChatColor.RED + location + ChatColor.GOLD + " on " + ChatColor.RED + world);	
+									}
+									//sends message for non-staff
+									else {
+										sender.sendMessage(ChatColor.GOLD + "Player " + ChatColor.RED + name + ChatColor.GOLD + " has been " + ChatColor.GREEN + "online " + ChatColor.GOLD + "for " + ChatColor.RED + getTimeElapsed(time, new Date())  + "\n" + ChatColor.GOLD + " - UUID: " + ChatColor.RED + uuid + "\n" + ChatColor.GOLD + " - Former Names: " + ChatColor.RED + formerNames);	
+									}
+								}
+								//sends message if given player is offline
+								else {
+									//sends message for staff
+									if(sender.hasPermission("sqduties.mod")) {
+										sender.sendMessage(ChatColor.GOLD + "Player " + ChatColor.RED + name + ChatColor.GOLD + " has been " + ChatColor.DARK_RED + "offline " + ChatColor.GOLD + "for " + ChatColor.RED + getTimeElapsed(time, new Date())  + "\n" + ChatColor.GOLD + " - UUID: " + ChatColor.RED + uuid + "\n" + ChatColor.GOLD + " - Former Names: " + ChatColor.RED + formerNames + "\n" + ChatColor.GOLD + " - IP Address: " + ChatColor.RED + ip + "\n" + ChatColor.GOLD + " - Location: " + ChatColor.RED + location + ChatColor.GOLD + " on " + ChatColor.RED + world);
+									}
+									//sends message for non-staff
+									else {
+										sender.sendMessage(ChatColor.GOLD + "Player " + ChatColor.RED + name + ChatColor.GOLD + " has been " + ChatColor.DARK_RED + "offline " + ChatColor.GOLD + "for " + ChatColor.RED + getTimeElapsed(time, new Date())  + "\n" + ChatColor.GOLD + " - UUID: " + ChatColor.RED + uuid + "\n" + ChatColor.GOLD + " - Former Names: " + ChatColor.RED + formerNames);
+									}
+								}
 							}
-						}
-						//sends message if given player is online
-						if(online == true) {
-							//sends message for staff
-							if(sender.hasPermission("sqduties.mod")) {
-								sender.sendMessage(ChatColor.GOLD + "Player " + ChatColor.RED + name + ChatColor.GOLD + " has been " + ChatColor.GREEN + "online " + ChatColor.GOLD + "for " + ChatColor.RED + getTimeElapsed(time, new Date()) + "\n" + ChatColor.GOLD + " - UUID: " + ChatColor.RED + uuid + "\n" + ChatColor.GOLD + " - Former Names: " + ChatColor.RED + formerNames + "\n" + ChatColor.GOLD + " - IP Address: " + ChatColor.RED + ip + "\n" + ChatColor.GOLD + " - Location: " + ChatColor.RED + location + ChatColor.GOLD + " on " + ChatColor.RED + world);	
-							}
-							//sends message for non-staff
+							//if no players found
 							else {
-								sender.sendMessage(ChatColor.GOLD + "Player " + ChatColor.RED + name + ChatColor.GOLD + " has been " + ChatColor.GREEN + "online " + ChatColor.GOLD + "for " + ChatColor.RED + getTimeElapsed(time, new Date())  + "\n" + ChatColor.GOLD + " - UUID: " + ChatColor.RED + uuid + "\n" + ChatColor.GOLD + " - Former Names: " + ChatColor.RED + formerNames);	
+								sender.sendMessage(ChatColor.DARK_RED + "Player not seen");
 							}
 						}
-						//sends message if given player is offline
+						//argument contained illegal characters
 						else {
-							//sends message for staff
-							if(sender.hasPermission("sqduties.mod")) {
-								sender.sendMessage(ChatColor.GOLD + "Player " + ChatColor.RED + name + ChatColor.GOLD + " has been " + ChatColor.DARK_RED + "offline " + ChatColor.GOLD + "for " + ChatColor.RED + getTimeElapsed(time, new Date())  + "\n" + ChatColor.GOLD + " - UUID: " + ChatColor.RED + uuid + "\n" + ChatColor.GOLD + " - Former Names: " + ChatColor.RED + formerNames + "\n" + ChatColor.GOLD + " - IP Address: " + ChatColor.RED + ip + "\n" + ChatColor.GOLD + " - Location: " + ChatColor.RED + location + ChatColor.GOLD + " on " + ChatColor.RED + world);
-							}
-							//sends message for non-staff
-							else {
-								sender.sendMessage(ChatColor.GOLD + "Player " + ChatColor.RED + name + ChatColor.GOLD + " has been " + ChatColor.DARK_RED + "offline " + ChatColor.GOLD + "for " + ChatColor.RED + getTimeElapsed(time, new Date())  + "\n" + ChatColor.GOLD + " - UUID: " + ChatColor.RED + uuid + "\n" + ChatColor.GOLD + " - Former Names: " + ChatColor.RED + formerNames);
-							}
+							sender.sendMessage(ChatColor.DARK_RED + "Given name contained illegal characters.");
 						}
 					}
-					//if no players found
+					//not enough arguments
 					else {
-						sender.sendMessage(ChatColor.DARK_RED + "Player not seen");
+						sender.sendMessage("Proper usage: /gseen <name>");
 					}
 				}
-				//argument contained illegal characters
-				else {
-					sender.sendMessage(ChatColor.DARK_RED + "Given name contained illegal characters.");
-				}
-			}
-			//not enough arguments
-			else {
-				sender.sendMessage("Proper usage: /gseen <name>");
-			}
-		}
-		else if((cmd.getName().equals("showalts")) && (sender.hasPermission("sqduties.mod"))) {
-			if(args.length > 1) {
-				//Prevents SQL injection hack
-				if(!(containsIllegalCharacters(args[1]))) {
-					ArrayList<String> names = null;
-					String namesAsString = "";
-					//if player inputted an ip
-					if(args[0].equalsIgnoreCase("ip")) {
-						names = getSQLDatabase().getAltsFromIP(args[1], getConnection());
-						if(names != null) {
-							//Concatenates results (player names), separated by space and comma, into a usable String
-							for(int i = 0; i < names.size(); i++) {
-								namesAsString += names.get(i);
-								if(names.size() != i + 1) {
-									namesAsString += ", ";
+				else if((cmd.getName().equals("showalts")) && (sender.hasPermission("sqduties.mod"))) {
+					if(args.length > 1) {
+						//Prevents SQL injection hack
+						if(!(containsIllegalCharacters(args[1]))) {
+							ArrayList<String> names = null;
+							String namesAsString = "";
+							//if player inputted an ip
+							if(args[0].equalsIgnoreCase("ip")) {
+								names = getSQLDatabase().getAltsFromIP(args[1], getConnection());
+								if(names.size() > 0) {
+									//Concatenates results (player names), separated by space and comma, into a usable String
+									for(int i = 0; i < names.size(); i++) {
+										namesAsString += names.get(i);
+										if(names.size() != i + 1) {
+											namesAsString += ", ";
+										}
+									}
+									sender.sendMessage(ChatColor.GOLD + "Players with IP of " + ChatColor.RED + args[1] + ChatColor.GOLD + ": \n" + namesAsString);
+								}
+								//If no players were found
+								else {
+									sender.sendMessage(ChatColor.DARK_RED + "No players with given  IP found.");
 								}
 							}
-							sender.sendMessage(ChatColor.GOLD + "Players with IP of " + ChatColor.RED + args[1] + ChatColor.GOLD + ": \n" + namesAsString);
-						}
-						//If no players were found
-						else {
-							sender.sendMessage(ChatColor.DARK_RED + "No players with given name or IP found.");
-						}
-					}
-					//if player inputted a name
-					else if(args[0].equalsIgnoreCase("name")) {
-						names = getSQLDatabase().getAltsFromName(args[1], getConnection());
-						if(names != null) {
-							//Concatenates results (player names), separated by space and comma, into a usable String
-							for(int i = 0; i < names.size(); i++) {
-								namesAsString += names.get(i);
-								if(names.size() != i + 1) {
-									namesAsString += ", ";
+							//if player inputted a name
+							else if(args[0].equalsIgnoreCase("name")) {
+								names = getSQLDatabase().getAltsFromName(args[1], getConnection());
+								if(names.size() > 0) {
+									//Concatenates results (player names), separated by space and comma, into a usable String
+									for(int i = 0; i < names.size(); i++) {
+										namesAsString += names.get(i);
+										if(names.size() != i + 1) {
+											namesAsString += ", ";
+										}
+									}
+									sender.sendMessage(ChatColor.GOLD + "Players with IP of " + ChatColor.RED + (String) getSQLDatabase().getData(args[1], getConnection()).get("ip") + ChatColor.GOLD + ": \n" + namesAsString);
+								}
+								//If no players were found
+								else {
+									sender.sendMessage(ChatColor.DARK_RED + "No players with given name found.");
 								}
 							}
-							sender.sendMessage(ChatColor.GOLD + "Players with IP of " + ChatColor.RED + (String) getSQLDatabase().getData(args[1], getConnection()).get("ip") + ChatColor.GOLD + ": \n" + namesAsString);
+							//if player inputted neither an ip nor a name
+							else {
+								sender.sendMessage("Shows possible alts based on IP given a player's name or IP. Proper usage: /showalts <ip | name> <player's ip | player's name>");
+							}
 						}
-						//If no players were found
 						else {
-							sender.sendMessage(ChatColor.DARK_RED + "No players with given name or IP found.");
+							sender.sendMessage(ChatColor.DARK_RED + "Illegal characters found in command.");
 						}
 					}
-					//if player inputted neither an ip nor a name
 					else {
 						sender.sendMessage("Shows possible alts based on IP given a player's name or IP. Proper usage: /showalts <ip | name> <player's ip | player's name>");
 					}
 				}
-				else {
-					sender.sendMessage(ChatColor.DARK_RED + "Illegal characters found in command.");
-				}
 			}
-			else {
-				sender.sendMessage("Shows possible alts based on IP given a player's name or IP. Proper usage: /showalts <ip | name> <player's ip | player's name>");
-			}
-		}
+		});
 		return false;
 	}
 	
