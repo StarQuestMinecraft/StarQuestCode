@@ -115,7 +115,8 @@ public class SQDuties extends JavaPlugin implements Listener{
 						
 						System.out.print(player.getName() + " has entered duty mode");
 						
-						permission.playerAddGroup(player, (String) playerCanDutyResults[2]);
+						Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "pp user " + player.getName() + " addgroup " + (String) playerCanDutyResults[2]);
+						//permission.playerAddGroup(player, (String) playerCanDutyResults[2]);
 						
 						Knapsack knapsack = new Knapsack(player);
 						
@@ -139,8 +140,8 @@ public class SQDuties extends JavaPlugin implements Listener{
 				} else {
 					
 					System.out.print(player.getName() + " has left duty mode");
-					
-					permission.playerRemoveGroup(player, (String) playerInDutyResults[2]);
+					Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "pp user " + player.getName() + " removegroup " + (String) playerInDutyResults[2]);
+					//permission.playerRemoveGroup(player, (String) playerInDutyResults[2]);
 
 					player.setGameMode(GameMode.SURVIVAL);
 					
