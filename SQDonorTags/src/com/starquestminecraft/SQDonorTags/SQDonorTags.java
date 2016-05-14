@@ -48,6 +48,10 @@ public class SQDonorTags extends JavaPlugin implements Listener {
 				return false;
 			}
 			OfflinePlayer player = Bukkit.getOfflinePlayer(UUID.fromString(args[0]));
+			if(player == null || player.getName() == null){
+				System.out.println("Player not found, cannot give donation funds!");
+				return true;
+			}
 			Account account = cc3.getAccountManager().getAccount(player.getName());
 			account.deposit(Double.parseDouble(args[1]), world.getName(), "donation", Cause.PLUGIN,
 					"Donation record update");
