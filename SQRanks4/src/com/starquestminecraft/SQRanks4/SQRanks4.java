@@ -81,8 +81,9 @@ public class SQRanks4 extends JavaPlugin implements Listener{
 		
 		if(skill.equals("all")) {
 			if(eco.has(player, price) && ExperienceAPI.getPowerLevel(player) >= level && has_prereqs){
-				permission.playerRemoveGroup(player, current_rank);
-				permission.playerAddGroup(player, next_rank);
+				//permission.playerRemoveGroup(player, current_rank);
+				//Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "pp user " + player.getName() + " removegroup " + current_rank);
+				Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "pp user " + player.getName() + " addgroup " + next_rank);
 				eco.withdrawPlayer(player, price);
 				player.sendMessage(ChatColor.GREEN + "You have bought the rank: " + chat.getGroupPrefix(player.getWorld(), next_rank));
 			}
@@ -101,8 +102,8 @@ public class SQRanks4 extends JavaPlugin implements Listener{
 			}
 		}
 		else if(eco.has(player, price) && ExperienceAPI.getLevel(player, skill) >= level && has_prereqs){
-			permission.playerRemoveGroup(player, current_rank);
-			permission.playerAddGroup(player, next_rank);
+			//Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "pp user " + player.getName() + " removegroup " + current_rank);
+			Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "pp user " + player.getName() + " addgroup " + next_rank);
 			eco.withdrawPlayer(player, price);
 			player.sendMessage(ChatColor.GREEN + "You have bought the rank: " + chat.getGroupPrefix(player.getWorld(), next_rank));
 		}
