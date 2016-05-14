@@ -42,7 +42,7 @@ public class SQRanks4 extends JavaPlugin implements Listener{
 		Player player = (Player) sender;
 		String[] ara_ranks = {"Arator0", "Arator1", "Arator2", "Arator3", "Arator4", "Arator5"};
 		String[] req_ranks = {"Requiem0", "Requiem1", "Requiem2", "Requiem3", "Requiem4", "Requiem5"};
-		String[] yav_ranks = {"Yavari0", "Yarari1", "Yavari2", "Yavari3", "Yavari4", "Yavari5"};
+		String[] yav_ranks = {"Yavari0", "Yavari1", "Yavari2", "Yavari3", "Yavari4", "Yavari5"};
 
 		if(permission.playerInGroup(player, "Arator5") || permission.playerInGroup(player, "Requiem5") || permission.playerInGroup(player, "Yavari5")){
 			player.sendMessage(ChatColor.GOLD + "You are already at max rank");
