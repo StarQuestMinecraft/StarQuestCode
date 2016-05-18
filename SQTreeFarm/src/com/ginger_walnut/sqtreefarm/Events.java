@@ -8,11 +8,13 @@ import java.util.List;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.TreeType;
 import org.bukkit.block.Block;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.world.StructureGrowEvent;
 import org.bukkit.scheduler.BukkitScheduler;
 
 public class Events implements Listener{
@@ -64,6 +66,33 @@ public class Events implements Listener{
 					}
 					
 				}
+				
+			}
+			
+		}
+		
+	}
+	
+	@EventHandler
+	public void onTreeGrow(StructureGrowEvent event) {
+		
+		if (!(event.getSpecies().equals(TreeType.RED_MUSHROOM) || !event.getSpecies().equals(TreeType.BROWN_MUSHROOM))) {
+			
+			boolean withinFarm = false;
+			
+			for (File farm : SQTreeFarm.treefarms) {
+				
+				if (isWithinFarm(farm, event.getLocation())) {
+					
+					withinFarm = true;
+					
+				}
+				
+			}
+			
+			if (withinFarm) {
+
+				event.setCancelled(false);
 				
 			}
 			

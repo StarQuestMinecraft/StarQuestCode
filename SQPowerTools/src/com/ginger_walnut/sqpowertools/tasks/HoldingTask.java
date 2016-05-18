@@ -12,10 +12,11 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.scheduler.BukkitScheduler;
 
 import com.ginger_walnut.sqpowertools.SQPowerTools;
+import com.ginger_walnut.sqpowertools.objects.PowerToolType;
 import com.ginger_walnut.sqpowertools.utils.EffectUtils;
 
 public class HoldingTask extends Thread{
-	
+
 	public void run() {
 		
 		BukkitScheduler scheduler = Bukkit.getServer().getScheduler();
@@ -26,6 +27,90 @@ public class HoldingTask extends Thread{
 			public void run() {
 				
 				for (Player player : Bukkit.getOnlinePlayers()) {
+					
+					if (player.isBlocking()) {
+						
+						if (player.getInventory().getItemInOffHand() != null) {
+							
+							ItemStack handItem = player.getInventory().getItemInOffHand();
+							
+							if (handItem.hasItemMeta()) {
+								
+								if (handItem.getItemMeta().hasLore()) {
+									
+									List<String> lore = handItem.getItemMeta().getLore();
+									
+									if (lore.contains(ChatColor.DARK_PURPLE + "Power Tool")) {
+
+										PowerToolType type = SQPowerTools.getType(handItem);
+										
+										int energy = SQPowerTools.getEnergy(handItem);
+										
+										if (energy != 0) {
+											
+											List<PotionEffect> effects = new ArrayList<PotionEffect>();
+											
+											HashMap<String, Integer> modifiers = SQPowerTools.getModifiers(handItem);
+											
+											for (int j = 0; j < type.modifiers.size(); j ++) {
+												
+												if (modifiers.containsKey(type.modifiers.get(j).name)) {
+													
+													for (int k = 0; k < type.modifiers.get(j).effects.size(); k ++) {
+														
+														if (type.modifiers.get(j).effects.get(k) != null) {
+															
+															if (type.modifiers.get(j).effects.get(k).effectCase == 5) {
+
+																effects.add(new PotionEffect(EffectUtils.getEffectFromId(type.modifiers.get(j).effects.get(k).effect), type.modifiers.get(j).effects.get(k).duration * 20, type.modifiers.get(j).effects.get(k).level));
+																
+															}
+															
+														}
+														
+													}
+													
+												}
+												
+											}
+											
+											for (int j = 0; j < type.effects.size(); j ++) {
+												
+												if (type.effects.get(j) != null) {
+													
+													if (type.effects.get(j).effectCase == 5) {
+
+														effects.add(new PotionEffect(EffectUtils.getEffectFromId(type.effects.get(j).effect), type.effects.get(j).duration * 20, type.effects.get(j).level));
+														
+													}
+													
+												}
+												
+											}
+											
+											for (int j = 0; j < effects.size(); j ++) {
+												
+												if (player.hasPotionEffect(effects.get(j).getType())) {
+													
+													player.removePotionEffect(effects.get(j).getType());
+													
+												}
+												
+											}
+											
+											player.addPotionEffects(effects);
+											
+										}
+										
+									}
+									
+								}
+								
+							}
+							
+						}
+						
+					}
 					
 					if (player.getInventory().getItemInMainHand() != null) {
 						
@@ -39,36 +124,27 @@ public class HoldingTask extends Thread{
 								
 								if (lore.contains(ChatColor.DARK_PURPLE + "Power Tool")) {
 
+									PowerToolType type = SQPowerTools.getType(handItem);
+									
 									int energy = SQPowerTools.getEnergy(handItem);
 									
 									if (energy != 0) {
 										
 										List<PotionEffect> effects = new ArrayList<PotionEffect>();
-										int pos = 0;
 										
 										HashMap<String, Integer> modifiers = SQPowerTools.getModifiers(handItem);
-												
-										for (int i = 0; i < SQPowerTools.powerToolNames.size(); i ++) {
-											
-											if (SQPowerTools.powerToolNames.get(i).equals(SQPowerTools.getName(handItem))) {
-												
-												pos = i;
-												
-											}
-											
-										}
 										
-										for (int i = 0; i < SQPowerTools.powerToolModNames.get(pos).size(); i ++) {
+										for (int j = 0; j < type.modifiers.size(); j ++) {
 											
-											if (modifiers.containsKey(SQPowerTools.powerToolModNames.get(pos).get(i))) {
+											if (modifiers.containsKey(type.modifiers.get(j).name)) {
 												
-												for (int j = 0; j < SQPowerTools.powerToolModEffects.get(pos).get(i).size(); j ++) {
+												for (int k = 0; k < type.modifiers.get(j).effects.size(); k ++) {
 													
-													if (SQPowerTools.powerToolModEffects.get(pos).get(i).get(j) != null) {
+													if (type.modifiers.get(j).effects.get(k) != null) {
 														
-														if (SQPowerTools.powerToolModEffectCases.get(pos).get(i).get(j) == 5) {
+														if (type.modifiers.get(j).effects.get(k).effectCase == 5) {
 
-															effects.add(new PotionEffect(EffectUtils.getEffectFromId(SQPowerTools.powerToolModEffects.get(pos).get(i).get(j)), SQPowerTools.powerToolModEffectDurations.get(pos).get(i).get(j) * 20 + 1, SQPowerTools.powerToolModEffectLevels.get(pos).get(i).get(j)));
+															effects.add(new PotionEffect(EffectUtils.getEffectFromId(type.modifiers.get(j).effects.get(k).effect), type.modifiers.get(j).effects.get(k).duration * 20, type.modifiers.get(j).effects.get(k).level));
 															
 														}
 														
@@ -80,13 +156,13 @@ public class HoldingTask extends Thread{
 											
 										}
 										
-										for (int j = 0; j < SQPowerTools.powerToolEffects.get(pos).size(); j ++) {
+										for (int j = 0; j < type.effects.size(); j ++) {
 											
-											if (SQPowerTools.powerToolEffects.get(pos).get(j) != null) {
+											if (type.effects.get(j) != null) {
 												
-												if (SQPowerTools.powerToolEffectCases.get(pos).get(j) == 5) {
+												if (type.effects.get(j).effectCase == 5) {
 
-													effects.add(new PotionEffect(EffectUtils.getEffectFromId(SQPowerTools.powerToolEffects.get(pos).get(j)), SQPowerTools.powerToolEffectDurations.get(pos).get(j) * 20 + 1, SQPowerTools.powerToolEffectLevels.get(pos).get(j)));
+													effects.add(new PotionEffect(EffectUtils.getEffectFromId(type.effects.get(j).effect), type.effects.get(j).duration * 20, type.effects.get(j).level));
 													
 												}
 												
@@ -94,18 +170,17 @@ public class HoldingTask extends Thread{
 											
 										}
 										
-										for (int i = 0; i < effects.size(); i ++) {
+										for (int j = 0; j < effects.size(); j ++) {
 											
-											if (player.hasPotionEffect(effects.get(i).getType())) {
+											if (player.hasPotionEffect(effects.get(j).getType())) {
 												
-												player.removePotionEffect(effects.get(i).getType());
+												player.removePotionEffect(effects.get(j).getType());
 												
 											}
 											
 										}
 										
 										player.addPotionEffects(effects);
-	
 										
 									}
 									
@@ -131,37 +206,27 @@ public class HoldingTask extends Thread{
 									
 									if (armor.getItemMeta().getLore().contains(ChatColor.DARK_PURPLE + "Power Tool")) {
 										
+										PowerToolType type = SQPowerTools.getType(armor);
+										
 										int energy = SQPowerTools.getEnergy(armor);
 										
 										if (energy != 0) {
 											
 											List<PotionEffect> effects = new ArrayList<PotionEffect>();
 											
-											int pos = 0;
-											
 											HashMap<String, Integer> modifiers = SQPowerTools.getModifiers(armor);
-													
-											for (int j = 0; j < SQPowerTools.powerToolNames.size(); j ++) {
-												
-												if (SQPowerTools.powerToolNames.get(j).equals(SQPowerTools.getName(armor))) {
-													
-													pos = j;
-													
-												}
-												
-											}
 											
-											for (int j = 0; j < SQPowerTools.powerToolModNames.get(pos).size(); j ++) {
+											for (int j = 0; j < type.modifiers.size(); j ++) {
 												
-												if (modifiers.containsKey(SQPowerTools.powerToolModNames.get(pos).get(j))) {
+												if (modifiers.containsKey(type.modifiers.get(j).name)) {
 													
-													for (int k = 0; k < SQPowerTools.powerToolModEffects.get(pos).get(j).size(); k ++) {
+													for (int k = 0; k < type.modifiers.get(j).effects.size(); k ++) {
 														
-														if (SQPowerTools.powerToolModEffects.get(pos).get(j).get(k) != null) {
+														if (type.modifiers.get(j).effects.get(k) != null) {
 															
-															if (SQPowerTools.powerToolModEffectCases.get(pos).get(j).get(k) == 5) {
+															if (type.modifiers.get(j).effects.get(k).effectCase == 5) {
 
-																effects.add(new PotionEffect(EffectUtils.getEffectFromId(SQPowerTools.powerToolModEffects.get(pos).get(j).get(k)), SQPowerTools.powerToolModEffectDurations.get(pos).get(j).get(k) * 20 + 1, SQPowerTools.powerToolModEffectLevels.get(pos).get(j).get(k)));
+																effects.add(new PotionEffect(EffectUtils.getEffectFromId(type.modifiers.get(j).effects.get(k).effect), type.modifiers.get(j).effects.get(k).duration * 20, type.modifiers.get(j).effects.get(k).level));
 																
 															}
 															
@@ -173,13 +238,13 @@ public class HoldingTask extends Thread{
 												
 											}
 											
-											for (int j = 0; j < SQPowerTools.powerToolEffects.get(pos).size(); j ++) {
+											for (int j = 0; j < type.effects.size(); j ++) {
 												
-												if (SQPowerTools.powerToolEffects.get(pos).get(j) != null) {
+												if (type.effects.get(j) != null) {
 													
-													if (SQPowerTools.powerToolEffectCases.get(pos).get(j) == 5) {
+													if (type.effects.get(j).effectCase == 5) {
 
-														effects.add(new PotionEffect(EffectUtils.getEffectFromId(SQPowerTools.powerToolEffects.get(pos).get(j)), SQPowerTools.powerToolEffectDurations.get(pos).get(j) * 20 + 1, SQPowerTools.powerToolEffectLevels.get(pos).get(j)));
+														effects.add(new PotionEffect(EffectUtils.getEffectFromId(type.effects.get(j).effect), type.effects.get(j).duration * 20, type.effects.get(j).level));
 														
 													}
 													
@@ -196,7 +261,7 @@ public class HoldingTask extends Thread{
 												}
 												
 											}
-
+											
 											player.addPotionEffects(effects);
 											
 										}

@@ -115,15 +115,27 @@ public class SQSpace extends JavaPlugin implements Listener {
 		if(armor == null) return false;
 		for(ItemStack i : armor){
 			if(i == null) return false;
-			if(!isArmor(i.getType())){
+			if(!isArmor(i)){
 				return false;
 			}
 		}
 		return true;
 	}
 	
-	private boolean isArmor(Material m){
-		return m == Material.CHAINMAIL_HELMET ||  m == Material.CHAINMAIL_CHESTPLATE ||  m == Material.CHAINMAIL_LEGGINGS || m ==  Material.CHAINMAIL_BOOTS;
+	private boolean isArmor(ItemStack item){
+		Material m = item.getType();
+		boolean armor = false;
+		if (m == Material.CHAINMAIL_HELMET ||  m == Material.CHAINMAIL_CHESTPLATE ||  m == Material.CHAINMAIL_LEGGINGS || m ==  Material.CHAINMAIL_BOOTS) {
+			armor = true;
+		}
+		if (item.hasItemMeta()) {
+			if (item.getItemMeta().hasLore()) {
+				if (item.getItemMeta().getLore().contains(ChatColor.DARK_PURPLE + "Power Tool")) {
+					armor = true;
+				}
+			}
+		}
+		return armor;
 	}
 
 	public static boolean isInSpace(Entity e) {

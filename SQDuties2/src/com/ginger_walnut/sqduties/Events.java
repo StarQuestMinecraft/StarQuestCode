@@ -1,11 +1,14 @@
 package com.ginger_walnut.sqduties;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.inventory.CraftItemEvent;
+import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCreativeEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
@@ -16,7 +19,10 @@ import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.scheduler.BukkitScheduler;
 
+@SuppressWarnings("deprecation")
 public class Events implements Listener{	
 
 	@EventHandler
@@ -24,21 +30,47 @@ public class Events implements Listener{
 
 		if (e.getPlayer().hasPermission("commandspy.track")) {
 
-			Runnable task = new CommandSpyFile(e.getPlayer().getName(), "General", ("Chat: " + e.getMessage()));
-			new Thread(task, "CommandSpy").start();
+			final String message = e.getMessage();
+			final String name = e.getPlayer().getName();
+			
+			BukkitScheduler scheduler = Bukkit.getServer().getScheduler();
+			scheduler.scheduleAsyncDelayedTask(SQDuties.getPluginMain(), new Runnable() {
+		
+				@Override
+				public void run() {
+					
+					(new CommandSpyFile(name, "General", ("Chat: " + message))).run();
+			
+				}
+				
+			},1);
 
 		}
 		
 	}
+
 
 	@EventHandler
 	public void dutyWorldChange(PlayerChangedWorldEvent e) {
 
 		if (e.getPlayer().hasPermission("commandspy.track")) {
 
-			Runnable task = new CommandSpyFile(e.getPlayer().getName(), "General", ("Changed worlds from " + e.getFrom() + " to " + SQDuties.getPluginMain().getServer().getName()));
-			new Thread(task, "CommandSpy").start();
+			final String name = e.getPlayer().getName();
+			final World from = e.getFrom();
+			final String to = SQDuties.getPluginMain().getServer().getName();
 			
+			BukkitScheduler scheduler = Bukkit.getServer().getScheduler();
+			scheduler.scheduleAsyncDelayedTask(SQDuties.getPluginMain(), new Runnable() {
+		
+				@Override
+				public void run() {
+					
+					(new CommandSpyFile(name, "General", ("Changed worlds from " + from + " to " + to))).run();
+			
+				}
+				
+			},1);
+					
 		}
 		
 	}
@@ -48,8 +80,21 @@ public class Events implements Listener{
 
 		if (e.getPlayer().hasPermission("commandspy.track")) {
 
-			Runnable task = new CommandSpyFile(e.getPlayer().getName(), "Items", "Dropped item " + e.getItemDrop().getItemStack().getType().toString() + " at " + locationToString(e.getPlayer().getLocation()));
-			new Thread(task, "CommandSpy").start();
+			final String item = e.getItemDrop().getItemStack().getType().toString();
+			final String name = e.getPlayer().getName();
+			final Location location = e.getPlayer().getLocation();
+			
+			BukkitScheduler scheduler = Bukkit.getServer().getScheduler();
+			scheduler.scheduleAsyncDelayedTask(SQDuties.getPluginMain(), new Runnable() {
+		
+				@Override
+				public void run() {
+					
+					(new CommandSpyFile(name, "Items", "Dropped Item " + item + " at " + locationToString(location))).run();
+			
+				}
+				
+			},1);
 			
 		}
 		
@@ -60,8 +105,21 @@ public class Events implements Listener{
 
 		if (e.getPlayer().hasPermission("commandspy.track")) {
 			
-			Runnable task = new CommandSpyFile(e.getPlayer().getName(), "Items", "Picked up item " + e.getItem().getItemStack().getType().toString() + " at " + locationToString(e.getPlayer().getLocation()));
-			new Thread(task, "CommandSpy").start();
+			final String item = e.getItem().getItemStack().getType().toString();
+			final String name = e.getPlayer().getName();
+			final Location location = e.getPlayer().getLocation();
+			
+			BukkitScheduler scheduler = Bukkit.getServer().getScheduler();
+			scheduler.scheduleAsyncDelayedTask(SQDuties.getPluginMain(), new Runnable() {
+		
+				@Override
+				public void run() {
+					
+					(new CommandSpyFile(name, "Items", "Picked up Item " + item + " at " + locationToString(location))).run();
+			
+				}
+				
+			},1);
 			
 		}
 		
@@ -72,8 +130,21 @@ public class Events implements Listener{
 
 		if (e.getPlayer().hasPermission("commandspy.track")) {
 			
-			Runnable task = new CommandSpyFile(((Player) e.getPlayer()).getName(), "Inventory", "Opened " + e.getInventory().getTitle() + "| Location: " + locationToString(e.getPlayer().getLocation()));
-			new Thread(task, "CommandSpy").start();
+			final String title = e.getInventory().getTitle();
+			final String name = e.getPlayer().getName();
+			final Location location = e.getPlayer().getLocation();
+			
+			BukkitScheduler scheduler = Bukkit.getServer().getScheduler();
+			scheduler.scheduleAsyncDelayedTask(SQDuties.getPluginMain(), new Runnable() {
+		
+				@Override
+				public void run() {
+					
+					(new CommandSpyFile(name, "Inventory", ("Opened " + title + "| Location: " + locationToString(location)))).run();
+			
+				}
+				
+			},1);
 			
 		}
 		
@@ -84,8 +155,22 @@ public class Events implements Listener{
 
 		if (e.getWhoClicked().hasPermission("commandspy.track")) {
 			
-			Runnable task = new CommandSpyFile(((Player) e.getWhoClicked()).getName(), "Inventory", e.getInventory().getName() + "|" + e.getAction() + "|" + e.getCurrentItem());
-			new Thread(task, "CommandSpy").start();
+			final String name = e.getWhoClicked().getName();
+			final String invName = e.getInventory().getName();
+			final InventoryAction invAction = e.getAction();
+			final ItemStack item = e.getCurrentItem();
+			
+			BukkitScheduler scheduler = Bukkit.getServer().getScheduler();
+			scheduler.scheduleAsyncDelayedTask(SQDuties.getPluginMain(), new Runnable() {
+		
+				@Override
+				public void run() {
+					
+					(new CommandSpyFile(name, "Inventory", (invName + "|" + invAction + "|" + item))).run();
+			
+				}
+				
+			},1);
 			
 		}
 		
@@ -96,8 +181,21 @@ public class Events implements Listener{
 
 		if (e.getWhoClicked().hasPermission("commandspy.track")) {
 			
-			Runnable task = new CommandSpyFile(((Player) e.getWhoClicked()).getName(), "Inventory", "Own Inventory" + e.getAction() + "|" + e.getCurrentItem());
-			new Thread(task, "CommandSpy").start();
+			final String name = e.getWhoClicked().getName();
+			final InventoryAction invAction = e.getAction();
+			final ItemStack item = e.getCurrentItem();
+			
+			BukkitScheduler scheduler = Bukkit.getServer().getScheduler();
+			scheduler.scheduleAsyncDelayedTask(SQDuties.getPluginMain(), new Runnable() {
+		
+				@Override
+				public void run() {
+					
+					(new CommandSpyFile(name, "Inventory", ("Own Inventory " + invAction + "|" + item))).run();
+			
+				}
+				
+			},1);
 			
 		}
 		
@@ -108,8 +206,20 @@ public class Events implements Listener{
 
 		if (e.getPlayer().hasPermission("commandspy.track")) {
 			
-			Runnable task = new CommandSpyFile(e.getPlayer().getName(), "General", "Command: " + e.getMessage());
-			new Thread(task, "CommandSpy").start();
+			final String message = e.getMessage();
+			final String name = e.getPlayer().getName();
+			
+			BukkitScheduler scheduler = Bukkit.getServer().getScheduler();
+			scheduler.scheduleAsyncDelayedTask(SQDuties.getPluginMain(), new Runnable() {
+		
+				@Override
+				public void run() {
+					
+					(new CommandSpyFile(name, "General", ("Command: " + message))).run();
+			
+				}
+				
+			},1);
 			
 		}
 		
@@ -120,16 +230,41 @@ public class Events implements Listener{
 
 		if (e.getPlayer().hasPermission("commandspy.track")) {
 			
-			Runnable task = new CommandSpyFile(((Player) e.getPlayer()).getName(), "Block", "BlockBreak: " + e.getBlock().getType() + " Location: " + locationToString(e.getBlock().getLocation()));
-			new Thread(task, "CommandSpy").start();
+			final String name = e.getPlayer().getName();
+			final Material type = e.getBlock().getType();
+			final Location location = e.getPlayer().getLocation();
+			
+			BukkitScheduler scheduler = Bukkit.getServer().getScheduler();
+			scheduler.scheduleAsyncDelayedTask(SQDuties.getPluginMain(), new Runnable() {
+		
+				@Override
+				public void run() {
+					
+					(new CommandSpyFile(name, "Block", ("BlockBreak: " + type + " Location " + locationToString(location)))).run();
+			
+				}
+				
+			},1);
 			
 		} else if (e.getBlock().getType() == Material.DIAMOND_BLOCK 
 				|| e.getBlock().getType() == Material.GOLD_BLOCK
 				|| e.getBlock().getType() == Material.EMERALD_BLOCK) {
 			
-			// Adding support for global tracking
-			Runnable task = new CommandSpyFile("Global", "Block", "Broken by " + e.getPlayer().getName() + ": " + e.getBlock().getType() + locationToString(e.getBlock().getLocation()));
-			new Thread(task, "CommandSpy").start();
+			final String name = e.getPlayer().getName();
+			final Material type = e.getBlock().getType();
+			final Location location = e.getPlayer().getLocation();
+			
+			BukkitScheduler scheduler = Bukkit.getServer().getScheduler();
+			scheduler.scheduleAsyncDelayedTask(SQDuties.getPluginMain(), new Runnable() {
+		
+				@Override
+				public void run() {
+					
+					(new CommandSpyFile("Global", "Block", ("Broken by " + name + ":" + type + " Location " + locationToString(location)))).run();
+			
+				}
+				
+			},1);
 			
 		}
 		
@@ -140,16 +275,41 @@ public class Events implements Listener{
 
 		if (e.getPlayer().hasPermission("commandspy.track")) {
 			
-			Runnable task = new CommandSpyFile(((Player) e.getPlayer()).getName(), "Block", "BlockPlace: " + e.getBlock().getType() + " Location: " + locationToString(e.getBlock().getLocation()));
-			new Thread(task, "CommandSpy").start();
+			final String name = e.getPlayer().getName();
+			final Material type = e.getBlock().getType();
+			final Location location = e.getPlayer().getLocation();
+			
+			BukkitScheduler scheduler = Bukkit.getServer().getScheduler();
+			scheduler.scheduleAsyncDelayedTask(SQDuties.getPluginMain(), new Runnable() {
+		
+				@Override
+				public void run() {
+					
+					(new CommandSpyFile(name, "Block", ("BlockPlace: " + type + " Location " + locationToString(location)))).run();
+			
+				}
+				
+			},1);
 			
 		} else if (e.getBlock().getType() == Material.DIAMOND_BLOCK 
 				|| e.getBlock().getType() == Material.GOLD_BLOCK
 				|| e.getBlock().getType() == Material.EMERALD_BLOCK) {
 			
-			// Adding support for global tracking
-			Runnable task = new CommandSpyFile("Global", "Block", "Placed by " + e.getPlayer().getName() + ": " + e.getBlock().getType() + locationToString(e.getBlock().getLocation()));
-			new Thread(task, "CommandSpy").start();
+			final String name = e.getPlayer().getName();
+			final Material type = e.getBlock().getType();
+			final Location location = e.getPlayer().getLocation();
+			
+			BukkitScheduler scheduler = Bukkit.getServer().getScheduler();
+			scheduler.scheduleAsyncDelayedTask(SQDuties.getPluginMain(), new Runnable() {
+		
+				@Override
+				public void run() {
+					
+					(new CommandSpyFile("Global", "Block", ("Placed by " + name + ":" + type + " Location " + locationToString(location)))).run();
+			
+				}
+				
+			},1);
 			
 		}
 		
@@ -160,14 +320,40 @@ public class Events implements Listener{
 
 		if (e.getWhoClicked().hasPermission("commandspy.track")) {
 			
-			Runnable task = new CommandSpyFile(((Player) e.getWhoClicked()).getName(), "Craft", "Crafted: " + e.getCurrentItem().getType());
-			new Thread(task, "CommandSpy").start();
+			final String name = e.getWhoClicked().getName();
+			final Material type = e.getCurrentItem().getType();
+			
+			BukkitScheduler scheduler = Bukkit.getServer().getScheduler();
+			scheduler.scheduleAsyncDelayedTask(SQDuties.getPluginMain(), new Runnable() {
+		
+				@Override
+				public void run() {
+					
+					(new CommandSpyFile(name, "Craft", ("Crafted: " + type))).run();
+			
+				}
+				
+			},1);
 			
 		} else if (e.getCurrentItem().getType() == Material.DIAMOND_BLOCK 
 				|| e.getCurrentItem().getType() == Material.GOLD_BLOCK
 				|| e.getCurrentItem().getType() == Material.EMERALD_BLOCK) {
 			
-			// Adding support for global tracking
+			final String name = e.getWhoClicked().getName();
+			final Material type = e.getCurrentItem().getType();
+			
+			BukkitScheduler scheduler = Bukkit.getServer().getScheduler();
+			scheduler.scheduleAsyncDelayedTask(SQDuties.getPluginMain(), new Runnable() {
+		
+				@Override
+				public void run() {
+					
+					(new CommandSpyFile("Global", "Craft", ("Crafted by  " + name + ":" + type))).run();
+			
+				}
+				
+			},1);
+			
 			Runnable task = new CommandSpyFile("Global", "Craft", "Crafted by " + e.getWhoClicked().getName() + ": " + e.getCurrentItem().getType());
 			new Thread(task, "CommandSpy").start();
 			

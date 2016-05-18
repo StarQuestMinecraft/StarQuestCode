@@ -1,6 +1,7 @@
 package com.ginger_walnut.sqboosters;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.bukkit.Bukkit;
@@ -11,11 +12,12 @@ import com.ginger_walnut.sqboosters.database.DatabaseInterface;
 
 public class DatabaseChecker extends Thread {
 
+	@SuppressWarnings("deprecation")
 	public void run() {
 		
 		BukkitScheduler scheduler = Bukkit.getServer().getScheduler();
 		
-		scheduler.scheduleSyncRepeatingTask(SQBoosters.getPluginMain(), new Runnable() {
+		scheduler.scheduleAsyncRepeatingTask(SQBoosters.getPluginMain(), new Runnable() {
 			
 			@Override
 			public void run() {
@@ -23,7 +25,7 @@ public class DatabaseChecker extends Thread {
 				List<Integer> oldDatabaseIDs = new ArrayList<Integer>();
 				List<Integer> oldDatabaseMultipliers = new ArrayList<Integer>();
 				List<String> oldDatabaseBoosters = new ArrayList<String>();
-				List<String> oldDatabasePurchasers = new ArrayList<String>();				
+				List<String> oldDatabasePurchasers = new ArrayList<String>();		
 				
 				oldDatabaseIDs.addAll(SQBoosters.databaseIDs);
 				oldDatabaseMultipliers.addAll(SQBoosters.databaseMultipliers);
@@ -71,12 +73,12 @@ public class DatabaseChecker extends Thread {
 							
 							if (SQBoosters.databasePurchasers.get(j) != null) {
 								
-								Bukkit.getServer().broadcastMessage(ChatColor.GOLD + boosterName + ": " + SQBoosters.databasePurchasers.get(j) + " has purchased a " + multiplierName + " booster and the multiplier is now " + booster);
+								Bukkit.getServer().broadcastMessage(ChatColor.GOLD + boosterName + ": " + SQBoosters.databasePurchasers.get(j) + " has purchased a " + multiplierName + " booster for " + getTimeLeft(j) + " and the multiplier is now " + booster);
 								Bukkit.getServer().broadcastMessage(ChatColor.GOLD + "You can thank them by giving them money using /thank " + SQBoosters.databasePurchasers.get(j) + " <amount>");
 							
 							} else {
 							
-								Bukkit.getServer().broadcastMessage(ChatColor.GOLD + boosterName + ": An anonymous person has purchased a " + multiplierName + " and the multiplier is now " + booster);
+								Bukkit.getServer().broadcastMessage(ChatColor.GOLD + boosterName + ": An anonymous person has purchased a " + multiplierName + " booster for " + getTimeLeft(j) + " and the multiplier is now " + booster);
 							
 							}	
 							
@@ -84,12 +86,12 @@ public class DatabaseChecker extends Thread {
 							
 							if (SQBoosters.databasePurchasers.get(j) != null) {
 								
-								Bukkit.getServer().broadcastMessage(ChatColor.GOLD + boosterName + ": " + SQBoosters.databasePurchasers.get(j) + " has purchased a " + multiplierName + " booster and the multiplier is now " + multiplier);
+								Bukkit.getServer().broadcastMessage(ChatColor.GOLD + boosterName + ": " + SQBoosters.databasePurchasers.get(j) + " has purchased a " + multiplierName + " booster for " + getTimeLeft(j) + " and the multiplier is now " + multiplier);
 								Bukkit.getServer().broadcastMessage(ChatColor.GOLD + "You can thank them by giving them money using /thank " + SQBoosters.databasePurchasers.get(j) + " <amount>");
 							
 							} else {
 							
-								Bukkit.getServer().broadcastMessage(ChatColor.GOLD + boosterName + ": An anonymous person has purchased a " + multiplierName + " and the multiplier is now " + multiplier);
+								Bukkit.getServer().broadcastMessage(ChatColor.GOLD + boosterName + ": An anonymous person has purchased a " + multiplierName + " booster for " + getTimeLeft(j) + " and the multiplier is now " + multiplier);
 							
 							}	
 							
@@ -163,6 +165,39 @@ public class DatabaseChecker extends Thread {
 			}
 			
 		}, 0, 600);
+		
+	}
+	
+	static String getTimeLeft(int i) {
+		
+		if (SQBoosters.databaseExpirationDates.get(i).getDay() > new Date().getDay()) {
+			
+			if (SQBoosters.databaseExpirationTimes.get(i).getMinutes() > new Date().getMinutes()) {
+				
+				return Integer.toString(SQBoosters.databaseMultipliers.get(i)) + " - " + SQBoosters.databasePurchasers.get(i) + " - " + Integer.toString(SQBoosters.databaseExpirationTimes.get(i).getHours() - new Date().getHours() + 24) + " hours and " + Integer.toString(SQBoosters.databaseExpirationTimes.get(i).getMinutes() - new Date().getMinutes()) + " minutes";
+				
+			} else {
+				
+				return Integer.toString(SQBoosters.databaseMultipliers.get(i)) + " - " + SQBoosters.databasePurchasers.get(i) + " - " + Integer.toString(SQBoosters.databaseExpirationTimes.get(i).getHours() - new Date().getHours() + 23) + " hours and " + Integer.toString(SQBoosters.databaseExpirationTimes.get(i).getMinutes() - new Date().getMinutes() + 60) + " minutes";
+				
+			}
+
+			
+		} else if (SQBoosters.databaseExpirationDates.get(i).getDay() == new Date().getDay()) {
+			
+			if (SQBoosters.databaseExpirationTimes.get(i).getMinutes() > new Date().getMinutes()) {
+			
+				return Integer.toString(SQBoosters.databaseMultipliers.get(i)) + " - " + SQBoosters.databasePurchasers.get(i) + " - " + Integer.toString(SQBoosters.databaseExpirationTimes.get(i).getHours() - new Date().getHours()) + " hours and " + Integer.toString(SQBoosters.databaseExpirationTimes.get(i).getMinutes() - new Date().getMinutes()) + " minutes";
+				
+			} else {
+				
+				return Integer.toString(SQBoosters.databaseMultipliers.get(i)) + " - " + SQBoosters.databasePurchasers.get(i) + " - " + Integer.toString(SQBoosters.databaseExpirationTimes.get(i).getHours() - new Date().getHours() - 1) + " hours and " + Integer.toString(SQBoosters.databaseExpirationTimes.get(i).getMinutes() - new Date().getMinutes() + 60) + " minutes";
+				
+			}
+			
+		}
+		
+		return "an unkown amount of time";
 		
 	}
 	

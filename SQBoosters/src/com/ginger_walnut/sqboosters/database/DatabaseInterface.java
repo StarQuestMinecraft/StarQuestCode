@@ -9,7 +9,7 @@ import com.ginger_walnut.sqboosters.SQBoosters;
 
 public class DatabaseInterface {
 	
-	public static void addMultiplier(String booster, int multiplier, String purchaser) {
+	public static void addMultiplier(String booster, int multiplier, String purchaser, int minutes) {
 		
 		SQLDatabase database = new SQLDatabase();
 		
@@ -17,7 +17,7 @@ public class DatabaseInterface {
 		
 		try {
 			
-			database.writeData(con, booster, multiplier, purchaser);
+			database.writeData(con, booster, multiplier, purchaser, minutes);
 			
 		} catch (Exception e) {
 			

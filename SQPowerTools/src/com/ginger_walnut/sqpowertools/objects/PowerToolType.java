@@ -1,7 +1,5 @@
 package com.ginger_walnut.sqpowertools.objects;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -24,33 +22,15 @@ public class PowerToolType {
 	
 	public int maxMods;
 	
-	public List<Attribute> attributes = new ArrayList<Attribute>();
-	public List<Effect> effects = new ArrayList<Effect>();
-	public List<Modifier> modifiers = new ArrayList<Modifier>();
+	public List<Attribute> attributes;
+	public List<Effect> effects;
+	public List<Modifier> modifiers;
+
+	public List<String> extraLore;
 	
-	public Map<Enchantment, Integer> enchants = new HashMap<Enchantment, Integer>();
+	public Map<Enchantment, Integer> enchants;
 	
-	public PowerToolType(String name, String configName, Material material, boolean hasRecipe, short durability, int energy, int energyPerUse, int maxMods, List<Attribute> attributes, List<Effect> effects, List<Modifier> modifiers, Map<Enchantment, Integer> enchants) {
-		
-		this.name = name;
-		this.configName = configName;
-		
-		this.material = material;
-		
-		this.hasRecipe = hasRecipe;
-		
-		this.durability = durability;
-		
-		this.energy = energy;
-		this.energyPerUse = energyPerUse;
-		
-		this.maxMods = maxMods;
-		
-		this.attributes = attributes;
-		this.effects = effects;
-		this.modifiers = modifiers;
-		
-		this.enchants = enchants;
+	public PowerToolType() {
 		
 	}
 	

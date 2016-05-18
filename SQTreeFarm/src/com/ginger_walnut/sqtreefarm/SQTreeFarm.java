@@ -55,7 +55,7 @@ public class SQTreeFarm extends JavaPlugin{
 			
 		}
 		
-		(new SaplingPlacer()).run();
+		//(new SaplingPlacer()).run();
 		
 	}
 	

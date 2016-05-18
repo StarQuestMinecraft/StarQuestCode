@@ -1,6 +1,6 @@
 name: SQBoosters
 main: com.ginger_walnut.sqboosters.SQBoosters
-version: 1.1
+version: 1.2
 description: A plugin that adds various boosters
 depend: [Movecraft]
 commands:
@@ -40,13 +40,23 @@ commands:
      description: Manages SQMMO-AlchemyBoost
    mcmmo-pilotingboost:
      description: Manages SQMMO-PilotingBoost
+   mcmmo-salvageboost:
+     description: Manages SQMMO-SalvageBoost
+   mcmmo-smeltingboost:
+     description: Manages SQMMO-SmeltingBoost
+   mcmmo-tamingboost:
+     description: Manages SQMMO-TamingBoost
 
    thank:
       description: Thanks a player for purchasing a booster with credits
+
+   booster:
+   boosters:
+
 permissions:
    SQBoosters.viewHelp:
       description: Premission node for viewing help
-      default: false
+      default: op
    SQBoosters.addMultiplier:
       description: Premission node for adding a multipier
-      default: false
+      default: op

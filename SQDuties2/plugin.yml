@@ -1,9 +1,9 @@
 name: SQDuties
 main: com.ginger_walnut.sqduties.SQDuties
-version: 1.0
+version: 2.1
 description: A plugin that allows mods to go into duty mode
 commands:
    duty:
       description: toggles duty mode
-   dutyresetmode:
-      description: resets duty
+   invrestore:
+      description: restores inventory

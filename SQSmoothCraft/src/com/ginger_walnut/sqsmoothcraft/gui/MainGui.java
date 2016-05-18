@@ -161,7 +161,6 @@ public class MainGui extends Gui{
 			blockList.add(new ShipBlock(new ShipLocation(-1, 0, 1, blockList.get(0)), coal, blockList.get(0), BlockType.NORMAL));
 			blockList.add(new ShipBlock(new ShipLocation(-1, 0, -1, blockList.get(0)), blueWool, blockList.get(0), BlockType.NORMAL));
 			blockList.add(new ShipBlock(new ShipLocation(0, 1, 2, blockList.get(0)), glass, blockList.get(0), BlockType.NORMAL));
-			blockList.add(new ShipBlock(new ShipLocation(0, 1, 3, blockList.get(0)), new ItemStack(Material.SIGN), blockList.get(0), BlockType.NORMAL));
 			blockList.add(new ShipBlock(new ShipLocation(1, 1, 1, blockList.get(0)), glass, blockList.get(0), BlockType.NORMAL));
 			blockList.add(new ShipBlock(new ShipLocation(-1, 1, 1, blockList.get(0)), glass, blockList.get(0), BlockType.NORMAL));
 			blockList.add(new ShipBlock(new ShipLocation(-1, 1, 0, blockList.get(0)), blueWool, blockList.get(0), BlockType.NORMAL));

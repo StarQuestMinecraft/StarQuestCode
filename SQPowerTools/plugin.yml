@@ -1,6 +1,6 @@
 name: SQPowerTools
 main: com.ginger_walnut.sqpowertools.SQPowerTools
-version: 1.0.2
+version: 1.0.3
 description: A plugin that adds custom items
 commands:
   sqpowertools:
@@ -9,4 +9,7 @@ commands:
 permissions:
   SQPowerTools.reload:
     description: permission node for reloading SQPowerTools
-    default: false
+    default: op
+  SQPowerTools.spawn:
+    description: permission node for spawning power tools
+    default: op

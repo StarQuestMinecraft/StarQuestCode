@@ -19,6 +19,7 @@ import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import com.ginger_walnut.sqboosters.database.DatabaseInterface;
+import com.gmail.nossr50.datatypes.skills.SkillType;
 import com.greatmancode.craftconomy3.Common;
 import com.greatmancode.craftconomy3.tools.interfaces.Loader;
 
@@ -26,11 +27,11 @@ public class SQBoosters extends JavaPlugin {
 
 	public final Logger logger = Logger.getLogger("Minecraft");
 	public static SQBoosters plugin;
-	public static int[] multipliers = new int[] {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
-	public static boolean[] enabledBoosters = new boolean[] {false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false};
-	public static String[] configNames = new String[] {"expbooster", "mobdropbooster", "sheepshearingbooster", "shopbooster", "speedbooster", "mcmmo-miningbooster", "mcmmo-woodcuttingbooster", "mcmmo-herbalism", "mcmmo-fishing", "mcmmo-excavation", "mcmmo-unarmed", "mcmmo-archery", "mcmmo-swords", "mcmmo-axes", "mcmmo-repair", "mcmmo-acrobatics", "mcmmo-alchemy", "mcmmo-piloting"};
-	public static String[] permissionName = new String[] {"SQExpBoost", "SQMobDropBoost", "SQSheepShearBoost", "SQShopBooster", "SQSpeedBooster", "SQMMO-MiningBooster", "SQMMO-WoodcuttingBooster", "SQMMO-HerbalismBooster", "SQMMO-FishingBooster", "SQMMO-ExcavationBooster", "SQMMO-UnarmedBooster", "SQMMO-ArcheryBooster", "SQMMO-SwordsBooster", "SQMMO-AxesBooster", "SQMMO-RepairBooster", "SQMMO-AcrobaticsBooster", "SQMMO-AlchemyBooster", "SQMMO-PilotingBooster"};
-	public static String[] multiplierName = new String[] {"exp", "mob drop", "sheep shearing", "shop", "speed", "MCMMO-mining", "MCMMO-woodcutting", "MCMMO-herbalism", "MCMMO-fishing", "MCMMO-excavation", "MCMMO-unarmed", "MCMMO-archery", "MCMMO-swords", "MCMMO-axes", "MCMMO-repair", "MCMMO-acrobatics", "MCMMO-alchemy", "MCMMO-piloting"};
+	public static int[] multipliers = new int[] {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
+	public static boolean[] enabledBoosters = new boolean[] {false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false};
+	public static String[] configNames = new String[] {"expbooster", "mobdropbooster", "sheepshearingbooster", "shopbooster", "speedbooster", "mcmmo-miningbooster", "mcmmo-woodcuttingbooster", "mcmmo-herbalismbooster", "mcmmo-fishingbooster", "mcmmo-excavationbooster", "mcmmo-unarmedbooster", "mcmmo-archerybooster", "mcmmo-swordsbooster", "mcmmo-axesbooster", "mcmmo-repairbooster", "mcmmo-acrobaticsbooster", "mcmmo-alchemybooster", "mcmmo-pilotingbooster", "mcmmo-salvagebooster", "mcmmo-smeltingbooster", "mcmmo-tamingbooster"};
+	public static String[] permissionName = new String[] {"SQExpBoost", "SQMobDropBoost", "SQSheepShearBoost", "SQShopBooster", "SQSpeedBooster", "SQMMO-MiningBooster", "SQMMO-WoodcuttingBooster", "SQMMO-HerbalismBooster", "SQMMO-FishingBooster", "SQMMO-ExcavationBooster", "SQMMO-UnarmedBooster", "SQMMO-ArcheryBooster", "SQMMO-SwordsBooster", "SQMMO-AxesBooster", "SQMMO-RepairBooster", "SQMMO-AcrobaticsBooster", "SQMMO-AlchemyBooster", "SQMMO-PilotingBooster", "SQMMO-SalvageBooster", "SQMMO-SmeltingBooster", "SQMMO-TamingBooster"};
+	public static String[] multiplierName = new String[] {"exp", "mob drop", "sheep shearing", "shop", "speed", "MCMMO-mining", "MCMMO-woodcutting", "MCMMO-herbalism", "MCMMO-fishing", "MCMMO-excavation", "MCMMO-unarmed", "MCMMO-archery", "MCMMO-swords", "MCMMO-axes", "MCMMO-repair", "MCMMO-acrobatics", "MCMMO-alchemy", "MCMMO-piloting", "MCMMO-salvage", "MCMMO-smelting", "MCMMO-taming"};
 	
 	public static List<Integer> databaseIDs = new ArrayList<Integer>();
 	public static List<String> databaseBoosters = new ArrayList<String>();
@@ -129,8 +130,8 @@ public class SQBoosters extends JavaPlugin {
 				sender.sendMessage(ChatColor.GOLD + "-----------------------------------------------------");
 				sender.sendMessage(ChatColor.GOLD + "Current " + multiplierName + " multiplier: " + ChatColor.BLUE + multipliers[multiplierPosition]);
 				sender.sendMessage(ChatColor.GOLD + "/" + commandName + " help" + ChatColor.BLUE + " - Shows this");
-				sender.sendMessage(ChatColor.GOLD + "/" + commandName + " add <multiplier> <purchaser>" + ChatColor.BLUE + " - Adds a booster with the specified purchaser ");
-				sender.sendMessage(ChatColor.GOLD + "/" + commandName + " add <multiplier>" + ChatColor.BLUE + " - Adds a booster with no purchaser");
+				sender.sendMessage(ChatColor.GOLD + "/" + commandName + " add <multiplier> <minutes> <purchaser>" + ChatColor.BLUE + " - Adds a booster with the specified purchaser ");
+				sender.sendMessage(ChatColor.GOLD + "/" + commandName + " add <multiplier> <minutes>" + ChatColor.BLUE + " - Adds a booster with no purchaser");
 				sender.sendMessage(ChatColor.GOLD + "/" + commandName + " view" + ChatColor.BLUE + " - Shows a brekadown of the current booster");
 				sender.sendMessage(ChatColor.GOLD + "-----------------------------------------------------");
 					
@@ -191,6 +192,9 @@ public class SQBoosters extends JavaPlugin {
 		commandNames.add("mcmmo-acrobaticsboost");
 		commandNames.add("mcmmo-alchemyboost");
 		commandNames.add("mcmmo-pilotingboost");
+		commandNames.add("mcmmo-salvageboost");
+		commandNames.add("mcmmo-smeltingboost");
+		commandNames.add("mcmmo-tamingboost");
 		
 		if (commandNames.contains(commandLabel)) {
 			
@@ -336,7 +340,7 @@ public class SQBoosters extends JavaPlugin {
 							
 					}
 											
-				} else if (args.length == 2) {
+				} else if (args.length == 3) {
 							
 					if (args[0].equalsIgnoreCase("add")) {
 						
@@ -344,9 +348,9 @@ public class SQBoosters extends JavaPlugin {
 							
 							try {
 		
-								DatabaseInterface.addMultiplier(configNames[arrayPos], Integer.parseInt(args[1]), null);
+								DatabaseInterface.addMultiplier(configNames[arrayPos], Integer.parseInt(args[1]), null, Integer.parseInt(args[2]));
 								
-								sender.sendMessage(ChatColor.GREEN + "The booster may take up to five minutes to register across every server");
+								sender.sendMessage(ChatColor.GREEN + "The booster may take up to 30 seconds to register across every server");
 																
 							} catch (NumberFormatException error) {
 									
@@ -366,7 +370,7 @@ public class SQBoosters extends JavaPlugin {
 					
 					}
 						
-				} else if (args.length == 3) {
+				} else if (args.length == 4) {
 					
 					if (args[0].equalsIgnoreCase("add")) {
 				
@@ -374,9 +378,9 @@ public class SQBoosters extends JavaPlugin {
 					
 							try {
 						
-								DatabaseInterface.addMultiplier(configNames[arrayPos],Integer.parseInt(args[1]), args[2]);
+								DatabaseInterface.addMultiplier(configNames[arrayPos],Integer.parseInt(args[1]), args[3], Integer.parseInt(args[2]));
 							
-								sender.sendMessage(ChatColor.GREEN + "The booster may take up to five minutes to register across every server");
+								sender.sendMessage(ChatColor.GREEN + "The booster may take up to 30 seconds to register across every server");
 														
 							} catch (NumberFormatException error) {
 								
@@ -474,6 +478,22 @@ public class SQBoosters extends JavaPlugin {
 				
 			}
 			
+		} else if (commandLabel.equals("boosters") || commandLabel.equals("booster")) {
+			
+			sender.sendMessage(ChatColor.GOLD + "-----------------------------------------------------");
+			
+			for (int i = 0; i < commandNames.size(); i ++) {
+				
+				if (enabledBoosters[i]) {
+					
+					sender.sendMessage(ChatColor.GOLD + "/" + commandNames.get(i) + ChatColor.BLUE + " - " + multipliers[i]);
+					
+				}
+
+			}
+			
+			sender.sendMessage(ChatColor.GOLD + "-----------------------------------------------------");
+			
 		}
 
 		return false;	
@@ -523,23 +543,26 @@ public class SQBoosters extends JavaPlugin {
 		
 	}
 	
-	public static int getMCMMOBooster(String skill) {
+	public static int getMCMMOBooster(SkillType skill) {
 		
 		switch(skill) {
 		
-			case "mining": return multipliers[5];
-			case "woodcutting": return multipliers[6];
-			case "herbalism": return multipliers[7];
-			case "fishing": return multipliers[8];
-			case "excavation": return multipliers[9];
-			case "unarmed": return multipliers[10];
-			case "archery": return multipliers[11];
-			case "swords": return multipliers[12];
-			case "axes": return multipliers[13];
-			case "repair": return multipliers[14];
-			case "acrobatics": return multipliers[15];
-			case "alchemy": return multipliers[16];
-			case "piloting": return multipliers[17];
+			case MINING: return multipliers[5];
+			case WOODCUTTING: return multipliers[6];
+			case HERBALISM: return multipliers[7];
+			case FISHING: return multipliers[8];
+			case EXCAVATION: return multipliers[9];
+			case UNARMED: return multipliers[10];
+			case ARCHERY: return multipliers[11];
+			case SWORDS: return multipliers[12];
+			case AXES: return multipliers[13];
+			case REPAIR: return multipliers[14];
+			case ACROBATICS: return multipliers[15];
+			case ALCHEMY: return multipliers[16];
+			//case PILOTING: return multipliers[17];
+			case SALVAGE: return multipliers[18];
+			case SMELTING: return multipliers[19];
+			case TAMING: return multipliers[20];
 			default: return 1;
 		
 		}

@@ -16,7 +16,7 @@ public class CommandSpyFile implements Runnable {
 
 	public CommandSpyFile(String p, String type, String message) {
 
-		this.file = new File("C:/StarQuest/CommandSpy/" + p + "/" + type + ".txt");
+		this.file = new File(SQDuties.getPluginMain().getDataFolder().getAbsolutePath() + "/CommandSpy/" + p + "/" + type + ".txt");
 		this.message = message;
 		if (!this.file.exists()) {
 			try {

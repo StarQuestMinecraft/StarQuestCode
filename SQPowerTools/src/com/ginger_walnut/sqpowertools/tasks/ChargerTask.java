@@ -47,7 +47,7 @@ public class ChargerTask extends Thread{
 												
 												ItemStack powerTool = charger.getInventory().getSmelting();
 												
-												charger.setCookTime((short) (((float) SQPowerTools.getEnergy(powerTool) / (float) SQPowerTools.getMaxEnergy(SQPowerTools.getName(powerTool), powerTool)) * 200));
+												charger.setCookTime((short) (((float) SQPowerTools.getEnergy(powerTool) / (float) SQPowerTools.getMaxEnergy(SQPowerTools.getType(powerTool), powerTool)) * 200));
 												
 												short timeLeft = 0;
 												
@@ -69,7 +69,7 @@ public class ChargerTask extends Thread{
 													
 														if (charger.getInventory().getFuel().getTypeId() == SQPowerTools.config.getInt("charger.fuel.fuelID")) {
 														
-															if (SQPowerTools.getEnergy(powerTool) < SQPowerTools.getMaxEnergy(SQPowerTools.getName(powerTool), powerTool)) {
+															if (SQPowerTools.getEnergy(powerTool) < SQPowerTools.getMaxEnergy(SQPowerTools.getType(powerTool), powerTool)) {
 																
 																ItemStack fuel = charger.getInventory().getFuel();
 																
@@ -93,13 +93,17 @@ public class ChargerTask extends Thread{
 													
 													charger.setMetadata("fuel_left", new FixedMetadataValue(SQPowerTools.getPluginMain(), timeLeft - 1));
 													
-													if ((SQPowerTools.getEnergy(powerTool) + (SQPowerTools.config.getInt("charger.fuel.energy") / 200)) > SQPowerTools.getMaxEnergy(SQPowerTools.getName(powerTool), powerTool)) {
+													if ((SQPowerTools.getEnergy(powerTool) + (SQPowerTools.config.getInt("charger.fuel.energy") / 200)) > SQPowerTools.getMaxEnergy(SQPowerTools.getType(powerTool), powerTool)) {
 														
-														powerTool = SQPowerTools.setEnergy(powerTool, SQPowerTools.getMaxEnergy(SQPowerTools.getName(powerTool), powerTool));
+														powerTool = SQPowerTools.setEnergy(powerTool, SQPowerTools.getMaxEnergy(SQPowerTools.getType(powerTool), powerTool));
 														
-														charger.getInventory().setResult(powerTool);
-														charger.getInventory().setSmelting(new ItemStack(Material.AIR));
-														
+														if (charger.getInventory().getResult() == null) {
+															
+															charger.getInventory().setResult(powerTool);
+															charger.getInventory().setSmelting(new ItemStack(Material.AIR));
+															
+														}
+
 													} else {
 														
 														SQPowerTools.setEnergy(powerTool, SQPowerTools.getEnergy(powerTool) + (SQPowerTools.config.getInt("charger.fuel.energy") / 200));

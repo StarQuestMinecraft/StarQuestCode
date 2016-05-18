@@ -15,15 +15,16 @@ import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitScheduler;
 
 import com.dibujaron.cardboardbox.Knapsack;
+import com.ginger_walnut.sqduties.database.InvRestoreDB;
 import com.ginger_walnut.sqduties.database.SQLDatabase;
 
 public class SQDuties extends JavaPlugin implements Listener{
@@ -66,6 +67,7 @@ public class SQDuties extends JavaPlugin implements Listener{
 		
 		baseGroups = getConfig().getStringList("base groups");
 		dutyGroups = getConfig().getStringList("duty groups");
+		
 		
 	}
 	
@@ -114,8 +116,11 @@ public class SQDuties extends JavaPlugin implements Listener{
 					if ((boolean) playerCanDutyResults[0]) {
 						
 						System.out.print(player.getName() + " has entered duty mode");
+										
+						Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "pp user " + player.getName() + " addgroup " + (String) playerCanDutyResults[2]);
+						//Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "pp user " + player.getName() + " removegroup " + (String) playerCanDutyResults[1]);
 						
-						permission.playerAddGroup(player, (String) playerCanDutyResults[2]);
+						//permission.playerAddGroup(player, (String) playerCanDutyResults[2]);
 						
 						Knapsack knapsack = new Knapsack(player);
 						
@@ -140,7 +145,10 @@ public class SQDuties extends JavaPlugin implements Listener{
 					
 					System.out.print(player.getName() + " has left duty mode");
 					
-					permission.playerRemoveGroup(player, (String) playerInDutyResults[2]);
+					Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "pp user " + player.getName() + " removegroup " + (String) playerInDutyResults[2]);
+					//Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "pp user " + player.getName() + " addgroup " + (String) playerInDutyResults[1]);
+					
+					//permission.playerRemoveGroup(player, (String) playerInDutyResults[2]);
 
 					player.setGameMode(GameMode.SURVIVAL);
 					
@@ -153,14 +161,6 @@ public class SQDuties extends JavaPlugin implements Listener{
 				
 			}
 			
-		} else if (commandLabel.equals("dutyresetmode")) {
-			
-			if (((Player) sender).getName().equalsIgnoreCase("Ginger_Walnut")) {
-				
-				permission.playerAddGroup((Player) sender, "jrdev");
-				
-			}
-
 		} else if (commandLabel.equals("invrestore") && (sender.hasPermission("SQDuties.restore") || sender instanceof ConsoleCommandSender)) {
 			
 			if (args.length < 1 || args.length > 3) { 
@@ -174,9 +174,13 @@ public class SQDuties extends JavaPlugin implements Listener{
 				sender.sendMessage(ChatColor.AQUA + "Player Lookup"); 
 				sender.sendMessage(ChatColor.AQUA + "-------------------"); 
 
-				for (int i = 0; i < InvRestoreDB.getDeaths(args[0]).size(); i ++) {
+				InvRestoreDB db = new InvRestoreDB();
+				
+				ArrayList<String> deaths = db.getDeaths(args[0]);
+				
+				for (int i = 0; i < deaths.size(); i ++) {
 
-					sender.sendMessage(ChatColor.AQUA + "" + i + ": " + InvRestoreDB.getDeaths(args[0]).get(i)); 
+					sender.sendMessage(ChatColor.AQUA + "" + i + ": " + deaths.get(i)); 
 					
 				}
 				
@@ -189,18 +193,12 @@ public class SQDuties extends JavaPlugin implements Listener{
 				System.out.print("restoring inventory");
 				
 				String timestamp  = InvRestoreDB.getDateIndex(args[0], Integer.parseInt(args[1]));
-				Inventory inv = InventoryStringDeSerializer.StringToInventory(InvRestoreDB.getInv(args[0], timestamp));
-				Inventory armorInv = InventoryStringDeSerializer.StringToInventory(InvRestoreDB.getArmor(args[0], timestamp));
-				double[] exp = InventoryStringDeSerializer.StringToExp(InvRestoreDB.getInv(args[0], timestamp));
-				player.setLevel((int) exp[0]);
-				player.setExp((float) exp[1]);
 				
-				ItemStack[] armor = new ItemStack[4];
-				for (int i = 0; i < armor.length; i++) {
-					armor[i] = armorInv.getItem(i);
-				}
-				player.getInventory().setContents(inv.getContents());
-				player.getInventory().setArmorContents(armor);
+				InvRestoreDB db = new InvRestoreDB();
+				
+				Knapsack knapsack = db.getKnapsack(args[0], timestamp);
+				
+				knapsack.unpack(player);
 				
 			} 
 
@@ -285,7 +283,7 @@ public class SQDuties extends JavaPlugin implements Listener{
 		
 		if ((boolean) playerCanDuty(player)[0]) {
 			
-			Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "bp reload");
+			Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "pp reload");
 			
 			if ((boolean) playerInDuty(player)[0]) {
 				
@@ -294,6 +292,32 @@ public class SQDuties extends JavaPlugin implements Listener{
 			}
 			
 		}
+		
+	}
+	
+	@SuppressWarnings("deprecation")
+	@EventHandler
+	public void onPlayerDeath(PlayerDeathEvent event) {
+		
+		Player player = (Player) event.getEntity();
+		
+		final InvRestoreDB db = new InvRestoreDB();
+		
+		final String name = player.getName();
+		final Knapsack knapsack = new Knapsack(player);
+		
+		BukkitScheduler scheduler = Bukkit.getServer().getScheduler();
+
+		scheduler.scheduleAsyncDelayedTask(this, new Runnable() {
+	
+			@Override
+			public void run() {
+		
+			db.newKey(name, knapsack);
+			
+			}
+			
+		}, 1);
 		
 	}
 	

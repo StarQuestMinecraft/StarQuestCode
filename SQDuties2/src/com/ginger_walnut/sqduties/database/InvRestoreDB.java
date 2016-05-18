@@ -1,42 +1,32 @@
-package com.ginger_walnut.sqduties;
+package com.ginger_walnut.sqduties.database;
 
-import java.sql.Connection;
-import java.sql.Driver;
-import java.sql.DriverManager;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 
-import net.countercraft.movecraft.bedspawns.Bedspawn;
+import com.dibujaron.cardboardbox.Knapsack;
 
 public class InvRestoreDB {
-	public static String driverString = "com.mysql.jdbc.Driver";
-	public static String hostname = "192.99.20.8";
-	public static String port = "3306";
-	public static String db_name = "minecraft";
-	public static String username = "minecraft";
-	public static String password = "R3b!rth!ng";
-	public static String dsn = ("jdbc:mysql://" + hostname + ":" + port + "/" + db_name);
-
-	public static void setUp() {
+	
+	public static BedspawnConnectionProvider con;
+	
+	public InvRestoreDB() {
+		con = new BedspawnConnectionProvider();	
 		String Database_table = "CREATE TABLE IF NOT EXISTS InventoryRestore ("
-				+ "`name` VARCHAR(32) NOT NULL," + "`inventory` LONGTEXT,"
-				+ "`armor` LONGTEXT," 
+				+ "`name` VARCHAR(32) NOT NULL," + "`data` BLOB," 
 				+ "`time` DATETIME,"
-				+ "`cause` LONGTEXT"
 				+ ")";
-		try {
-			Driver driver = (Driver) Class.forName(driverString).newInstance();
-			DriverManager.registerDriver(driver);
-		} catch (Exception e) {
-			System.out.println("[SQDatabases] Driver error: " + e);
-		}
 		Statement s = null;
 
 		try {
-			s = getConn().createStatement();
+			s = con.getConnection().createStatement();
 			s.executeUpdate(Database_table);
 			System.out.println("[SQDatabase] Table check/creation sucessful");
 		} catch (SQLException ee) {
@@ -45,39 +35,24 @@ public class InvRestoreDB {
 
 	}
 
-	public static String getInv(String name, String datetime) {
+	public Knapsack getKnapsack(String name, String datetime) {
 		PreparedStatement s = null;
 		try {
-			s = getConn().prepareStatement("SELECT `inventory` FROM InventoryRestore WHERE `name` = ? && `time` = ?");
+			s = con.getConnection().prepareStatement("SELECT `data` FROM InventoryRestore WHERE `name` = ? && `time` = ?");
 			s.setString(1, name);
 			s.setString(2, datetime);
 			ResultSet rs = s.executeQuery();
+			byte[] unparsedPerk = null;
 			while (rs.next()) {
-				return rs.getString("inventory");
+				unparsedPerk = (byte[]) rs.getObject("data");
+				
 			}
+			
+			ByteArrayInputStream baip = new ByteArrayInputStream(unparsedPerk);
+			ObjectInputStream ois = new ObjectInputStream(baip);
 			s.close();
-
-		} catch (SQLException e) {
-			System.out.print("[CCDB] SQL Error" + e.getMessage());
-		} catch (Exception e) {
-			System.out.print("[CCDB] SQL Error (Unknown)");
-			e.printStackTrace();
-		}
-		return null;
-
-	}
-
-	public static String getArmor(String name, String datetime) {
-		PreparedStatement s = null;
-		try {
-			s = getConn().prepareStatement("SELECT `armor` FROM InventoryRestore WHERE `name` = ? && `time` = ?");
-			s.setString(1, name);
-			s.setString(2, datetime);
-			ResultSet rs = s.executeQuery();
-			while (rs.next()) {
-				return rs.getString("armor");
-			}
-			s.close();
+			
+			return (Knapsack) ois.readObject();
 
 		} catch (SQLException e) {
 			System.out.print("[CCDB] SQL Error" + e.getMessage());
@@ -89,14 +64,14 @@ public class InvRestoreDB {
 
 	}
 	
-	public static void trimRow(final String datetime) {
+	public void trimRow(final String datetime) {
         Runnable task = new Runnable() {
 
             public void run() {
                 try {
             		PreparedStatement s = null;
             		try {
-            			s = getConn().prepareStatement("DELETE FROM InventoryRestore WHERE `time` = ?");
+            			s = con.getConnection().prepareStatement("DELETE FROM InventoryRestore WHERE `time` = ?");
             			s.setString(1, datetime);
             			s.execute();
             			s.close();
@@ -118,18 +93,18 @@ public class InvRestoreDB {
 
 	}
 	
-	public static ArrayList<String> getDeaths(String name) {
+	public ArrayList<String> getDeaths(String name) {
 		System.out.println("GETTING DEATHS");
 		ArrayList<String> returnArray = new ArrayList<String>();
 		PreparedStatement s = null;
 		try {
 			System.out.println("TRYING");
-			s = getConn().prepareStatement("SELECT * FROM InventoryRestore WHERE `name` = ? ORDER BY InventoryRestore.time DESC");
+			s = con.getConnection().prepareStatement("SELECT * FROM InventoryRestore WHERE `name` = ? ORDER BY InventoryRestore.time DESC");
 			s.setString(1, name);
 			ResultSet rs = s.executeQuery();
 			while (rs.next()) {
 				System.out.println("IM THE NEXT");
-				String entry = "Name: " + rs.getString("name") + " Time: " + rs.getString("time") + " Cause: " + rs.getString("cause");
+				String entry = "Name: " + rs.getString("name") + " Time: " + rs.getString("time");
 				returnArray.add(entry);
 			}
 			s.close();
@@ -150,7 +125,7 @@ public class InvRestoreDB {
 		int counter = 1;
 		PreparedStatement s = null;
 		try {
-			s = getConn().prepareStatement("SELECT `time` FROM InventoryRestore WHERE `name` = ? ORDER BY InventoryRestore.time DESC");
+			s = con.getConnection().prepareStatement("SELECT `time` FROM InventoryRestore WHERE `name` = ? ORDER BY InventoryRestore.time DESC");
 			s.setString(1, name);
 			ResultSet rs = s.executeQuery();
 			while (rs.next()) {
@@ -174,40 +149,28 @@ public class InvRestoreDB {
 
 	}
 
-	public static void newKey(final String name, final String inv, final String armor, final String cause) {
-        Runnable task = new Runnable() {
+	public void newKey(final String name, final Knapsack knapsack) {
+   		PreparedStatement s = null;
+   		
+        try {
+            			
+          byte[] knapsackBytes = convertToBytes(knapsack);
+            			
+          s = con.getConnection().prepareStatement("INSERT INTO InventoryRestore VALUES (?,?,NOW())");
+          s.setString(1, name);
+          s.setBinaryStream(2, convertToBinary(knapsackBytes), knapsackBytes.length);
+          s.executeUpdate();
+          s.close();
 
-            public void run() {
-                try {
-            		PreparedStatement s = null;
-            		try {
-            			s = getConn().prepareStatement("INSERT INTO InventoryRestore VALUES (?,?,?,NOW(),?)");
-            			s.setString(1, name);
-            			s.setString(2, inv);
-            			s.setString(3, armor);
-            			s.setString(4, cause);
-            			s.execute();
-            			s.close();
-
-            		} catch (SQLException e) {
-            			System.out.print("[CCDB] SQL Error" + e.getMessage());
-            		} catch (Exception e) {
-            			System.out.print("[CCDB] SQL Error (Unknown)");
-            			e.printStackTrace();
-            		} finally {
-            			trimKey(name);
-            		}
-                } catch (Exception ex) {
-                    //handle error which cannot be thrown back
-                }
-            }
-        };
-        new Thread(task, "ServiceThread").start(); 
-
+        } catch (Exception ex) {
+        	
+        	ex.printStackTrace();
+        	
+        }
 
 	}
 
-	public static void trimKey(final String name) {
+	public void trimKey(final String name) {
 		  Runnable task = new Runnable() {
 	            public void run() {
 	                try {
@@ -215,7 +178,7 @@ public class InvRestoreDB {
 	            		int counter = 1;
 	            		PreparedStatement s = null;
 	            		try {
-	            			s = getConn().prepareStatement("SELECT * FROM InventoryRestore WHERE `name` = ? ORDER BY InventoryRestore.time DESC");
+	            			s = con.getConnection().prepareStatement("SELECT * FROM InventoryRestore WHERE `name` = ? ORDER BY InventoryRestore.time DESC");
 	            			s.setString(1, name);
 	            			ResultSet rs = s.executeQuery();
 	            			while (rs.next()) {
@@ -244,7 +207,32 @@ public class InvRestoreDB {
 	        new Thread(task, "ServiceThread").start(); 
 		
 	}
-	public static Connection getConn(){
-		return Bedspawn.cntx;
+	
+	private byte[] convertToBytes(Knapsack k) {
+
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		ObjectOutputStream oos;
+		
+		try {
+			
+			oos = new ObjectOutputStream(baos);
+			oos.writeObject(k);
+			
+		} catch (IOException e) {
+			
+			e.printStackTrace();
+			
+		}
+		
+		byte[] wantBytes = baos.toByteArray();
+		return wantBytes;
+		
 	}
+
+	private ByteArrayInputStream convertToBinary(byte[] bytes) {
+
+		return new ByteArrayInputStream(bytes);
+		
+	}
+	
 }

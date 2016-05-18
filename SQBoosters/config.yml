@@ -15,7 +15,10 @@ mcmmo-axesbooster: true
 mcmmo-repairbooster: true
 mcmmo-acrobaticsbooster: true
 mcmmo-alchemybooster: true
-mcmmo-pilotingbooster: true
+mcmmo-pilotingbooster: false
+mcmmo-salvagebooster: true
+mcmmo-smeltingbooster: true
+mcmmo-tamingbooster: true
 
 #entities that are effected by the mobdropbooster
 entities:

@@ -40,9 +40,9 @@ public class SaplingPlacer extends Thread{
 						int y2 = Integer.parseInt(lines.get(4));
 						int z2 = Integer.parseInt(lines.get(5));
 						
-						width = Math.abs(x1 - x2);
-						height = Math.abs(y1 - y2);
-						length = Math.abs(z1 - z2);
+						width = Math.abs(x1 - x2) + 1;
+						height = Math.abs(y1 - y2) + 1;
+						length = Math.abs(z1 - z2) + 1;
 						
 						for (int x = 0; x < width; x ++) {
 							
@@ -54,12 +54,12 @@ public class SaplingPlacer extends Thread{
 										
 										if (z1 > z2) {
 											
-											if (Bukkit.getWorlds().get(0).getBlockAt(new Location(Bukkit.getWorlds().get(0), x1 - x, y1 + y, z1 - z)).getType().equals(Material.DIRT)) {
+											if (Bukkit.getWorlds().get(0).getBlockAt(new Location(Bukkit.getWorlds().get(0), x1 - x, y1 + y - 1, z1 - z)).getType().equals(Material.DIRT)) {
 												
-												if (Bukkit.getWorlds().get(0).getBlockAt(new Location(Bukkit.getWorlds().get(0), x1 - x, y1 + y + 1, z1 - z)).getType().equals(Material.AIR)) {
+												if (Bukkit.getWorlds().get(0).getBlockAt(new Location(Bukkit.getWorlds().get(0), x1 - x, y1 + y, z1 - z)).getType().equals(Material.AIR)) {
 													
-													Bukkit.getWorlds().get(0).getBlockAt(new Location(Bukkit.getWorlds().get(0), x1 - x, y1 + y + 1, z1 - z)).setType(Material.SAPLING);
-													Bukkit.getWorlds().get(0).getBlockAt(new Location(Bukkit.getWorlds().get(0), x1 - x, y1 + y + 1, z1 - z)).setData((byte)2);
+													Bukkit.getWorlds().get(0).getBlockAt(new Location(Bukkit.getWorlds().get(0), x1 - x, y1 + y, z1 - z)).setType(Material.SAPLING);
+													Bukkit.getWorlds().get(0).getBlockAt(new Location(Bukkit.getWorlds().get(0), x1 - x, y1 + y, z1 - z)).setData((byte)2);
 													
 												}
 												
@@ -67,12 +67,12 @@ public class SaplingPlacer extends Thread{
 											
 										} else {
 											
-											if (Bukkit.getWorlds().get(0).getBlockAt(new Location(Bukkit.getWorlds().get(0), x1 - x, y1 + y, z1 + z)).getType().equals(Material.DIRT)) {
+											if (Bukkit.getWorlds().get(0).getBlockAt(new Location(Bukkit.getWorlds().get(0), x1 - x, y1 + y - 1, z1 + z)).getType().equals(Material.DIRT)) {
 												
-												if (Bukkit.getWorlds().get(0).getBlockAt(new Location(Bukkit.getWorlds().get(0), x1 - x, y1 + y + 1, z1 + z)).getType().equals(Material.AIR)) {
+												if (Bukkit.getWorlds().get(0).getBlockAt(new Location(Bukkit.getWorlds().get(0), x1 - x, y1 + y, z1 + z)).getType().equals(Material.AIR)) {
 													
-													Bukkit.getWorlds().get(0).getBlockAt(new Location(Bukkit.getWorlds().get(0), x1 - x, y1 + y + 1, z1 + z)).setType(Material.SAPLING);
-													Bukkit.getWorlds().get(0).getBlockAt(new Location(Bukkit.getWorlds().get(0), x1 - x, y1 + y + 1, z1 + z)).setData((byte)2);
+													Bukkit.getWorlds().get(0).getBlockAt(new Location(Bukkit.getWorlds().get(0), x1 - x, y1 + y, z1 + z)).setType(Material.SAPLING);
+													Bukkit.getWorlds().get(0).getBlockAt(new Location(Bukkit.getWorlds().get(0), x1 - x, y1 + y, z1 + z)).setData((byte)2);
 													
 												}
 												
@@ -83,13 +83,13 @@ public class SaplingPlacer extends Thread{
 									} else {
 										
 										if (z1 > z2) {
-											
-											if (Bukkit.getWorlds().get(0).getBlockAt(new Location(Bukkit.getWorlds().get(0), x1 + x, y1 + y, z1 - z)).getType().equals(Material.DIRT)) {
+
+											if (Bukkit.getWorlds().get(0).getBlockAt(new Location(Bukkit.getWorlds().get(0), x1 + x, y1 + y - 1, z1 - z)).getType().equals(Material.DIRT)) {
 												
-												if (Bukkit.getWorlds().get(0).getBlockAt(new Location(Bukkit.getWorlds().get(0), x1 + x, y1 + y + 1, z1 - z)).getType().equals(Material.AIR)) {
+												if (Bukkit.getWorlds().get(0).getBlockAt(new Location(Bukkit.getWorlds().get(0), x1 + x, y1 + y, z1 - z)).getType().equals(Material.AIR)) {
 													
-													Bukkit.getWorlds().get(0).getBlockAt(new Location(Bukkit.getWorlds().get(0), x1 + x, y1 + y + 1, z1 - z)).setType(Material.SAPLING);
-													Bukkit.getWorlds().get(0).getBlockAt(new Location(Bukkit.getWorlds().get(0), x1 + x, y1 + y + 1, z1 - z)).setData((byte)2);
+													Bukkit.getWorlds().get(0).getBlockAt(new Location(Bukkit.getWorlds().get(0), x1 + x, y1 + y, z1 - z)).setType(Material.SAPLING);
+													Bukkit.getWorlds().get(0).getBlockAt(new Location(Bukkit.getWorlds().get(0), x1 + x, y1 + y, z1 - z)).setData((byte)2);
 													
 												}
 												
@@ -97,12 +97,12 @@ public class SaplingPlacer extends Thread{
 											
 										} else {
 											
-											if (Bukkit.getWorlds().get(0).getBlockAt(new Location(Bukkit.getWorlds().get(0), x1 + x, y1 + y, z1 + z)).getType().equals(Material.DIRT)) {
+											if (Bukkit.getWorlds().get(0).getBlockAt(new Location(Bukkit.getWorlds().get(0), x1 + x, y1 + y - 1, z1 + z)).getType().equals(Material.DIRT)) {
 												
-												if (Bukkit.getWorlds().get(0).getBlockAt(new Location(Bukkit.getWorlds().get(0), x1 + x, y1 + y + 1, z1 + z)).getType().equals(Material.AIR)) {
+												if (Bukkit.getWorlds().get(0).getBlockAt(new Location(Bukkit.getWorlds().get(0), x1 + x, y1 + y, z1 + z)).getType().equals(Material.AIR)) {
 													
-													Bukkit.getWorlds().get(0).getBlockAt(new Location(Bukkit.getWorlds().get(0), x1 + x, y1 + y + 1, z1 + z)).setType(Material.SAPLING);
-													Bukkit.getWorlds().get(0).getBlockAt(new Location(Bukkit.getWorlds().get(0), x1 + x, y1 + y + 1, z1 + z)).setData((byte)2);
+													Bukkit.getWorlds().get(0).getBlockAt(new Location(Bukkit.getWorlds().get(0), x1 + x, y1 + y, z1 + z)).setType(Material.SAPLING);
+													Bukkit.getWorlds().get(0).getBlockAt(new Location(Bukkit.getWorlds().get(0), x1 + x, y1 + y, z1 + z)).setData((byte)2);
 													
 												}
 												

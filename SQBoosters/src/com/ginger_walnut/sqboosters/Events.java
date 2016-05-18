@@ -5,6 +5,7 @@ import java.util.List;
 
 import io.netty.util.internal.ThreadLocalRandom;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
@@ -20,23 +21,53 @@ import org.bukkit.event.player.PlayerShearEntityEvent;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.FixedMetadataValue;
+import org.bukkit.scheduler.BukkitScheduler;
+
+import com.gmail.nossr50.api.ExperienceAPI;
+import com.gmail.nossr50.datatypes.skills.XPGainReason;
+import com.gmail.nossr50.events.experience.McMMOPlayerXpGainEvent;
 
 public class Events implements Listener{	
 
 	@EventHandler
 	public void onPlayerJoin (PlayerJoinEvent event) {
 		
-		Player player = event.getPlayer();
+		final Player player = event.getPlayer();
 		
-		for (int i = 0; i < SQBoosters.multipliers.length; i ++) {
-			
-			if (SQBoosters.multipliers[i] > 1) {
+		player.setMetadata("lastExp", new FixedMetadataValue(SQBoosters.getPluginMain(), player.getTotalExperience()));
+		
+		BukkitScheduler scheduler = Bukkit.getServer().getScheduler();
+
+		scheduler.scheduleSyncDelayedTask(SQBoosters.getPluginMain(), new Runnable() {
+	
+			@Override
+			public void run() {
 				
-				player.sendMessage(ChatColor.GOLD + SQBoosters.permissionName[i] + ": The " + SQBoosters.multiplierName[i] + " multiplier is currently " + SQBoosters.multipliers[i]);
+		
+				for (int i = 0; i < SQBoosters.multipliers.length; i ++) {
+					
+					if (SQBoosters.multipliers[i] > 1) {
+						
+						player.sendMessage(ChatColor.GOLD + SQBoosters.permissionName[i] + ChatColor.BLUE + ": The " + SQBoosters.multiplierName[i] + " multiplier is currently " + SQBoosters.multipliers[i]);
+						
+					}
+
+				}
 				
 			}
+		
+		}, 1);
+		
+	}
 	
-			player.setMetadata("lastExp", new FixedMetadataValue(SQBoosters.getPluginMain(), player.getTotalExperience()));
+	@EventHandler
+	public void onMcMMOPlayerXpGain(McMMOPlayerXpGainEvent event) {
+		
+		if (!event.getXpGainReason().equals(XPGainReason.COMMAND)) {
+			
+			int multiplier = SQBoosters.getMCMMOBooster(event.getSkill());
+			
+			event.setRawXpGained(event.getRawXpGained() * multiplier);
 			
 		}
 		

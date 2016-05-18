@@ -275,7 +275,7 @@ public class ShipMovement extends Thread {
 						
 						//if (clear) {						
 						if (detectionLocation.getWorld().getBlockAt(detectionLocation).getType().equals(Material.AIR)) {
-							
+
 							locationShip.setX(x);
 							locationShip.setY(y);
 							locationShip.setZ(z);
