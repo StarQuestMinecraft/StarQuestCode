@@ -17,6 +17,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.event.entity.EntitySpawnEvent;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
@@ -32,15 +33,17 @@ public class EntityListener implements Listener {
 	private static final List<CreatureSpawnEvent.SpawnReason> PASSTHROUGH_REASONS = Arrays.asList(new CreatureSpawnEvent.SpawnReason[] {
 			CreatureSpawnEvent.SpawnReason.CUSTOM, CreatureSpawnEvent.SpawnReason.SLIME_SPLIT, CreatureSpawnEvent.SpawnReason.BUILD_IRONGOLEM, 
 			CreatureSpawnEvent.SpawnReason.BUILD_SNOWMAN, CreatureSpawnEvent.SpawnReason.SPAWNER_EGG });
+	
+	public static final int TAMED_PASSIVES_PER_CHUNK = 16;
 
 	@EventHandler
 	public void onEntitySpawn(CreatureSpawnEvent event) {
 		if (event.isCancelled()) {
 			return;
 		}
+		List<EntityType> passives = Settings.getPassivesOfPlanet(event.getEntity().getWorld().getName());
 
 		if (event.getEntity().getType() == EntityType.SQUID) {
-			List<EntityType> passives = Settings.getPassivesOfPlanet(event.getEntity().getWorld().getName());
 			if(passives != null && passives.contains(EntityType.SQUID)){
 				return;
 			} else {
@@ -53,12 +56,12 @@ public class EntityListener implements Listener {
 			return;
 		}
 		if (event.getSpawnReason() == CreatureSpawnEvent.SpawnReason.BREEDING) {
-			System.out.println("[SQPassives] breeding!");
+			checkAndRemoveTooManyEntities(event, passives);
 			event.getEntity().setCustomName(this.p.getRandomName(event.getEntity()));
 			event.getEntity().setCustomNameVisible(true);
 		} else if (event.getSpawnReason() == CreatureSpawnEvent.SpawnReason.EGG) {
 			String n = event.getEntity().getWorld().getName().toLowerCase();
-			if (!(n.equals("nalavor") || n.equals("sampetra"))){
+			if (passives == null || !passives.contains(EntityType.CHICKEN)){
 				event.setCancelled(true);
 			}
 		} else if ((!PASSTHROUGH_REASONS.contains(event.getSpawnReason())) && (!event.isCancelled())) {
@@ -133,6 +136,25 @@ public class EntityListener implements Listener {
 			Skeleton s = (Skeleton) event.getEntity();
 			if ((s.getSkeletonType() == Skeleton.SkeletonType.WITHER) && (Math.random() < 0.3D))
 				event.getDrops().add(new ItemStack(372, 1));
+		}
+	}
+	
+	private void checkAndRemoveTooManyEntities(EntitySpawnEvent event, List<EntityType> passives){
+		Entity[] cents = event.getEntity().getLocation().getChunk().getEntities();
+		int count = 0;
+		for(Entity e : cents){
+			if(e instanceof LivingEntity){
+				LivingEntity le = (LivingEntity) e;
+				if(passives.contains(e.getType())){
+					if ((le.getCustomName() != null) || le.isCustomNameVisible()) {
+						if(count > TAMED_PASSIVES_PER_CHUNK){
+							e.remove();
+						} else {
+							count++;
+						}
+					}
+				}
+			}
 		}
 	}
 }

@@ -43,8 +43,21 @@ public class EmpireCommand implements CommandExecutor{
 				BungeePlayerHandler.sendPlayer(p, "YavarSystem", "YavarSystem", 0, 231, 2500);
 				//Bukkit.dispatchCommand(Bukkit.getConsoleSender(), 
 				//		"eb janesudo Yavari, please welcome your newest member " + p.getName() + "!");
+			} else if(e == Empire.NONE){
+				p.teleport(p.getWorld().getSpawnLocation());
 			}
 			return true;
+		} else if(cmd.getName().equalsIgnoreCase("empirereset") && sender.hasPermission("sqempire.reset")){
+			Player p = Bukkit.getPlayer(args[0]);
+			EmpirePlayer ep = EmpirePlayer.getOnlinePlayer(p);
+			ep.setEmpire(Empire.NONE);
+			ep.publishData();
+			SQEmpire.economy.withdrawPlayer(p, SQEmpire.economy.getBalance(p));
+			SQEmpire.permission.playerAddGroup(p,"Guest");
+			Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "bungeeperms user " + p.getName() + " removegroup Yavari0");
+			Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "bungeeperms user " + p.getName() + " removegroup Arator0");
+			Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "bungeeperms user " + p.getName() + " removegroup Requiem0");
+			BungeePlayerHandler.sendPlayer(p, "CoreSystem", "CoreSystem", 0, 102, 0);
 		}
 		if(!(sender instanceof Player)){
 			sender.sendMessage("The empire command can only be run ingame.");
@@ -173,8 +186,7 @@ public class EmpireCommand implements CommandExecutor{
 						Bukkit.dispatchCommand(Bukkit.getConsoleSender(), 
 								"eb janesudo Yavari, please welcome your newest member " + p.getName() + "!");
 					}
-					SQEmpire.permission.playerRemoveGroup(p,"Guest");
-
+					Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "bungeeperms user " + p.getName() + " removegroup Guest");
 				}
 			} else {
 				p.sendMessage("Incorrect usage, type /empire join <name>");

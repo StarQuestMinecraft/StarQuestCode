@@ -18,7 +18,7 @@ public class Database {
 	public static String port = "3306";
 	public static String db_name = "minecraft";
 	public static String username = "sqmaster";
-	public static String password = "R3b!rth!ng";
+	public static String password = "90jrd3v";
 	public static Connection cntx = null;
 	public static String dsn = ("jdbc:mysql://" + hostname + ":" + port + "/" + db_name);
 	
@@ -62,10 +62,8 @@ public class Database {
 				try {
 					if(type == ServerType.ALT){
 						s = cntx.prepareStatement(update_alt);
-						System.out.println("Update type: alt");
 					} else {
 						s = cntx.prepareStatement(update_main);
-						System.out.println("Update type: main");
 					}
 					String uidstr = player.getUniqueId().toString();
 					s.setString(1, uidstr);

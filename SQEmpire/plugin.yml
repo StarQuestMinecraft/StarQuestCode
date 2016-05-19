@@ -13,3 +13,6 @@ commands:
    playersendempire:
       description: sends player to empire spawn.
       usage: /playersendempire <player>
+   empirereset:
+      description: reset a player's empire.
+      usage: /empirereset <player>
