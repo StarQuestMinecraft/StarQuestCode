@@ -1,0 +1,23 @@
+name: MachinaFactory
+version: @VERSION@
+description: A MachinaCraft framework that allows machina to send each other objects through a pipeline.
+author: Lyneira
+website: http://dev.bukkit.org/server-mods/machinacraft/
+dev-url: http://dev.bukkit.org/server-mods/machinacraft/
+main: me.lyneira.MachinaFactory.MachinaFactory
+depend: [MachinaCore]
+permissions:
+    machinafactory.*:
+        children:
+            machinafactory.all: true
+    machinafactory.all:
+        description: Gives full access to MachinaFactory's item machina
+        children:
+            machinafactory.itemrelay: true
+            machinafactory.fabricator: true
+    machinafactory.itemrelay:
+        description: Allows use of Item Relays and Splitters
+        default: op
+    machinafactory.fabricator:
+        description: Allows use of a Fabricator
+        default: op
