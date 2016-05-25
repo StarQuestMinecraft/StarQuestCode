@@ -4,6 +4,8 @@ import com.greatmancode.craftconomy3.Cause;
 import com.greatmancode.craftconomy3.Common;
 import com.greatmancode.craftconomy3.account.Account;
 import com.greatmancode.craftconomy3.account.AccountManager;
+
+import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 import net.milkbowl.vault.chat.Chat;
@@ -26,6 +28,7 @@ public class SQDonorTags extends JavaPlugin implements Listener {
 	public static Chat chat;
 	public static Common cc3;
 	public static World world;
+	public static HashMap<String, Long> times = new HashMap<String, Long>();
 
 	public void onEnable() {
 		setupPermissions();
@@ -52,6 +55,10 @@ public class SQDonorTags extends JavaPlugin implements Listener {
 				System.out.println("Player not found, cannot give donation funds!");
 				return true;
 			}
+			if(times.containsKey(args[0]) && System.currentTimeMillis() - times.get(args[0]) < 60000){
+				return true;
+			}
+			times.put(args[0], System.currentTimeMillis());
 			Account account = cc3.getAccountManager().getAccount(player.getName());
 			account.deposit(Double.parseDouble(args[1]), world.getName(), "donation", Cause.PLUGIN,
 					"Donation record update");
