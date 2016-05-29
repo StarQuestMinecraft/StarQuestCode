@@ -1,0 +1,16 @@
+regions:
+   region1:
+      owner: Arator
+      capture points:
+         point1:
+            position: 8,100,8
+            owner: Arator
+         point2:
+            position: 7,70,7
+            owner: Yavari
+      connections:
+       - region2
+      points:
+       - 100,100
+       - 100,200
+       - 150,100

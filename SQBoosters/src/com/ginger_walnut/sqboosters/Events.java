@@ -67,7 +67,11 @@ public class Events implements Listener{
 			
 			int multiplier = SQBoosters.getMCMMOBooster(event.getSkill());
 			
-			event.setRawXpGained(event.getRawXpGained() * multiplier);
+			if (multiplier > 1) {
+				
+				event.setXpGained(event.getXpGained() * multiplier);
+				
+			}
 			
 		}
 		

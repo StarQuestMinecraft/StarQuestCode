@@ -39,7 +39,11 @@ public class Territory {
 	}
 	
 	public void print(PrintWriter out, int tlx, int tly, int sx, int sy){
-		out.println(name + ":");
+		out.println("  " + name + ":");
+		out.println("    owner: None");
+		out.println("    capture points:");
+		out.println("    connections:");
+		out.println("    points:");
 		
 		double rtlx = tlx / sx;
 		double rtly = tlx / sy;
@@ -47,7 +51,7 @@ public class Territory {
 		for(Point p : points){
 			double nx = (rtlx + p.x) * sx;
 			double ny = (rtly + p.y) * sy;
-			out.println("    -" + nx + "," + ny);
+			out.println("    - -" + nx + "," + ny);
 		}
 	}
 }

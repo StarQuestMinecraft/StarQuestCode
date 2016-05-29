@@ -1,6 +1,11 @@
 package com.whirlwindgames.dibujaron.sqempire;
 
 import org.bukkit.ChatColor;
+import org.bukkit.DyeColor;
+import org.bukkit.block.Banner;
+import org.bukkit.block.Block;
+import org.bukkit.block.banner.Pattern;
+import org.bukkit.block.banner.PatternType;
 
 public enum Empire {
 	NONE(0, ChatColor.DARK_GRAY, ChatColor.GRAY, "None"),
@@ -34,6 +39,54 @@ public enum Empire {
 	
 	public int getID(){
 		return id;
+	}
+	
+	public Banner getBanner(Block block) {
+		
+		if (id == 1) {
+			
+			Banner banner = (Banner) block.getState();
+			banner.addPattern(new Pattern(DyeColor.BLUE, PatternType.GRADIENT_UP));
+			banner.addPattern(new Pattern(DyeColor.WHITE, PatternType.CROSS));
+			banner.addPattern(new Pattern(DyeColor.BLUE, PatternType.CURLY_BORDER));
+			banner.addPattern(new Pattern(DyeColor.BLUE, PatternType.FLOWER));
+			banner.addPattern(new Pattern(DyeColor.BLUE, PatternType.RHOMBUS_MIDDLE));
+			banner.addPattern(new Pattern(DyeColor.WHITE, PatternType.CIRCLE_MIDDLE));
+			
+			return banner;
+			
+		} else  if (id == 2) {
+			
+			Banner banner = (Banner) block.getState();
+			banner.addPattern(new Pattern(DyeColor.RED, PatternType.GRADIENT_UP));
+			banner.addPattern(new Pattern(DyeColor.RED, PatternType.GRADIENT));
+			banner.addPattern(new Pattern(DyeColor.BLACK, PatternType.CROSS));
+			banner.addPattern(new Pattern(DyeColor.BLACK, PatternType.STRIPE_CENTER));
+			banner.addPattern(new Pattern(DyeColor.GRAY, PatternType.RHOMBUS_MIDDLE));
+			banner.addPattern(new Pattern(DyeColor.BLACK, PatternType.FLOWER));
+			
+			return banner;
+			
+		} else if (id == 3) {
+			
+			Banner banner = (Banner) block.getState();
+			banner.addPattern(new Pattern(DyeColor.SILVER, PatternType.TRIANGLE_TOP));
+			banner.addPattern(new Pattern(DyeColor.SILVER, PatternType.TRIANGLE_BOTTOM));
+			banner.addPattern(new Pattern(DyeColor.BLACK, PatternType.GRADIENT_UP));
+			banner.addPattern(new Pattern(DyeColor.BLACK, PatternType.GRADIENT));
+			banner.addPattern(new Pattern(DyeColor.BLACK, PatternType.RHOMBUS_MIDDLE));
+			banner.addPattern(new Pattern(DyeColor.PURPLE, PatternType.CIRCLE_MIDDLE));
+			
+			return banner;
+			
+		} else {
+			
+			Banner banner = (Banner) block.getState();
+			
+			return banner;
+			
+		}
+		
 	}
 	
 	public static Empire fromID(int id){
