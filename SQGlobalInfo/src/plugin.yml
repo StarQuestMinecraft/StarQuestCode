@@ -1,5 +1,6 @@
 name: SQGlobalInfo
 description: Easier retrieval of player information globally on a Bungeecord server
+depend: [SQBungeeMovecraft]
 main: net.homeip.hall.sqglobalinfo.SQGlobalInfo
 version: 1.0
 commands:
