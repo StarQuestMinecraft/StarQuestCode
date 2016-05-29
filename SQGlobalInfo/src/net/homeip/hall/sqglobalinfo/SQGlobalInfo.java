@@ -28,10 +28,9 @@ public class SQGlobalInfo extends JavaPlugin implements Listener {
 	private SQLDatabase database;
 	private static SQGlobalInfo instance;
 	
-	public static void main(String[] args) {}
-	
 	public void onEnable() {
 		instance = this;
+		saveDefaultConfig();
 		loadSQLDatabase();
 		this.getServer().getPluginManager().registerEvents(this, this);
 	}
@@ -46,12 +45,14 @@ public class SQGlobalInfo extends JavaPlugin implements Listener {
 		boolean online = false;
 		String world = player.getWorld().getName();
 		String location = getLocation(player);
-		//Upserts to database
-		Bukkit.getScheduler().runTaskAsynchronously(this, new Runnable() {
-			public void run() {
-				getSQLDatabase().updatePlayerData(name, uuid, ip, time, online, world, location);
-			}
-		});
+		//Upserts to database unless the player is in the do not track list
+		if(!(playerIsIncognito(name))) {
+			Bukkit.getScheduler().runTaskAsynchronously(this, new Runnable() {
+				public void run() {
+					getSQLDatabase().updatePlayerData(name, uuid, ip, time, online, world, location);
+				}
+			});
+		}
 	}
 	@EventHandler
 	public void onPlayerJoin(PlayerJoinEvent event) {
@@ -64,12 +65,14 @@ public class SQGlobalInfo extends JavaPlugin implements Listener {
 		boolean online = true;
 		String world = player.getWorld().getName();
 		String location = getLocation(player);
-		//Upserts to database
-		Bukkit.getScheduler().runTaskAsynchronously(this, new Runnable() {
-			public void run() {
-				getSQLDatabase().updatePlayerData(name, uuid, ip, time, online, world, location);
-			}
-		});
+		//Upserts to database unless the player is in the do not track list
+		if(!(playerIsIncognito(name))) {
+			Bukkit.getScheduler().runTaskAsynchronously(this, new Runnable() {
+				public void run() {
+					getSQLDatabase().updatePlayerData(name, uuid, ip, time, online, world, location);
+				}
+			});
+		}
 	}
 	@EventHandler
 	public void onPlayerKick(PlayerKickEvent event) {
@@ -82,12 +85,14 @@ public class SQGlobalInfo extends JavaPlugin implements Listener {
 		boolean online = true;
 		String world = player.getWorld().getName();
 		String location = getLocation(player);
-		//Upserts to database
-		Bukkit.getScheduler().runTaskAsynchronously(this, new Runnable() {
-			public void run() {
-				getSQLDatabase().updatePlayerData(name, uuid, ip, time, online, world, location);
-			}
-		});
+		//Upserts to database unless the player is in the do not track list
+		if(!(playerIsIncognito(name))) {
+			Bukkit.getScheduler().runTaskAsynchronously(this, new Runnable() {
+				public void run() {
+					getSQLDatabase().updatePlayerData(name, uuid, ip, time, online, world, location);
+				}
+			});
+		}
 	}
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
@@ -233,6 +238,13 @@ public class SQGlobalInfo extends JavaPlugin implements Listener {
 	//returns sqlconnect session
 	private Connection getConnection() {
 		return getSQLDatabase().getConnection();
+	}
+	//returns true if the player is in the do not track list (managers/upper staff)
+	private boolean playerIsIncognito(String playerName) {
+		if(getConfig().getStringList("IncognitoPlayers").contains(playerName.toLowerCase())) {
+			return true;
+		}
+		return false;
 	}
 	//Prevents escaping of query, which in turn prevents sql injection attacks
 	private boolean containsIllegalCharacters(String query) {
