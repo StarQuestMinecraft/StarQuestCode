@@ -1,0 +1,7 @@
+name: MachinaCore
+version: 1.9
+description: A framework for lever-activated machines made out of blocks.
+author: Lyneira
+website: http://dev.bukkit.org/server-mods/machinacraft/
+dev-url: http://dev.bukkit.org/server-mods/machinacraft/
+main: me.lyneira.MachinaCore.MachinaCore

@@ -1,0 +1,34 @@
+# MachinaPlanter configuration file.
+#
+# action-delay: The number of server ticks it takes for the planter to move, plant or harvest.
+# max-length: The maximum length of the rail that the planter moves along. Maximum allowed: 64
+# max-width: The maximum width of the planter. Maximum allowed: 64
+# use-energy: Whether the planter needs fuel to run.
+# use-tool: Whether the planter needs a hoe for planting, tilling soil and harvesting.
+#
+# *** Note on harvesting options *** 
+# The planter will only harvest if the activating player has permission to harvest!
+# Use these to fine-tune what players with this permission can harvest.
+#
+# harvest-wheat: Harvest wheat.
+# harvest-wheat-seeds: Harvest seeds from wheat. Only works if harvest-wheat is true.
+# harvest-pumpkin: Harvest pumpkins.
+# harvest-melon: Harvest melons.
+# harvest-netherwart: Harvest nether wart.
+# harvest-carrot: Harvest carrots.
+# harvest-potato: Harvest potatoes.
+# harvest-cocoa: Harvest cocoa beans.
+
+action-delay: 20
+max-length: 16
+max-width: 10
+use-energy: false
+use-tool: true
+harvest-wheat: true
+harvest-wheat-seeds: true
+harvest-pumpkin: true
+harvest-melon: true
+harvest-netherwart: true
+harvest-carrot: true
+harvest-potato: true
+harvest-cocoa: true
