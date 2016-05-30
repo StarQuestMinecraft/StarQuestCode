@@ -123,7 +123,7 @@ public class SQGlobalInfo extends JavaPlugin implements Listener {
 								//sends message if given player is online
 								if(online == true) {
 									//sends message for staff
-									if(sender.hasPermission("sqduties.mod")) {
+									if(sender.hasPermission("essentials.kick")) {
 										sender.sendMessage(ChatColor.GOLD + "Player " + ChatColor.RED + name + ChatColor.GOLD + " has been " + ChatColor.GREEN + "online " + ChatColor.GOLD + "for " + ChatColor.RED + getTimeElapsed(time, new Date()) + "\n" + ChatColor.GOLD + " - UUID: " + ChatColor.RED + uuid + "\n" + ChatColor.GOLD + " - Former Names: " + ChatColor.RED + formerNames + "\n" + ChatColor.GOLD + " - IP Address: " + ChatColor.RED + ip + "\n" + ChatColor.GOLD + " - Location: " + ChatColor.RED + location + ChatColor.GOLD + " on " + ChatColor.RED + world);	
 									}
 									//sends message for non-staff
@@ -134,7 +134,7 @@ public class SQGlobalInfo extends JavaPlugin implements Listener {
 								//sends message if given player is offline
 								else {
 									//sends message for staff
-									if(sender.hasPermission("sqduties.mod")) {
+									if(sender.hasPermission("essentials.kick")) {
 										sender.sendMessage(ChatColor.GOLD + "Player " + ChatColor.RED + name + ChatColor.GOLD + " has been " + ChatColor.DARK_RED + "offline " + ChatColor.GOLD + "for " + ChatColor.RED + getTimeElapsed(time, new Date())  + "\n" + ChatColor.GOLD + " - UUID: " + ChatColor.RED + uuid + "\n" + ChatColor.GOLD + " - Former Names: " + ChatColor.RED + formerNames + "\n" + ChatColor.GOLD + " - IP Address: " + ChatColor.RED + ip + "\n" + ChatColor.GOLD + " - Location: " + ChatColor.RED + location + ChatColor.GOLD + " on " + ChatColor.RED + world);
 									}
 									//sends message for non-staff
@@ -158,7 +158,7 @@ public class SQGlobalInfo extends JavaPlugin implements Listener {
 						sender.sendMessage("Proper usage: /gseen <name>");
 					}
 				}
-				else if((cmd.getName().equals("showalts")) && (sender.hasPermission("sqduties.mod"))) {
+				else if((cmd.getName().equals("showalts")) && (sender.hasPermission("essentials.kick"))) {
 					if(args.length > 1) {
 						//Prevents SQL injection hack
 						if(!(containsIllegalCharacters(args[1]))) {
