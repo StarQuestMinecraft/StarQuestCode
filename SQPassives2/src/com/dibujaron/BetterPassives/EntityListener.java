@@ -32,7 +32,7 @@ public class EntityListener implements Listener {
 
 	private static final List<CreatureSpawnEvent.SpawnReason> PASSTHROUGH_REASONS = Arrays.asList(new CreatureSpawnEvent.SpawnReason[] {
 			CreatureSpawnEvent.SpawnReason.CUSTOM, CreatureSpawnEvent.SpawnReason.SLIME_SPLIT, CreatureSpawnEvent.SpawnReason.BUILD_IRONGOLEM, 
-			CreatureSpawnEvent.SpawnReason.BUILD_SNOWMAN, CreatureSpawnEvent.SpawnReason.SPAWNER_EGG });
+			CreatureSpawnEvent.SpawnReason.BUILD_SNOWMAN, CreatureSpawnEvent.SpawnReason.SPAWNER_EGG, CreatureSpawnEvent.SpawnReason.SILVERFISH_BLOCK});
 	
 	public static final int TAMED_PASSIVES_PER_CHUNK = 16;
 
