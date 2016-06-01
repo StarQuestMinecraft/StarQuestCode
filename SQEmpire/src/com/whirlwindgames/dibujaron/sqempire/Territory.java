@@ -9,9 +9,9 @@ public class Territory {
 
 	public String name;
 	public Empire owner;
+	public int age;
 	
 	public List<CapturePoint> capturePoints = new ArrayList<CapturePoint>();
-	public List<String> connections = new ArrayList<String>();
 	
 	public List<BlockVector2D> points = new ArrayList<BlockVector2D>();
 	

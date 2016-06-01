@@ -42,7 +42,7 @@ public class Territory {
 		out.println("  " + name + ":");
 		out.println("    owner: None");
 		out.println("    capture points:");
-		out.println("    connections:");
+		out.println("    beachead: false");
 		out.println("    points:");
 		
 		double rtlx = tlx / sx;

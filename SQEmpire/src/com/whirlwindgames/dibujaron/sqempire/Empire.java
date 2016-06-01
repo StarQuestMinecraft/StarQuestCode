@@ -1,11 +1,13 @@
 package com.whirlwindgames.dibujaron.sqempire;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.DyeColor;
 import org.bukkit.block.Banner;
 import org.bukkit.block.Block;
 import org.bukkit.block.banner.Pattern;
 import org.bukkit.block.banner.PatternType;
+import org.bukkit.scheduler.BukkitScheduler;
 
 public enum Empire {
 	NONE(0, ChatColor.DARK_GRAY, ChatColor.GRAY, "None"),
@@ -41,10 +43,10 @@ public enum Empire {
 		return id;
 	}
 	
-	public Banner getBanner(Block block) {
-		
+	public void setBanner(final Block block) {
+				
 		if (id == 1) {
-			
+				
 			Banner banner = (Banner) block.getState();
 			banner.addPattern(new Pattern(DyeColor.BLUE, PatternType.GRADIENT_UP));
 			banner.addPattern(new Pattern(DyeColor.WHITE, PatternType.CROSS));
@@ -52,38 +54,34 @@ public enum Empire {
 			banner.addPattern(new Pattern(DyeColor.BLUE, PatternType.FLOWER));
 			banner.addPattern(new Pattern(DyeColor.BLUE, PatternType.RHOMBUS_MIDDLE));
 			banner.addPattern(new Pattern(DyeColor.WHITE, PatternType.CIRCLE_MIDDLE));
+			banner.update();
 			
-			return banner;
+		} else if (id == 2) {
 			
-		} else  if (id == 2) {
-			
-			Banner banner = (Banner) block.getState();
+			Banner banner = (Banner) block;
 			banner.addPattern(new Pattern(DyeColor.RED, PatternType.GRADIENT_UP));
 			banner.addPattern(new Pattern(DyeColor.RED, PatternType.GRADIENT));
 			banner.addPattern(new Pattern(DyeColor.BLACK, PatternType.CROSS));
 			banner.addPattern(new Pattern(DyeColor.BLACK, PatternType.STRIPE_CENTER));
 			banner.addPattern(new Pattern(DyeColor.GRAY, PatternType.RHOMBUS_MIDDLE));
 			banner.addPattern(new Pattern(DyeColor.BLACK, PatternType.FLOWER));
-			
-			return banner;
+			banner.update();
 			
 		} else if (id == 3) {
 			
-			Banner banner = (Banner) block.getState();
+			Banner banner = (Banner) block;
 			banner.addPattern(new Pattern(DyeColor.SILVER, PatternType.TRIANGLE_TOP));
 			banner.addPattern(new Pattern(DyeColor.SILVER, PatternType.TRIANGLE_BOTTOM));
 			banner.addPattern(new Pattern(DyeColor.BLACK, PatternType.GRADIENT_UP));
 			banner.addPattern(new Pattern(DyeColor.BLACK, PatternType.GRADIENT));
 			banner.addPattern(new Pattern(DyeColor.BLACK, PatternType.RHOMBUS_MIDDLE));
 			banner.addPattern(new Pattern(DyeColor.PURPLE, PatternType.CIRCLE_MIDDLE));
-			
-			return banner;
+			banner.update();
 			
 		} else {
 			
-			Banner banner = (Banner) block.getState();
-			
-			return banner;
+			Banner banner = (Banner) block;
+			banner.update();
 			
 		}
 		
