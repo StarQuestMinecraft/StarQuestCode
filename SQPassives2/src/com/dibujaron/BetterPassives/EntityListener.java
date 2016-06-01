@@ -2,158 +2,105 @@ package com.dibujaron.BetterPassives;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Random;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.entity.Creeper;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Skeleton;
-import org.bukkit.entity.Zombie;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.entity.CreatureSpawnEvent;
-import org.bukkit.event.entity.EntityDeathEvent;
-import org.bukkit.event.entity.EntitySpawnEvent;
-import org.bukkit.inventory.EntityEquipment;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
+import org.bukkit.event.world.ChunkLoadEvent;
+import org.bukkit.event.world.ChunkUnloadEvent;
+import org.bukkit.util.Vector;
 
-public class EntityListener implements Listener {
+public class ChunkListener implements Listener {
 	BetterPassives p;
 
-	EntityListener(BetterPassives plugin) {
+	static final List<Material> SPAWN_TYPES = Arrays.asList(new Material[] { Material.GRASS, Material.SNOW,
+			Material.MYCEL, Material.SNOW_BLOCK, Material.LEAVES, Material.NETHERRACK });
+
+	static final List<Material> PASSTHROUGH_TYPES = Arrays
+			.asList(new Material[] { Material.LEAVES, Material.WOOL, Material.LOG });
+
+	/*
+	 * if ((baseLocBlock.getType() != Material.GRASS) && (baseLocBlock.getType()
+	 * != Material.SNOW) && (baseLocBlock.getType() != Material.LONG_GRASS) &&
+	 * (baseLocBlock.getType() != Material.MYCEL) && (baseLocBlock.getType() !=
+	 * Material.SNOW_BLOCK) && (baseLocBlock.getType() != Material.LEAVES)) {
+	 * return; }
+	 */
+	ChunkListener(BetterPassives plugin) {
 		this.p = plugin;
 	}
 
-	private static final List<CreatureSpawnEvent.SpawnReason> PASSTHROUGH_REASONS = Arrays.asList(new CreatureSpawnEvent.SpawnReason[] {
-			CreatureSpawnEvent.SpawnReason.CUSTOM, CreatureSpawnEvent.SpawnReason.SLIME_SPLIT, CreatureSpawnEvent.SpawnReason.BUILD_IRONGOLEM, 
-			CreatureSpawnEvent.SpawnReason.BUILD_SNOWMAN, CreatureSpawnEvent.SpawnReason.SPAWNER_EGG });
-	
-	public static final int TAMED_PASSIVES_PER_CHUNK = 16;
-
-	@EventHandler
-	public void onEntitySpawn(CreatureSpawnEvent event) {
-		if (event.isCancelled()) {
+	@EventHandler(priority = EventPriority.HIGH)
+	public void onChunkUnload(ChunkUnloadEvent event) {
+		Entity[] entitiesInChunk = event.getChunk().getEntities();
+		if (entitiesInChunk.length == 0)
 			return;
-		}
-		List<EntityType> passives = Settings.getPassivesOfPlanet(event.getEntity().getWorld().getName());
 
-		if (event.getEntity().getType() == EntityType.SQUID) {
-			if(passives != null && passives.contains(EntityType.SQUID)){
-				return;
-			} else {
-				event.setCancelled(true);
-				return;
-			}
-		}
+		List<EntityType> passives = Settings.getAllPassives();
+		List<EntityType> hostiles = Settings.getAllHostiles();
 
-		if ((event.getEntity().getType() == EntityType.WITHER) || (event.getEntity().getType() == EntityType.WITHER_SKULL || event.getEntity().getType() == EntityType.ARMOR_STAND)) {
-			return;
+		for (Entity e : entitiesInChunk) {
+			if ((hostiles != null && hostiles.contains(e.getType())
+					|| (passives != null && passives.contains(e.getType())))) {
+				LivingEntity le = (LivingEntity) e;
+				if ((le.getCustomName() == null) && (!le.isCustomNameVisible())) {
+					le.remove();
+				}
+			} else if (e.getType() == EntityType.WITHER_SKULL) {
+				e.remove();
+			}
 		}
-		if (event.getSpawnReason() == CreatureSpawnEvent.SpawnReason.BREEDING) {
-			checkAndRemoveTooManyEntities(event, passives);
-			event.getEntity().setCustomName(this.p.getRandomName(event.getEntity()));
-			event.getEntity().setCustomNameVisible(true);
-		} else if (event.getSpawnReason() == CreatureSpawnEvent.SpawnReason.EGG) {
-			String n = event.getEntity().getWorld().getName().toLowerCase();
-			if (passives == null || !passives.contains(EntityType.CHICKEN)){
-				event.setCancelled(true);
-			}
-		} else if ((!PASSTHROUGH_REASONS.contains(event.getSpawnReason())) && (!event.isCancelled())) {
-			if(FactionUtils.isInClaimedLand(event.getLocation())){
-				event.setCancelled(true);
+	}
+
+	@EventHandler(priority = EventPriority.HIGH)
+	public void onChunkLoad(ChunkLoadEvent event) {
+
+		if (Math.random() * 10.0 < 2.0) {
+			double chunkX = event.getChunk().getX() * 16;
+			double chunkZ = event.getChunk().getZ() * 16;
+			List<EntityType> types = Settings.getPassivesOfPlanet(event.getWorld().getName());
+			if (types == null || types.size() == 0)
+				return;
+			if (FactionUtils.isInClaimedLand(new Location(event.getWorld(), chunkX, 0, chunkZ)))
+				return;
+			double X = 16.0D * Math.random();
+			double Z = 16.0D * Math.random();
+
+			Location baseLoc = this.p
+					.getRealHighestBlockAt(new Location(event.getChunk().getWorld(), chunkX + X, 5.0D, chunkZ + Z))
+					.getLocation();
+			Block baseLocBlock = baseLoc.getBlock();
+
+			if (!SPAWN_TYPES.contains(baseLocBlock.getType())) {
 				return;
 			}
-			List<EntityType> types = this.p.getAcceptableHostileTypes(event.getLocation().getWorld());
-			if (types == null) {
-				event.setCancelled(true);
-				return;
-			}
-			if (types.size() == 0) {
-				event.setCancelled(true);
-				return;
+
+			if (PASSTHROUGH_TYPES.contains(baseLocBlock.getType())) {
+				for (int s = 30; s > 0; s--) {
+					Block lowerBlock = baseLocBlock.getRelative(0, s * -1, 0);
+					if (lowerBlock.getType() == Material.GRASS) {
+						baseLoc = lowerBlock.getLocation();
+						baseLocBlock = lowerBlock;
+						break;
+					}
+				}
 			}
 
 			EntityType type = types.get((int) (Math.random() * types.size()));
-			Entity e = event.getLocation().getWorld().spawnEntity(event.getEntity().getLocation(), type);
-			String n = e.getWorld().getName().toLowerCase();
-			if ((e.getType() == EntityType.SKELETON) && (n.equals("avaquo"))) {
-				Skeleton s = (Skeleton) e;
-				s.setSkeletonType(Skeleton.SkeletonType.WITHER);
-			} else if ((e.getType() == EntityType.CREEPER) && (n.equals("tallimar"))) {
-				Creeper c = (Creeper) e;
-				c.setPowered(true);
-				permaVanish(c);
-			} else if ((e.getType() == EntityType.SKELETON) && (n.equals("uru"))) {
-				createRobot((Skeleton) e);
-			}
-			event.setCancelled(true);
-		}
-		if (Settings.getAllHostiles().contains(event.getEntityType())) {
-			int chance = BetterPassives.config.getInt("hostile chance");
-			Random rand = new Random();
-			if (rand.nextInt(101) > chance) {
-				event.setCancelled(true);
-			}
-			
-		}
-	}
 
-	private void createRobot(Skeleton s) {
-		EntityEquipment e = s.getEquipment();
-		e.setHelmet(new ItemStack(Material.DISPENSER, 1));
-		e.setChestplate(new ItemStack(Material.IRON_CHESTPLATE, 1));
-		e.setLeggings(new ItemStack(Material.CHAINMAIL_LEGGINGS, 1));
-		e.setLeggings(new ItemStack(Material.IRON_BOOTS, 1));
-		e.setItemInHand(new ItemStack(Material.BOW, 1));
-		permaVanish(s);
-	}
+			int numToSpawn = (int) (Math.random() * 4.0D);
 
-	private void createSpiritBlock(Zombie z) {
-		permaVanish(z);
-		z.getEquipment().setHelmet(new ItemStack(getHighestBlockBeneath(z.getLocation()).getBlock().getType(), 1));
-	}
-
-	private void permaVanish(LivingEntity c) {
-		c.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, 2147483647, 1));
-	}
-
-	public static Location getHighestBlockBeneath(Location loc) {
-		if (loc.getWorld().getBlockAt(loc).getType() == Material.AIR) {
-			return getHighestBlockBeneath(new Location(loc.getWorld(), loc.getX(), loc.getY() - 1.0D, loc.getZ()));
-		}
-		return loc;
-	}
-
-	@EventHandler(priority = EventPriority.HIGHEST)
-	public void onEntityDeath(EntityDeathEvent event) {
-		if (event.getEntityType() == EntityType.SKELETON) {
-			Skeleton s = (Skeleton) event.getEntity();
-			if ((s.getSkeletonType() == Skeleton.SkeletonType.WITHER) && (Math.random() < 0.3D))
-				event.getDrops().add(new ItemStack(372, 1));
-		}
-	}
-	
-	private void checkAndRemoveTooManyEntities(EntitySpawnEvent event, List<EntityType> passives){
-		Entity[] cents = event.getEntity().getLocation().getChunk().getEntities();
-		int count = 0;
-		for(Entity e : cents){
-			if(e instanceof LivingEntity){
-				LivingEntity le = (LivingEntity) e;
-				if(passives.contains(e.getType())){
-					if ((le.getCustomName() != null) || le.isCustomNameVisible()) {
-						if(count > TAMED_PASSIVES_PER_CHUNK){
-							e.remove();
-						} else {
-							count++;
-						}
-					}
-				}
+			Location spawnLoc = new Location(baseLoc.getWorld(), baseLoc.getX(), baseLoc.getY() + 1.0D, baseLoc.getZ());
+			for (int n = numToSpawn; n > 0; n--) {
+				LivingEntity e = (LivingEntity) baseLoc.getWorld().spawnEntity(spawnLoc, type);
+				Vector v = new Vector(Math.random() * 3.0D, 0.0D, Math.random());
+				e.setVelocity(v);
 			}
 		}
 	}
@@ -161,5 +108,5 @@ public class EntityListener implements Listener {
 
 /*
  * Location: C:\Users\Drew\Desktop\SQPassives.jar Qualified Name:
- * com.dibujaron.BetterPassives.EntityListener JD-Core Version: 0.6.2
+ * com.dibujaron.BetterPassives.ChunkListener JD-Core Version: 0.6.2
  */
