@@ -10,7 +10,10 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.PluginManager;
+import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import net.milkbowl.vault.permission.Permission;
 
 /**
  * Main Plugin.
@@ -21,20 +24,33 @@ public final class MachinaCore extends JavaPlugin {
     final static Logger log = Logger.getLogger("Minecraft");
     static MachinaCore plugin;
     static PluginManager pluginManager;
+    public Permission permission = null;
     /**
      * This is a hashmap of the blueprint's class name to its blueprint. This
      * prevents accidental double insertions by buggy code.
      */
     private final Map<Class<?>, MachinaBlueprint> blueprints = new LinkedHashMap<Class<?>, MachinaBlueprint>();
 
+    private boolean setupPermissions()
+    {
+        RegisteredServiceProvider<Permission> permissionProvider = getServer().getServicesManager().getRegistration(net.milkbowl.vault.permission.Permission.class);
+        if (permissionProvider != null) {
+            permission = permissionProvider.getProvider();
+        }
+        return (permission != null);
+    }
+    
     public final void onEnable() {
         plugin = this;
         PluginDescriptionFile pdf = getDescription();
         log.info(pdf.getName() + " version " + pdf.getVersion() + " is now enabled.");
-
+        
         // Set listener
         pluginManager = this.getServer().getPluginManager();
         pluginManager.registerEvents(new MachinaCoreListener(this), this);
+        
+        if(this.getServer().getPluginManager().getPlugin("Vault") != null)
+        	this.setupPermissions();
 
         ConfigurationManager config = new ConfigurationManager(this);
         Fuel.loadConfiguration(config.getSection("fuels"));
@@ -46,6 +62,11 @@ public final class MachinaCore extends JavaPlugin {
         PluginDescriptionFile pdf = getDescription();
         log.info(pdf.getName() + " is now disabled.");
         MachinaRunner.deActivateAll();
+    }
+    
+    public final Map<Class<?>, MachinaBlueprint> getBlueprints()
+    {
+    	return blueprints;
     }
 
     /**
