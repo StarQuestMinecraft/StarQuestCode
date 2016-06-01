@@ -6,6 +6,8 @@ import java.util.GregorianCalendar;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import com.whirlwindgames.dibujaron.sqempire.SQEmpire;
+
 public class TimeCheckTask extends BukkitRunnable{
 	
 	JavaPlugin p;
@@ -19,6 +21,7 @@ public class TimeCheckTask extends BukkitRunnable{
 		//9 PM is hour 21, java calendar is military time
 		if(hour == 9 || hour == 21){
 			//time for a restart
+			SQEmpire.automaticRestart = true;			
 			new DelayedRestartTask(3).runTaskTimer(p, 1200, 1200);
 			this.cancel();
 		}

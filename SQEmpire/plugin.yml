@@ -4,7 +4,7 @@ description: StarQuest Empires!
 author: dibujaron
 website: http://starquestminecraft.com
 main: com.whirlwindgames.dibujaron.sqempire.SQEmpire
-depend: [Movecraft, Vault, WorldGuard]
+depend: [Movecraft, Vault, WorldGuard, Factions]
 
 commands:
    empire:

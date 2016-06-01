@@ -272,7 +272,7 @@ public class TerritoryCreator extends JFrame implements Runnable, MouseListener,
 				if (strLine.startsWith("    -") && readingPoints) {
 					
 					String[] split = strLine.split(",");
-					double x = Double.parseDouble(split[0].substring(7, split[0].length()));
+					double x = Double.parseDouble(split[0].substring(6, split[0].length()));
 					double z = Double.parseDouble(split[1]);
 					Point p = new Point((int) Math.round(x), (int) Math.round(z));
 					System.out.println("adding point: " + x + ", " + z);
