@@ -172,7 +172,7 @@ public class EventSimulator {
     	if(player.hasPermission("chestfix.bypass") == true)
     		hasPerm = true;
     	
-    	if(MachinaCore.pluginManager.getPlugin("ChestFix") != null && MachinaCore.plugin.permission != null)
+    	if(MachinaCore.pluginManager.getPlugin("ChestFix") != null && MachinaCore.plugin != null && MachinaCore.plugin.permission != null)
     	{
     		chestFixInstalled = true;
     	}
