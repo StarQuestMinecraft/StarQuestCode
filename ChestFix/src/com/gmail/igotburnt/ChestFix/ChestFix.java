@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.logging.Logger;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -26,11 +27,15 @@ public class ChestFix extends org.bukkit.plugin.java.JavaPlugin
 	private HashSet<Material> rightClickOnly = new HashSet<Material>(30);
 
 	private ContainerListener containerListener = new ContainerListener(this);
+	
+	private String pluginName = null;
 
 	public void onEnable()
 	{
 		this.log = getLogger();
 
+		this.pluginName = "[" + this.getDescription().getName() +"]";
+		
 		Bukkit.getServer().getPluginManager().registerEvents(this.containerListener, this);
 
 		this.log.info(getDescription().getName() + getDescription().getVersion() + " Enabled ");
@@ -97,7 +102,6 @@ public class ChestFix extends org.bukkit.plugin.java.JavaPlugin
 		return this.rightClickOnly;
 	}
 
-	@SuppressWarnings("deprecation")
 	public void loadTransparentBlocks()
 	{
 		this.transparent.clear();
@@ -181,14 +185,18 @@ public class ChestFix extends org.bukkit.plugin.java.JavaPlugin
 		addTransparentBlock(Material.TORCH);
 		addTransparentBlock(Material.TRAP_DOOR);
 
-		List<Integer> confIds = this.config.getIntegerList("transparent");
+		List<String> confIds = this.config.getStringList("transparent");
 		for (int i = 0; i < confIds.size(); i++)
-		{
-			addTransparentBlock(Material.getMaterial(((Integer) confIds.get(i)).intValue()));
+		{	
+			if(confIds.get(i) != null && Material.getMaterial(confIds.get(i)) == null)
+			{
+				this.getServer().getConsoleSender().sendMessage(ChatColor.RED + this.pluginName + "Config value: \"transparent: " + confIds.get(i) + "\" is not a valid material name.");
+			}
+			else if(confIds.get(i) != null)
+				addTransparentBlock(Material.getMaterial(confIds.get(i)));
 		}
 	}
 
-	@SuppressWarnings("deprecation")
 	public void loadInteractBlocks()
 	{
 		this.interact.clear();
@@ -198,10 +206,17 @@ public class ChestFix extends org.bukkit.plugin.java.JavaPlugin
 		addInteractBlock(Material.DISPENSER);
 		addInteractBlock(Material.BURNING_FURNACE);
 		addInteractBlock(Material.JUKEBOX);
-
-		List<Integer> confIds = this.config.getIntegerList("interact");
+		
+		List<String> confIds = this.config.getStringList("interact");
 		for (int i = 0; i < confIds.size(); i++)
-			addInteractBlock(Material.getMaterial(((Integer) confIds.get(i)).intValue()));
+		{
+			if(confIds.get(i) != null && Material.getMaterial(confIds.get(i)) == null)
+			{
+				this.getServer().getConsoleSender().sendMessage(ChatColor.RED + this.pluginName + "Config value: \"interact: " + confIds.get(i) + "\" is not a valid material name.");
+			}
+			else if(confIds.get(i) != null)
+				addInteractBlock(Material.getMaterial(confIds.get(i)));
+		}
 	}
 
 	public void addTransparentBlock(Material mat)
