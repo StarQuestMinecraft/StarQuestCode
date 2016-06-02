@@ -5,7 +5,6 @@ import java.util.Collection;
 import org.bukkit.ChatColor;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
-<<<<<<< HEAD
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -13,13 +12,7 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 
 public class ContainerListener implements Listener
-=======
-import org.bukkit.event.EventPriority;
-import org.bukkit.event.block.Action;
-import org.bukkit.event.player.PlayerInteractEvent;
 
-public class ContainerListener implements org.bukkit.event.Listener
->>>>>>> dan14941-issue965
 {
 	private ChestFix plugin;
 	private Checker checker;
@@ -30,11 +23,7 @@ public class ContainerListener implements org.bukkit.event.Listener
 		this.checker = new Checker(plugin);
 	}
 
-<<<<<<< HEAD
 	@EventHandler(priority = EventPriority.LOW)
-=======
-	@org.bukkit.event.EventHandler(priority = EventPriority.LOW)
->>>>>>> dan14941-issue965
 	public void onBlockInteract(PlayerInteractEvent e)
 	{
 		if ((e.isCancelled())

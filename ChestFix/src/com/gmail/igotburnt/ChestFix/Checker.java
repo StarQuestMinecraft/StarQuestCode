@@ -2,10 +2,7 @@ package com.gmail.igotburnt.ChestFix;
 
 import org.bukkit.Location;
 import org.bukkit.block.Block;
-<<<<<<< HEAD
 import org.bukkit.block.BlockFace;
-=======
->>>>>>> dan14941-issue965
 import org.bukkit.material.Door;
 
 public class Checker
@@ -154,7 +151,6 @@ public class Checker
 
 	private Block getChestNextTo(Block b)
 	{
-<<<<<<< HEAD
 		BlockFace areaAround[] = {BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST, BlockFace.NORTH};
 		
 		Block[] c = new Block[4];
@@ -166,13 +162,6 @@ public class Checker
 			count++;
 		}
 		
-=======
-		Block[] c = new Block[4];
-		c[0] = b.getLocation().add(1.0D, 0.0D, 0.0D).getBlock();
-		c[1] = b.getLocation().add(-1.0D, 0.0D, 0.0D).getBlock();
-		c[2] = b.getLocation().add(0.0D, 0.0D, 1.0D).getBlock();
-		c[3] = b.getLocation().add(0.0D, 0.0D, -1.0D).getBlock();
->>>>>>> dan14941-issue965
 		Block[] arrayOfBlock1;
 		int j = (arrayOfBlock1 = c).length;
 		for (int i = 0; i < j; i++)
