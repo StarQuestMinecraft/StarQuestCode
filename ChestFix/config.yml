@@ -12,6 +12,7 @@ message: true
 lenient: true
 #Blocks that can be interacted through. E.g, signs, levers, grass, piston heads.  Many of these are pre-added
 transparent:
+<<<<<<< HEAD
     - BREWING_STAND #Brewing stand
     - WOODEN_DOOR #Wooden door
     - Material.STEP #Slabs
@@ -19,3 +20,12 @@ transparent:
 interact:
     - ENCHANTMENT_TABLE #Enchanting table
     - LEVER #Lever
+=======
+    - 117 #Brewing stand
+    - 64 #Wooden door
+    - 44 #Slabs
+#Blocks to protect interaction with. E.g., Levers, Chests, crafting tables.  Many of thes are pre-added.
+interact:
+    - 116 #Enchanting table
+    - 69 #Lever
+>>>>>>> dan14941-issue965

@@ -6,7 +6,10 @@ import java.util.List;
 import java.util.logging.Logger;
 
 import org.bukkit.Bukkit;
+<<<<<<< HEAD
 import org.bukkit.ChatColor;
+=======
+>>>>>>> dan14941-issue965
 import org.bukkit.Material;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -27,15 +30,21 @@ public class ChestFix extends org.bukkit.plugin.java.JavaPlugin
 	private HashSet<Material> rightClickOnly = new HashSet<Material>(30);
 
 	private ContainerListener containerListener = new ContainerListener(this);
+<<<<<<< HEAD
 	
 	private String pluginName = null;
+=======
+>>>>>>> dan14941-issue965
 
 	public void onEnable()
 	{
 		this.log = getLogger();
 
+<<<<<<< HEAD
 		this.pluginName = "[" + this.getDescription().getName() +"]";
 		
+=======
+>>>>>>> dan14941-issue965
 		Bukkit.getServer().getPluginManager().registerEvents(this.containerListener, this);
 
 		this.log.info(getDescription().getName() + getDescription().getVersion() + " Enabled ");
@@ -102,6 +111,10 @@ public class ChestFix extends org.bukkit.plugin.java.JavaPlugin
 		return this.rightClickOnly;
 	}
 
+<<<<<<< HEAD
+=======
+	@SuppressWarnings("deprecation")
+>>>>>>> dan14941-issue965
 	public void loadTransparentBlocks()
 	{
 		this.transparent.clear();
@@ -185,6 +198,7 @@ public class ChestFix extends org.bukkit.plugin.java.JavaPlugin
 		addTransparentBlock(Material.TORCH);
 		addTransparentBlock(Material.TRAP_DOOR);
 
+<<<<<<< HEAD
 		List<String> confIds = this.config.getStringList("transparent");
 		for (int i = 0; i < confIds.size(); i++)
 		{	
@@ -197,6 +211,16 @@ public class ChestFix extends org.bukkit.plugin.java.JavaPlugin
 		}
 	}
 
+=======
+		List<Integer> confIds = this.config.getIntegerList("transparent");
+		for (int i = 0; i < confIds.size(); i++)
+		{
+			addTransparentBlock(Material.getMaterial(((Integer) confIds.get(i)).intValue()));
+		}
+	}
+
+	@SuppressWarnings("deprecation")
+>>>>>>> dan14941-issue965
 	public void loadInteractBlocks()
 	{
 		this.interact.clear();
@@ -206,6 +230,7 @@ public class ChestFix extends org.bukkit.plugin.java.JavaPlugin
 		addInteractBlock(Material.DISPENSER);
 		addInteractBlock(Material.BURNING_FURNACE);
 		addInteractBlock(Material.JUKEBOX);
+<<<<<<< HEAD
 		
 		List<String> confIds = this.config.getStringList("interact");
 		for (int i = 0; i < confIds.size(); i++)
@@ -217,6 +242,12 @@ public class ChestFix extends org.bukkit.plugin.java.JavaPlugin
 			else if(confIds.get(i) != null)
 				addInteractBlock(Material.getMaterial(confIds.get(i)));
 		}
+=======
+
+		List<Integer> confIds = this.config.getIntegerList("interact");
+		for (int i = 0; i < confIds.size(); i++)
+			addInteractBlock(Material.getMaterial(((Integer) confIds.get(i)).intValue()));
+>>>>>>> dan14941-issue965
 	}
 
 	public void addTransparentBlock(Material mat)
