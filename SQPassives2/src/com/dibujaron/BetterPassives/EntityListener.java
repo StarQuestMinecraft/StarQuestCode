@@ -30,11 +30,11 @@ public class EntityListener implements Listener {
 		this.p = plugin;
 	}
 
-	private static final List<CreatureSpawnEvent.SpawnReason> PASSTHROUGH_REASONS = Arrays.asList(new CreatureSpawnEvent.SpawnReason[] {
-			CreatureSpawnEvent.SpawnReason.CUSTOM, CreatureSpawnEvent.SpawnReason.SLIME_SPLIT, CreatureSpawnEvent.SpawnReason.BUILD_IRONGOLEM, 
-			CreatureSpawnEvent.SpawnReason.BUILD_SNOWMAN, CreatureSpawnEvent.SpawnReason.SPAWNER_EGG });
-	
-	public static final int TAMED_PASSIVES_PER_CHUNK = 16;
+	private static final List<CreatureSpawnEvent.SpawnReason> PASSTHROUGH_REASONS = Arrays
+			.asList(new CreatureSpawnEvent.SpawnReason[] { CreatureSpawnEvent.SpawnReason.CUSTOM,
+					CreatureSpawnEvent.SpawnReason.SLIME_SPLIT, CreatureSpawnEvent.SpawnReason.BUILD_IRONGOLEM,
+					CreatureSpawnEvent.SpawnReason.BUILD_SNOWMAN, CreatureSpawnEvent.SpawnReason.SPAWNER_EGG,
+					CreatureSpawnEvent.SpawnReason.SILVERFISH_BLOCK });
 
 	@EventHandler
 	public void onEntitySpawn(CreatureSpawnEvent event) {
@@ -44,7 +44,7 @@ public class EntityListener implements Listener {
 		List<EntityType> passives = Settings.getPassivesOfPlanet(event.getEntity().getWorld().getName());
 
 		if (event.getEntity().getType() == EntityType.SQUID) {
-			if(passives != null && passives.contains(EntityType.SQUID)){
+			if (passives != null && passives.contains(EntityType.SQUID)) {
 				return;
 			} else {
 				event.setCancelled(true);
@@ -52,7 +52,9 @@ public class EntityListener implements Listener {
 			}
 		}
 
-		if ((event.getEntity().getType() == EntityType.WITHER) || (event.getEntity().getType() == EntityType.WITHER_SKULL || event.getEntity().getType() == EntityType.ARMOR_STAND)) {
+		if ((event.getEntity().getType() == EntityType.WITHER)
+				|| (event.getEntity().getType() == EntityType.WITHER_SKULL
+						|| event.getEntity().getType() == EntityType.ARMOR_STAND)) {
 			return;
 		}
 		if (event.getSpawnReason() == CreatureSpawnEvent.SpawnReason.BREEDING) {
@@ -60,12 +62,11 @@ public class EntityListener implements Listener {
 			event.getEntity().setCustomName(this.p.getRandomName(event.getEntity()));
 			event.getEntity().setCustomNameVisible(true);
 		} else if (event.getSpawnReason() == CreatureSpawnEvent.SpawnReason.EGG) {
-			String n = event.getEntity().getWorld().getName().toLowerCase();
-			if (passives == null || !passives.contains(EntityType.CHICKEN)){
+			if (passives == null || !passives.contains(EntityType.CHICKEN)) {
 				event.setCancelled(true);
 			}
 		} else if ((!PASSTHROUGH_REASONS.contains(event.getSpawnReason())) && (!event.isCancelled())) {
-			if(FactionUtils.isInClaimedLand(event.getLocation())){
+			if (FactionUtils.isInClaimedLand(event.getLocation())) {
 				event.setCancelled(true);
 				return;
 			}
@@ -100,7 +101,7 @@ public class EntityListener implements Listener {
 			if (rand.nextInt(101) > chance) {
 				event.setCancelled(true);
 			}
-			
+
 		}
 	}
 
@@ -110,10 +111,11 @@ public class EntityListener implements Listener {
 		e.setChestplate(new ItemStack(Material.IRON_CHESTPLATE, 1));
 		e.setLeggings(new ItemStack(Material.CHAINMAIL_LEGGINGS, 1));
 		e.setLeggings(new ItemStack(Material.IRON_BOOTS, 1));
-		e.setItemInHand(new ItemStack(Material.BOW, 1));
+		e.setItemInMainHand(new ItemStack(Material.BOW, 1));
 		permaVanish(s);
 	}
 
+	@SuppressWarnings("unused")
 	private void createSpiritBlock(Zombie z) {
 		permaVanish(z);
 		z.getEquipment().setHelmet(new ItemStack(getHighestBlockBeneath(z.getLocation()).getBlock().getType(), 1));
@@ -135,19 +137,19 @@ public class EntityListener implements Listener {
 		if (event.getEntityType() == EntityType.SKELETON) {
 			Skeleton s = (Skeleton) event.getEntity();
 			if ((s.getSkeletonType() == Skeleton.SkeletonType.WITHER) && (Math.random() < 0.3D))
-				event.getDrops().add(new ItemStack(372, 1));
+				event.getDrops().add(new ItemStack(Material.NETHER_WARTS, 1));
 		}
 	}
-	
-	private void checkAndRemoveTooManyEntities(EntitySpawnEvent event, List<EntityType> passives){
+
+	private void checkAndRemoveTooManyEntities(EntitySpawnEvent event, List<EntityType> passives) {
 		Entity[] cents = event.getEntity().getLocation().getChunk().getEntities();
 		int count = 0;
-		for(Entity e : cents){
-			if(e instanceof LivingEntity){
+		for (Entity e : cents) {
+			if (e instanceof LivingEntity) {
 				LivingEntity le = (LivingEntity) e;
-				if(passives.contains(e.getType())){
+				if (passives.contains(e.getType())) {
 					if ((le.getCustomName() != null) || le.isCustomNameVisible()) {
-						if(count > TAMED_PASSIVES_PER_CHUNK){
+						if (count > Settings.getTamedPerChunk()) {
 							e.remove();
 						} else {
 							count++;

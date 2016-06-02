@@ -1,0 +1,8 @@
+name: ChestFix
+version: 0.9
+main: com.gmail.igotburnt.ChestFix.ChestFix
+author: Netherfoam
+
+description: Prevents chests being accessed through walls. Includes furnaces etc.
+website: http://maxgamer.org
+softdepend: [HawkEye]
