@@ -13,6 +13,12 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 
+import com.gmail.nossr50.datatypes.player.McMMOPlayer;
+import com.gmail.nossr50.datatypes.player.PlayerProfile;
+import com.gmail.nossr50.datatypes.skills.SkillType;
+import com.gmail.nossr50.events.experience.McMMOPlayerExperienceEvent;
+import com.gmail.nossr50.events.experience.McMMOPlayerXpGainEvent;
+
 /**
  * Class that simulates events.
  * 
