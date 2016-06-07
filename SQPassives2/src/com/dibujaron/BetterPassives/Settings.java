@@ -13,11 +13,14 @@ public class Settings {
 	private static List<EntityType> hostiles;
 	private static HashMap<String, Planet> planets = new HashMap<String, Planet>();
 	private static int tamedPerChunk = 16;
+	private static int hostilesPerChunk = 16;
 
 	public static void loadSettings(Configuration c) {
 		if (c.contains("passivesperchunk")) {
 			tamedPerChunk = c.getInt("passivesperchunk");
 		}
+		if(c.contains("hostilesPerChunk"))
+			hostilesPerChunk = c.getInt("hostilesPerChunk");
 		passives = new ArrayList<EntityType>();
 		for (String s : c.getStringList("allPassives")) {
 			EntityType t = EntityType.valueOf(s.toUpperCase());
@@ -49,6 +52,11 @@ public class Settings {
 
 	public static int getTamedPerChunk() {
 		return tamedPerChunk;
+	}
+	
+	public static int getHostilesPerChunk()
+	{
+		return hostilesPerChunk;
 	}
 
 	public static List<EntityType> getAllHostiles() {

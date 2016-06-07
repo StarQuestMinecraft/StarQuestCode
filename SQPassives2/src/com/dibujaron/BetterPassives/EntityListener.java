@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
+import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Creeper;
@@ -66,6 +67,11 @@ public class EntityListener implements Listener {
 				event.setCancelled(true);
 			}
 		} else if ((!PASSTHROUGH_REASONS.contains(event.getSpawnReason())) && (!event.isCancelled())) {
+			if(this.getNumberOfHostiles(event) > Settings.getHostilesPerChunk()) // Too many in one chunk!
+			{
+				event.setCancelled(true);
+				return;
+			}
 			if (FactionUtils.isInClaimedLand(event.getLocation())) {
 				event.setCancelled(true);
 				return;
@@ -101,7 +107,6 @@ public class EntityListener implements Listener {
 			if (rand.nextInt(101) > chance) {
 				event.setCancelled(true);
 			}
-
 		}
 	}
 
@@ -158,6 +163,18 @@ public class EntityListener implements Listener {
 				}
 			}
 		}
+	}
+	
+	private int getNumberOfHostiles(CreatureSpawnEvent e)
+	{
+		Chunk c = e.getEntity().getLocation().getChunk();
+		Entity[] entities = c.getEntities();
+		int count = 0;
+		for (Entity en : entities)
+			if(en instanceof LivingEntity)
+				if(Settings.getHostilesOfPlanet(e.getLocation().getWorld().getName()).contains(en.getType()))
+					count++;
+		return count;
 	}
 }
 

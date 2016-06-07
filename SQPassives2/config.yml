@@ -1,5 +1,7 @@
+
 #Config file for betterPassives by dibujaron
 #Originally developed for Erecia.net roleplay server
+hostilesPerChunk: 16
 
 allPassives:
     - bat
