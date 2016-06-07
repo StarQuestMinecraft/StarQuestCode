@@ -98,7 +98,8 @@ public class EntityListener implements Listener {
 				permaVanish(c);
 			} else if ((e.getType() == EntityType.SKELETON) && (n.equals("uru"))) {
 				createRobot((Skeleton) e);
-			}
+			} else if (e.getType() == EntityType.GHAST)
+				e.teleport(e.getLocation().add(0, 10, 0));
 			event.setCancelled(true);
 		}
 		if (Settings.getAllHostiles().contains(event.getEntityType())) {
