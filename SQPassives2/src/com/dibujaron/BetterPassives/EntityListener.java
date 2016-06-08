@@ -55,7 +55,12 @@ public class EntityListener implements Listener {
 
 		if ((event.getEntity().getType() == EntityType.WITHER)
 				|| (event.getEntity().getType() == EntityType.WITHER_SKULL
-						|| event.getEntity().getType() == EntityType.ARMOR_STAND)) {
+						|| event.getEntity().getType() == EntityType.ARMOR_STAND))
+		{
+			if(event.getEntity().getType() == EntityType.WITHER)
+			{
+			    event.setCancelled(true);
+			}
 			return;
 		}
 		if (event.getSpawnReason() == CreatureSpawnEvent.SpawnReason.BREEDING) {
@@ -89,7 +94,7 @@ public class EntityListener implements Listener {
 			EntityType type = types.get((int) (Math.random() * types.size()));
 			Entity e = event.getLocation().getWorld().spawnEntity(event.getEntity().getLocation(), type);
 			String n = e.getWorld().getName().toLowerCase();
-			if ((e.getType() == EntityType.SKELETON) && (n.equals("avaquo"))) {
+			if ((e.getType() == EntityType.SKELETON) && (n.equals("xira"))) {
 				Skeleton s = (Skeleton) e;
 				s.setSkeletonType(Skeleton.SkeletonType.WITHER);
 			} else if ((e.getType() == EntityType.CREEPER) && (n.equals("tallimar"))) {
