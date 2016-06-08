@@ -87,7 +87,7 @@ public class EventSimulator {
         if(wasCreative == false) {
         	player.setGameMode(GameMode.CREATIVE);
         }
-        BlockBreakEvent breakEvent = new FakeBlockBreakEvent(block, player);
+        BlockBreakEvent breakEvent = new ArtificialBlockBreakEvent(block, player);
         if(wasCreative == false) {
         	player.setGameMode(GameMode.SURVIVAL);
         }
@@ -152,7 +152,7 @@ public class EventSimulator {
      */
     public static boolean blockBreakPretend(BlockLocation target, Player player) {
         Block block = target.getBlock();
-        pretendEvent = new FakeBlockBreakEvent(block, player);
+        pretendEvent = new ArtificialBlockBreakEvent(block, player);
         pretendEventCancelled = true;
         MachinaCore.pluginManager.callEvent(pretendEvent);
 
