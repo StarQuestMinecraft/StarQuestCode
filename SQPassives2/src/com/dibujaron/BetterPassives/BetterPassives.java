@@ -1,13 +1,11 @@
-//  /\*.*?\*/ 
-
 package com.dibujaron.BetterPassives;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.Server;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -17,32 +15,31 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.metadata.MetadataValue;
-import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.PluginDescriptionFile;
-import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class BetterPassives extends JavaPlugin {
 
 	public static FileConfiguration config;
-	
+
 	public void onEnable() {
 		getServer().getPluginManager().registerEvents(new PlayerListener(this), this);
 		getServer().getPluginManager().registerEvents(new EntityListener(this), this);
 		getServer().getPluginManager().registerEvents(new ChunkListener(this), this);
 
 		saveDefaultConfig();
-		
+
 		Settings.loadSettings(getConfig());
-		
+
 		config = getConfig();
 	}
 
 	public void onDisable() {
 		World w = Bukkit.getWorld(Bukkit.getServerName());
-		if(w == null) return;
+		if (w == null)
+			return;
 		List<EntityType> types = getAcceptableHostileTypes(w);
-		if(types == null) return;
+		if (types == null)
+			return;
 		ArrayList<Entity> removalQueue = new ArrayList<Entity>();
 		for (Entity e : w.getEntities()) {
 			if (types.contains(e.getType())) {
@@ -85,12 +82,13 @@ public class BetterPassives extends JavaPlugin {
 
 	public String getRandomName(Entity entity) {
 		EntityType type = entity.getType();
-		return type.getName().toLowerCase();
+		return type.toString().replaceAll("_", "").toLowerCase().toLowerCase();
 	}
 
 	public Block getRealHighestBlockAt(Location location) {
 		Location location2 = location.getWorld().getHighestBlockAt(location).getLocation();
-		Location location3 = new Location(location2.getWorld(), location2.getX(), location2.getY() - 1.0D, location2.getZ());
+		Location location3 = new Location(location2.getWorld(), location2.getX(), location2.getY() - 1.0D,
+				location2.getZ());
 		return location3.getBlock();
 	}
 

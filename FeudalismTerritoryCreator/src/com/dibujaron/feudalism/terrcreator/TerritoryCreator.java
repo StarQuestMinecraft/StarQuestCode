@@ -163,6 +163,8 @@ public class TerritoryCreator extends JFrame implements Runnable, MouseListener,
 			fout = new FileWriter(f);
 			out = new PrintWriter(fout);
 
+			out.println("regions:");
+			
 			for (Territory t : tm.territories) {
 				t.print(out, tlx, tly, sx, sy);
 			}
@@ -253,25 +255,41 @@ public class TerritoryCreator extends JFrame implements Runnable, MouseListener,
 			BufferedReader br = new BufferedReader(new InputStreamReader(in));
 			ArrayList<Point> currentPoints = new ArrayList<Point>();
 			ArrayList<Territory> retval = new ArrayList<Territory>();
+			br.readLine();
 			String terrName = br.readLine();
-			terrName = terrName.substring(0, terrName.length() - 1);
+			terrName = terrName.substring(2, terrName.length() - 1);
 			String strLine;
+			boolean readingPoints = false;
+			
 			while ((strLine = br.readLine()) != null) {
 				System.out.println(strLine);
-				if (strLine.startsWith("    ")) {
+				if (strLine.startsWith("    points:")) {
+					
+					readingPoints = true;
+					
+				}
+				
+				if (strLine.startsWith("    -") && readingPoints) {
+					
 					String[] split = strLine.split(",");
-					double x = Double.parseDouble(split[0].substring(5, split[0].length()));
+					double x = Double.parseDouble(split[0].substring(6, split[0].length()));
 					double z = Double.parseDouble(split[1]);
 					Point p = new Point((int) Math.round(x), (int) Math.round(z));
 					System.out.println("adding point: " + x + ", " + z);
 					currentPoints.add(p);
-				} else {
+				}
+				
+				if (!strLine.startsWith("    -") && !strLine.startsWith("    points:") && readingPoints) {
+
+					readingPoints = false;
+					
 					Territory t = new Territory(currentPoints, terrName);
 					retval.add(t);
 					System.out.println("added territory with name " + terrName + " and points size " + currentPoints.size());
 
 					currentPoints.clear();
-					terrName = strLine.substring(0, strLine.length() - 1);
+					terrName = strLine.substring(2, strLine.length() - 1);
+				
 				}
 				
 			}

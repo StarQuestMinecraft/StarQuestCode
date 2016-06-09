@@ -1,6 +1,5 @@
 package me.lyneira.MachinaCore;
 
-import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -34,6 +33,7 @@ public class EventSimulator {
     static Event pretendEvent;
     static boolean pretendEventCancelled;
 
+    @SuppressWarnings("deprecation")
     /**
      * Simulates a block place event on behalf of a player. Returns true if the
      * player could build the new block.
@@ -52,7 +52,7 @@ public class EventSimulator {
         Block placedBlock = target.getBlock();
         BlockState replacedBlockState = placedBlock.getState();
         int oldType = replacedBlockState.getTypeId();
-        byte oldData = replacedBlockState.getRawData();
+		byte oldData = replacedBlockState.getRawData();
         
         // Set the new state without physics.
         placedBlock.setTypeIdAndData(typeId, data, false);
@@ -81,8 +81,23 @@ public class EventSimulator {
      */
     public static boolean blockBreak(BlockLocation target, Player player) {
         Block block = target.getBlock();
+<<<<<<< HEAD
         BlockBreakEvent breakEvent = new FakeBlockBreakEvent(block, player);
 
+=======
+        boolean wasCreative = false;
+        if(player.getGameMode().equals(GameMode.CREATIVE)) {
+        	wasCreative = true;
+        }
+        if(wasCreative == false) {
+        	player.setGameMode(GameMode.CREATIVE);
+        }
+        BlockBreakEvent breakEvent = new FakeBlockBreakEvent(block, player);
+        if(wasCreative == false) {
+        	player.setGameMode(GameMode.SURVIVAL);
+        }
+        
+>>>>>>> origin/master
         MachinaCore.pluginManager.callEvent(breakEvent);
         if (breakEvent.isCancelled()) {
             return false;
@@ -109,7 +124,8 @@ public class EventSimulator {
      *            The player to simulate for
      * @return True if the player may place a block at the location
      */
-    public static boolean blockPlacePretend(BlockLocation target, int typeId, BlockLocation placedAgainst, Player player) {
+    @SuppressWarnings("deprecation")
+	public static boolean blockPlacePretend(BlockLocation target, int typeId, BlockLocation placedAgainst, Player player) {
         Block placedBlock = target.getBlock();
         BlockState replacedBlockState = placedBlock.getState();
         int oldType = replacedBlockState.getTypeId();
@@ -161,9 +177,26 @@ public class EventSimulator {
      *            The blockface to click on
      * @return True if the player may interact with this block
      */
-    public static boolean blockRightClick(BlockLocation target, Player player, BlockFace clickedFace) {
+    public static boolean blockRightClick(BlockLocation target, Player player, BlockFace clickedFace)
+    {
+    	boolean hasPerm = false;
+    	boolean chestFixInstalled = false;
+    	if(player.hasPermission("chestfix.bypass") == true)
+    		hasPerm = true;
+    	
+    	if(MachinaCore.pluginManager.getPlugin("ChestFix") != null && MachinaCore.plugin != null && MachinaCore.plugin.permission != null)
+    	{
+    		chestFixInstalled = true;
+    	}
+    	
+    	if(hasPerm == false && chestFixInstalled == true)
+    		MachinaCore.plugin.permission.playerAdd(player, "chestfix.bypass");
+    	
         PlayerInteractEvent event = new PlayerInteractEvent(player, Action.RIGHT_CLICK_BLOCK, new ItemStack(Material.AIR), target.getBlock(), clickedFace);
         MachinaCore.pluginManager.callEvent(event);
+        
+        if(hasPerm == false && chestFixInstalled == true)
+        	MachinaCore.plugin.permission.playerRemove(player, "chestfix.bypass");
 
         if (event.isCancelled())
             return false;

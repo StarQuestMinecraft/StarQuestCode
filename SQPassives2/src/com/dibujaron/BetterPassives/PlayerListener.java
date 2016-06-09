@@ -1,13 +1,10 @@
 package com.dibujaron.BetterPassives;
 
 import java.util.ArrayList;
-import java.util.List;
+
 import org.bukkit.ChatColor;
 import org.bukkit.Effect;
 import org.bukkit.Material;
-import org.bukkit.World;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -26,11 +23,11 @@ public class PlayerListener implements Listener {
 
 	@EventHandler
 	public void onPlayerInteractEntity(PlayerInteractEntityEvent event) {
-		if (!Settings.getAllPassives().contains(event.getRightClicked().getType())){
+		if (!Settings.getAllPassives().contains(event.getRightClicked().getType())) {
 			return;
 		}
 
-		if (event.getPlayer().getItemInHand().getType() == Material.IRON_HOE) {
+		if (event.getPlayer().getInventory().getItemInMainHand().getType() == Material.IRON_HOE) {
 			LivingEntity entity = (LivingEntity) event.getRightClicked();
 			if (entity.getCustomName() == null)
 				return;
@@ -43,7 +40,7 @@ public class PlayerListener implements Listener {
 		}
 
 		ItemStack stak = this.p.getTameItem(event.getRightClicked());
-		if (stak != null && stak.isSimilar(event.getPlayer().getItemInHand())) {
+		if (stak != null && stak.isSimilar(event.getPlayer().getInventory().getItemInMainHand())) {
 			LivingEntity entity = (LivingEntity) event.getRightClicked();
 			if (entity.getCustomName() != null)
 				return;

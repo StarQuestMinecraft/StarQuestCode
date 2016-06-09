@@ -198,7 +198,11 @@ public class SQDuties extends JavaPlugin implements Listener{
 				
 				Knapsack knapsack = db.getKnapsack(args[0], timestamp);
 				
+				double health = player.getHealth();
+				
 				knapsack.unpack(player);
+				
+				player.setHealth(health);
 				
 			} 
 

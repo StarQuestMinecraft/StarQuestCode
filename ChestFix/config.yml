@@ -1,0 +1,21 @@
+#Log to...
+log:
+    #hawkeye plugin
+    hawkeye: true
+    #Log to console & server.log file
+    server-log: true
+#Set to true to notify all players online with chestfix.notify permission when a player may possibly be freecamming.
+notify-mods: true
+#Send players an error msg when they try to see the block
+message: true
+#Complicated.  Instead of searching a 1x1 beam, it searches a 3x3 beam of blocks for the target block.  True will mean less strict 
+lenient: true
+#Blocks that can be interacted through. E.g, signs, levers, grass, piston heads.  Many of these are pre-added
+transparent:
+    - BREWING_STAND #Brewing stand
+    - WOODEN_DOOR #Wooden door
+    - Material.STEP #Slabs
+#Blocks to protect interaction with. E.g., Levers, Chests, crafting tables.  Many of thes are pre-added.
+interact:
+    - ENCHANTMENT_TABLE #Enchanting table
+    - LEVER #Lever
