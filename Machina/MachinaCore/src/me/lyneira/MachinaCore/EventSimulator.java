@@ -19,6 +19,7 @@ import com.gmail.nossr50.datatypes.player.PlayerProfile;
 import com.gmail.nossr50.datatypes.skills.SkillType;
 import com.gmail.nossr50.events.experience.McMMOPlayerExperienceEvent;
 import com.gmail.nossr50.events.experience.McMMOPlayerXpGainEvent;
+import com.gmail.nossr50.events.fake.FakeBlockBreakEvent;
 
 /**
  * Class that simulates events.
@@ -80,18 +81,8 @@ public class EventSimulator {
      */
     public static boolean blockBreak(BlockLocation target, Player player) {
         Block block = target.getBlock();
-        boolean wasCreative = false;
-        if(player.getGameMode().equals(GameMode.CREATIVE)) {
-        	wasCreative = true;
-        }
-        if(wasCreative == false) {
-        	player.setGameMode(GameMode.CREATIVE);
-        }
-        BlockBreakEvent breakEvent = new ArtificialBlockBreakEvent(block, player);
-        if(wasCreative == false) {
-        	player.setGameMode(GameMode.SURVIVAL);
-        }
-        
+        BlockBreakEvent breakEvent = new FakeBlockBreakEvent(block, player);
+
         MachinaCore.pluginManager.callEvent(breakEvent);
         if (breakEvent.isCancelled()) {
             return false;
@@ -151,7 +142,7 @@ public class EventSimulator {
      */
     public static boolean blockBreakPretend(BlockLocation target, Player player) {
         Block block = target.getBlock();
-        pretendEvent = new ArtificialBlockBreakEvent(block, player);
+        pretendEvent = new FakeBlockBreakEvent(block, player);
         pretendEventCancelled = true;
         MachinaCore.pluginManager.callEvent(pretendEvent);
 
