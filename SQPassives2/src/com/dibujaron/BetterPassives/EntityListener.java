@@ -4,7 +4,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
-import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Creeper;
@@ -98,8 +97,20 @@ public class EntityListener implements Listener {
 				event.setCancelled(true);
 				return;
 			}
-
+			
 			EntityType type = types.get((int) (Math.random() * types.size()));
+			
+			// Ghast spawning
+			if(type == EntityType.GHAST)
+			{
+				Ghast g = (Ghast) event.getLocation().getWorld().spawnEntity(event.getEntity().getLocation().add(0, 20, 0), type);
+				g.setAI(true);
+				g.setCollidable(true);
+				event.setCancelled(true);
+				return;
+			}
+			
+			
 			Entity e = event.getLocation().getWorld().spawnEntity(event.getEntity().getLocation(), type);
 			String n = e.getWorld().getName().toLowerCase();
 			if ((e.getType() == EntityType.SKELETON) && (n.equals("xira"))) {
@@ -111,13 +122,8 @@ public class EntityListener implements Listener {
 				permaVanish(c);
 			} else if ((e.getType() == EntityType.SKELETON) && (n.equals("uru"))) {
 				createRobot((Skeleton) e);
-			} else if (e.getType() == EntityType.GHAST)
-			{
-				//TODO spawn custom ghast
-				Ghast ghast = (Ghast) e;
-				e.teleport(event.getEntity().getLocation().add(0, (int) event.getEntity().getLocation().getY() + 20, 0));
-				ghast.setCollidable(true);
 			}
+				
 			event.setCancelled(true);
 		}
 		if (Settings.getAllHostiles().contains(event.getEntityType())) {
