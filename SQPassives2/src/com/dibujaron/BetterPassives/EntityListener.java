@@ -10,6 +10,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.Creeper;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Ghast;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Skeleton;
 import org.bukkit.entity.Zombie;
@@ -43,7 +44,14 @@ public class EntityListener implements Listener {
 			return;
 		}
 		List<EntityType> passives = Settings.getPassivesOfPlanet(event.getEntity().getWorld().getName());
-
+		List<EntityType> hostiles = Settings.getHostilesOfPlanet(event.getEntity().getWorld().getName());
+		
+		if(hostiles == null)
+		{
+			event.setCancelled(true);
+			return;
+		}
+		
 		if (event.getEntity().getType() == EntityType.SQUID) {
 			if (passives != null && passives.contains(EntityType.SQUID)) {
 				return;
@@ -72,7 +80,7 @@ public class EntityListener implements Listener {
 				event.setCancelled(true);
 			}
 		} else if ((!PASSTHROUGH_REASONS.contains(event.getSpawnReason())) && (!event.isCancelled())) {
-			if(this.getNumberOfHostiles(event) > Settings.getHostilesPerChunk()) // Too many in one chunk!
+			if(this.getNumberOfHostiles(event, hostiles) > Settings.getHostilesPerChunk()) // Too many in one chunk!
 			{
 				event.setCancelled(true);
 				return;
@@ -104,7 +112,12 @@ public class EntityListener implements Listener {
 			} else if ((e.getType() == EntityType.SKELETON) && (n.equals("uru"))) {
 				createRobot((Skeleton) e);
 			} else if (e.getType() == EntityType.GHAST)
-				e.teleport(e.getLocation().add(0, 10, 0));
+			{
+				//TODO spawn custom ghast
+				Ghast ghast = (Ghast) e;
+				e.teleport(event.getEntity().getLocation().add(0, (int) event.getEntity().getLocation().getY() + 20, 0));
+				ghast.setCollidable(true);
+			}
 			event.setCancelled(true);
 		}
 		if (Settings.getAllHostiles().contains(event.getEntityType())) {
@@ -171,15 +184,15 @@ public class EntityListener implements Listener {
 		}
 	}
 	
-	private int getNumberOfHostiles(CreatureSpawnEvent e)
+	private int getNumberOfHostiles(CreatureSpawnEvent e, List<EntityType> hostiles)
 	{
-		Chunk c = e.getEntity().getLocation().getChunk();
-		Entity[] entities = c.getEntities();
+		Entity[] entities = e.getEntity().getLocation().getChunk().getEntities();
 		int count = 0;
 		for (Entity en : entities)
 			if(en instanceof LivingEntity)
-				if(Settings.getHostilesOfPlanet(e.getLocation().getWorld().getName()).contains(en.getType()))
-					count++;
+			{
+				count++;
+			}
 		return count;
 	}
 }

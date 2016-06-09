@@ -30,13 +30,14 @@ public class Settings {
 				passives.add(EntityType.valueOf(s.toUpperCase()));
 			}
 		}
+		
 		hostiles = new ArrayList<EntityType>();
 		for (String s : c.getStringList("allHostiles")) {
 			EntityType t = EntityType.valueOf(s.toUpperCase());
 			if (t == null) {
 				System.out.println("No EntityType found for " + s + "!");
 			} else {
-				hostiles.add(EntityType.valueOf(s.toUpperCase()));
+				hostiles.add(t);
 			}
 		}
 
@@ -45,6 +46,7 @@ public class Settings {
 			List<String> hostiles = c.getStringList("planets." + key + ".hostiles");
 			System.out
 					.println("Loaded " + passives.size() + " passives and " + hostiles.size() + " hostiles for " + key);
+			System.out.println("Hostiles for " + key + " " + hostiles);
 			Planet p = new Planet(key, hostiles, passives);
 			planets.put(key.toLowerCase(), p);
 		}
@@ -67,6 +69,12 @@ public class Settings {
 		return passives;
 	}
 
+	/**
+	 * Gets a list of all allowed hostiles for a planet, defined in the config.<br>
+	 * Returns null if there are no hostiles in the config for a planet
+	 * @param planet planet name
+	 * @return An EntityType list of the allowed hostiles for a planet
+	 */
 	public static List<EntityType> getHostilesOfPlanet(String planet) {
 		Planet p = planets.get(planet.toLowerCase());
 		if (p != null) {
@@ -104,6 +112,7 @@ public class Settings {
 					this.hostiles.add(EntityType.valueOf(s));
 				}
 			}
+			
 			this.passives = new ArrayList<EntityType>();
 			for (String s : passives) {
 				s = s.toUpperCase();
