@@ -99,32 +99,40 @@ public class EntityListener implements Listener {
 			}
 			
 			EntityType type = types.get((int) (Math.random() * types.size()));
-			
+			//System.out.println(type);
 			// Ghast spawning
 			if(type == EntityType.GHAST)
 			{
-				Ghast g = (Ghast) event.getLocation().getWorld().spawnEntity(event.getEntity().getLocation().add(0, 20, 0), type);
+				//System.out.println("Entity Loc: " + event.getEntity().getLocation());
+				Ghast g = (Ghast) event.getLocation().getWorld().spawn(event.getEntity().getLocation().add(0, 25, 0), Ghast.class);
 				g.setAI(true);
 				g.setCollidable(true);
+				//System.out.println("Ghast loc: " + g.getLocation());
 				event.setCancelled(true);
 				return;
 			}
 			
-			
 			Entity e = event.getLocation().getWorld().spawnEntity(event.getEntity().getLocation(), type);
 			String n = e.getWorld().getName().toLowerCase();
-			if ((e.getType() == EntityType.SKELETON) && (n.equals("xira"))) {
+			if ((e.getType() == EntityType.SKELETON) && (n.equals("xira")))
+			{
 				Skeleton s = (Skeleton) e;
+				ItemStack skeletonItems[] = s.getEquipment().getArmorContents();
 				s.setSkeletonType(Skeleton.SkeletonType.WITHER);
-			} else if ((e.getType() == EntityType.CREEPER) && (n.equals("tallimar"))) {
+				s.getEquipment().setArmorContents(skeletonItems);
+				//System.out.println("Skeleoton inv: " + s.getEquipment().getBoots());
+			}
+			else if ((e.getType() == EntityType.CREEPER) && (n.equals("tallimar"))) {
 				Creeper c = (Creeper) e;
 				c.setPowered(true);
 				permaVanish(c);
 			} else if ((e.getType() == EntityType.SKELETON) && (n.equals("uru"))) {
 				createRobot((Skeleton) e);
 			}
-				
+			
+			//System.out.println("Entity: " + event.getEntity().getWorld().getEntities());
 			event.setCancelled(true);
+			return;
 		}
 		if (Settings.getAllHostiles().contains(event.getEntityType())) {
 			int chance = BetterPassives.config.getInt("hostile chance");
@@ -162,14 +170,18 @@ public class EntityListener implements Listener {
 		return loc;
 	}
 
+	
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onEntityDeath(EntityDeathEvent event) {
 		if (event.getEntityType() == EntityType.SKELETON) {
 			Skeleton s = (Skeleton) event.getEntity();
-			if ((s.getSkeletonType() == Skeleton.SkeletonType.WITHER) && (Math.random() < 0.3D))
-				event.getDrops().add(new ItemStack(Material.NETHER_WARTS, 1));
+			if ((s.getSkeletonType() == Skeleton.SkeletonType.WITHER) && (Math.random() < 0.3))
+			{
+				event.getDrops().add(new ItemStack(Material.NETHER_STALK, 1));
+			}
 		}
 	}
+	
 
 	private void checkAndRemoveTooManyEntities(EntitySpawnEvent event, List<EntityType> passives) {
 		Entity[] cents = event.getEntity().getLocation().getChunk().getEntities();
