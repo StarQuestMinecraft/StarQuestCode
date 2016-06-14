@@ -11,6 +11,7 @@ public class Settings {
 
 	private static List<EntityType> passives;
 	private static List<EntityType> hostiles;
+	private static HashMap<Planet, List<String>> specials = new HashMap<Planet, List<String>>();
 	private static HashMap<String, Planet> planets = new HashMap<String, Planet>();
 	private static int tamedPerChunk = 16;
 	private static int hostilesPerChunk = 16;
@@ -46,9 +47,12 @@ public class Settings {
 			List<String> hostiles = c.getStringList("planets." + key + ".hostiles");
 			System.out
 					.println("Loaded " + passives.size() + " passives and " + hostiles.size() + " hostiles for " + key);
-			System.out.println("Hostiles for " + key + " " + hostiles);
 			Planet p = new Planet(key, hostiles, passives);
 			planets.put(key.toLowerCase(), p);
+			
+			List<String> specialProperties = c.getStringList("planets." + key + ".specials");
+			System.out.println("Loaded " + specialProperties.size() + " special properties for " + key);
+			specials.put(p, specialProperties);
 		}
 	}
 
@@ -92,6 +96,24 @@ public class Settings {
 				return p.passives();
 		}
 		return null;
+	}
+	
+	//TODO Doesn't work
+	/**
+	 * 
+	 * @param planet name
+	 * @return String list containing all the special properties for a planet or null if the planet name is not valid.
+	 */
+	public static List<String> getSpecialPropertiesOfPlanet(String planet)
+	{
+		Planet p = planets.get(planet.toLowerCase());
+		if(p != null)
+		{
+			List<String> specialProperties = specials.get(p);
+			return specialProperties;
+		}
+		else
+			return null;
 	}
 
 	private static class Planet {

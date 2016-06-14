@@ -42,6 +42,9 @@ planets:
         hostiles:
             - creeper
             - skeleton
+        specials:
+           # Spawns wither skeletons instead of normal skeletons
+            - wither skeleton
     boskevine:
         passives:
             - ozelot

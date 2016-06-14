@@ -114,15 +114,22 @@ public class EntityListener implements Listener {
 			
 			Entity e = event.getLocation().getWorld().spawnEntity(event.getEntity().getLocation(), type);
 			String n = e.getWorld().getName().toLowerCase();
-			if ((e.getType() == EntityType.SKELETON) && (n.equals("xira")))
+			List<String> specials = Settings.getSpecialPropertiesOfPlanet(n);
+			
+			if(specials == null)
+			{
+				event.setCancelled(true);
+				return;
+			}
+			
+			if ((e.getType() == EntityType.SKELETON) && (specials.contains("wither skeleton")))
 			{
 				Skeleton s = (Skeleton) e;
 				ItemStack skeletonItems[] = s.getEquipment().getArmorContents();
 				s.setSkeletonType(Skeleton.SkeletonType.WITHER);
 				s.getEquipment().setArmorContents(skeletonItems);
-				//System.out.println("Skeleoton inv: " + s.getEquipment().getBoots());
 			}
-			else if ((e.getType() == EntityType.CREEPER) && (n.equals("tallimar"))) {
+			else if ((e.getType() == EntityType.CREEPER) && specials.contains("charged creeper")) {
 				Creeper c = (Creeper) e;
 				c.setPowered(true);
 				permaVanish(c);
