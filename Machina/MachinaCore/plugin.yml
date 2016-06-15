@@ -5,4 +5,3 @@ author: Lyneira
 website: http://dev.bukkit.org/server-mods/machinacraft/
 dev-url: http://dev.bukkit.org/server-mods/machinacraft/
 main: me.lyneira.MachinaCore.MachinaCore
-softdepend: [ChestFix, Vault]

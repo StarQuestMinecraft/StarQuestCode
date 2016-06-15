@@ -11,6 +11,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 
+import me.lyneira.MachinaCore.ArtificialPlayerInteractEvent;
+
 public class ContainerListener implements Listener
 
 {
@@ -22,10 +24,15 @@ public class ContainerListener implements Listener
 		this.plugin = plugin;
 		this.checker = new Checker(plugin);
 	}
-
+	
 	@EventHandler(priority = EventPriority.LOW)
 	public void onBlockInteract(PlayerInteractEvent e)
 	{
+		if(e instanceof ArtificialPlayerInteractEvent)
+		{
+			return;
+		}
+		
 		if ((e.isCancelled())
 				|| ((e.getAction() != Action.RIGHT_CLICK_BLOCK) && (e.getAction() != Action.LEFT_CLICK_BLOCK)))
 			return;
@@ -40,33 +47,6 @@ public class ContainerListener implements Listener
 		{
 			return;
 		}
-		
-		/*//Ignore this
-		MachinaCore ma = null;
-		if(Bukkit.getServer().getPluginManager().getPlugin("MachinaCore").isEnabled() == true)
-			ma = (MachinaCore) Bukkit.getServer().getPluginManager().getPlugin("MachinaCore");
-		
-		if(ma != null)
-		{
-			if(e.getClickedBlock().getType() == Material.LEVER)
-			{
-				BlockLocation BlLoc = new BlockLocation(b);
-				Lever lever = (Lever) b.getState().getData();
-				BlockLocation leverAttach = new BlockLocation(b.getRelative(lever.getAttachedFace()));
-				
-				for (MachinaBlueprint i : ma.getBlueprints().values())
-				{
-					Machina machina = i.detect(null, leverAttach, lever.getAttachedFace().getOppositeFace(), e.getPlayer().getInventory().getItemInMainHand());
-					if(machina != null)
-					{
-						System.out.println("Machina found!: " + machina);
-						e.setCancelled(false);
-					}
-					System.out.println(BlLoc.toString() + lever.getAttachedFace());
-				}
-			}
-		}
-		*/
 		
 		if ((this.plugin.getInteractBlocks().contains(b.getType()))
 				&& (!this.checker.canSee(e.getPlayer(), e.getClickedBlock())))
