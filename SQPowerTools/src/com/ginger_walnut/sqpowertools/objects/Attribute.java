@@ -12,4 +12,16 @@ public class Attribute {
 		
 	}
 	
+	public boolean equalsExceptAmount(Attribute attribute) {
+		
+		if (attribute.attribute.equals(attribute) && attribute.slot.equals(slot) && attribute.operation == operation && attribute.uuid == uuid) {
+			
+			return true;
+			
+		}
+		
+		return false;
+		
+	}
+	
 }

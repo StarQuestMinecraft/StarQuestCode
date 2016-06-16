@@ -39,6 +39,7 @@ import org.bukkit.potion.PotionEffect;
 
 import com.ginger_walnut.sqboosters.SQBoosters;
 import com.ginger_walnut.sqpowertools.objects.Attribute;
+import com.ginger_walnut.sqpowertools.objects.PowerTool;
 import com.ginger_walnut.sqpowertools.objects.PowerToolType;
 import com.ginger_walnut.sqpowertools.tasks.ChargerTask;
 import com.ginger_walnut.sqpowertools.utils.EffectUtils;
@@ -1143,7 +1144,7 @@ public class Events implements Listener{
 							
 							modifiers.put(clicked.getItemMeta().getLore().get(0), oldLevel + 1);
 							
-							powerTool = SQPowerTools.getPowerTool(toolType);
+							powerTool = (new PowerTool(toolType)).item;
 							
 							powerTool = SQPowerTools.addModifiers(powerTool, modifiers);
 							

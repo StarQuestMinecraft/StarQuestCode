@@ -35,6 +35,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import com.ginger_walnut.sqpowertools.objects.Attribute;
 import com.ginger_walnut.sqpowertools.objects.Effect;
 import com.ginger_walnut.sqpowertools.objects.Modifier;
+import com.ginger_walnut.sqpowertools.objects.PowerTool;
 import com.ginger_walnut.sqpowertools.objects.PowerToolType;
 import com.ginger_walnut.sqpowertools.tasks.ChargerTask;
 import com.ginger_walnut.sqpowertools.tasks.HoldingTask;
@@ -295,7 +296,7 @@ public class SQPowerTools extends JavaPlugin {
 			
 			if (config.contains("power tools." + powerTool + ".recipe")) {
 				
-				ShapedRecipe recipe = new ShapedRecipe(getPowerTool(powerToolType));
+				ShapedRecipe recipe = new ShapedRecipe((new PowerTool(powerToolType)).item);
 				
 				if (config.contains("power tools." + powerTool + ".recipe.line2")) {
 					
@@ -349,34 +350,32 @@ public class SQPowerTools extends JavaPlugin {
 
 	public static void sendHelp(CommandSender sender) {
 		
-
-		
-			sender.sendMessage(ChatColor.GOLD + "-----------------------------------------------------");
-			sender.sendMessage(ChatColor.GOLD + "/sqpowertools help" + ChatColor.BLUE + " - Shows this");
-			sender.sendMessage(ChatColor.GOLD + "/sqpowertools guide" + ChatColor.BLUE + " - Displays a guide for SQPowerTools");
+		sender.sendMessage(ChatColor.GOLD + "-----------------------------------------------------");
+		sender.sendMessage(ChatColor.GOLD + "/sqpowertools help" + ChatColor.BLUE + " - Shows this");
+		sender.sendMessage(ChatColor.GOLD + "/sqpowertools guide" + ChatColor.BLUE + " - Displays a guide for SQPowerTools");
 			
-			if (!(sender instanceof ConsoleCommandSender)) {
+		if (!(sender instanceof ConsoleCommandSender)) {
 			
-				sender.sendMessage(ChatColor.GOLD + "/sqpowertools recipes" + ChatColor.BLUE + " - Displays power tool recipes");
-				sender.sendMessage(ChatColor.GOLD + "/sqpowertools mods" + ChatColor.BLUE + " - Displays power tool mods");
-				sender.sendMessage(ChatColor.GOLD + "/sqpowertools fuel" + ChatColor.BLUE + " - Displays the charger fuel");
+			sender.sendMessage(ChatColor.GOLD + "/sqpowertools recipes" + ChatColor.BLUE + " - Displays power tool recipes");
+			sender.sendMessage(ChatColor.GOLD + "/sqpowertools mods" + ChatColor.BLUE + " - Displays power tool mods");
+			sender.sendMessage(ChatColor.GOLD + "/sqpowertools fuel" + ChatColor.BLUE + " - Displays the charger fuel");
 				
-			}
+		}
 			
-			if (sender instanceof ConsoleCommandSender || sender.hasPermission("SQPowerTools.reload")) {
+		if (sender instanceof ConsoleCommandSender || sender.hasPermission("SQPowerTools.reload")) {
 			
-				sender.sendMessage(ChatColor.GOLD + "/sqpowertools reload" + ChatColor.BLUE + " - Reloads the power tool config");
+			sender.sendMessage(ChatColor.GOLD + "/sqpowertools reload" + ChatColor.BLUE + " - Reloads the power tool config");
 				
-			}
+		}
 			
-			if (sender.hasPermission("SQPowerTools.spawn")) {
+		if (sender.hasPermission("SQPowerTools.spawn")) {
 				
-				sender.sendMessage(ChatColor.GOLD + "/sqpowertools spawn" + ChatColor.BLUE + " - Spawns a power tool");
-				sender.sendMessage(ChatColor.GOLD + "/sqpowertools addmods" + ChatColor.BLUE + " - Adds mods to a power tool");
+			sender.sendMessage(ChatColor.GOLD + "/sqpowertools spawn" + ChatColor.BLUE + " - Spawns a power tool");
+			sender.sendMessage(ChatColor.GOLD + "/sqpowertools addmods" + ChatColor.BLUE + " - Adds mods to a power tool");
 				
-			}
+		}
 				
-			sender.sendMessage(ChatColor.GOLD + "-----------------------------------------------------");
+		sender.sendMessage(ChatColor.GOLD + "-----------------------------------------------------");
 			
 	}
 	
@@ -419,7 +418,7 @@ public class SQPowerTools extends JavaPlugin {
 							
 							if (powerTools.get(i).hasRecipe) {
 								
-								ItemStack powerTool = getPowerTool(powerTools.get(i));
+								ItemStack powerTool = (new PowerTool(powerTools.get(i))).item;
 								
 								ItemMeta itemMeta = powerTool.getItemMeta();
 								
@@ -485,7 +484,7 @@ public class SQPowerTools extends JavaPlugin {
 								
 						for (int i = 0; i < powerTools.size(); i ++) {
 								
-							ItemStack powerTool = getPowerTool(powerTools.get(i));
+							ItemStack powerTool = (new PowerTool(powerTools.get(i))).item;
 								
 							ItemMeta itemMeta = powerTool.getItemMeta();
 								
@@ -521,7 +520,7 @@ public class SQPowerTools extends JavaPlugin {
 									
 							for (int i = 0; i < powerTools.size(); i ++) {
 									
-								ItemStack powerTool = getPowerTool(powerTools.get(i));
+								ItemStack powerTool = (new PowerTool(powerTools.get(i))).item;
 									
 								ItemMeta itemMeta = powerTool.getItemMeta();
 									
@@ -765,115 +764,6 @@ public class SQPowerTools extends JavaPlugin {
 		}
 		
 		return false;
-		
-	}
-	
-	public static ItemStack addAttributes(ItemStack itemStack, List<Attribute> attributes){
-		  
-		net.minecraft.server.v1_9_R1.ItemStack nmsStack = CraftItemStack.asNMSCopy(itemStack);
-	         
-		HashMap<String, Integer> attributeUUIDs = new HashMap<String, Integer>();
-		
-	    NBTTagCompound compound = nmsStack.getTag();
-	         
-	    if (compound == null) {
-	        	 
-	    	compound = new NBTTagCompound();
-	        nmsStack.setTag(compound);
-	        compound = nmsStack.getTag();
-	             
-	    }
-	         
-	    NBTTagList modifiers = new NBTTagList();
-
-	    for (int i = 0; i < attributes.size(); i ++) {
-	    	
-		    int uuid = attributes.get(i).uuid + 1;
-	    	
-		    NBTTagCompound attribute = new NBTTagCompound();
-
-		    if (attributeUUIDs.containsKey(attributes.get(i).attribute)) {
-		    	
-		    	int currentUUID = (int) attributeUUIDs.get(attributes.get(i).attribute);
-		    	
-		    	attributeUUIDs.remove(attributes.get(i).attribute);
-		    	
-		    	attributeUUIDs.put(attributes.get(i).attribute, currentUUID + 1);
-		    	
-		    	uuid = currentUUID + 1;
-		    	
-		    } else {
-		    	
-		    	attributeUUIDs.put(attributes.get(i).attribute, 1);
-		    	
-		    }
-		    
-	    	attribute.set("Slot", new NBTTagString(attributes.get(i).slot));
-		    attribute.set("AttributeName", new NBTTagString(attributes.get(i).attribute));
-		    attribute.set("Name", new NBTTagString(attributes.get(i).attribute));
-		    attribute.set("Amount", new NBTTagFloat(attributes.get(i).amount));
-		    attribute.set("Operation", new NBTTagInt(attributes.get(i).operation));
-		    attribute.set("UUIDLeast", new NBTTagInt(uuid));
-		    attribute.set("UUIDMost", new NBTTagInt(uuid));
-	    	
-		    modifiers.add(attribute);
-		    
-	    }
-
-	    compound.set("HideFlags", new NBTTagInt(6));
-	    
-	    compound.set("Unbreakable", new NBTTagInt(1));
-	    
-	    compound.set("AttributeModifiers", modifiers);
-	    nmsStack.setTag(compound);
-	    
-	    itemStack = CraftItemStack.asBukkitCopy(nmsStack);
-	    
-	    return itemStack;
-	       
-	}
-	
-	public static ItemStack getPowerTool(PowerToolType type, Map<String, Integer> modifiers) {
-		
-		ItemStack powerTool = new ItemStack(type.material);
-				
-		ItemMeta itemMeta = powerTool.getItemMeta();
-				
-		itemMeta.setDisplayName(type.name);
-				
-		powerTool.setItemMeta(itemMeta);
-				
-		powerTool = addLore(powerTool, type, modifiers, false);
-				
-		powerTool.addUnsafeEnchantments(type.enchants);
-				
-		powerTool = addAttributes(powerTool, type.attributes);
-		
-		powerTool.setDurability(type.durability); 
-				
-		return powerTool;
-		
-	}
-	
-	public static ItemStack getPowerTool(PowerToolType type) {
-		
-		ItemStack powerTool = new ItemStack(type.material);
-				
-		ItemMeta itemMeta = powerTool.getItemMeta();
-				
-		itemMeta.setDisplayName(type.name);
-				
-		powerTool.setItemMeta(itemMeta);
-				
-		powerTool = addLore(powerTool, type, new HashMap<String, Integer>(), false);
-				
-		powerTool.addUnsafeEnchantments(type.enchants);
-				
-		powerTool = addAttributes(powerTool, type.attributes);
-		
-		powerTool.setDurability(type.durability); 
-				
-		return powerTool;
 		
 	}
 	
@@ -1199,7 +1089,7 @@ public class SQPowerTools extends JavaPlugin {
 		
 	}
 	
-	public static ItemStack addLore(ItemStack powerTool, PowerToolType type, Map<String, Integer> modifierMap, boolean contraband) {
+	/**public static ItemStack addLore(ItemStack powerTool, PowerToolType type, Map<String, Integer> modifierMap, boolean contraband) {
 		
 		ItemMeta itemMeta = powerTool.getItemMeta();
 		
@@ -1523,7 +1413,7 @@ public class SQPowerTools extends JavaPlugin {
 		
 		return powerTool;
 		
-	}
+	}**/
 	
 	public static ItemStack addModifiers(ItemStack powerTool, HashMap<String, Integer> modifiers) {
 		
