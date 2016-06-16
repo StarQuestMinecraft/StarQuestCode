@@ -1,5 +1,7 @@
+
 #Config file for betterPassives by dibujaron
 #Originally developed for Erecia.net roleplay server
+hostilesPerChunk: 16
 
 allPassives:
     - bat
@@ -40,6 +42,9 @@ planets:
         hostiles:
             - creeper
             - skeleton
+        specials:
+           # Spawns wither skeletons instead of normal skeletons
+            - wither skeleton
     boskevine:
         passives:
             - ozelot

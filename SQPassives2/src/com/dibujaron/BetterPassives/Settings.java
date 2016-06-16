@@ -11,13 +11,17 @@ public class Settings {
 
 	private static List<EntityType> passives;
 	private static List<EntityType> hostiles;
+	private static HashMap<Planet, List<String>> specials = new HashMap<Planet, List<String>>();
 	private static HashMap<String, Planet> planets = new HashMap<String, Planet>();
 	private static int tamedPerChunk = 16;
+	private static int hostilesPerChunk = 16;
 
 	public static void loadSettings(Configuration c) {
 		if (c.contains("passivesperchunk")) {
 			tamedPerChunk = c.getInt("passivesperchunk");
 		}
+		if(c.contains("hostilesPerChunk"))
+			hostilesPerChunk = c.getInt("hostilesPerChunk");
 		passives = new ArrayList<EntityType>();
 		for (String s : c.getStringList("allPassives")) {
 			EntityType t = EntityType.valueOf(s.toUpperCase());
@@ -27,13 +31,14 @@ public class Settings {
 				passives.add(EntityType.valueOf(s.toUpperCase()));
 			}
 		}
+		
 		hostiles = new ArrayList<EntityType>();
 		for (String s : c.getStringList("allHostiles")) {
 			EntityType t = EntityType.valueOf(s.toUpperCase());
 			if (t == null) {
 				System.out.println("No EntityType found for " + s + "!");
 			} else {
-				hostiles.add(EntityType.valueOf(s.toUpperCase()));
+				hostiles.add(t);
 			}
 		}
 
@@ -44,11 +49,20 @@ public class Settings {
 					.println("Loaded " + passives.size() + " passives and " + hostiles.size() + " hostiles for " + key);
 			Planet p = new Planet(key, hostiles, passives);
 			planets.put(key.toLowerCase(), p);
+			
+			List<String> specialProperties = c.getStringList("planets." + key + ".specials");
+			System.out.println("Loaded " + specialProperties.size() + " special properties for " + key);
+			specials.put(p, specialProperties);
 		}
 	}
 
 	public static int getTamedPerChunk() {
 		return tamedPerChunk;
+	}
+	
+	public static int getHostilesPerChunk()
+	{
+		return hostilesPerChunk;
 	}
 
 	public static List<EntityType> getAllHostiles() {
@@ -59,6 +73,12 @@ public class Settings {
 		return passives;
 	}
 
+	/**
+	 * Gets a list of all allowed hostiles for a planet, defined in the config.<br>
+	 * Returns null if there are no hostiles in the config for a planet
+	 * @param planet planet name
+	 * @return An EntityType list of the allowed hostiles for a planet
+	 */
 	public static List<EntityType> getHostilesOfPlanet(String planet) {
 		Planet p = planets.get(planet.toLowerCase());
 		if (p != null) {
@@ -76,6 +96,24 @@ public class Settings {
 				return p.passives();
 		}
 		return null;
+	}
+	
+	//TODO Doesn't work
+	/**
+	 * 
+	 * @param planet name
+	 * @return String list containing all the special properties for a planet or null if the planet name is not valid.
+	 */
+	public static List<String> getSpecialPropertiesOfPlanet(String planet)
+	{
+		Planet p = planets.get(planet.toLowerCase());
+		if(p != null)
+		{
+			List<String> specialProperties = specials.get(p);
+			return specialProperties;
+		}
+		else
+			return null;
 	}
 
 	private static class Planet {
@@ -96,6 +134,7 @@ public class Settings {
 					this.hostiles.add(EntityType.valueOf(s));
 				}
 			}
+			
 			this.passives = new ArrayList<EntityType>();
 			for (String s : passives) {
 				s = s.toUpperCase();

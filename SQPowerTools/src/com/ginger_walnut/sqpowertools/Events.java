@@ -44,6 +44,8 @@ import com.ginger_walnut.sqpowertools.objects.PowerToolType;
 import com.ginger_walnut.sqpowertools.tasks.ChargerTask;
 import com.ginger_walnut.sqpowertools.utils.EffectUtils;
 
+import com.gmail.nossr50.events.fake.FakeBlockBreakEvent;
+
 public class Events implements Listener{	
 	
 	@EventHandler
@@ -71,7 +73,7 @@ public class Events implements Listener{
 								
 								handItem = SQPowerTools.fixPowerTool(handItem);
 								player.getInventory().setItemInMainHand(handItem);
-
+								
 								int energy = SQPowerTools.getEnergy(handItem);
 								int energyPerUse = SQPowerTools.getType(handItem).energyPerUse;
 								
@@ -110,7 +112,7 @@ public class Events implements Listener{
 													player.getWorld().dropItem(player.getLocation(), wool);
 													
 												}
-													
+												
 											}
 											
 										}
@@ -140,7 +142,7 @@ public class Events implements Listener{
 					}
 					
 				}
-							
+				
 			}
 			
 		}
@@ -153,7 +155,7 @@ public class Events implements Listener{
 		if (!event.isCancelled()) {
 			
 			Player player = event.getPlayer();
-
+			
 			if (player.getInventory().getItemInMainHand() != null) {
 				
 				ItemStack handItem = player.getInventory().getItemInMainHand();			
@@ -185,7 +187,7 @@ public class Events implements Listener{
 								player.sendMessage(ChatColor.RED + "Your tool will break in " + (1551 - handItem.getDurability()) + " uses");
 								
 							}
-
+							
 						}
 						
 					}
@@ -198,33 +200,37 @@ public class Events implements Listener{
 						
 						List<String> lore = handItem.getItemMeta().getLore();
 						
-						if (lore.contains(ChatColor.DARK_PURPLE + "Power Tool")) {
+						if (!event.getEventName().equals("FakeBlockBreakEvent")) {
 							
-							handItem = SQPowerTools.fixPowerTool(handItem);
-							player.getInventory().setItemInMainHand(handItem);
-
-							int energy = SQPowerTools.getEnergy(handItem);
-							int energyPerUse = SQPowerTools.getType(handItem).energyPerUse;
-							
-							if (energy == 0) {
+							if (lore.contains(ChatColor.DARK_PURPLE + "Power Tool")) {
 								
-								event.setCancelled(true);
+								handItem = SQPowerTools.fixPowerTool(handItem);
+								player.getInventory().setItemInMainHand(handItem);
 								
-								player.sendMessage(ChatColor.RED + "Your Power Tool is out of energy");
+								int energy = SQPowerTools.getEnergy(handItem);
+								int energyPerUse = SQPowerTools.getType(handItem).energyPerUse;
 								
-							} else {
-								
-								if (energy <= energyPerUse) {
+								if (energy == 0) {
 									
-									handItem = SQPowerTools.setEnergy(handItem, 0);
-									player.getInventory().setItemInMainHand(handItem);
+									event.setCancelled(true);
 									
-									player.sendMessage(ChatColor.RED + "Your Power Tool has run out of energy");
+									player.sendMessage(ChatColor.RED + "Your Power Tool is out of energy");
 									
 								} else {
 									
-									handItem = SQPowerTools.setEnergy(handItem, energy - energyPerUse);
-									player.getInventory().setItemInMainHand(handItem);
+									if (energy <= energyPerUse) {
+										
+										handItem = SQPowerTools.setEnergy(handItem, 0);
+										player.getInventory().setItemInMainHand(handItem);
+										
+										player.sendMessage(ChatColor.RED + "Your Power Tool has run out of energy");
+										
+									} else {
+										
+										handItem = SQPowerTools.setEnergy(handItem, energy - energyPerUse);
+										player.getInventory().setItemInMainHand(handItem);
+										
+									}
 									
 								}
 								
@@ -244,11 +250,11 @@ public class Events implements Listener{
 	
 	@EventHandler
 	public static void onEntityDamageEntity(EntityDamageByEntityEvent event) {
-			
+		
 		if (event.getDamager() instanceof Player) {
 			
 			Player player = (Player) event.getDamager();
-
+			
 			if (player.getInventory().getItemInMainHand() != null) {
 				
 				ItemStack handItem = player.getInventory().getItemInMainHand();
@@ -278,7 +284,7 @@ public class Events implements Listener{
 								player.sendMessage(ChatColor.RED + "Your tool will break in " + (1551 - handItem.getDurability()) + " uses");
 								
 							}
-
+							
 						}
 						
 					}
@@ -292,10 +298,10 @@ public class Events implements Listener{
 						List<String> lore = handItem.getItemMeta().getLore();
 						
 						if (lore.contains(ChatColor.DARK_PURPLE + "Power Tool")) {
-
+							
 							handItem = SQPowerTools.fixPowerTool(handItem);
 							player.getInventory().setItemInMainHand(handItem);
-
+							
 							PowerToolType type = SQPowerTools.getType(handItem);
 							
 							int energy = SQPowerTools.getEnergy(handItem);
@@ -323,11 +329,11 @@ public class Events implements Listener{
 											if (type.modifiers.get(i).effects.get(j) != null) {
 												
 												if (type.modifiers.get(i).effects.get(j).effectCase == 1) {
-
+													
 													selfEffects.add(new PotionEffect(EffectUtils.getEffectFromId(type.modifiers.get(i).effects.get(j).effect), type.modifiers.get(i).effects.get(j).duration * 20, type.modifiers.get(i).effects.get(j).level));
 													
 												} else if (type.modifiers.get(i).effects.get(j).effectCase == 2) {
-
+													
 													otherEffects.add(new PotionEffect(EffectUtils.getEffectFromId(type.modifiers.get(i).effects.get(j).effect), type.modifiers.get(i).effects.get(j).duration * 20, type.modifiers.get(i).effects.get(j).level));
 													
 												}
@@ -345,11 +351,11 @@ public class Events implements Listener{
 									if (type.effects.get(j) != null) {
 										
 										if (type.effects.get(j).effectCase == 1) {
-
+											
 											selfEffects.add(new PotionEffect(EffectUtils.getEffectFromId(type.effects.get(j).effect), type.effects.get(j).duration * 20, type.effects.get(j).level));
 											
 										} else if (type.effects.get(j).effectCase == 2) {
-
+											
 											otherEffects.add(new PotionEffect(EffectUtils.getEffectFromId(type.effects.get(j).effect), type.effects.get(j).duration * 20, type.effects.get(j).level));
 											
 										}
@@ -369,7 +375,7 @@ public class Events implements Listener{
 								}
 								
 								player.addPotionEffects(selfEffects);
-							
+								
 								if (event.getEntity() instanceof LivingEntity) {
 									
 									LivingEntity enemy = (LivingEntity) event.getEntity();
@@ -387,13 +393,13 @@ public class Events implements Listener{
 											enemy.addPotionEffect(otherEffects.get(j));
 											
 										}
-	
+										
 									}
 									
 								}
-
-								if (!event.isCancelled()) {
 								
+								if (!event.isCancelled()) {
+									
 									if (energy <= energyPerUse) {
 										
 										handItem = SQPowerTools.setEnergy(handItem, 0);
@@ -409,7 +415,7 @@ public class Events implements Listener{
 									}
 									
 								}
-									
+								
 							}
 							
 						}
@@ -463,11 +469,11 @@ public class Events implements Listener{
 												if (type.modifiers.get(j).effects.get(k) != null) {
 													
 													if (type.modifiers.get(j).effects.get(k).effectCase == 1) {
-
+														
 														selfEffects.add(new PotionEffect(EffectUtils.getEffectFromId(type.modifiers.get(j).effects.get(k).effect), type.modifiers.get(j).effects.get(k).duration * 20, type.modifiers.get(j).effects.get(k).level));
 														
 													} else if (type.modifiers.get(j).effects.get(k).effectCase == 2) {
-
+														
 														otherEffects.add(new PotionEffect(EffectUtils.getEffectFromId(type.modifiers.get(j).effects.get(k).effect), type.modifiers.get(j).effects.get(k).duration * 20, type.modifiers.get(j).effects.get(k).level));
 														
 													}
@@ -485,11 +491,11 @@ public class Events implements Listener{
 										if (type.effects.get(j) != null) {
 											
 											if (type.effects.get(j).effectCase == 1) {
-
+												
 												selfEffects.add(new PotionEffect(EffectUtils.getEffectFromId(type.effects.get(j).effect), type.effects.get(j).duration * 20, type.effects.get(j).level));
 												
 											} else if (type.effects.get(j).effectCase == 2) {
-
+												
 												otherEffects.add(new PotionEffect(EffectUtils.getEffectFromId(type.effects.get(j).effect), type.effects.get(j).duration * 20, type.effects.get(j).level));
 												
 											}
@@ -509,7 +515,7 @@ public class Events implements Listener{
 									}
 									
 									player.addPotionEffects(selfEffects);
-								
+									
 									if (event.getEntity() instanceof LivingEntity) {
 										
 										LivingEntity enemy = (LivingEntity) event.getEntity();
@@ -594,11 +600,11 @@ public class Events implements Listener{
 												if (type.modifiers.get(j).effects.get(k) != null) {
 													
 													if (type.modifiers.get(j).effects.get(k).effectCase == 3) {
-
+														
 														selfEffects.add(new PotionEffect(EffectUtils.getEffectFromId(type.modifiers.get(j).effects.get(k).effect), type.modifiers.get(j).effects.get(k).duration * 20, type.modifiers.get(j).effects.get(k).level));
 														
 													} else if (type.modifiers.get(j).effects.get(k).effectCase == 4) {
-
+														
 														otherEffects.add(new PotionEffect(EffectUtils.getEffectFromId(type.modifiers.get(j).effects.get(k).effect), type.modifiers.get(j).effects.get(k).duration * 20, type.modifiers.get(j).effects.get(k).level));
 														
 													}
@@ -616,11 +622,11 @@ public class Events implements Listener{
 										if (type.effects.get(j) != null) {
 											
 											if (type.effects.get(j).effectCase == 3) {
-
+												
 												selfEffects.add(new PotionEffect(EffectUtils.getEffectFromId(type.effects.get(j).effect), type.effects.get(j).duration * 20, type.effects.get(j).level));
 												
 											} else if (type.effects.get(j).effectCase == 4) {
-
+												
 												otherEffects.add(new PotionEffect(EffectUtils.getEffectFromId(type.effects.get(j).effect), type.effects.get(j).duration * 20, type.effects.get(j).level));
 												
 											}
@@ -640,7 +646,7 @@ public class Events implements Listener{
 									}
 									
 									player.addPotionEffects(selfEffects);
-								
+									
 									if (event.getDamager() instanceof LivingEntity) {
 										
 										LivingEntity enemy = (LivingEntity) event.getDamager();
@@ -664,7 +670,7 @@ public class Events implements Listener{
 									}
 									
 									if (!event.isCancelled()) {
-									
+										
 										if (energy <= energyPerUse) {
 											
 											player.sendMessage(ChatColor.RED + "Your Power Tool has run out of energy");
@@ -710,12 +716,12 @@ public class Events implements Listener{
 						List<String> lore = handItem.getItemMeta().getLore();
 						
 						if (lore.contains(ChatColor.DARK_PURPLE + "Power Tool")) {
-
+							
 							handItem = SQPowerTools.fixPowerTool(handItem);
 							player.getInventory().setItemInMainHand(handItem);
-
+							
 							PowerToolType type = SQPowerTools.getType(handItem);
-				
+							
 							int energy = SQPowerTools.getEnergy(handItem);
 							
 							if (energy == 0) {
@@ -740,11 +746,11 @@ public class Events implements Listener{
 											if (type.modifiers.get(j).effects.get(k) != null) {
 												
 												if (type.modifiers.get(j).effects.get(k).effectCase == 3) {
-
+													
 													selfEffects.add(new PotionEffect(EffectUtils.getEffectFromId(type.modifiers.get(j).effects.get(k).effect), type.modifiers.get(j).effects.get(k).duration * 20, type.modifiers.get(j).effects.get(k).level));
 													
 												} else if (type.modifiers.get(j).effects.get(k).effectCase == 4) {
-
+													
 													otherEffects.add(new PotionEffect(EffectUtils.getEffectFromId(type.modifiers.get(j).effects.get(k).effect), type.modifiers.get(j).effects.get(k).duration * 20, type.modifiers.get(j).effects.get(k).level));
 													
 												}
@@ -762,11 +768,11 @@ public class Events implements Listener{
 									if (type.effects.get(j) != null) {
 										
 										if (type.effects.get(j).effectCase == 3) {
-
+											
 											selfEffects.add(new PotionEffect(EffectUtils.getEffectFromId(type.effects.get(j).effect), type.effects.get(j).duration * 20, type.effects.get(j).level));
 											
 										} else if (type.effects.get(j).effectCase == 4) {
-
+											
 											otherEffects.add(new PotionEffect(EffectUtils.getEffectFromId(type.effects.get(j).effect), type.effects.get(j).duration * 20, type.effects.get(j).level));
 											
 										}
@@ -786,7 +792,7 @@ public class Events implements Listener{
 								}
 								
 								player.addPotionEffects(selfEffects);
-							
+								
 								if (event.getDamager() instanceof LivingEntity) {
 									
 									LivingEntity enemy = (LivingEntity) event.getDamager();
@@ -808,7 +814,7 @@ public class Events implements Listener{
 									}
 									
 								}
-
+								
 							}	
 							
 						}
@@ -816,9 +822,9 @@ public class Events implements Listener{
 					}
 					
 				}
-			
-			}
 				
+			}
+			
 		}
 		
 		if (event.getEntity() instanceof Player) {
@@ -838,10 +844,10 @@ public class Events implements Listener{
 							List<String> lore = handItem.getItemMeta().getLore();
 							
 							if (lore.contains(ChatColor.DARK_PURPLE + "Power Tool")) {
-
+								
 								handItem = SQPowerTools.fixPowerTool(handItem);
 								player.getInventory().setItemInOffHand(handItem);
-
+								
 								PowerToolType type = SQPowerTools.getType(handItem);
 								
 								int energyPerUse = type.energyPerUse;
@@ -869,11 +875,11 @@ public class Events implements Listener{
 												if (type.modifiers.get(j).effects.get(k) != null) {
 													
 													if (type.modifiers.get(j).effects.get(k).effectCase == 3) {
-
+														
 														selfEffects.add(new PotionEffect(EffectUtils.getEffectFromId(type.modifiers.get(j).effects.get(k).effect), type.modifiers.get(j).effects.get(k).duration * 20, type.modifiers.get(j).effects.get(k).level));
 														
 													} else if (type.modifiers.get(j).effects.get(k).effectCase == 4) {
-
+														
 														otherEffects.add(new PotionEffect(EffectUtils.getEffectFromId(type.modifiers.get(j).effects.get(k).effect), type.modifiers.get(j).effects.get(k).duration * 20, type.modifiers.get(j).effects.get(k).level));
 														
 													}
@@ -891,11 +897,11 @@ public class Events implements Listener{
 										if (type.effects.get(j) != null) {
 											
 											if (type.effects.get(j).effectCase == 3) {
-
+												
 												selfEffects.add(new PotionEffect(EffectUtils.getEffectFromId(type.effects.get(j).effect), type.effects.get(j).duration * 20, type.effects.get(j).level));
 												
 											} else if (type.effects.get(j).effectCase == 4) {
-
+												
 												otherEffects.add(new PotionEffect(EffectUtils.getEffectFromId(type.effects.get(j).effect), type.effects.get(j).duration * 20, type.effects.get(j).level));
 												
 											}
@@ -915,7 +921,7 @@ public class Events implements Listener{
 									}
 									
 									player.addPotionEffects(selfEffects);
-								
+									
 									if (event.getDamager() instanceof LivingEntity) {
 										
 										LivingEntity enemy = (LivingEntity) event.getDamager();
@@ -958,7 +964,7 @@ public class Events implements Listener{
 										}
 										
 									}
-
+									
 								}
 								
 							}
@@ -966,13 +972,13 @@ public class Events implements Listener{
 						}
 						
 					}
-				
+					
 				}
 				
 			}
 			
 		}
-	
+		
 	}
 	
 	@EventHandler
@@ -1029,7 +1035,7 @@ public class Events implements Listener{
 								System.out.print(event.getAction());
 								
 								if (event.getAction().equals(InventoryAction.PLACE_ONE)) {
-								
+									
 									int amount = event.getCursor().getAmount();
 									
 									if (amount == 1) {
@@ -1064,7 +1070,7 @@ public class Events implements Listener{
 								if (event.getAction().equals(InventoryAction.PLACE_ONE)) {
 									
 									if (clicked.getAmount() < clicked.getMaxStackSize()) {
-									
+										
 										int amount = event.getCursor().getAmount();
 										
 										if (amount == 1) {
@@ -1097,7 +1103,7 @@ public class Events implements Listener{
 							}
 							
 						}
-
+						
 					}
 					
 				}
@@ -1117,21 +1123,21 @@ public class Events implements Listener{
 				PowerToolType toolType = SQPowerTools.getType(powerTool);
 				
 				Inventory modifierInventory = Bukkit.createInventory(player, 54, "Power Tool Addmods");
-
+				
 				boolean modifier = true;
 				
 				if (clicked.getItemMeta().getDisplayName() != null) {
-				
+					
 					if (clicked.getItemMeta().getDisplayName().equals("Info")) {
 						
 						modifier = false;
 						
 					}
-			
-				}
 					
-				if (modifier) {
+				}
 				
+				if (modifier) {
+					
 					if (!clicked.getItemMeta().getLore().get(0).equals(ChatColor.DARK_PURPLE + "Power Tool")) {
 						
 						HashMap<String, Integer> modifiers = SQPowerTools.getModifiers(powerTool);
@@ -1159,22 +1165,22 @@ public class Events implements Listener{
 							powerTool = SQPowerTools.addLore(powerTool, toolType, modifiers, false);
 							
 						}
-					
+						
 					}
 					
 				}
-
+				
 				player.getInventory().setItemInMainHand(powerTool);
 				
 				modifierInventory.setItem(53, powerTool);
-					
+				
 				ItemStack maxMods = new ItemStack(Material.PAPER);
 				
 				List<String> maxModsLore = new ArrayList<String>();
 				
 				maxModsLore.add("Max Total Mod Levels: " + Integer.toString(toolType.maxMods));
 				maxModsLore.add(ChatColor.RED + "" + ChatColor.MAGIC + "Contraband");
-
+				
 				ItemMeta itemMeta = maxMods.getItemMeta();
 				
 				itemMeta.setLore(maxModsLore);
@@ -1202,7 +1208,7 @@ public class Events implements Listener{
 					modLore.add("Levels: " + toolType.modifiers.get(i).levels);
 					
 					if (toolType.modifiers.get(i).energy > 0) {
-		
+						
 						modLore.add(ChatColor.RED + "+ " + toolType.modifiers.get(i).energy + " Energy");
 						
 					} else if (toolType.modifiers.get(i).energy < 0) {
@@ -1220,7 +1226,7 @@ public class Events implements Listener{
 						if (toolType.modifiers.get(i).attributes.get(j).attribute.equals("generic.attackSpeed")) {
 							
 							attributeName = "Attack Speed";
-
+							
 						} else if (toolType.modifiers.get(i).attributes.get(j).attribute.equals("generic.attackDamage")) {
 							
 							attributeName = "Damage";
@@ -1250,7 +1256,7 @@ public class Events implements Listener{
 							attributeName = "Armor Toughness";
 							
 						} else {
-						
+							
 							
 							attributeName = toolType.modifiers.get(i).attributes.get(j).attribute;
 						}
@@ -1284,7 +1290,7 @@ public class Events implements Listener{
 					}
 					
 					if (toolType.modifiers.get(i).effects.size() > 0) {
-					
+						
 						modLore.add(ChatColor.DARK_PURPLE + "Potion Effects:");
 						
 						for (int j = 0; j < toolType.modifiers.get(i).effects.size(); j ++) {
@@ -1295,7 +1301,7 @@ public class Events implements Listener{
 							modLore.add(ChatColor.DARK_PURPLE + "    Applies " + EffectUtils.getCaseName(toolType.modifiers.get(i).effects.get(j).effectCase));
 							
 						}
-					
+						
 					}
 					
 					if (toolType.modifiers.get(i).cannotCombines.size() > 0) {
@@ -1325,7 +1331,7 @@ public class Events implements Listener{
 			}
 			
 			if (clicked.hasItemMeta()) {
-
+				
 				if (clicked.getItemMeta().hasLore()) {
 					
 					if (clicked.getItemMeta().getLore().contains(ChatColor.DARK_PURPLE + "Power Tool")) {
@@ -1359,9 +1365,9 @@ public class Events implements Listener{
 													if (SQPowerTools.powerTools.get(i).equals(SQPowerTools.getType(powerTool))) {
 														
 														for (int j = 0; j < SQPowerTools.powerTools.get(i).modifiers.size(); j ++) {
-														
+															
 															modifiers.add(SQPowerTools.powerTools.get(i).modifiers.get(j).material);
-														
+															
 														}
 														
 													}
@@ -1371,7 +1377,7 @@ public class Events implements Listener{
 												if (inventory.getItem(13) != null) {
 													
 													if (modifiers.contains(inventory.getItem(13).getType())) {
-
+														
 														inventory.setItem(10, new ItemStack(Material.AIR));
 														
 														List<Material> modifierMaterials = new ArrayList<Material>();
@@ -1385,7 +1391,7 @@ public class Events implements Listener{
 																	
 																	modifierMaterials.add(SQPowerTools.powerTools.get(i).modifiers.get(j).material);
 																	modifierAmounts.add(SQPowerTools.powerTools.get(i).modifiers.get(j).number);
-																
+																	
 																}
 																
 															}
@@ -1395,7 +1401,7 @@ public class Events implements Listener{
 														for (int i = 0; i < modifierMaterials.size(); i ++) {
 															
 															if (modifierMaterials.get(i).equals(inventory.getItem(13).getType())) {
-	
+																
 																ItemStack newItem = inventory.getItem(13);
 																
 																newItem.setAmount(newItem.getAmount() - modifierAmounts.get(i));
@@ -1423,7 +1429,7 @@ public class Events implements Listener{
 													}
 													
 												}
-													
+												
 											}
 											
 										}
@@ -1463,7 +1469,7 @@ public class Events implements Listener{
 											recipe.add(config.getString("power tools." + powerTool + ".recipe.line1"));
 											
 										}
-
+										
 										if (config.contains("power tools." + powerTool + ".recipe.line2")) {
 											
 											if (config.getString("power tools." + powerTool + ".recipe.line2").length() == 2) {
@@ -1646,7 +1652,7 @@ public class Events implements Listener{
 								
 								maxModsLore.add("Max Total Mod Levels: " + Integer.toString(toolType.maxMods));
 								maxModsLore.add(ChatColor.RED + "" + ChatColor.MAGIC + "Contraband");
-
+								
 								ItemMeta itemMeta = maxMods.getItemMeta();
 								
 								itemMeta.setLore(maxModsLore);
@@ -1674,7 +1680,7 @@ public class Events implements Listener{
 									modLore.add("Levels: " + toolType.modifiers.get(i).levels);
 									
 									if (toolType.modifiers.get(i).energy > 0) {
-						
+										
 										modLore.add(ChatColor.RED + "+ " + toolType.modifiers.get(i).energy + " Energy");
 										
 									} else if (toolType.modifiers.get(i).energy < 0) {
@@ -1692,7 +1698,7 @@ public class Events implements Listener{
 										if (toolType.modifiers.get(i).attributes.get(j).attribute.equals("generic.attackSpeed")) {
 											
 											attributeName = "Attack Speed";
-
+											
 										} else if (toolType.modifiers.get(i).attributes.get(j).attribute.equals("generic.attackDamage")) {
 											
 											attributeName = "Damage";
@@ -1722,7 +1728,7 @@ public class Events implements Listener{
 											attributeName = "Armor Toughness";
 											
 										} else {
-										
+											
 											
 											attributeName = toolType.modifiers.get(i).attributes.get(j).attribute;
 										}
@@ -1756,7 +1762,7 @@ public class Events implements Listener{
 									}
 									
 									if (toolType.modifiers.get(i).effects.size() > 0) {
-									
+										
 										modLore.add(ChatColor.DARK_PURPLE + "Potion Effects:");
 										
 										for (int j = 0; j < toolType.modifiers.get(i).effects.size(); j ++) {
@@ -1767,7 +1773,7 @@ public class Events implements Listener{
 											modLore.add(ChatColor.DARK_PURPLE + "    Applies " + EffectUtils.getCaseName(toolType.modifiers.get(i).effects.get(j).effectCase));
 											
 										}
-									
+										
 									}
 									
 									if (toolType.modifiers.get(i).cannotCombines.size() > 0) {
@@ -1803,21 +1809,21 @@ public class Events implements Listener{
 								player.closeInventory();
 								
 							} 
-														
+							
 						} else if (isCharger(player.getWorld().getBlockAt(inventory.getLocation()))) {
 							
-
-
+							
+							
 						} else if (event.getSlotType().equals(SlotType.CONTAINER) || event.getSlotType().equals(SlotType.RESULT) || event.getSlotType().equals(SlotType.QUICKBAR) || event.getSlotType().equals(SlotType.ARMOR)) {
-
+							
 						} else {
-													
+							
 							event.setCancelled(true);
 							
 							player.sendMessage(ChatColor.RED + "You cannot put a power tool into this inventory");
-														
+							
 						}
-					
+						
 					}
 					
 				}
@@ -1843,7 +1849,7 @@ public class Events implements Listener{
 								event.setCancelled(true);
 								
 							}
-
+							
 						}
 						
 					}
@@ -1851,7 +1857,7 @@ public class Events implements Listener{
 				}
 				
 				ItemStack powerTool = inventory.getItem(10);
-
+				
 				if (powerTool != null) {
 					
 					if (powerTool.hasItemMeta()) {
@@ -1916,7 +1922,7 @@ public class Events implements Listener{
 														modifierMap.put(modifierNames.get(i), 1);
 														
 													}
-																									
+													
 													int totalLevels = 0;
 													
 													List<Integer> currentModifierLevels = new ArrayList<Integer>();
@@ -1974,7 +1980,7 @@ public class Events implements Listener{
 														List<String> lore = powerTool.getItemMeta().getLore();
 														
 														ItemStack resultPowerTool = SQPowerTools.getPowerTool(toolType);
-																
+														
 														resultPowerTool = SQPowerTools.addLore(resultPowerTool, toolType, modifierMap, true);
 														
 														resultPowerTool = SQPowerTools.addModifiers(resultPowerTool, modifierMap);
@@ -1984,7 +1990,7 @@ public class Events implements Listener{
 														if (inventory.getItem(16) != null) {
 															
 															boolean drop = true;
-														
+															
 															if (inventory.getItem(16).hasItemMeta()) {
 																
 																if (inventory.getItem(16).getItemMeta().hasLore()) {
@@ -2061,11 +2067,11 @@ public class Events implements Listener{
 														needToRemove = false;
 														
 													}									
-
+													
 												}
-
+												
 											}
-																						
+											
 										}
 										
 									} else if (event.getSlot() == 13) {
@@ -2103,7 +2109,7 @@ public class Events implements Listener{
 														modifierMap.put(modifierNames.get(i), 1);
 														
 													}
-												
+													
 													int totalLevels = 0;
 													
 													List<Integer> currentModifierLevels = new ArrayList<Integer>();
@@ -2157,7 +2163,7 @@ public class Events implements Listener{
 													}
 													
 													if (!error) {
-
+														
 														List<String> lore = powerTool.getItemMeta().getLore();
 														
 														ItemStack resultPowerTool = SQPowerTools.getPowerTool(toolType);
@@ -2250,15 +2256,15 @@ public class Events implements Listener{
 													}	
 													
 												}
-
+												
 											}
-																						
+											
 										}
 										
 									}
 									
 								}
-									
+								
 							}
 							
 						}
@@ -2274,7 +2280,7 @@ public class Events implements Listener{
 						if (inventory.getItem(16).hasItemMeta()) {
 							
 							if (inventory.getItem(16).getItemMeta().hasLore()) {
-							
+								
 								if (inventory.getItem(16).getItemMeta().getLore().contains(ChatColor.RED + "" + ChatColor.MAGIC + "Contraband")) {
 									
 									inventory.setItem(16, new ItemStack(Material.AIR));
@@ -2288,7 +2294,7 @@ public class Events implements Listener{
 					}
 					
 				}
-
+				
 			}
 			
 		}
@@ -2325,22 +2331,22 @@ public class Events implements Listener{
 					if (sign.getLine(1).equals(ChatColor.RED + "[Disabled]")) {
 						
 						if (getAttachedBlock(sign).getType().equals(Material.FURNACE) || getAttachedBlock(sign).getType().equals(Material.BURNING_FURNACE)) {
-						
+							
 							sign.setLine(1, ChatColor.GREEN + "[Enabled]");
 							sign.update();
 							
 							SQPowerTools.chargerLocations.add(getAttachedBlock(sign).getLocation());
-
+							
 						} else {
 							
 							player.sendMessage(ChatColor.RED + "The charger sign must be placed on a furnace");
 							
 						}
-							
+						
 					} else if (sign.getLine(1).equals(ChatColor.GREEN + "[Enabled]")) {
 						
 						if (getAttachedBlock(sign).getType().equals(Material.FURNACE) || getAttachedBlock(sign).getType().equals(Material.BURNING_FURNACE)) {
-						
+							
 							sign.setLine(1, ChatColor.RED + "[Disabled]");
 							sign.update();
 							
@@ -2405,7 +2411,7 @@ public class Events implements Listener{
 				paper1.setItemMeta(itemMeta);
 				
 				ItemStack paper2 = new ItemStack(Material.PAPER);
-
+				
 				itemMeta = paper2.getItemMeta();
 				
 				itemMeta.setDisplayName("Info");
@@ -2417,7 +2423,7 @@ public class Events implements Listener{
 				paper2.setItemMeta(itemMeta);
 				
 				ItemStack paper3 = new ItemStack(Material.PAPER);
-
+				
 				itemMeta = paper3.getItemMeta();
 				
 				itemMeta.setDisplayName("Info");
@@ -2429,7 +2435,7 @@ public class Events implements Listener{
 				paper3.setItemMeta(itemMeta);
 				
 				ItemStack refresh = new ItemStack(Material.DOUBLE_PLANT);
-
+				
 				itemMeta = refresh.getItemMeta();
 				
 				itemMeta.setDisplayName("Refresh");
@@ -2542,14 +2548,14 @@ public class Events implements Listener{
 		}
 		
 	}
-
+	
 	public static Block getAttachedBlock(Sign sign) {
-
+		
 		MaterialData materialData = sign.getBlock().getState().getData();
 		BlockFace face = ((Attachable) materialData).getAttachedFace();
-
+		
 		return sign.getBlock().getRelative(face);
-
+		
 	}
 	
 	public static boolean isCharger(Block block) {
@@ -2605,7 +2611,7 @@ public class Events implements Listener{
 			}
 			
 		}
-			
+		
 		return false;
 		
 	}
@@ -2663,7 +2669,7 @@ public class Events implements Listener{
 			}
 			
 		}
-			
+		
 		return false;
 		
 	}

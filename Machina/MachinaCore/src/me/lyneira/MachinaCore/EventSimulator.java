@@ -10,7 +10,7 @@ import org.bukkit.event.Event;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
 import com.gmail.nossr50.datatypes.player.McMMOPlayer;
@@ -18,6 +18,7 @@ import com.gmail.nossr50.datatypes.player.PlayerProfile;
 import com.gmail.nossr50.datatypes.skills.SkillType;
 import com.gmail.nossr50.events.experience.McMMOPlayerExperienceEvent;
 import com.gmail.nossr50.events.experience.McMMOPlayerXpGainEvent;
+import com.gmail.nossr50.events.fake.FakeBlockBreakEvent;
 
 /**
  * Class that simulates events.
@@ -55,7 +56,7 @@ public class EventSimulator {
         
         // Set the new state without physics.
         placedBlock.setTypeIdAndData(typeId, data, false);
-        BlockPlaceEvent placeEvent = new ArtificialBlockPlaceEvent(placedBlock, replacedBlockState, placedAgainst.getBlock(), null, player, true);
+        BlockPlaceEvent placeEvent = new ArtificialBlockPlaceEvent(placedBlock, replacedBlockState, placedAgainst.getBlock(), null, player, true, EquipmentSlot.HAND);
         MachinaCore.pluginManager.callEvent(placeEvent);
 
         // Revert to the old state without physics.
@@ -80,18 +81,8 @@ public class EventSimulator {
      */
     public static boolean blockBreak(BlockLocation target, Player player) {
         Block block = target.getBlock();
-        boolean wasCreative = false;
-        if(player.getGameMode().equals(GameMode.CREATIVE)) {
-        	wasCreative = true;
-        }
-        if(wasCreative == false) {
-        	player.setGameMode(GameMode.CREATIVE);
-        }
-        BlockBreakEvent breakEvent = new ArtificialBlockBreakEvent(block, player);
-        if(wasCreative == false) {
-        	player.setGameMode(GameMode.SURVIVAL);
-        }
-        
+        BlockBreakEvent breakEvent = new FakeBlockBreakEvent(block, player);
+
         MachinaCore.pluginManager.callEvent(breakEvent);
         if (breakEvent.isCancelled()) {
             return false;
@@ -128,7 +119,7 @@ public class EventSimulator {
         // Set the new state without physics.
         placedBlock.setTypeIdAndData(typeId, (byte) 0, false);
 
-        pretendEvent = new ArtificialBlockPlaceEvent(placedBlock, replacedBlockState, placedAgainst.getBlock(), new ItemStack(Material.AIR), player, true);
+        pretendEvent = new ArtificialBlockPlaceEvent(placedBlock, replacedBlockState, placedAgainst.getBlock(), new ItemStack(Material.AIR), player, true, EquipmentSlot.HAND);
         pretendEventCancelled = true;
         MachinaCore.pluginManager.callEvent(pretendEvent);
 
@@ -152,7 +143,7 @@ public class EventSimulator {
      */
     public static boolean blockBreakPretend(BlockLocation target, Player player) {
         Block block = target.getBlock();
-        pretendEvent = new ArtificialBlockBreakEvent(block, player);
+        pretendEvent = new FakeBlockBreakEvent(block, player);
         pretendEventCancelled = true;
         MachinaCore.pluginManager.callEvent(pretendEvent);
 
@@ -172,28 +163,13 @@ public class EventSimulator {
      * @return True if the player may interact with this block
      */
     public static boolean blockRightClick(BlockLocation target, Player player, BlockFace clickedFace)
-    {
-    	boolean hasPerm = false;
-    	boolean chestFixInstalled = false;
-    	if(player.hasPermission("chestfix.bypass") == true)
-    		hasPerm = true;
-    	
-    	if(MachinaCore.pluginManager.getPlugin("ChestFix") != null && MachinaCore.plugin != null && MachinaCore.plugin.permission != null)
-    	{
-    		chestFixInstalled = true;
-    	}
-    	
-    	if(hasPerm == false && chestFixInstalled == true)
-    		MachinaCore.plugin.permission.playerAdd(player, "chestfix.bypass");
-    	
-        PlayerInteractEvent event = new PlayerInteractEvent(player, Action.RIGHT_CLICK_BLOCK, new ItemStack(Material.AIR), target.getBlock(), clickedFace);
+    {	
+    	ArtificialPlayerInteractEvent event = new ArtificialPlayerInteractEvent(player, Action.RIGHT_CLICK_BLOCK, new ItemStack(Material.AIR), target.getBlock(), clickedFace);
         MachinaCore.pluginManager.callEvent(event);
-        
-        if(hasPerm == false && chestFixInstalled == true)
-        	MachinaCore.plugin.permission.playerRemove(player, "chestfix.bypass");
 
         if (event.isCancelled())
             return false;
+        
         return true;
     }
 
