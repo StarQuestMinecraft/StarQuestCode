@@ -1,0 +1,3 @@
+name: SQShipReplicator
+main: com.dibujaron.shipreplicator.SQShipReplicator
+version: 1.2.0
