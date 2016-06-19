@@ -8,11 +8,11 @@ import java.util.Map;
 import java.util.logging.Logger;
 
 import net.md_5.bungee.api.ChatColor;
-import net.minecraft.server.v1_9_R1.NBTTagCompound;
-import net.minecraft.server.v1_9_R1.NBTTagFloat;
-import net.minecraft.server.v1_9_R1.NBTTagInt;
-import net.minecraft.server.v1_9_R1.NBTTagList;
-import net.minecraft.server.v1_9_R1.NBTTagString;
+import net.minecraft.server.v1_10_R1.NBTTagCompound;
+import net.minecraft.server.v1_10_R1.NBTTagFloat;
+import net.minecraft.server.v1_10_R1.NBTTagInt;
+import net.minecraft.server.v1_10_R1.NBTTagList;
+import net.minecraft.server.v1_10_R1.NBTTagString;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -21,7 +21,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.craftbukkit.v1_9_R1.inventory.CraftItemStack;
+import org.bukkit.craftbukkit.v1_10_R1.inventory.CraftItemStack;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;

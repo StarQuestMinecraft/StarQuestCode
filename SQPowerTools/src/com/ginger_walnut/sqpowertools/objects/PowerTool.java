@@ -6,18 +6,18 @@ import java.util.List;
 import java.util.Map;
 
 import org.bukkit.ChatColor;
-import org.bukkit.craftbukkit.v1_9_R1.inventory.CraftItemStack;
+import org.bukkit.craftbukkit.v1_10_R1.inventory.CraftItemStack;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import com.ginger_walnut.sqpowertools.SQPowerTools;
 import com.ginger_walnut.sqpowertools.utils.AttributeUtils;
 
-import net.minecraft.server.v1_9_R1.NBTTagCompound;
-import net.minecraft.server.v1_9_R1.NBTTagFloat;
-import net.minecraft.server.v1_9_R1.NBTTagInt;
-import net.minecraft.server.v1_9_R1.NBTTagList;
-import net.minecraft.server.v1_9_R1.NBTTagString;
+import net.minecraft.server.v1_10_R1.NBTTagCompound;
+import net.minecraft.server.v1_10_R1.NBTTagFloat;
+import net.minecraft.server.v1_10_R1.NBTTagInt;
+import net.minecraft.server.v1_10_R1.NBTTagList;
+import net.minecraft.server.v1_10_R1.NBTTagString;
 
 public class PowerTool {
 
@@ -189,7 +189,7 @@ public class PowerTool {
 	
 	private void addAttributes(){
 		  
-		net.minecraft.server.v1_9_R1.ItemStack nmsStack = CraftItemStack.asNMSCopy(item);
+		net.minecraft.server.v1_10_R1.ItemStack nmsStack = CraftItemStack.asNMSCopy(item);
 	         
 		HashMap<String, Integer> attributeUUIDs = new HashMap<String, Integer>();
 		
