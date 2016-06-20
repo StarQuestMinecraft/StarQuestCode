@@ -133,7 +133,7 @@ public class SQShipReplicator extends JavaPlugin implements Listener{
 		}
 		//System.out.println("Unequal types! : " + scan.getType());
 		short durability = data;
-		if(removeItemsFromInventory(type, durability, chest.getInventory(), 1) < 1){
+		if(removeItemsFromInventory(type, durability, chest.getInventory(), 1, scan) < 1){
 			return;
 		}
 		print.setType(type);
@@ -144,19 +144,51 @@ public class SQShipReplicator extends JavaPlugin implements Listener{
 		return BlockUtils.rotate(BlockUtils.rotate(data, type, Rotation.CLOCKWISE), type, Rotation.CLOCKWISE);
 	}
 	
-	public static int removeItemsFromInventory(Material type, short durability, Inventory inv, int amount){
+	public static int removeItemsFromInventory(Material type, short durability, Inventory inv, int amount, Block block)
+	{
 		int amountRemoved = 0;
-		for(int i = 0; i < inv.getSize(); i++){
+		boolean isDoubleSlab = false;
+		boolean isDoublePurpurSlab = false;
+		boolean isDoubleWoodSlab = false;
+		boolean isDoubleWoodSlab2 = false;
+		if ((type.equals(Material.DOUBLE_STEP)) && (block.getType().equals(type)))
+		{
+			isDoubleSlab = true;
+			amount *= 2;
+		}
+		else if ((type.equals(Material.PURPUR_DOUBLE_SLAB)) && (block.getType().equals(type)))
+		{
+			isDoublePurpurSlab = true;
+			amount *= 2;
+		}
+		else if ((type.equals(Material.WOOD_DOUBLE_STEP)) && (block.getType().equals(type)))
+		{
+			isDoubleWoodSlab = true;
+			amount *= 2;
+		}
+		else if ((type.equals(Material.DOUBLE_STONE_SLAB2)) && (block.getType().equals(type)))
+		{
+			isDoubleWoodSlab2 = true;
+			amount *= 2;
+		}
+		for (int i = 0; i < inv.getSize(); i++)
+		{
 			ItemStack item = inv.getItem(i);
-			if(item != null && item.getType() == type){
-				if(item.getDurability() == durability || isIgnorableDataValue(type)){
-					int amtLeft = amount-amountRemoved;
-					if(item.getAmount() < amtLeft){
-						//add to the amount removed and delete the item
+			if ((item != null) && ((item.getType() == type) || 
+					((isDoubleSlab) && (item.getType() == Material.STEP)) || 
+					((isDoublePurpurSlab) && (item.getType() == Material.PURPUR_SLAB)) || 
+					((isDoubleWoodSlab) && (item.getType() == Material.WOOD_STEP)) || (
+							(isDoubleWoodSlab2) && (item.getType() == Material.STONE_SLAB2)))) {
+				if ((item.getDurability() == durability) || (isIgnorableDataValue(type)))
+				{
+					int amtLeft = amount - amountRemoved;
+					if (item.getAmount() < amtLeft)
+					{
 						amountRemoved += item.getAmount();
 						inv.setItem(i, new ItemStack(Material.AIR, 1));
-					} else {
-						//everything is removed, subtract the last few from this stack and go
+					}
+					else
+					{
 						item.setAmount(item.getAmount() - amtLeft);
 						inv.setItem(i, item);
 						amountRemoved = amount;
