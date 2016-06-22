@@ -1,0 +1,10 @@
+name: SQGlobalInfo
+description: Easier retrieval of player information globally on a Bungeecord server
+depend: [Movecraft]
+main: net.homeip.hall.sqglobalinfo.SQGlobalInfo
+version: 1.0
+commands:
+    gseen:
+        description: Shows information about a player, cross-world
+    showalts:
+        description: Shows potential alts of a player based on a playername or an ip
