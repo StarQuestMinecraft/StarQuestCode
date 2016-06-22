@@ -9,6 +9,9 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import net.homeip.hall.sqglobalinfo.database.BedspawnConnectionProvider;
 
@@ -16,15 +19,15 @@ public class SQLDatabase {
 	
 	private ConnectionProvider con;
 	
-	static final String CREATE_TABLE_SQL = "CREATE TABLE IF NOT EXISTS global_player_info (name varchar(16), uuid varchar(36), ip varchar(40), time DATETIME, online tinyint, world varchar(16), location varchar(32), primary key (name))";
+	static final String CREATE_TABLE_SQL = "CREATE TABLE IF NOT EXISTS global_player_info (name varchar(16), uuid varchar(36), ip varchar(40), time DATETIME, online tinyint, world varchar(16), location varchar(32), PRIMARY KEY (name))";
 	
 	static final String UPSERT_SQL = "INSERT INTO global_player_info (name, uuid, ip, time, online, world, location) VALUES (?, ?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE uuid = VALUES(uuid), ip = VALUES(ip), time = VALUES(time), online = VALUES(online), world = VALUES(world), location = VALUES(location)";
 	
 	static final String READ_ALL_SQL = "SELECT * FROM global_player_info WHERE `name` = ?";
 	
 	static final String READ_NAMES_SQL = "SELECT `name`, `time` FROM global_player_info WHERE `uuid` = (SELECT `uuid` FROM global_player_info WHERE `name` = ?) ORDER BY time DESC";
-	static final String READ_ALTS_GIVEN_IP_SQL = "SELECT `name` FROM global_player_info WHERE `ip` = ?";
-	static final String READ_ALTS_GIVEN_NAME_SQL = "SELECT `name` FROM global_player_info WHERE `ip` = (SELECT `ip` FROM global_player_info WHERE `name` = ?)";
+	
+	static final String READ_ALTS_GIVEN_NAME_SQL = "SELECT `name` FROM (SELECT `name`, `uuid` FROM (SELECT `name`, `time`, `uuid` FROM global_player_info WHERE `uuid` IN (SELECT DISTINCT `uuid`FROM global_player_info WHERE `ip` = (SELECT `ip` FROM global_player_info WHERE `name` = ?)) ORDER BY `time` DESC) AS names_by_time GROUP BY `uuid`) AS most_recent_names";
 	
 	
 	public SQLDatabase() {
@@ -72,8 +75,8 @@ public class SQLDatabase {
  	}
 
  	
- 	public ArrayList<String> getNames(String name, Connection connection) {
- 		ArrayList<String> names = new ArrayList<String>();
+ 	public List<String> getNames(String name, Connection connection) {
+ 		List<String> names = new ArrayList<String>();
  		try {
  			PreparedStatement s = connection.prepareStatement(READ_NAMES_SQL);
  			s.setString(1, name);
@@ -88,24 +91,9 @@ public class SQLDatabase {
  		}
  		return names;
  	}
- 	
- 	public ArrayList<String> getAltsFromIP(String ip, Connection connection) {
- 		ArrayList<String> names = new ArrayList<String>();
- 		try {
- 			PreparedStatement s = connection.prepareStatement(READ_ALTS_GIVEN_IP_SQL);
- 			s.setString(1, ip);
- 			ResultSet results = s.executeQuery();
- 			while(results.next()) {
- 				names.add(results.getString(1));
- 			}
- 		}
- 		catch(SQLException e) {
- 			e.printStackTrace();
- 		}
- 		return names;
- 	}
- 	public ArrayList<String> getAltsFromName(String name, Connection connection) {
- 		ArrayList<String> names = new ArrayList<String>();
+ 
+ 	public List<String> getAltsFromName(String name, Connection connection) {
+ 		List<String> names = new ArrayList<String>();
  		try {
  			PreparedStatement s = connection.prepareStatement(READ_ALTS_GIVEN_NAME_SQL);
  			s.setString(1, name);

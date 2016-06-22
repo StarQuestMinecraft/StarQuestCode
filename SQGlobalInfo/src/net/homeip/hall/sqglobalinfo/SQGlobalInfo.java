@@ -3,6 +3,7 @@ package net.homeip.hall.sqglobalinfo;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.sql.Connection;
 
 import org.bukkit.entity.Player;
@@ -103,7 +104,7 @@ public class SQGlobalInfo extends JavaPlugin implements Listener {
 						String name = args[0];
 						//Prevents SQL injection hack
 						if(!(containsIllegalCharacters(name))) {
-							ArrayList<String> names = getSQLDatabase().getNames(name, getConnection());
+							List<String> names = getSQLDatabase().getNames(name, getConnection());
 							if((names.size() > 0) && (!(names.get(0).equals(null)))) {
 								HashMap<String, Object> data = getSQLDatabase().getData(name, getConnection());
 								String uuid = (String) data.get("uuid");
@@ -162,28 +163,10 @@ public class SQGlobalInfo extends JavaPlugin implements Listener {
 					if(args.length > 1) {
 						//Prevents SQL injection hack
 						if(!(containsIllegalCharacters(args[1]))) {
-							ArrayList<String> names = null;
+							List<String> names = null;
 							String namesAsString = "";
-							//if player inputted an ip
-							if(args[0].equalsIgnoreCase("ip")) {
-								names = getSQLDatabase().getAltsFromIP(args[1], getConnection());
-								if(names.size() > 0) {
-									//Concatenates results (player names), separated by space and comma, into a usable String
-									for(int i = 0; i < names.size(); i++) {
-										namesAsString += names.get(i);
-										if(names.size() != i + 1) {
-											namesAsString += ", ";
-										}
-									}
-									sender.sendMessage(ChatColor.GOLD + "Players with IP of " + ChatColor.RED + args[1] + ChatColor.GOLD + ": \n" + namesAsString);
-								}
-								//If no players were found
-								else {
-									sender.sendMessage(ChatColor.DARK_RED + "No players with given  IP found.");
-								}
-							}
 							//if player inputted a name
-							else if(args[0].equalsIgnoreCase("name")) {
+							if(args[0].equalsIgnoreCase("name")) {
 								names = getSQLDatabase().getAltsFromName(args[1], getConnection());
 								if(names.size() > 0) {
 									//Concatenates results (player names), separated by space and comma, into a usable String
@@ -202,7 +185,7 @@ public class SQGlobalInfo extends JavaPlugin implements Listener {
 							}
 							//if player inputted neither an ip nor a name
 							else {
-								sender.sendMessage("Shows possible alts based on IP given a player's name or IP. Proper usage: /showalts <ip | name> <player's ip | player's name>");
+								sender.sendMessage("Shows possible alts based on IP given a player's name. Proper usage: /showalts <username>");
 							}
 						}
 						else {
@@ -210,7 +193,7 @@ public class SQGlobalInfo extends JavaPlugin implements Listener {
 						}
 					}
 					else {
-						sender.sendMessage("Shows possible alts based on IP given a player's name or IP. Proper usage: /showalts <ip | name> <player's ip | player's name>");
+						sender.sendMessage("Shows possible alts based on IP given a player's name. Proper usage: /showalts <username>");
 					}
 				}
 			}
@@ -229,14 +212,14 @@ public class SQGlobalInfo extends JavaPlugin implements Listener {
 		return instance;
 	}
 	
-	private SQLDatabase getSQLDatabase() {
+	public SQLDatabase getSQLDatabase() {
 		return database;
 	}
 	private void loadSQLDatabase() {
 		database = new SQLDatabase();
 	}
 	//returns sqlconnect session
-	private Connection getConnection() {
+	public Connection getConnection() {
 		return getSQLDatabase().getConnection();
 	}
 	//returns true if the player is in the do not track list (managers/upper staff)
