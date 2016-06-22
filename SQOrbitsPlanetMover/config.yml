@@ -1,0 +1,12 @@
+#Database
+Host_Name: play.starquestminecraft.com
+Database_Name: minecraft
+Port: 3306
+Username: minecraft
+Password: lolnope
+TableName: SQORBITS_PLANETS_TEMPTEST
+
+#Used to identify which planets to paste in this server
+SystemName: ReplaceMe
+#Used to identify which world to paste the planets in
+WorldName: ReplaceMe
