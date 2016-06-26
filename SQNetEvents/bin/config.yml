@@ -1,0 +1,12 @@
+# The address to listen on. ServerName@address:port
+ListenAt: Rakuria@127.0.0.1:12345
+# A list of servers that events will be passed on to. ServerName@address:port
+SendTo:
+    - Trinitos_Alpha@127.0.0.1:12346
+#The server's assigned ID. Should match the last 1 or 2 digits of the ListenAt port
+ServerID: 45
+#List as "true" or "false", indicates whether this is a hub or just a spoke
+IsHub: false
+#Address of the hub
+Hub:
+   - Trinitos_Alpha@127.0.0.1:12346
