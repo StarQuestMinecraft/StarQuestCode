@@ -89,10 +89,10 @@ public class SQNetEvents extends JavaPlugin {
 		}
 	}
 	//sends packet to a specific client server, or handles the packet if it's local
-	public void send(Packet packet, String serverName) {
+	public void send(Packet packet, String destination) {
 		//if local
 		System.out.println("Packet is null: " + packet == null);
-		if(serverName.equals(getServerName())) {
+		if(destination.equals(getServerName())) {
 			try {
 				packet.handle();
 			} catch (IOException e) {
@@ -101,10 +101,10 @@ public class SQNetEvents extends JavaPlugin {
 			return;
 		}
 		else if(isHub()) {
-			System.out.println("Server name: " + serverName);
-			System.out.println("Server name again: " + getServerName());
-			System.out.println("getSenders().get(serverName): " + getClients().get(serverName));
-			getClients().get(serverName).send(packet);
+			System.out.println("Destination name: " + destination);
+			System.out.println("Server name: " + getServerName());
+			System.out.println("getClients().get(destination): " + getClients().get(destination));
+			getClients().get(destination).send(packet);
 		}
 		else {
 			getHub().send(packet);
