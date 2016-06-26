@@ -7,7 +7,6 @@ import net.countercraft.movecraft.utils.MathUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
 import org.bukkit.block.Sign;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -18,6 +17,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 public class DockingTubeCore extends JavaPlugin implements Listener{
 	public void onEnable(){
 		getServer().getPluginManager().registerEvents(this, this);
+		getServer().getPluginManager().registerEvents(new VerticalLadderBlockUpdate(), this);
 	}
 	@EventHandler
 	public void onPlayerInteract(PlayerInteractEvent event) {

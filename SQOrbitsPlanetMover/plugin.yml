@@ -1,0 +1,13 @@
+name: ${project.name}
+main: ${project.groupId}.${project.name}
+version: ${project.version}
+author: lawrencethefrog
+
+softdepend: [WorldGuard,WorldEdit,dynmap]
+
+commands:
+  whereis:
+    description: Shows the coordinates of a planet (or all planets in system if unspecified)
+    usage: /whereis <planet>
+    permission: sqorbits.whereis
+    permission-message: You don't have permission to view the coordiantes of planets.

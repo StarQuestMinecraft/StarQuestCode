@@ -1,0 +1,10 @@
+#Database
+Host_Name: play.starquestminecraft.com
+Database_Name: minecraft
+Port: 3306
+Username: minecraft
+Password: lolnope
+TableName: SQORBITS_PLANETS_TEMPTEST
+
+#Relative from data folder
+MovecraftConfigPath: '..\Movecraft\config.yml'

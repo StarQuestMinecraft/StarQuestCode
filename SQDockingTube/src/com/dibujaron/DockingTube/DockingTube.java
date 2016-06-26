@@ -20,7 +20,16 @@ public class DockingTube{
 	BlockFace doorside;
 
 
-	DockingTube(Sign s, Player p){
+	DockingTube(Sign s, Player p)
+	{
+		org.bukkit.material.Sign signMaterial = (org.bukkit.material.Sign) s.getBlock().getState().getData();
+		
+		if(signMaterial.isWallSign() && s.getBlock().getRelative(signMaterial.getAttachedFace()).getType() == Material.DROPPER)
+		{
+			new VerticalDockingTube(s, p);
+			return;
+		}
+		
 		forward = DirectionUtils.getGateDirection(s.getBlock());
 		right = DirectionUtils.getBlockFaceRight(forward);
 		left = DirectionUtils.getBlockFaceLeft(forward);
@@ -66,14 +75,19 @@ public class DockingTube{
 				}
 			}
 			
+			Material maj = VerticalDockingTube.getMajorityMaterialType(ldfb);
 			Material type = Material.GLASS;
 			byte data = 0;
-			
-			if(p.hasPermission("dockingtube.color")){
-				System.out.println("has permission!");
-				type = Material.STAINED_GLASS;
-				data = getMajorityType(ldfb);
+			if(maj == Material.WOOL)
+			{
+				// Colored tube perk
+				if(p.hasPermission("dockingtube.color"))
+				{
+					type = Material.STAINED_GLASS;
+					data = getMajorityType(ldfb);
+				}
 			}
+			
 			//load the toggle blocks
 			boolean endFound = false;
 			int distance = 0;
@@ -81,7 +95,8 @@ public class DockingTube{
 			ArrayList<Block> farWoolBlocks = new ArrayList<Block>();
 			while (!endFound && distance <= 20){
 				int buttonsfound = 0;
-				for (Block b: loadFrame(mainblock)){
+				for (Block b: loadFrame(mainblock))
+				{
 					if (b.getType() == Material.STONE_BUTTON){
 							if (distance == 0){
 								tb.add(b);
@@ -92,8 +107,8 @@ public class DockingTube{
 					} else if (b.getType() == Material.AIR){
 						tb.add(b);
 					} else {
-						p.sendMessage("docking tube obstructed");
-						p.sendMessage(b.getLocation() + " " + b.getType());
+						p.sendMessage("Docking tube obstructed");
+						p.sendMessage(b.getLocation().getBlockX() + ", " + b.getLocation().getBlockY() + ", " + b.getLocation().getBlockZ() + ", " + b.getType());
 						endFound = true;
 						return;
 					}
@@ -114,27 +129,24 @@ public class DockingTube{
 			}
 			s.setLine(1, "{" + ChatColor.GREEN + "EXTENDED" + ChatColor.BLACK + "}");
 			s.update();
-			mainblock.getWorld().playSound(mainblock.getLocation(), Sound.PISTON_EXTEND, 2.0F, 1.0F);
+			mainblock.getWorld().playSound(mainblock.getLocation(), Sound.BLOCK_PISTON_EXTEND, 2.0F, 1.0F);
 		} else if (s.getLine(1).equals("{" + ChatColor.GREEN + "EXTENDED" + ChatColor.BLACK + "}")){
 			boolean endFound = false;
 			int distance = 0;
 			Block mainblock = baseblock.getRelative(forward);
-			ArrayList<Block> farWoolBlocks = new ArrayList<Block>();
+			ArrayList<Block> farEndBlocks = new ArrayList<Block>();
 			while (!endFound && distance <= 21){
-				int woolfound = 0;
+				int blockfound = 0;
 				for (Block b: loadFrame(mainblock)){
 					if (b.getType() == Material.GLASS || b.getType() == Material.STAINED_GLASS){
 						tb.add(b);
-					} else if(b.getType() == Material.WOOL){
-						woolfound++;
-						farWoolBlocks.add(b);
-					} else {
-						p.sendMessage("Docking tube doesn't end in wool- error");
-						return;
+					} else if(b.getType().isSolid()){
+						blockfound++;
+						farEndBlocks.add(b);
 					}
 				}
 				mainblock = mainblock.getRelative(forward);
-				if (woolfound >= 6) endFound = true;
+				if (blockfound >= 6) endFound = true;
 				if (distance == 21){
 					p.sendMessage("ERROR: far end not found.");
 					return;
@@ -148,7 +160,7 @@ public class DockingTube{
 			for (Block b: ldfb){
 				b.getRelative(forward).setTypeIdAndData(77, DirectionUtils.getButtonDataAttatchThisBlockFace(forward), true);
 			}
-			for (Block b: farWoolBlocks){
+			for (Block b: farEndBlocks){
 				b.getRelative(back).setTypeIdAndData(77, DirectionUtils.getButtonDataAttatchThisBlockFace(back), true);
 				Block sign = b.getRelative(forward);
 				if(sign.getType() == Material.WALL_SIGN){
@@ -158,7 +170,7 @@ public class DockingTube{
 			}
 			s.setLine(1, "{" + ChatColor.RED + "RETRACTED" + ChatColor.BLACK + "}");
 			s.update();
-			mainblock.getWorld().playSound(mainblock.getLocation(), Sound.PISTON_RETRACT, 2.0F, 1.0F);
+			mainblock.getWorld().playSound(mainblock.getLocation(), Sound.BLOCK_PISTON_CONTRACT, 2.0F, 1.0F);
 		}
 	}
 	private byte getMajorityType(ArrayList<Block> ldfb) {
@@ -179,6 +191,7 @@ public class DockingTube{
 		}
 		return (byte) indexMax;
 	}
+	
 	ArrayList<Block> loadFrame(Block baseblock){
 		ArrayList<Block> ldfb = new ArrayList<Block>();
 		ldfb.add(baseblock);
