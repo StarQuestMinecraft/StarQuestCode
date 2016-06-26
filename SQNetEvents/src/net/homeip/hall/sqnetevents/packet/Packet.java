@@ -6,6 +6,7 @@ import java.nio.ByteBuffer;
 
 
 public interface Packet extends Serializable {
+	public String getPacketDestination();
     public void handle() throws IOException;
     public ByteBuffer write() throws IOException;
 }

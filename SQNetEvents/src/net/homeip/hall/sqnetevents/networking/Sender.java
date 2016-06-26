@@ -32,6 +32,7 @@ public class Sender implements Closeable {
 	
 	public Sender(String remoteAddress) {
 		String[] address = remoteAddress.split(":");
+		System.out.println("address[1]: " + address[1]);
 		setSendAddress(new InetSocketAddress(address[0], Integer.parseInt(address[1])));
 		System.out.println("[NetEvents] Creating sender. SendTo address: " + getSendAddress());
 		// establishes connection with remote address
@@ -48,7 +49,6 @@ public class Sender implements Closeable {
 				// TODO: Add breakdown and EOF implementation
 				ByteBuffer byteBuffer = packet.write();
 				System.out.println("[NetEvents] Sending packet with length of " + byteBuffer.array().length);
-				System.out.println("[NetEvents] Packet: " + new String(byteBuffer.array()));
 				System.out.println("[NetEvents] Done");
 				int bytesWritten = getClientChannel().write(byteBuffer);
 				System.out.println("[NetEvents] Bytes written: " + bytesWritten);
@@ -99,7 +99,7 @@ public class Sender implements Closeable {
 						e.printStackTrace();
 					}
 				} catch (IOException e) {
-					//System.out.println("[NetEvents] Failed to connect. Reattempting...");
+					System.out.println("[NetEvents] Failed to connect. Reattempting...");
 					try {
 						sleep(10000L);
 					} catch (InterruptedException ie) {

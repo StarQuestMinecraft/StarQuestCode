@@ -7,3 +7,6 @@ SendTo:
 ServerID: 45
 #List as "true" or "false", indicates whether this is a hub or just a spoke
 IsHub: false
+#Address of the hub
+Hub:
+   - Trinitos_Alpha@127.0.0.1:12346
