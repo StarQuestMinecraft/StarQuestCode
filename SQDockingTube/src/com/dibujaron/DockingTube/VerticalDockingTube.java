@@ -148,7 +148,7 @@ public class VerticalDockingTube
 			for(int i = 0; i <= distance; i++)
 			{
 				Block ladder = opening.getRelative(0, -(i), 0);
-				ladder.setType(Material.LADDER);
+				ladder.setType(Material.LADDER, false);
 				ladder.setData(signDirection, false);
 				removeItemsFromInventory(Material.LADDER, inventory.getInventory(), 1);
 			}

@@ -17,7 +17,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 public class DockingTubeCore extends JavaPlugin implements Listener{
 	public void onEnable(){
 		getServer().getPluginManager().registerEvents(this, this);
-		getServer().getPluginManager().registerEvents(new VerticalLadderBlockUpdate(), this);
 	}
 	@EventHandler
 	public void onPlayerInteract(PlayerInteractEvent event) {
