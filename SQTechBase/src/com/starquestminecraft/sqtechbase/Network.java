@@ -15,8 +15,8 @@ public class Network {
 	
 	List<Block> attemptedBlocks = new ArrayList<Block>();
 	List<Block> attemptableBlocksFrom = new ArrayList<Block>();
-	List<Block> detectedGUIBlocks = new ArrayList<Block>();
-	List<Block> detectedWireBlocks = new ArrayList<Block>();
+	public List<Block> detectedGUIBlocks = new ArrayList<Block>();
+	public List<Block> detectedWireBlocks = new ArrayList<Block>();
 	
 	public Network(Block startingBlock) {
 
@@ -187,9 +187,7 @@ public class Network {
 					for (Machine machine : SQTechBase.machines) {
 						
 						if (machine.guiBlock.equals(guiBlock)) {
-							
-							System.out.print("test");
-							
+														
 							machine.guiBlock = selfGUIBlock;
 							
 						}

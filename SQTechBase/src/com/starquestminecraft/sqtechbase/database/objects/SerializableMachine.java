@@ -1,6 +1,9 @@
 package com.starquestminecraft.sqtechbase.database.objects;
 
+import java.io.ByteArrayOutputStream;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.util.HashMap;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -11,7 +14,7 @@ import com.starquestminecraft.sqtechbase.MachineType;
 import com.starquestminecraft.sqtechbase.Network;
 import com.starquestminecraft.sqtechbase.SQTechBase;
 
-public class SerializableMachine implements Serializable{
+public class SerializableMachine implements Serializable {
 
 	private static final long serialVersionUID = 7348147532012964743L;
 	
@@ -26,6 +29,8 @@ public class SerializableMachine implements Serializable{
 	boolean exportsEnergy;
 	boolean importsEnergy;
 	
+	HashMap<String, Object> data;
+	
 	public SerializableMachine(Machine machine) {
 		
 		machineType = machine.getMachineType().name;
@@ -38,6 +43,22 @@ public class SerializableMachine implements Serializable{
 		
 		exportsEnergy = machine.exportsEnergy;
 		importsEnergy = machine.importsEnergy;
+		
+		for (String key: machine.data.keySet()) {
+			
+			try {
+				
+				new ObjectOutputStream(new ByteArrayOutputStream()).writeObject(machine.data.get(key));
+				
+				data.put(key, machine.data.get(key));
+				
+			} catch (Exception exception) {
+				
+				System.out.print("SQTechBase: machine with type " + machineType + " was unable to save data with key " + key);
+				
+			}
+			
+		}
 		
 	}
 	
@@ -94,6 +115,8 @@ public class SerializableMachine implements Serializable{
 			
 			machine.exportsEnergy = exportsEnergy;
 			machine.importsEnergy = importsEnergy;
+			
+			machine.data.putAll(data);
 			
 			return machine;
 			

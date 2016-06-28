@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.logging.Logger;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginDescriptionFile;
@@ -17,6 +18,7 @@ import com.starquestminecraft.sqtechbase.database.DatabaseInterface;
 import com.starquestminecraft.sqtechbase.database.SQLDatabase;
 import com.starquestminecraft.sqtechbase.gui.GUI;
 import com.starquestminecraft.sqtechbase.tasks.EnergyTask;
+import com.starquestminecraft.sqtechbase.tasks.GUIBlockMoveTask;
 import com.starquestminecraft.sqtechbase.tasks.ItemMovingTask;
 import com.starquestminecraft.sqtechbase.tasks.StructureTask;
 
@@ -33,6 +35,9 @@ public class SQTechBase extends JavaPlugin {
     public static List<Machine> machines = new ArrayList<Machine>();
 	
 	static FileConfiguration config = null;
+	
+	public static List<Location> oldLocationQueue = new ArrayList<Location>();
+	public static List<Location> newLocationQueue = new ArrayList<Location>();
 	
 	boolean enabled = false;
 	
@@ -70,6 +75,7 @@ public class SQTechBase extends JavaPlugin {
 		(new ItemMovingTask()).run();
 		(new StructureTask()).run();
 		(new EnergyTask()).run();
+		(new GUIBlockMoveTask()).run();
 		
 		new SQLDatabase();
 		
@@ -97,6 +103,13 @@ public class SQTechBase extends JavaPlugin {
 	public static void addMachineType(MachineType machineType) {
 		
 		machineTypes.add(machineType);
+		
+	}
+	
+	public static void changeGUIBlockLocation(Location oldLocation, Location newLocation) {
+		
+		oldLocationQueue.add(oldLocation);
+		newLocationQueue.add(newLocation);
 		
 	}
 

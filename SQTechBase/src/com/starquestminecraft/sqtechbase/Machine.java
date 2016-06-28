@@ -1,5 +1,7 @@
 package com.starquestminecraft.sqtechbase;
 
+import java.util.HashMap;
+
 import com.starquestminecraft.sqtechbase.gui.GUI;
 
 public class Machine {
@@ -14,6 +16,8 @@ public class Machine {
 	
 	public boolean exportsEnergy;
 	public boolean importsEnergy;
+	
+	public HashMap<String, Object> data;
 	
 	public Machine(int energy, GUIBlock guiBlock, MachineType machineType) {
 		

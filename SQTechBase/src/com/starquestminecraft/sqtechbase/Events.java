@@ -213,8 +213,6 @@ public class Events implements Listener {
 		
 		if (SQTechBase.currentGui.containsKey(event.getWhoClicked())) {
 			
-			event.setCancelled(true);
-			
 			SQTechBase.currentGui.get(event.getWhoClicked()).click(event);
 			
 		}
