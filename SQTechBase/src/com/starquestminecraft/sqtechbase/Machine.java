@@ -19,6 +19,8 @@ public class Machine {
 	
 	public HashMap<String, Object> data;
 	
+	public boolean enabled;
+	
 	public Machine(int energy, GUIBlock guiBlock, MachineType machineType) {
 		
 		this.energy = energy;
@@ -67,4 +69,12 @@ public class Machine {
 		
 	}
 	
+	
+	public void changeMachineType(MachineType newMachineType) {
+		
+		machineType = newMachineType;
+		
+		gui = machineType.getGUI();
+		
+	}
 }

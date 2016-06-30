@@ -3,8 +3,10 @@ package com.starquestminecraft.sqtechbase;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.scheduler.BukkitScheduler;
 
 import com.starquestminecraft.sqtechbase.gui.GUIBlockGUI;
 
@@ -19,7 +21,7 @@ public class Network {
 	public List<Block> detectedWireBlocks = new ArrayList<Block>();
 	
 	public Network(Block startingBlock) {
-
+		
 		if (startingBlock.getType().equals(Material.LAPIS_BLOCK) || startingBlock.getType().equals(Material.STAINED_GLASS) || startingBlock.getType().equals(Material.GLASS)) {
 			
 			attemptedBlocks.clear();
@@ -104,7 +106,7 @@ public class Network {
 				
 				for (Network network : networks) {
 					
-					for (Block guiBlock : network.detectedGUIBlocks) {
+					for (GUIBlock guiBlock : network.GUIBlocks) {
 						
 						if (guiBlock.getLocation().equals(block.getLocation())) {
 							
@@ -171,10 +173,21 @@ public class Network {
 		
 	}
 	
-	public void merge(Network network) {
+	public void merge(final Network network) {
 			
-		SQTechBase.networks.remove(network);
+		BukkitScheduler scheduler = Bukkit.getScheduler();
+		scheduler.scheduleSyncDelayedTask(SQTechBase.getPluginMain(), new Runnable() {
+			
+			public void run() {
+			
+				SQTechBase.networks.remove(network);
+			
+			}
+			
+		}, 1);
 		
+
+
 		for (GUIBlock guiBlock : network.GUIBlocks) {
 			
 			for (GUIBlock selfGUIBlock : GUIBlocks) {

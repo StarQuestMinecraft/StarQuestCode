@@ -21,7 +21,7 @@ public class DatabaseInterface {
 				
 				try {
 					
-					SQLDatabase.writeGUIBlock(SQLDatabase.con.getConnection(), guiBlock);
+					SQLDatabase.writeGUIBlock(SQLDatabase.con.getConnection(), SQTechBase.config.getString("server name"), guiBlock);
 					
 				} catch (Exception e) {
 
@@ -37,7 +37,7 @@ public class DatabaseInterface {
 			
 			try {
 				
-				SQLDatabase.writeMachine(SQLDatabase.con.getConnection(), machine);
+				SQLDatabase.writeMachine(SQLDatabase.con.getConnection(), SQTechBase.config.getString("server name"), machine);
 				
 			} catch (Exception e) {
 
@@ -53,7 +53,7 @@ public class DatabaseInterface {
 		
 		try {
 			
-			ResultSet rs = SQLDatabase.readGUIBlocks(SQLDatabase.con.getConnection());
+			ResultSet rs = SQLDatabase.readGUIBlocks(SQLDatabase.con.getConnection(), SQTechBase.config.getString("server name"));
 			
 			while (rs.next()) {
 				
@@ -91,9 +91,9 @@ public class DatabaseInterface {
 
 			}
 			
-			SQLDatabase.clearGUIBlocks(SQLDatabase.con.getConnection());
+			SQLDatabase.clearGUIBlocks(SQLDatabase.con.getConnection(), SQTechBase.config.getString("server name"));
 			
-			rs = SQLDatabase.readMachines(SQLDatabase.con.getConnection());
+			rs = SQLDatabase.readMachines(SQLDatabase.con.getConnection(), SQTechBase.config.getString("server name"));
 			
 			while (rs.next()) {
 				
@@ -120,7 +120,7 @@ public class DatabaseInterface {
 
 			}
 			
-			SQLDatabase.clearMachines(SQLDatabase.con.getConnection());
+			SQLDatabase.clearMachines(SQLDatabase.con.getConnection(), SQTechBase.config.getString("server name"));
 			
 		} catch (Exception e) {
 

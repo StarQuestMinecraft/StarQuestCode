@@ -7,6 +7,8 @@ public class MachineType {
 	int maxEnergy = 0;
 	public String name = "Machine Type";
 	
+	public boolean autodetect = true;
+	
 	public MachineType(int maxEnergy) {
 		
 		this.maxEnergy = maxEnergy;
@@ -15,7 +17,7 @@ public class MachineType {
 	
 	public boolean detectStructure(GUIBlock guiBlock) {
 		
-		return true;
+		return false;
 		
 	}
 	

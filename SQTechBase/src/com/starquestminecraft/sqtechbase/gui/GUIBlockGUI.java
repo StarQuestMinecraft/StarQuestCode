@@ -110,6 +110,8 @@ public class GUIBlockGUI extends GUI {
 		
 		if (event.getClickedInventory().getTitle().startsWith(ChatColor.BLUE + "SQTech")) {
 			
+			event.setCancelled(true);
+			
 			ItemStack clickedItem = event.getInventory().getItem(event.getSlot());
 			
 			boolean normalItem = true;
@@ -212,27 +214,11 @@ public class GUIBlockGUI extends GUI {
 					
 					if (event.getInventory().getItem(event.getSlot()) != null) {
 						
-						GUIBlock guiBlock = null;
-						
-						for (Network listNetwork : SQTechBase.networks) {
-							
-							for (GUIBlock networkGUIBlock : listNetwork.getGUIBlocks()) {
-								
-								if (networkGUIBlock.getGUI() == this) {
-									
-									guiBlock = networkGUIBlock;
-									
-								}
-								
-							}
-							
-						}
-						
 						Machine machine = null;
 						
 						for (Machine listMachine : SQTechBase.machines) {
 							
-							if (listMachine.getGUIBlock().equals(guiBlock)) {
+							if (listMachine.getGUIBlock().getGUI() == this) {
 								
 								machine = listMachine;
 								
@@ -241,7 +227,7 @@ public class GUIBlockGUI extends GUI {
 						}
 						
 						if (machine != null) {
-						
+							
 							machine.getGUI().open(owner);
 						
 						}
@@ -352,7 +338,7 @@ public class GUIBlockGUI extends GUI {
 					
 					if (event.getClickedInventory().getItem(event.getSlot()) == null) {
 						
-						if (event.getCursor() != null) {
+						if (!event.getCursor().getType().equals(Material.AIR)) {
 							
 							GUIBlock guiBlock = null;
 							
@@ -420,7 +406,7 @@ public class GUIBlockGUI extends GUI {
 					
 					if (event.getClickedInventory().getItem(event.getSlot()) == null) {
 						
-						if (event.getCursor() != null) {
+						if (!event.getCursor().getType().equals(Material.AIR)) {
 							
 							GUIBlock guiBlock = null;
 							
@@ -493,9 +479,9 @@ public class GUIBlockGUI extends GUI {
 			
 		} else {
 			
-			if (!event.getAction().equals(InventoryAction.MOVE_TO_OTHER_INVENTORY)) {
+			if (event.getAction().equals(InventoryAction.MOVE_TO_OTHER_INVENTORY)) {
 				
-				event.setCancelled(false);
+				event.setCancelled(true);
 				
 			}
 

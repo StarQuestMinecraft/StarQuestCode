@@ -31,6 +31,8 @@ public class SerializableMachine implements Serializable {
 	
 	HashMap<String, Object> data;
 	
+	boolean enabled;
+	
 	public SerializableMachine(Machine machine) {
 		
 		machineType = machine.getMachineType().name;
@@ -59,6 +61,8 @@ public class SerializableMachine implements Serializable {
 			}
 			
 		}
+		
+		enabled = machine.enabled;
 		
 	}
 	
@@ -117,6 +121,8 @@ public class SerializableMachine implements Serializable {
 			machine.importsEnergy = importsEnergy;
 			
 			machine.data.putAll(data);
+			
+			machine.enabled = enabled;
 			
 			return machine;
 			

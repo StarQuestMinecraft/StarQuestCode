@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.logging.Logger;
 
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginDescriptionFile;
@@ -18,7 +17,6 @@ import com.starquestminecraft.sqtechbase.database.DatabaseInterface;
 import com.starquestminecraft.sqtechbase.database.SQLDatabase;
 import com.starquestminecraft.sqtechbase.gui.GUI;
 import com.starquestminecraft.sqtechbase.tasks.EnergyTask;
-import com.starquestminecraft.sqtechbase.tasks.GUIBlockMoveTask;
 import com.starquestminecraft.sqtechbase.tasks.ItemMovingTask;
 import com.starquestminecraft.sqtechbase.tasks.StructureTask;
 
@@ -34,10 +32,9 @@ public class SQTechBase extends JavaPlugin {
     public static List<MachineType> machineTypes = new ArrayList<MachineType>();
     public static List<Machine> machines = new ArrayList<Machine>();
 	
-	static FileConfiguration config = null;
+	public static FileConfiguration config = null;
 	
-	public static List<Location> oldLocationQueue = new ArrayList<Location>();
-	public static List<Location> newLocationQueue = new ArrayList<Location>();
+	public static List<String> energyItemNames = new ArrayList<String>();
 	
 	boolean enabled = false;
 	
@@ -72,10 +69,15 @@ public class SQTechBase extends JavaPlugin {
 		
 		this.getServer().getPluginManager().registerEvents(new Events(), this);
 		
+		if (Bukkit.getPluginManager().isPluginEnabled("Movecraft")) {
+			
+			this.getServer().getPluginManager().registerEvents(new MovecraftEvents(), this);
+			
+		}
+
 		(new ItemMovingTask()).run();
 		(new StructureTask()).run();
 		(new EnergyTask()).run();
-		(new GUIBlockMoveTask()).run();
 		
 		new SQLDatabase();
 		
@@ -106,10 +108,9 @@ public class SQTechBase extends JavaPlugin {
 		
 	}
 	
-	public static void changeGUIBlockLocation(Location oldLocation, Location newLocation) {
+	public static void addEnergyItem(String name) {
 		
-		oldLocationQueue.add(oldLocation);
-		newLocationQueue.add(newLocation);
+		energyItemNames.add(name);
 		
 	}
 

@@ -41,14 +41,30 @@ public class GUIBlock {
 			
 			for (MachineType machineType : SQTechBase.machineTypes) {
 				
-				if (machineType.detectStructure(this)) {
+				if (machineType.autodetect) {
 					
-					Machine machine = new Machine(0, this, machineType);
-					
-					SQTechBase.machines.add(machine);
+					if (machineType.detectStructure(this)) {
+						
+						Machine machine = new Machine(0, this, machineType);
+						
+						SQTechBase.machines.add(machine);
+						
+					}
 					
 				}
 									
+			}
+			
+		} else {
+			
+			for (Machine machine : SQTechBase.machines) {
+				
+				if (machine.getGUIBlock().getLocation().equals(location)) {
+					
+					machine.enabled = true;
+					
+				}
+				
 			}
 			
 		}
@@ -87,9 +103,31 @@ public class GUIBlock {
 		
 	}
 	
-	public void setLocation(Location location) {
+	void setLocation(Location location) {
 		
 		this.location = location;
+		
+	}
+	
+	public void changeLocation(Location location) {
+		
+		Location oldLocation = this.location.clone();
+		
+		this.location = location;
+		
+		new Network(oldLocation.getBlock().getRelative(1, 0, 0));
+		new Network(oldLocation.getBlock().getRelative(-1, 0, 0));
+		new Network(oldLocation.getBlock().getRelative(0, 1, 0));
+		new Network(oldLocation.getBlock().getRelative(0, -1, 0));
+		new Network(oldLocation.getBlock().getRelative(0, 0, 1));
+		new Network(oldLocation.getBlock().getRelative(0, 0, -1));
+		
+		new Network(location.getBlock().getRelative(1, 0, 0));
+		new Network(location.getBlock().getRelative(-1, 0, 0));
+		new Network(location.getBlock().getRelative(0, 1, 0));
+		new Network(location.getBlock().getRelative(0, -1, 0));
+		new Network(location.getBlock().getRelative(0, 0, 1));
+		new Network(location.getBlock().getRelative(0, 0, -1));
 		
 	}
 	
