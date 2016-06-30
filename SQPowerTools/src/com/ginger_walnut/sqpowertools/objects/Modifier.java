@@ -9,13 +9,13 @@ import org.bukkit.enchantments.Enchantment;
 public class Modifier {
 
 	public String name;
-	public int data;
+	public int durability;
 	public Material material;
 	
 	public int number;
 	public int levels;
 	
-	public int energy;
+	public int energy = 0;
 	
 	public List<Attribute> attributes;
 	public List<Effect> effects;
@@ -23,6 +23,10 @@ public class Modifier {
 
 	public List<String> cannotCombines;
 	
+	public BlasterStats blasterStats;
 	
+	public Modifier() {
+		
+	}	
 	
 }

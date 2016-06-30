@@ -14,13 +14,26 @@ public class Attribute {
 	
 	public boolean equalsExceptAmount(Attribute attribute) {
 		
-		if (attribute.attribute.equals(attribute) && attribute.slot.equals(slot) && attribute.operation == operation && attribute.uuid == uuid) {
+		if (attribute.attribute.equals(this.attribute) && attribute.slot.equals(slot) && attribute.operation == operation && attribute.uuid == uuid) {
 			
 			return true;
 			
 		}
 		
 		return false;
+		
+	}
+	
+	public Attribute clone() {
+		
+		Attribute attribute = new Attribute();
+		attribute.attribute = this.attribute;
+		attribute.amount = amount;
+		attribute.slot = slot;
+		attribute.operation = operation;
+		attribute.uuid = uuid;
+		
+		return attribute;
 		
 	}
 	
