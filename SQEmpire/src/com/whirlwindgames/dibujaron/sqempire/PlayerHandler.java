@@ -9,6 +9,7 @@ import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -21,6 +22,9 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
+import com.gmail.nossr50.datatypes.skills.SkillType;
+import com.gmail.nossr50.datatypes.skills.XPGainReason;
+import com.gmail.nossr50.events.experience.McMMOPlayerXpGainEvent;
 import com.massivecraft.factions.Rel;
 import com.massivecraft.factions.event.EventFactionsChunkChangeType;
 import com.massivecraft.factions.event.EventFactionsChunksChange;
@@ -74,18 +78,18 @@ public class PlayerHandler implements Listener{
 			
 			for (CapturePoint capturePoint : territory.capturePoints) {
 				
-				if (!capturePoint.owner.getName().equals(empire.getName())) {
+				int xMultiplier = capturePoint.x / capturePoint.x;
+		        int zMultiplier = capturePoint.z / capturePoint.z;
 					
-					int xMultiplier = capturePoint.x / capturePoint.x;
-		        	int zMultiplier = capturePoint.z / capturePoint.z;
-					
-		        	if (event.getBlock().getLocation().equals(new Location(event.getPlayer().getWorld(), capturePoint.x * 16 + (xMultiplier * 7), capturePoint.y + 2, capturePoint.z * 16 + (zMultiplier * 7)))) {
+		        if (event.getBlock().getLocation().equals(new Location(event.getPlayer().getWorld(), capturePoint.x * 16 + (xMultiplier * 7), capturePoint.y + 2, capturePoint.z * 16 + (zMultiplier * 7)))) {
 		        		
-		        		event.setCancelled(true);
-		        		
-		        		capturePoint.destroyBanner(event.getPlayer());
-		        		return;
-		        		
+		        	if (event.getBlock().getType().equals(Material.BANNER) || event.getBlock().getType().equals(Material.STANDING_BANNER)) {
+		        			
+			        	event.setCancelled(true);
+			        		
+			        	capturePoint.destroyBanner(event.getPlayer());
+			        	return;
+		        			
 		        	}
 		        	
 				}
@@ -112,7 +116,7 @@ public class PlayerHandler implements Listener{
 				
 				for (Territory territory : SQEmpire.territories) {
 					
-					if (region.getId().equals(territory.name)) {
+					if (territory.name.equalsIgnoreCase(region.getId())) {
 						
 						Empire empire = EmpirePlayer.getOnlinePlayer(event.getPlayer()).getEmpire(); 
 						
@@ -188,7 +192,7 @@ public class PlayerHandler implements Listener{
 					
 					for (Territory territory : SQEmpire.territories) {
 						
-						if (region.getId().equals(territory.name)) {
+						if (territory.name.equalsIgnoreCase(region.getId())) {
 							
 							if (event.getSender() instanceof Player) {
 								
@@ -221,7 +225,7 @@ public class PlayerHandler implements Listener{
 		
 	}
 	
-	@EventHandler
+    @EventHandler
 	public void onFactionRankChange(EventFactionsRankChange event) {
 		
 		if (event.getNewRank().equals(Rel.LEADER)) {
@@ -231,6 +235,25 @@ public class PlayerHandler implements Listener{
 				event.setCancelled(true);
 				
 				event.getSender().sendMessage(ChatColor.RED + "That player cannot own a faction");
+				
+			}
+			
+		}
+		
+	}
+	
+	@EventHandler
+	public void onMCMMOPlayerXpGain(McMMOPlayerXpGainEvent event) {
+		
+		if (!event.getXpGainReason().equals(XPGainReason.COMMAND)) {
+			
+			if (event.getSkill().equals(SkillType.ALCHEMY) || event.getSkill().equals(SkillType.ARCHERY)) {
+				
+				if (EmpirePlayer.getOnlinePlayer(event.getPlayer()).getEmpire().equals(SQEmpire.dominantEmpire)) {
+					
+					event.setRawXpGained(event.getRawXpGained() * 1.5f);
+					
+				}
 				
 			}
 			

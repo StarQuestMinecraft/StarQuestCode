@@ -5,20 +5,12 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
-import org.bukkit.block.Block;
-import org.bukkit.block.Chest;
-import org.bukkit.block.Dropper;
-import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitScheduler;
 
 import com.starquestminecraft.sqtechbase.GUIBlock;
 import com.starquestminecraft.sqtechbase.Machine;
-import com.starquestminecraft.sqtechbase.MachineType;
 import com.starquestminecraft.sqtechbase.Network;
 import com.starquestminecraft.sqtechbase.SQTechBase;
-import com.starquestminecraft.sqtechbase.util.BlockUtils;
 
 public class EnergyTask extends Thread {
 

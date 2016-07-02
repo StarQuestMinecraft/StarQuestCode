@@ -13,7 +13,7 @@ import com.starquestminecraft.sqtechbase.gui.GUIBlockGUI;
 
 public class ObjectUtils {
 
-	public GUIBlock getGUIBlockFromGUI(GUIBlockGUI gui) {
+	public static GUIBlock getGUIBlockFromGUI(GUIBlockGUI gui) {
 		
 		for (Network network : SQTechBase.networks) {
 			
@@ -33,7 +33,7 @@ public class ObjectUtils {
 		
 	}
 	
-	public Machine getMachineFromMachineGUI(GUI gui) {
+	public static Machine getMachineFromMachineGUI(GUI gui) {
 		
 		for (Machine machine : SQTechBase.machines) {
 			
@@ -49,13 +49,13 @@ public class ObjectUtils {
 		
 	}
 	
-	public List<Machine> getAllMachinesOfType(MachineType type) {
+	public static List<Machine> getAllMachinesOfType(String name) {
 		
 		List<Machine> machines = new ArrayList<Machine>();
 		
 		for (Machine machine : SQTechBase.machines) {
 			
-			if (machine.getMachineType().name.equals(type.name)) {
+			if (machine.getMachineType().name.equals(name)) {
 				
 				machines.add(machine);
 				

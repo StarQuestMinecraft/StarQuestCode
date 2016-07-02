@@ -4,7 +4,7 @@ description: StarQuest Empires!
 author: dibujaron
 website: http://starquestminecraft.com
 main: com.whirlwindgames.dibujaron.sqempire.SQEmpire
-depend: [Movecraft, Vault, WorldGuard, Factions]
+depend: [Movecraft, Vault, WorldGuard]
 
 commands:
    empire:
@@ -16,6 +16,8 @@ commands:
    empirereset:
       description: reset a player's empire.
       usage: /empirereset <player>
+   setdominantempire:
+      description: used for interserver communication
 permissions:
    SQEmpire.manageControlPoints:
       description: permission node for managing control points

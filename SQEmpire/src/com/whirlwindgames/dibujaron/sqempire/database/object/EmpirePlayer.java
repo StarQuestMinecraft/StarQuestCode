@@ -36,6 +36,14 @@ public class EmpirePlayer {
 		return ep;
 	}
 	
+	public static EmpirePlayer getFromUUID(UUID uuid){
+		EmpirePlayer ep = cache.get(uuid);
+		if(ep == null){
+			throw new NullPointerException("Requested EmpirePlayer but none exists!");
+		}
+		return ep;
+	}
+	
 	public void setEmpire(Empire e){
 		empire = e.getID();
 		publishData();
@@ -64,20 +72,20 @@ public class EmpirePlayer {
 									player.sendMessage("[EmpireBuilder] you've been assigned empire " + Empire.fromID(p.empire).getName() + "!");
 									SQEmpire.economy.depositPlayer(player, 10000);
 									if(p.empire == Empire.ARATOR.getID()){
-										SQEmpire.permission.playerAddGroup(player,"Arator0");
+										Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "pp user " + player.getName() + " addgroup Arator0");
 										BungeePlayerHandler.sendPlayer(player, "AratorSystem", "AratorSystem", 2598, 100, 1500);
 										Bukkit.dispatchCommand(Bukkit.getConsoleSender(), 
 												"eb janesudo Aratorians, please welcome your newest member " + player.getName() + "!");
 									} else if(p.empire == Empire.REQUIEM.getID()){
-										SQEmpire.permission.playerAddGroup(player,"Requiem0");
+										Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "pp user " + player.getName() + " addgroup Requiem0");
 										Bukkit.dispatchCommand(Bukkit.getConsoleSender(), 
 												"eb janesudo Requiem, please welcome your newest member " + player.getName() + "!");
 									} else if(p.empire == Empire.YAVARI.getID()){
-										SQEmpire.permission.playerAddGroup(player,"Yavari0");
+										Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "pp user " + player.getName() + " addgroup Yavari0");
 										Bukkit.dispatchCommand(Bukkit.getConsoleSender(), 
 												"eb janesudo Yavari, please welcome your newest member " + player.getName() + "!");
 									}
-									Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "bungeeperms user " + player.getUniqueId() + " removegroup Guest");
+									Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "pp user " + player.getUniqueId() + " removegroup Guest");
 									Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "playersendempire " + player.getName());
 								}
 							}, 20L);
@@ -187,5 +195,11 @@ public class EmpirePlayer {
 			ps.setDuplicate(i+9,lastSeenTimes[i]);
 		}
 		ps.executeAndClose();
+	}
+	
+	public UUID getUUID() {
+		
+		return id;
+		
 	}
 }
