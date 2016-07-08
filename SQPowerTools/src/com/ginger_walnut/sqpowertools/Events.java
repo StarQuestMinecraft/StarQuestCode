@@ -521,6 +521,8 @@ public class Events implements Listener {
 						
 						if (inventory.getType().equals(InventoryType.ANVIL) || inventory.getType().equals(InventoryType.ENCHANTING)) {
 							
+							player.sendMessage(ChatColor.RED + "You cannot put a power tool into this inventory");
+							
 							event.setCancelled(true);
 							
 						}
@@ -1002,6 +1004,12 @@ public class Events implements Listener {
 						} else {
 							
 							event.setCancelled(true);
+						
+							if (event.getAction().equals(InventoryAction.MOVE_TO_OTHER_INVENTORY)) {
+								
+								event.setCancelled(false);
+								
+							}
 							
 							player.sendMessage(ChatColor.RED + "You cannot put a power tool into this inventory");
 							

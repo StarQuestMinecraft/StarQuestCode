@@ -589,6 +589,16 @@ public class ToolUseEvents implements Listener {
 									
 									player.sendMessage(ChatColor.RED + "Your Power Tool is out of energy");
 									
+									PowerTool powerTool = new PowerTool(SQPowerTools.getType(armor));
+									powerTool.setEnergy(0);
+									powerTool.setModifiers(SQPowerTools.getModifiers(armor));
+									
+									powerTool.setAttributes(new ArrayList<Attribute>());
+									armor = powerTool.getItem();
+									
+									armorContents[i] = armor;
+									player.getInventory().setArmorContents(armorContents);		
+									
 								} else {
 									
 									List<PotionEffect> selfEffects = new ArrayList<PotionEffect>();
@@ -735,13 +745,7 @@ public class ToolUseEvents implements Listener {
 							
 							int energy = SQPowerTools.getEnergy(handItem);
 							
-							if (energy == 0) {
-								
-								event.setCancelled(true);
-								
-								player.sendMessage(ChatColor.RED + "Your Power Tool is out of energy");
-								
-							} else {
+							if (energy > 0) {
 								
 								List<PotionEffect> selfEffects = new ArrayList<PotionEffect>();
 								List<PotionEffect> otherEffects = new ArrayList<PotionEffect>();

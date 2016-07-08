@@ -1,0 +1,4 @@
+name: ExplosionFix
+version: 1.0
+description: Explosion Fix
+main: me.ginger_walnut.explosions.Explosions
