@@ -29,7 +29,7 @@ public class SerializableMachine implements Serializable {
 	boolean exportsEnergy;
 	boolean importsEnergy;
 	
-	HashMap<String, Object> data;
+	HashMap<String, Object> data = new HashMap<String, Object>();
 	
 	boolean enabled;
 	

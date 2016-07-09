@@ -10,7 +10,6 @@ import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
 import com.starquestminecraft.sqtechbase.GUIBlock;
-import com.starquestminecraft.sqtechbase.SQTechBase;
 import com.starquestminecraft.sqtechbase.gui.GUIBlockGUI;
 
 public class SerializableGUIBlock implements Serializable{

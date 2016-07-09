@@ -93,13 +93,15 @@ public class DatabaseInterface {
 			
 			SQLDatabase.clearGUIBlocks(SQLDatabase.con.getConnection(), SQTechBase.config.getString("server name"));
 			
-			rs = SQLDatabase.readMachines(SQLDatabase.con.getConnection(), SQTechBase.config.getString("server name"));
+			rs.close();
 			
-			while (rs.next()) {
+			ResultSet rs2 = SQLDatabase.readMachines(SQLDatabase.con.getConnection(), SQTechBase.config.getString("server name"));
+			
+			while (rs2.next()) {
 				
 				try {
 					
-					byte[] bytes = (byte[]) rs.getObject("object");
+					byte[] bytes = (byte[]) rs2.getObject("object");
 					
 					ByteArrayInputStream baip = new ByteArrayInputStream(bytes);
 					ObjectInputStream ois = new ObjectInputStream(baip);
@@ -121,6 +123,8 @@ public class DatabaseInterface {
 			}
 			
 			SQLDatabase.clearMachines(SQLDatabase.con.getConnection(), SQTechBase.config.getString("server name"));
+			
+			rs2.close();
 			
 		} catch (Exception e) {
 

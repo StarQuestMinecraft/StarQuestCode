@@ -16,6 +16,7 @@ import org.bukkit.scheduler.BukkitScheduler;
 import com.starquestminecraft.sqtechbase.database.DatabaseInterface;
 import com.starquestminecraft.sqtechbase.database.SQLDatabase;
 import com.starquestminecraft.sqtechbase.gui.GUI;
+import com.starquestminecraft.sqtechbase.tasks.DatabaseTask;
 import com.starquestminecraft.sqtechbase.tasks.EnergyTask;
 import com.starquestminecraft.sqtechbase.tasks.ItemMovingTask;
 import com.starquestminecraft.sqtechbase.tasks.StructureTask;
@@ -50,6 +51,7 @@ public class SQTechBase extends JavaPlugin {
 		
 	}
 	
+	@SuppressWarnings("deprecation")
 	@Override
 	public void onEnable() {
 		
@@ -83,16 +85,17 @@ public class SQTechBase extends JavaPlugin {
 		
 		BukkitScheduler bukkitScheduler =  Bukkit.getScheduler();
 		
-		bukkitScheduler.scheduleSyncDelayedTask(this, new Runnable() {
+		bukkitScheduler.scheduleAsyncDelayedTask(this, new Runnable() {
 			
 			public void run() {
 				
-				
 				DatabaseInterface.readObjects();
+				
+				(new DatabaseTask()).run();
 				
 			}
 
-		}, 1);
+		});
 		
 	}
 	

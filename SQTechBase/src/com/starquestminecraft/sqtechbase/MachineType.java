@@ -1,5 +1,7 @@
 package com.starquestminecraft.sqtechbase;
 
+import org.bukkit.inventory.ItemStack;
+
 import com.starquestminecraft.sqtechbase.gui.GUI;
 
 public class MachineType {
@@ -36,6 +38,20 @@ public class MachineType {
 	public String getName() {
 		
 		return name;
+		
+	}
+	
+	public int getSpaceLeft(Machine machine, ItemStack itemStack) {
+		
+		return 0;
+		
+	}
+	
+	public void sendItems(Machine machine, ItemStack itemStack) {
+
+	}
+	
+	public void updateEnergy(Machine machine) {
 		
 	}
 	

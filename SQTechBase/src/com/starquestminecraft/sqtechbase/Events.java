@@ -16,7 +16,10 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitScheduler;
+
+import net.md_5.bungee.api.ChatColor;
 
 public class Events implements Listener {
 	
@@ -152,6 +155,7 @@ public class Events implements Listener {
 										if (machine.detectStructure()) {
 											
 											isMachine = true;
+											machine.enabled = true;
 											
 										} else {
 											
@@ -165,7 +169,6 @@ public class Events implements Listener {
 								
 								SQTechBase.machines.removeAll(removeMachines);
 
-								
 								if (!isMachine) {
 									
 									for (MachineType machineType : SQTechBase.machineTypes) {
@@ -217,6 +220,42 @@ public class Events implements Listener {
 	public void onInventoryClose(InventoryCloseEvent event) {
 		
 		if (SQTechBase.currentGui.containsKey(event.getPlayer())) {
+			
+			for (ItemStack itemStack : event.getInventory().getContents()) {
+				
+				boolean normalItem = true;
+				
+				if (itemStack == null) {
+					
+					normalItem = false;
+					
+				} else {
+					
+					if (itemStack.hasItemMeta()) {
+						
+						if (itemStack.getItemMeta().hasLore()) {
+							
+							if (itemStack.getItemMeta().getLore().contains(ChatColor.RED + "" + ChatColor.MAGIC + "Contraband")) {
+								
+								normalItem = false;
+								
+							}
+							
+						}
+						
+					}
+					
+				}
+				
+				event.getInventory().remove(itemStack);
+				
+				if (normalItem) {
+					
+					event.getPlayer().getWorld().dropItem(event.getPlayer().getLocation(), itemStack);
+					
+				}
+				
+			}
 			
 			if (SQTechBase.currentGui.get(event.getPlayer()).close) {
 				

@@ -1,6 +1,8 @@
 package com.starquestminecraft.sqtechbase;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import com.starquestminecraft.sqtechbase.gui.GUI;
 
@@ -17,9 +19,9 @@ public class Machine {
 	public boolean exportsEnergy;
 	public boolean importsEnergy;
 	
-	public HashMap<String, Object> data;
+	public HashMap<String, Object> data = new HashMap<String, Object>();
 	
-	public boolean enabled;
+	public boolean enabled = true;
 	
 	public Machine(int energy, GUIBlock guiBlock, MachineType machineType) {
 		
@@ -30,6 +32,20 @@ public class Machine {
 		this.machineType = machineType;
 		
 		gui = machineType.getGUI();
+		
+		List<Machine> removeMachines = new ArrayList<Machine>();
+		
+		for (Machine machine : SQTechBase.machines) {
+			
+			if (machine.getGUIBlock() == guiBlock) {
+				
+				removeMachines.add(machine);
+				
+			}
+			
+		}
+		
+		SQTechBase.machines.removeAll(removeMachines);
 		
 	}
 	
