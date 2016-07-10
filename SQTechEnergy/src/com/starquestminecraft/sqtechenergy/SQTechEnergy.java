@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
+import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -46,7 +47,20 @@ public class SQTechEnergy extends JavaPlugin{
 			
 			Fuel fuelObject = new Fuel();
 			
-			fuelObject.id = config.getInt(path + ".id");
+			String[] split = config.getString(path + ".id").split(":");
+			
+			if (split.length == 1) {
+				
+				fuelObject.id = Integer.parseInt(split[0]);
+				fuelObject.data = (short) 0;
+				
+			} else {
+				
+				fuelObject.id = Integer.parseInt(split[0]);
+				fuelObject.data = Short.parseShort(split[1]);
+				
+			}
+			
 			fuelObject.energyPerTick = config.getInt(path + ".energy per tick");
 			fuelObject.burnTime = config.getInt(path + ".burn time");
 			fuelObject.generator = "Basic Generator";

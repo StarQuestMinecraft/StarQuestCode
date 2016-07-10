@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.md_5.bungee.api.ChatColor;
-import net.minecraft.server.v1_9_R1.EntityPlayer;
+import net.minecraft.server.v1_10_R1.EntityPlayer;
 
 import org.bukkit.Material;
 import org.bukkit.entity.ArmorStand;

@@ -14,11 +14,12 @@ import com.starquestminecraft.sqtechbase.SQTechBase;
 
 public class EnergyTask extends Thread {
 
+	@SuppressWarnings("deprecation")
 	public void run() {
 		
 		BukkitScheduler scheduler = Bukkit.getServer().getScheduler();
 		
-		scheduler.scheduleSyncRepeatingTask(SQTechBase.getPluginMain(), new Runnable() {
+		scheduler.scheduleAsyncRepeatingTask(SQTechBase.getPluginMain(), new Runnable() {
 			
 			@Override
 			public void run() {

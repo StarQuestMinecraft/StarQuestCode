@@ -1,5 +1,8 @@
 name: SQTechBase
-version: 0.0.1
+version: 1.0
 description: Technology plugin for minecraft
 main: com.starquestminecraft.sqtechbase.SQTechBase
 softdepend: [Movecraft]
+commands:
+   sqtech:
+     description: Manages SQTech

@@ -38,6 +38,7 @@ import org.dynmap.markers.impl.MarkerAPIImpl;
 
 import com.massivecraft.factions.Factions;
 import com.massivecraft.factions.entity.Board;
+import com.massivecraft.factions.entity.BoardColl;
 import com.massivecraft.factions.entity.Faction;
 import com.massivecraft.factions.entity.FactionColl;
 import com.massivecraft.massivecore.ps.PS;
@@ -457,13 +458,38 @@ public class SQEmpire extends JavaPlugin{
 	@Override
 	public void onDisable(){
 		
-		for (Faction faction : FactionColl.get().getAll()) {
+		if (automaticRestart) {
 			
-			System.out.print(faction);
-			System.out.print(Board.get(faction));
-			System.out.print(Board.get(faction).getMap());
+			for (Territory territory : territories) {
+				
+				config.set("regions." + territory.name.replace('_', ' ') + ".age", territory.age + 1);
+				
+			}
 			
-			for (PS ps : Board.get(faction).getMap().keySet()) {
+			saveConfig();
+			
+		}
+		
+		for (Territory territory : territories) {
+			
+			for (CapturePoint capturePoint : territory.capturePoints) {
+				
+				capturePoint.text.remove();
+				
+				int xMultiplier = capturePoint.x / capturePoint.x;
+	        	int zMultiplier = capturePoint.z / capturePoint.z;
+				
+				Bukkit.getWorlds().get(0).getBlockAt(capturePoint.x * 16 + (xMultiplier * 7), capturePoint.y + 2, capturePoint.z * 16 + (zMultiplier * 7)).setType(Material.AIR);
+				
+			}
+			
+		}
+		
+		saveDefaultConfig();
+
+		for (Faction faction : BoardColl.get().getFactionToChunks().keySet()) {
+			
+			for (PS ps : BoardColl.get().getFactionToChunks().get(faction)) {
 				
 				int x = ps.asBukkitChunk().getX();
 				int z = ps.asBukkitChunk().getZ();
@@ -528,35 +554,6 @@ public class SQEmpire extends JavaPlugin{
 			
 		}
 		
-		if (automaticRestart) {
-			
-			for (Territory territory : territories) {
-				
-				config.set("regions." + territory.name.replace('_', ' ') + ".age", territory.age + 1);
-				
-			}
-			
-			saveConfig();
-			
-		}
-		
-		for (Territory territory : territories) {
-			
-			for (CapturePoint capturePoint : territory.capturePoints) {
-				
-				capturePoint.text.remove();
-				
-				int xMultiplier = capturePoint.x / capturePoint.x;
-	        	int zMultiplier = capturePoint.z / capturePoint.z;
-				
-				Bukkit.getWorlds().get(0).getBlockAt(capturePoint.x * 16 + (xMultiplier * 7), capturePoint.y + 2, capturePoint.z * 16 + (zMultiplier * 7)).setType(Material.AIR);
-				
-			}
-			
-		}
-		
-		saveDefaultConfig();
-	
 	}
 	
 	public static SQEmpire getInstance(){

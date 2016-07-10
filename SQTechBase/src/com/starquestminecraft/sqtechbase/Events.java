@@ -189,8 +189,12 @@ public class Events implements Listener {
 									
 								}
 								
-								network.GUIBlocks.get(i).getGUI().open(event.getPlayer());
-								
+								if (!SQTechBase.currentGui.containsKey(event.getPlayer())) {
+									
+									network.GUIBlocks.get(i).getGUI().open(event.getPlayer());
+									
+								}
+
 							}
 							
 						}

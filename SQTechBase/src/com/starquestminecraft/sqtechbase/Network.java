@@ -147,23 +147,46 @@ public class Network {
 		for (Block sideBlock : sideBlocks) {
 			
 			if (!attemptedBlocks.contains(sideBlock)) {
-		
-				attemptedBlocks.add(sideBlock);
 				
 				if (sideBlock.getType().equals(Material.LAPIS_BLOCK)) {
+					
+					attemptedBlocks.add(sideBlock);
 					
 					detectedGUIBlocks.add(sideBlock);	
 					attemptableBlocksFrom.add(sideBlock);
 
-				} else if (sideBlock.getType().equals(Material.STAINED_GLASS) && (block.getType().equals(Material.LAPIS_BLOCK) || block.getType().equals(Material.GLASS) || block.getData() == sideBlock.getData())) {
+				} else if (sideBlock.getType().equals(Material.STAINED_GLASS) && (block.getType().equals(Material.LAPIS_BLOCK) || block.getType().equals(Material.GLASS) || block.getType().equals(Material.STAINED_GLASS))) {
 					
-					detectedWireBlocks.add(sideBlock);
-					attemptableBlocksFrom.add(sideBlock);
+					if (block.getType().equals(Material.STAINED_GLASS)) {
+						
+						if (block.getData() == sideBlock.getData()) {
+					
+							attemptedBlocks.add(sideBlock);
+							
+							detectedWireBlocks.add(sideBlock);
+							attemptableBlocksFrom.add(sideBlock);
+							
+						}
+						
+					} else {
+						
+						attemptedBlocks.add(sideBlock);
+						
+						detectedWireBlocks.add(sideBlock);
+						attemptableBlocksFrom.add(sideBlock);
+						
+					}
 					
 				} else if (sideBlock.getType().equals(Material.GLASS)) {
 					
+					attemptedBlocks.add(sideBlock);
+					
 					detectedWireBlocks.add(sideBlock);
 					attemptableBlocksFrom.add(sideBlock);
+					
+				} else {
+					
+					attemptedBlocks.add(sideBlock);
 					
 				}
 				
