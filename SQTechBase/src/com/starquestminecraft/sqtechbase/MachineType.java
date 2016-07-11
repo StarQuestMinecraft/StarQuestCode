@@ -1,11 +1,15 @@
 package com.starquestminecraft.sqtechbase;
 
+import org.bukkit.inventory.ItemStack;
+
 import com.starquestminecraft.sqtechbase.gui.GUI;
 
 public class MachineType {
 
 	int maxEnergy = 0;
 	public String name = "Machine Type";
+	
+	public boolean autodetect = true;
 	
 	public MachineType(int maxEnergy) {
 		
@@ -15,7 +19,7 @@ public class MachineType {
 	
 	public boolean detectStructure(GUIBlock guiBlock) {
 		
-		return true;
+		return false;
 		
 	}
 	
@@ -34,6 +38,20 @@ public class MachineType {
 	public String getName() {
 		
 		return name;
+		
+	}
+	
+	public int getSpaceLeft(Machine machine, ItemStack itemStack) {
+		
+		return 0;
+		
+	}
+	
+	public void sendItems(Machine machine, ItemStack itemStack) {
+
+	}
+	
+	public void updateEnergy(Machine machine) {
 		
 	}
 	

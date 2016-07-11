@@ -15,6 +15,7 @@ import org.bukkit.scheduler.BukkitScheduler;
 
 import com.ginger_walnut.sqpowertools.Events;
 import com.ginger_walnut.sqpowertools.SQPowerTools;
+import com.ginger_walnut.sqpowertools.objects.PowerTool;
 
 public class ChargerTask extends Thread{
 
@@ -95,7 +96,10 @@ public class ChargerTask extends Thread{
 													
 													if ((SQPowerTools.getEnergy(powerTool) + (SQPowerTools.config.getInt("charger.fuel.energy") / 200)) > SQPowerTools.getMaxEnergy(SQPowerTools.getType(powerTool), powerTool)) {
 														
-														powerTool = SQPowerTools.setEnergy(powerTool, SQPowerTools.getMaxEnergy(SQPowerTools.getType(powerTool), powerTool));
+														PowerTool powerToolObject = new PowerTool(powerTool);
+														powerToolObject.setEnergy(SQPowerTools.getMaxEnergy(SQPowerTools.getType(powerTool), powerTool));
+														
+														powerTool = powerToolObject.getItem();
 														
 														if (charger.getInventory().getResult() == null) {
 															
@@ -106,7 +110,12 @@ public class ChargerTask extends Thread{
 
 													} else {
 														
-														SQPowerTools.setEnergy(powerTool, SQPowerTools.getEnergy(powerTool) + (SQPowerTools.config.getInt("charger.fuel.energy") / 200));
+														PowerTool powerToolObject = new PowerTool(powerTool);
+														powerToolObject.setEnergy(powerToolObject.getEnergy() + (SQPowerTools.config.getInt("charger.fuel.energy") / 200));
+														
+														powerTool = powerToolObject.getItem();
+														
+														charger.getInventory().setSmelting(powerTool);
 														
 													}
 													

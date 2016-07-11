@@ -11,6 +11,9 @@ import org.bukkit.inventory.ItemStack;
 
 import com.starquestminecraft.sqtechbase.GUIBlock;
 import com.starquestminecraft.sqtechbase.gui.GUIBlockGUI;
+import com.starquestminecraft.sqtechbase.util.InventoryUtils;
+
+import net.md_5.bungee.api.ChatColor;
 
 public class SerializableGUIBlock implements Serializable{
 	
@@ -58,13 +61,13 @@ public class SerializableGUIBlock implements Serializable{
 			
 			for (int i = 0; i < importIDs.size(); i ++) {
 				
-				guiBlock.addImport(new ItemStack(Material.getMaterial(importIDs.get(i)), 1, importDatas.get(i)));
-				
+				guiBlock.addImport(InventoryUtils.createSpecialItem(Material.getMaterial(importIDs.get(i)), importDatas.get(i), "", new String[] {ChatColor.RED + "" + ChatColor.MAGIC + "Contraband"}));
+			
 			}
 			
 			for (int i = 0; i < exportIDs.size(); i ++) {
 				
-				guiBlock.addExport(new ItemStack(Material.getMaterial(exportIDs.get(i)), 1, exportDatas.get(i)));
+				guiBlock.addImport(InventoryUtils.createSpecialItem(Material.getMaterial(exportIDs.get(i)), exportDatas.get(i), "", new String[] {ChatColor.RED + "" + ChatColor.MAGIC + "Contraband"}));
 				
 			}
 			

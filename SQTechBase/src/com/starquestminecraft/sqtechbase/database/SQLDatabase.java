@@ -18,15 +18,15 @@ public class SQLDatabase {
 
 	public static BedspawnConnectionProvider con;
 
-	static final String WRITE_GUIBLOCK = "INSERT INTO minecraft.guiblocks(object) VALUES (?)";
-	static final String READ_GUIBLOCKS = "SELECT * FROM minecraft.guiblocks";
-	static final String CLEAR_GUIBLOCKS = "TRUNCATE TABLE minecraft.guiblocks";
-	static final String CREATE_GUIBLOCK = "CREATE TABLE IF NOT EXISTS minecraft.guiblocks (ID int NOT NULL AUTO_INCREMENT, object BLOB, primary key (ID))";
+	static final String WRITE_GUIBLOCK = "INSERT INTO minecraft.guiblocks(server, object) VALUES (?, ?)";
+	static final String READ_GUIBLOCKS = "SELECT * FROM minecraft.guiblocks WHERE server = ?";
+	static final String CLEAR_GUIBLOCKS = "DELETE FROM minecraft.guiblocks WHERE server = ?";
+	static final String CREATE_GUIBLOCK = "CREATE TABLE IF NOT EXISTS minecraft.guiblocks (ID int NOT NULL AUTO_INCREMENT, server varchar(32), object BLOB, primary key (ID))";
 	
-	static final String WRITE_MACHINE = "INSERT INTO minecraft.machines(object) VALUES (?)";
-	static final String READ_MACHINES = "SELECT * FROM minecraft.machines";
-	static final String CLEAR_MACHINES = "TRUNCATE TABLE minecraft.machines";
-	static final String CREATE_MACHINE = "CREATE TABLE IF NOT EXISTS minecraft.machines (ID int NOT NULL AUTO_INCREMENT, object BLOB, primary key (ID))";
+	static final String WRITE_MACHINE = "INSERT INTO minecraft.machines(server, object) VALUES (?, ?)";
+	static final String READ_MACHINES = "SELECT * FROM minecraft.machines WHERE server = ?";
+	static final String CLEAR_MACHINES = "DELETE FROM minecraft.machines WHERE server = ?";
+	static final String CREATE_MACHINE = "CREATE TABLE IF NOT EXISTS minecraft.machines (ID int NOT NULL AUTO_INCREMENT, server varchar(32), object BLOB, primary key (ID))";
 	
 	public SQLDatabase() {
 		
@@ -52,7 +52,7 @@ public class SQLDatabase {
 		
 	}
 
-	public static void writeGUIBlock(Connection conn, GUIBlock guiBlock) throws Exception {
+	public static void writeGUIBlock(Connection conn, String server, GUIBlock guiBlock) throws Exception {
 		
 		PreparedStatement pstmt = conn.prepareStatement(WRITE_GUIBLOCK);
 
@@ -70,29 +70,34 @@ public class SQLDatabase {
 			
 		}
 		
-		pstmt.setBinaryStream(1, new ByteArrayInputStream(baos.toByteArray()), baos.toByteArray().length);
+		pstmt.setString(1, server);
+		pstmt.setBinaryStream(2, new ByteArrayInputStream(baos.toByteArray()), baos.toByteArray().length);
 		
 		pstmt.executeUpdate();
 
 	}
 
-	public static ResultSet readGUIBlocks(Connection conn) throws Exception {
+	public static ResultSet readGUIBlocks(Connection conn, String server) throws Exception {
 		
 		PreparedStatement pstmt = conn.prepareStatement(READ_GUIBLOCKS);
+		
+		pstmt.setString(1, server);
 		
 		return pstmt.executeQuery();
 
 	}
 	
-	public static void clearGUIBlocks(Connection conn) throws Exception {
+	public static void clearGUIBlocks(Connection conn, String server) throws Exception {
 		
 		PreparedStatement pstmt = conn.prepareStatement(CLEAR_GUIBLOCKS);
+
+		pstmt.setString(1, server);
 		
 		pstmt.execute();
 		
 	}
 	
-	public static void writeMachine(Connection conn, Machine machine) throws Exception {
+	public static void writeMachine(Connection conn, String server, Machine machine) throws Exception {
 		
 		PreparedStatement pstmt = conn.prepareStatement(WRITE_MACHINE);
 
@@ -110,23 +115,28 @@ public class SQLDatabase {
 			
 		}
 		
-		pstmt.setBinaryStream(1, new ByteArrayInputStream(baos.toByteArray()), baos.toByteArray().length);
+		pstmt.setString(1, server);
+		pstmt.setBinaryStream(2, new ByteArrayInputStream(baos.toByteArray()), baos.toByteArray().length);
 		
 		pstmt.executeUpdate();
 
 	}
 
-	public static ResultSet readMachines(Connection conn) throws Exception {
+	public static ResultSet readMachines(Connection conn, String server) throws Exception {
 		
 		PreparedStatement pstmt = conn.prepareStatement(READ_MACHINES);
+		
+		pstmt.setString(1, server);
 		
 		return pstmt.executeQuery();
 
 	}
 	
-	public static void clearMachines(Connection conn) throws Exception {
+	public static void clearMachines(Connection conn, String server) throws Exception {
 		
 		PreparedStatement pstmt = conn.prepareStatement(CLEAR_MACHINES);
+		
+		pstmt.setString(1, server);
 		
 		pstmt.execute();
 		

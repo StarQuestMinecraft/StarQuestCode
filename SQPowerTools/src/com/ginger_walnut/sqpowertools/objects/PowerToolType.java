@@ -30,6 +30,8 @@ public class PowerToolType {
 	
 	public Map<Enchantment, Integer> enchants;
 	
+	public BlasterStats blasterStats;
+	
 	public PowerToolType() {
 		
 	}

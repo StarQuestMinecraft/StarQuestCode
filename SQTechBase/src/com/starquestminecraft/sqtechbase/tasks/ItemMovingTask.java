@@ -14,6 +14,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitScheduler;
 
 import com.starquestminecraft.sqtechbase.GUIBlock;
+import com.starquestminecraft.sqtechbase.Machine;
 import com.starquestminecraft.sqtechbase.Network;
 import com.starquestminecraft.sqtechbase.SQTechBase;
 import com.starquestminecraft.sqtechbase.util.BlockUtils;
@@ -89,9 +90,28 @@ public class ItemMovingTask extends Thread {
 								int spaceLeft = 0;
 								
 								List<Inventory> inventories = new ArrayList<Inventory>();
+								List<Machine> machines = new ArrayList<Machine>();
 								List<ItemStack> items = new ArrayList<ItemStack>();
 								
 								for (GUIBlock guiBlock :  imports.get(importItem)) {
+									
+									for (Machine machine : SQTechBase.machines) {
+										
+										if (machine.getGUIBlock() == guiBlock) {
+											
+											int space = machine.getMachineType().getSpaceLeft(machine, export);
+											
+											if (space > 0) {
+												
+												spaceLeft = spaceLeft + machine.getMachineType().getSpaceLeft(machine, export);
+
+												machines.add(machine);
+												
+											}
+
+										}
+										
+									}
 									
 									for (Block block : BlockUtils.getAdjacentBlocks(guiBlock.getLocation().getBlock())) {
 										
@@ -296,35 +316,55 @@ public class ItemMovingTask extends Thread {
 								
 								for (int i = 0; i < items.size(); i ++) {
 									
-									inventories.get(currentInventory).addItem(items.get(i));
-									
-									int currentSpaceLeft = 0;
-									
-									for (ItemStack itemStack : inventories.get(currentInventory).getContents()) {
+									if (inventories.size() > currentInventory) {
 										
-										if (itemStack == null) {
+										inventories.get(currentInventory).addItem(items.get(i));
+										
+										int currentSpaceLeft = 0;
+										
+										for (ItemStack itemStack : inventories.get(currentInventory).getContents()) {
 											
-											currentSpaceLeft = currentSpaceLeft + 64;
+											if (itemStack == null) {
+												
+												currentSpaceLeft = currentSpaceLeft + 64;
+												
+											} else if (itemStack.getType().equals(export.getType()) && itemStack.getDurability() == export.getDurability()) {
+												
+												currentSpaceLeft = currentSpaceLeft + (itemStack.getMaxStackSize() - itemStack.getAmount());
+												
+											}
 											
-										} else if (itemStack.getType().equals(export.getType()) && itemStack.getDurability() == export.getDurability()) {
+										}
+
+										if (currentSpaceLeft == 0) {
 											
-											currentSpaceLeft = currentSpaceLeft + (itemStack.getMaxStackSize() - itemStack.getAmount());
+											inventories.remove(currentInventory);
+
+										} else {
+											
+											currentInventory ++;
+											
+										}
+										
+									} else {
+										
+										Machine machine = machines.get(currentInventory - inventories.size());
+										
+										machine.getMachineType().sendItems(machine, items.get(i));
+										
+										if (machine.getMachineType().getSpaceLeft(machine, export) == 0) {
+											
+											machines.remove(machine);
+
+										} else {
+											
+											currentInventory ++;
 											
 										}
 										
 									}
-
-									if (currentSpaceLeft == 0) {
-										
-										inventories.remove(currentInventory);
-
-									} else {
-										
-										currentInventory ++;
-										
-									}
 									
-									if (inventories.size() == currentInventory) {
+									if ((inventories.size() + machines.size()) == currentInventory) {
 										
 										currentInventory = 0;
 										

@@ -7,11 +7,13 @@ import java.util.Map;
 
 import org.bukkit.ChatColor;
 import org.bukkit.craftbukkit.v1_10_R1.inventory.CraftItemStack;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import com.ginger_walnut.sqpowertools.SQPowerTools;
 import com.ginger_walnut.sqpowertools.utils.AttributeUtils;
+import com.ginger_walnut.sqpowertools.utils.EffectUtils;
 
 import net.minecraft.server.v1_10_R1.NBTTagCompound;
 import net.minecraft.server.v1_10_R1.NBTTagFloat;
@@ -28,19 +30,24 @@ public class PowerTool {
 	private List<Attribute> attributes = new ArrayList<Attribute>();
 	
 	private int energy;
-	private int maxEnergy;
 	
-	public PowerTool(PowerToolType type) {
+	public PowerTool(ItemStack item) {
 		
-		energy = type.energy;
-		maxEnergy = type.energy;
-		this.type = type;
+		this.type = SQPowerTools.getType(item);
+		energy = SQPowerTools.getEnergy(item);
+
+		setModifiers(SQPowerTools.getModifiers(item));
 		
 		List<Modifier> modifiers = new ArrayList<Modifier>();
 		modifiers.addAll(modifierMap.keySet());
 		
 		List<Attribute> attributes = new ArrayList<Attribute>();
-		attributes.addAll(type.attributes);
+		
+		for (Attribute attribute : type.attributes) {
+			
+			attributes.add(attribute.clone());
+			
+		}
 		
 		for (Modifier modifier : modifiers) {
 			
@@ -52,7 +59,115 @@ public class PowerTool {
 					
 					if (modifierAttribute.equalsExceptAmount(attribute)) {
 						
-						attribute.amount = attribute.amount + modifierAttribute.amount;
+						attribute.amount = attribute.amount + (modifierAttribute.amount * modifierMap.get(modifier));
+						
+						contains = true;
+					}
+					
+				}
+				
+				if (!contains) {
+					
+					float oldAmount = modifierAttribute.amount;
+					
+					modifierAttribute.amount = modifierAttribute.amount * modifierMap.get(modifier);
+					
+					attributes.add(modifierAttribute.clone());
+					
+					modifierAttribute.amount = oldAmount;
+					
+				}
+				
+			}
+			
+		}	
+		
+		this.attributes = attributes;
+		
+		this.item = new ItemStack(type.material);
+		
+		ItemMeta itemMeta = this.item.getItemMeta();	
+		itemMeta.setDisplayName(type.name);	
+		this.item.setItemMeta(itemMeta);
+		
+		List<Enchantment> oldEnchants = new ArrayList<Enchantment>();
+		oldEnchants.addAll(this.item.getEnchantments().keySet());
+		
+		for (Enchantment enchant : oldEnchants) {
+			
+			this.item.removeEnchantment(enchant);
+			
+		}
+		
+		this.item.setDurability(type.durability); 
+		
+		for (Modifier modifier : modifiers) {
+			
+			Map<Enchantment, Integer> enchants = new HashMap<Enchantment, Integer>();
+			enchants.putAll(modifier.enchants);
+			
+			for (Enchantment enchant : enchants.keySet()) {
+				
+				enchants.replace(enchant, enchants.get(enchant) * modifierMap.get(modifier));
+				
+			}
+			
+			for (Enchantment enchant : type.enchants.keySet()) {
+				
+				if (enchants.containsKey(enchant)) {
+					
+					enchants.replace(enchant, enchants.get(enchant) + type.enchants.get(enchant));
+					
+				}
+				
+			}
+			
+			this.item.addUnsafeEnchantments(enchants);
+			
+		}
+		
+		for (Enchantment enchant : type.enchants.keySet()) {
+			
+			if (!this.item.getEnchantments().containsKey(enchant)) {
+				
+				this.item.addUnsafeEnchantment(enchant, type.enchants.get(enchant));
+				
+			}
+			
+		}
+		
+		addLore();
+		addAttributes();
+
+	}
+	
+	public PowerTool(PowerToolType type) {
+		
+		energy = type.energy;
+		this.type = type;
+		
+		List<Modifier> modifiers = new ArrayList<Modifier>();
+		modifiers.addAll(modifierMap.keySet());
+		
+		List<Attribute> attributes = new ArrayList<Attribute>();
+		
+		for (Attribute attribute : type.attributes) {
+			
+			attributes.add(attribute.clone());
+			
+		}		
+		
+		for (Modifier modifier : modifiers) {
+			
+			for (Attribute modifierAttribute : modifier.attributes) {
+				
+				boolean contains = false;
+				
+				for (Attribute attribute : attributes) {
+					
+					if (modifierAttribute.equalsExceptAmount(attribute)) {
+						
+						attribute.amount = attribute.amount + (modifierAttribute.amount * modifierMap.get(modifier));
 						
 						contains = true;
 						
@@ -62,7 +177,13 @@ public class PowerTool {
 				
 				if (!contains) {
 					
-					attributes.add(modifierAttribute);
+					float oldAmount = modifierAttribute.amount;
+					
+					modifierAttribute.amount = modifierAttribute.amount * modifierMap.get(modifier);
+					
+					attributes.add(modifierAttribute.clone());
+					
+					modifierAttribute.amount = oldAmount;
 					
 				}
 				
@@ -70,18 +191,174 @@ public class PowerTool {
 			
 		}	
 		
+		this.attributes = attributes;
+		
 		item = new ItemStack(type.material);
 		
 		ItemMeta itemMeta = item.getItemMeta();	
 		itemMeta.setDisplayName(type.name);	
 		item.setItemMeta(itemMeta);
 		
-		item.addUnsafeEnchantments(type.enchants);
+		List<Enchantment> oldEnchants = new ArrayList<Enchantment>();
+		oldEnchants.addAll(item.getEnchantments().keySet());
+		
+		for (Enchantment enchant : oldEnchants) {
+			
+			this.item.removeEnchantment(enchant);
+			
+		}
+		
 		item.setDurability(type.durability); 
 				
+		for (Modifier modifier : modifiers) {
+			
+			Map<Enchantment, Integer> enchants = new HashMap<Enchantment, Integer>();
+			enchants.putAll(modifier.enchants);
+			
+			for (Enchantment enchant : enchants.keySet()) {
+				
+				enchants.replace(enchant, enchants.get(enchant) * modifierMap.get(modifier));
+				
+			}
+			
+			for (Enchantment enchant : type.enchants.keySet()) {
+				
+				if (enchants.containsKey(enchant)) {
+					
+					enchants.replace(enchant, enchants.get(enchant) + type.enchants.get(enchant));
+					
+				}
+				
+			}
+			
+			item.addUnsafeEnchantments(enchants);
+			
+		}
+		
+		for (Enchantment enchant : type.enchants.keySet()) {
+			
+			if (!item.getEnchantments().containsKey(enchant)) {
+				
+				item.addUnsafeEnchantment(enchant, type.enchants.get(enchant));
+				
+			}
+			
+		}
+		
 		addLore();
 		addAttributes();
 		
+	}
+	
+	public PowerTool(PowerToolType type, Map<Modifier, Integer> modifierMap) {
+		
+		energy = type.energy;
+		this.type = type;
+		
+		setModifiers(modifierMap);
+		
+		List<Modifier> modifiers = new ArrayList<Modifier>();
+		modifiers.addAll(modifierMap.keySet());
+		
+		List<Attribute> attributes = new ArrayList<Attribute>();
+
+		for (Attribute attribute : type.attributes) {
+			
+			attributes.add(attribute.clone());
+			
+		}
+		
+		for (Modifier modifier : modifiers) {
+			
+			for (Attribute modifierAttribute : modifier.attributes) {
+				
+				boolean contains = false;
+				
+				for (Attribute attribute : attributes) {
+					
+					if (modifierAttribute.equalsExceptAmount(attribute)) {
+											
+						attribute.amount = attribute.amount + (modifierAttribute.amount * modifierMap.get(modifier));
+						
+						contains = true;
+						
+					}
+					
+				}
+				
+				if (!contains) {
+					
+					float oldAmount = modifierAttribute.amount;
+					
+					modifierAttribute.amount = modifierAttribute.amount * modifierMap.get(modifier);
+					
+					attributes.add(modifierAttribute.clone());
+					
+					modifierAttribute.amount = oldAmount;
+										
+				}
+				
+			}
+			
+		}	
+		
+		this.attributes = attributes;
+		
+		item = new ItemStack(type.material);
+		
+		ItemMeta itemMeta = item.getItemMeta();	
+		itemMeta.setDisplayName(type.name);	
+		item.setItemMeta(itemMeta);
+		
+		List<Enchantment> oldEnchants = new ArrayList<Enchantment>();
+		oldEnchants.addAll(item.getEnchantments().keySet());
+		
+		for (Enchantment enchant : oldEnchants) {
+			
+			item.removeEnchantment(enchant);
+			
+		}
+		
+		item.setDurability(type.durability); 
+		
+		for (Modifier modifier : modifiers) {
+			
+			Map<Enchantment, Integer> enchants = new HashMap<Enchantment, Integer>();
+			enchants.putAll(modifier.enchants);
+			
+			for (Enchantment enchant : enchants.keySet()) {
+				
+				enchants.replace(enchant, enchants.get(enchant) * modifierMap.get(modifier));
+				
+			}
+			
+			for (Enchantment enchant : type.enchants.keySet()) {
+				
+				if (enchants.containsKey(enchant)) {
+					
+					enchants.replace(enchant, enchants.get(enchant) + type.enchants.get(enchant));
+					
+				}
+				
+			}
+			
+			item.addUnsafeEnchantments(enchants);
+			
+		}
+		
+		for (Enchantment enchant : type.enchants.keySet()) {
+			
+			if (!item.getEnchantments().containsKey(enchant)) {
+				
+				item.addUnsafeEnchantment(enchant, type.enchants.get(enchant));
+				
+			}
+			
+		}
+		
+		addLore();
+		addAttributes();
+
 	}
 	
 	public static boolean isPowerTool(ItemStack item) {
@@ -119,6 +396,18 @@ public class PowerTool {
 	}
 	
 	private void addLore() {
+		
+		int maxEnergy = type.energy;
+		
+		if (item.hasItemMeta()) {
+			
+			if (item.getItemMeta().hasLore()) {
+				
+				maxEnergy = SQPowerTools.getMaxEnergy(type, item);
+				
+			}
+			
+		}
 		
 		ItemMeta itemMeta = item.getItemMeta();
 		
@@ -181,6 +470,41 @@ public class PowerTool {
 			
 		}
 		
+		if (type.blasterStats != null) {
+			
+			BlasterStats blasterStats = getTotalBlasterStats();
+			
+			lore.add(ChatColor.GOLD + "Ranged Damage: " + blasterStats.damage);
+			
+			if (Double.toString(Double.parseDouble(Integer.toString(blasterStats.cooldown)) / 20.0).endsWith(".0")) {
+				
+				lore.add(ChatColor.GOLD + "Ranged Cooldown: " + (blasterStats.cooldown / 20.0) + " seconds");
+				
+			} else {
+				
+				lore.add(ChatColor.GOLD + "Ranged Cooldown: " + (Double.parseDouble(Integer.toString(blasterStats.cooldown)) / 20.0) + " seconds");
+				
+			}
+
+			lore.add(ChatColor.GOLD + "Ranged Scope: " + (blasterStats.scope + 1));
+			
+		}
+		
+		if (type.effects.size() > 0) {
+			
+			lore.add(ChatColor.DARK_PURPLE + "Potion Effects:");
+			
+			for (Effect effect : type.effects) {
+				
+				lore.add(ChatColor.DARK_PURPLE + "  " + EffectUtils.getEffectName(effect.effect) + ":");
+				lore.add(ChatColor.DARK_PURPLE + "    Level " + (effect.level + 1));
+				lore.add(ChatColor.DARK_PURPLE + "    For " + effect.duration + " seconds");
+				lore.add(ChatColor.DARK_PURPLE + "    Applies " + EffectUtils.getCaseName(effect.effectCase));
+				
+			}
+			
+		}
+		
 		itemMeta.setLore(lore);
 		
 		item.setItemMeta(itemMeta);
@@ -188,7 +512,7 @@ public class PowerTool {
 	}
 	
 	private void addAttributes(){
-		  
+
 		net.minecraft.server.v1_10_R1.ItemStack nmsStack = CraftItemStack.asNMSCopy(item);
 	         
 		HashMap<String, Integer> attributeUUIDs = new HashMap<String, Integer>();
@@ -257,7 +581,12 @@ public class PowerTool {
 		modifiers.addAll(modifierMap.keySet());
 		
 		List<Attribute> attributes = new ArrayList<Attribute>();
-		attributes.addAll(type.attributes);
+		
+		for (Attribute attribute : type.attributes) {
+			
+			attributes.add(attribute.clone());
+			
+		}
 		
 		for (Modifier modifier : modifiers) {
 			
@@ -269,7 +598,7 @@ public class PowerTool {
 					
 					if (modifierAttribute.equalsExceptAmount(attribute)) {
 						
-						attribute.amount = attribute.amount + modifierAttribute.amount;
+						attribute.amount = attribute.amount + (modifierAttribute.amount * modifierMap.get(modifier));
 						
 						contains = true;
 						
@@ -279,7 +608,13 @@ public class PowerTool {
 				
 				if (!contains) {
 					
-					attributes.add(modifierAttribute);
+					float oldAmount = modifierAttribute.amount;
+					
+					modifierAttribute.amount = modifierAttribute.amount * modifierMap.get(modifier);
+					
+					attributes.add(modifierAttribute.clone());
+					
+					modifierAttribute.amount = oldAmount;
 					
 				}
 				
@@ -287,17 +622,55 @@ public class PowerTool {
 			
 		}	
 		
+		this.attributes = attributes;
+		
 		item = new ItemStack(type.material);
 		
 		ItemMeta itemMeta = item.getItemMeta();	
 		itemMeta.setDisplayName(type.name);	
 		item.setItemMeta(itemMeta);
 		
-		item.addUnsafeEnchantments(type.enchants);
+		List<Enchantment> oldEnchants = new ArrayList<Enchantment>();
+		oldEnchants.addAll(item.getEnchantments().keySet());
+		
+		for (Enchantment enchant : oldEnchants) {
+			
+			item.removeEnchantment(enchant);
+			
+		}
 		
 		for (Modifier modifier : modifiers) {
 			
-			item.addUnsafeEnchantments(modifier.enchants);
+			Map<Enchantment, Integer> enchants = new HashMap<Enchantment, Integer>();
+			enchants.putAll(modifier.enchants);
+			
+			for (Enchantment enchant : enchants.keySet()) {
+				
+				enchants.replace(enchant, enchants.get(enchant) * modifierMap.get(modifier));
+				
+			}
+			
+			for (Enchantment enchant : type.enchants.keySet()) {
+				
+				if (enchants.containsKey(enchant)) {
+					
+					enchants.replace(enchant, enchants.get(enchant) + type.enchants.get(enchant));
+					
+				}
+
+			}
+			
+			item.addUnsafeEnchantments(enchants);
+			
+		}
+		
+		for (Enchantment enchant : type.enchants.keySet()) {
+			
+			if (!item.getEnchantments().containsKey(enchant)) {
+				
+				item.addUnsafeEnchantment(enchant, type.enchants.get(enchant));
+				
+			}
 			
 		}
 		
@@ -305,6 +678,76 @@ public class PowerTool {
 				
 		addLore();
 		addAttributes();
+		
+	}
+	
+	public ItemStack getItem() {
+		
+		addLore();
+		
+		return item;
+		
+	}
+	
+	public int getEnergy() {
+		
+		return energy;
+		
+	}
+	
+	public void setEnergy(int energy) {
+		
+		this.energy = energy;
+		
+	}
+	
+	public void setAttributes(List<Attribute> attributes) {
+		
+		this.attributes = attributes;
+		
+		addAttributes();
+		
+	}
+	
+	public ItemStack getFakeItem() {
+		
+		addLore();
+		
+		ItemMeta itemMeta = item.getItemMeta();
+		List<String> lore = itemMeta.getLore();
+		lore.add(ChatColor.RED + "" + ChatColor.MAGIC + "Contraband");
+		itemMeta.setLore(lore);
+		item.setItemMeta(itemMeta);
+		
+		return item;
+		
+	}
+	
+	public BlasterStats getTotalBlasterStats() {
+		
+		BlasterStats blasterStats = new BlasterStats();
+		
+		if (type.blasterStats != null) {
+			
+			blasterStats.cooldown = type.blasterStats.cooldown;
+			blasterStats.damage = type.blasterStats.damage;
+			blasterStats.scope = type.blasterStats.scope;
+			
+		}
+		
+		for (Modifier modifier : modifierMap.keySet()) {
+			
+			if (modifier.blasterStats != null) {
+				
+				blasterStats.cooldown = blasterStats.cooldown + (modifier.blasterStats.cooldown * modifierMap.get(modifier));
+				blasterStats.damage = blasterStats.damage + (modifier.blasterStats.damage * modifierMap.get(modifier));
+				blasterStats.scope = blasterStats.scope + (modifier.blasterStats.scope * modifierMap.get(modifier));
+				
+			}
+			
+		}
+		
+		return blasterStats;
 		
 	}
 	

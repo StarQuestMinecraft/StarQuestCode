@@ -67,7 +67,7 @@ public class DatabaseChecker extends Thread {
 
 							if (booster != 1) {
 								
-								booster =  1 + Math.abs(SQBoosters.square(.5, (booster - 1)) - 2);
+								booster =  Math.abs(SQBoosters.square(.5, (booster - 1)) - 2);
 								
 							}
 							
@@ -128,7 +128,7 @@ public class DatabaseChecker extends Thread {
 
 							if (booster != 1) {
 								
-								booster =  1 + Math.abs(SQBoosters.square(.5, (booster - 1)) - 2);
+								booster =  Math.abs(SQBoosters.square(.5, (booster - 1)) - 2);
 								
 							}
 							

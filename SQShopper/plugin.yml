@@ -1,0 +1,19 @@
+name: SQShopper
+main: me.Tongonto.SQShopper
+version: 1.0
+commands:
+   cart:
+      description: Main SQShopper command
+      usage: Do /cart help to view a list of commands
+   value:
+      description: Command for finding the value of something
+      usage: Do /value to get the value of the item in your hand
+   modifysign:
+      description: Staff-only command for modifying the prices of spawn shop signs
+      usage: Do /modifysign (Number) to set the new price you want to add to the sign
+   valueall:
+      description: Command for viewing prices of all items
+      usage: /valueall
+   reloadshops:
+      description: Reloads the config
+      usage: /reloadshops

@@ -1,86 +1,83 @@
 package com.starquestminecraft.sqtechbase;
 
-import net.countercraft.movecraft.event.CraftAsyncTranslateEvent;
-import net.countercraft.movecraft.event.CraftSyncTranslateEvent;
-import net.md_5.bungee.api.ChatColor;
-
 import java.util.ArrayList;
 import java.util.List;
 
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockPistonExtendEvent;
+import org.bukkit.event.block.BlockPistonRetractEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.metadata.FixedMetadataValue;
-import org.bukkit.metadata.MetadataValue;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitScheduler;
 
-import com.starquestminecraft.sqtechbase.gui.GUI;
+import net.md_5.bungee.api.ChatColor;
 
 public class Events implements Listener {
-
-	/*@EventHandler 
-	public void onCraftAsyncTranslate(CraftAsyncTranslateEvent event) {
-
-		/*if (!event.isCancelled()) {
+	
+	@EventHandler
+	public void onBlockPistonExtend(final BlockPistonExtendEvent event) {
 		
-			for (int i = 0; i < event.getData().getBlockList().length; i ++) {
-				
-				Location location = new Location(event.getCraft().getW(), event.getData().getBlockList()[i].getX(), event.getData().getBlockList()[i].getY(), event.getData().getBlockList()[i].getZ());
+		if (!event.isCancelled()) {
 
-				for (int j = 0; j < SQTechBase.GUIBlocks.size(); j ++) {
-					
-					if (SQTechBase.GUIBlocks.get(j).getLocation().equals(location)) {
-						
-						GUIBlock guiBlock = SQTechBase.GUIBlocks.get(j);
-						guiBlock.setLocation(guiBlock.getLocation().add(event.getData().getDx(), event.getData().getDy(), event.getData().getDz()));
-						SQTechBase.GUIBlocks.remove(i);
-						SQTechBase.GUIBlocks.add(guiBlock);
-						
-					}
-					
-				}
+			final Block block = event.getBlock().getRelative(event.getDirection(), 2);
 				
-			}
+			BukkitScheduler bukkitScheduler = Bukkit.getScheduler();
+				
+			bukkitScheduler.scheduleSyncDelayedTask(SQTechBase.getPluginMain(), new Runnable() {
+					
+				public void run() {
+					
+					new Network(block.getRelative(1, 0, 0));
+					new Network(block.getRelative(-1, 0, 0));
+					new Network(block.getRelative(0, 1, 0));
+					new Network(block.getRelative(0, -1, 0));
+					new Network(block.getRelative(0, 0, 1));
+					new Network(block.getRelative(0, 0, -1));
+						
+				}
+					
+			}, 4);
 			
 		}
 		
 	}
 	
-	@EventHandler 
-	public void onCraftSyncTranslate(CraftSyncTranslateEvent event) {
-
+	@EventHandler
+	public void onBlockPistonRetract(final BlockPistonRetractEvent event) {
+		
 		if (!event.isCancelled()) {
+
+			final Block block = event.getBlock().getRelative(event.getDirection().getOppositeFace(), 2);
 			
-			for (int i = 0; i < event.getData().getBlockList().length; i ++) {
+			BukkitScheduler bukkitScheduler = Bukkit.getScheduler();
 				
-				Location location = new Location(event.getCraft().getW(), event.getData().getBlockList()[i].getX(), event.getData().getBlockList()[i].getY(), event.getData().getBlockList()[i].getZ());
-				
-				for (int j = 0; j < SQTechBase.GUIBlocks.size(); j ++) {
+			bukkitScheduler.scheduleSyncDelayedTask(SQTechBase.getPluginMain(), new Runnable() {
 					
-					if (SQTechBase.GUIBlocks.get(j).getLocation().equals(location)) {
-						
-						GUIBlock guiBlock = SQTechBase.GUIBlocks.get(j);
-						guiBlock.setLocation(guiBlock.getLocation().add(event.getData().getDx(), event.getData().getDy(), event.getData().getDz()));
-						SQTechBase.GUIBlocks.remove(i);
-						SQTechBase.GUIBlocks.add(guiBlock);
-						
-					}
+				public void run() {
 					
+					new Network(block.getRelative(1, 0, 0));
+					new Network(block.getRelative(-1, 0, 0));
+					new Network(block.getRelative(0, 1, 0));
+					new Network(block.getRelative(0, -1, 0));
+					new Network(block.getRelative(0, 0, 1));
+					new Network(block.getRelative(0, 0, -1));
+						
 				}
-				
-			}
+					
+			}, 4);
 			
 		}
-
-	}*/
+		
+	}
 	
 	@EventHandler
 	public void onBlockPlace(BlockPlaceEvent event) {
@@ -158,6 +155,7 @@ public class Events implements Listener {
 										if (machine.detectStructure()) {
 											
 											isMachine = true;
+											machine.enabled = true;
 											
 										} else {
 											
@@ -171,30 +169,33 @@ public class Events implements Listener {
 								
 								SQTechBase.machines.removeAll(removeMachines);
 
-								
 								if (!isMachine) {
 									
 									for (MachineType machineType : SQTechBase.machineTypes) {
 										
-										if (machineType.detectStructure(network.GUIBlocks.get(i))) {
+										if (machineType.autodetect) {
 											
-											Machine machine = new Machine(0, network.GUIBlocks.get(i), machineType);
-											
-											SQTechBase.machines.add(machine);
+											if (machineType.detectStructure(network.GUIBlocks.get(i))) {
+												
+												Machine machine = new Machine(0, network.GUIBlocks.get(i), machineType);
+												
+												SQTechBase.machines.add(machine);
+												
+											}
 											
 										}
-															
+					
 									}
 									
 								}
 								
-								network.GUIBlocks.get(i).getGUI().open(event.getPlayer());
-								
+								if (!SQTechBase.currentGui.containsKey(event.getPlayer())) {
+									
+									network.GUIBlocks.get(i).getGUI().open(event.getPlayer());
+									
+								}
+
 							}
-							
-						} else {
-							
-							network.GUIBlocks.remove(i);
 							
 						}
 
@@ -223,6 +224,42 @@ public class Events implements Listener {
 	public void onInventoryClose(InventoryCloseEvent event) {
 		
 		if (SQTechBase.currentGui.containsKey(event.getPlayer())) {
+			
+			for (ItemStack itemStack : event.getInventory().getContents()) {
+				
+				boolean normalItem = true;
+				
+				if (itemStack == null) {
+					
+					normalItem = false;
+					
+				} else {
+					
+					if (itemStack.hasItemMeta()) {
+						
+						if (itemStack.getItemMeta().hasLore()) {
+							
+							if (itemStack.getItemMeta().getLore().contains(ChatColor.RED + "" + ChatColor.MAGIC + "Contraband")) {
+								
+								normalItem = false;
+								
+							}
+							
+						}
+						
+					}
+					
+				}
+				
+				event.getInventory().remove(itemStack);
+				
+				if (normalItem) {
+					
+					event.getPlayer().getWorld().dropItem(event.getPlayer().getLocation(), itemStack);
+					
+				}
+				
+			}
 			
 			if (SQTechBase.currentGui.get(event.getPlayer()).close) {
 				

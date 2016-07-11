@@ -1,0 +1,6 @@
+basic generator:
+  fuel:
+    coal:
+      id: 263
+      energy per tick: 5
+      burn time: 300

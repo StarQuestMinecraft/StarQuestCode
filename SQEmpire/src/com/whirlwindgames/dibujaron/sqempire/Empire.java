@@ -58,7 +58,7 @@ public enum Empire {
 			
 		} else if (id == 2) {
 			
-			Banner banner = (Banner) block;
+			Banner banner = (Banner) block.getState();
 			banner.addPattern(new Pattern(DyeColor.RED, PatternType.GRADIENT_UP));
 			banner.addPattern(new Pattern(DyeColor.RED, PatternType.GRADIENT));
 			banner.addPattern(new Pattern(DyeColor.BLACK, PatternType.CROSS));
@@ -69,7 +69,7 @@ public enum Empire {
 			
 		} else if (id == 3) {
 			
-			Banner banner = (Banner) block;
+			Banner banner = (Banner) block.getState();
 			banner.addPattern(new Pattern(DyeColor.SILVER, PatternType.TRIANGLE_TOP));
 			banner.addPattern(new Pattern(DyeColor.SILVER, PatternType.TRIANGLE_BOTTOM));
 			banner.addPattern(new Pattern(DyeColor.BLACK, PatternType.GRADIENT_UP));
@@ -80,7 +80,7 @@ public enum Empire {
 			
 		} else {
 			
-			Banner banner = (Banner) block;
+			Banner banner = (Banner) block.getState();
 			banner.update();
 			
 		}

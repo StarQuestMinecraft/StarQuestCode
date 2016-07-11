@@ -6,10 +6,7 @@ import java.util.List;
 import org.bukkit.Bukkit;
 import org.bukkit.scheduler.BukkitScheduler;
 
-import com.starquestminecraft.sqtechbase.GUIBlock;
 import com.starquestminecraft.sqtechbase.Machine;
-import com.starquestminecraft.sqtechbase.MachineType;
-import com.starquestminecraft.sqtechbase.Network;
 import com.starquestminecraft.sqtechbase.SQTechBase;
 
 public class StructureTask extends Thread {
@@ -29,7 +26,15 @@ public class StructureTask extends Thread {
 					
 					if (!machine.detectStructure()) {
 						
-						removeMachines.add(machine);
+						if (machine.getGUIBlock().getLocation().getBlock().hasMetadata("guiblock")) {
+							
+							removeMachines.add(machine);
+							
+						} else {
+							
+							machine.enabled = false;
+							
+						}
 						
 					}
 					

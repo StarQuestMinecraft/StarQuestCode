@@ -18,13 +18,13 @@ public class MissileMovement {
 	static Location targetLoc = null;
 	
 	@SuppressWarnings("deprecation")
-	public static boolean activateMissile(Block ammoDispenserBlock, Sign s, Player shooter, String type) {
+	public static boolean activateMissile(Block ammoDispenserBlock, Sign s, final Player shooter, String type) {
 		
 		int detectionRange = SQSmoothCraft.config.getInt("weapons.heatseeking missile.detection range");
 		int cooldown = SQSmoothCraft.config.getInt("weapons.heatseeking missile.cooldown");
 		int fuelTime = SQSmoothCraft.config.getInt("weapons.heatseeking missile.fuelTime");
 		
-		ShulkerBullet shulkerBullet = (ShulkerBullet) ammoDispenserBlock.getLocation().getWorld().spawnEntity(MissileDetection.inFrontOfDispenser(s.getBlock()).getLocation(), EntityType.SHULKER_BULLET);
+		final ShulkerBullet shulkerBullet = (ShulkerBullet) ammoDispenserBlock.getLocation().getWorld().spawnEntity(MissileDetection.inFrontOfDispenser(s.getBlock()).getLocation(), EntityType.SHULKER_BULLET);
 		
 		shulkerBullet.getLocation().setDirection(MissileDetection.getDirectionVector(s.getBlock()));
 		
@@ -47,7 +47,7 @@ public class MissileMovement {
 			return false;
 		}
 		
-		int updateshulkerBulletScheduler = Bukkit.getScheduler().scheduleSyncRepeatingTask(SQSmoothCraft.getPluginMain(), new Runnable() {
+		final int updateshulkerBulletScheduler = Bukkit.getScheduler().scheduleSyncRepeatingTask(SQSmoothCraft.getPluginMain(), new Runnable() {
 			@Override
 			public void run() {
 				
@@ -71,7 +71,7 @@ public class MissileMovement {
 		}, fuelTime * 20);
 		
 		Missile.missileCoolDownList.add(shooter);
-		Player cdPlayer = shooter;
+		final Player cdPlayer = shooter;
 		
 		Bukkit.getScheduler().scheduleAsyncDelayedTask(SQSmoothCraft.getPluginMain(), new Runnable() {
 			

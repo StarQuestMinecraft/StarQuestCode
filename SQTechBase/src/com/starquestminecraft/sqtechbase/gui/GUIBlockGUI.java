@@ -13,6 +13,7 @@ import org.bukkit.inventory.ItemStack;
 import com.starquestminecraft.sqtechbase.GUIBlock;
 import com.starquestminecraft.sqtechbase.Machine;
 import com.starquestminecraft.sqtechbase.Network;
+import com.starquestminecraft.sqtechbase.PlayerOptions;
 import com.starquestminecraft.sqtechbase.SQTechBase;
 import com.starquestminecraft.sqtechbase.util.InventoryUtils;
 
@@ -26,8 +27,6 @@ public class GUIBlockGUI extends GUI {
 	public void open(Player player) {
 		
 		owner = player;
-		
-		Inventory gui = Bukkit.createInventory(owner, 27, ChatColor.BLUE + "SQTech");
 		
 		GUIBlock guiBlock = null;
 		
@@ -45,9 +44,6 @@ public class GUIBlockGUI extends GUI {
 			
 		}
 		
-		gui.setItem(0, InventoryUtils.createSpecialItem(Material.CHEST, (short) 0, "Exports", new String[] {ChatColor.RED + "" + ChatColor.MAGIC + "Contraband"}));
-		gui.setItem(1, InventoryUtils.createSpecialItem(Material.CHEST, (short) 0, "Imports", new String[] {ChatColor.RED + "" + ChatColor.MAGIC + "Contraband"}));
-
 		Machine machine = null;
 		
 		for (Machine listMachine : SQTechBase.machines) {
@@ -59,6 +55,32 @@ public class GUIBlockGUI extends GUI {
 			}
 			
 		}
+		
+		if (machine != null) {
+			
+			if (SQTechBase.currentGui.get(player) != machine.getGUI()) {
+				
+				if (!SQTechBase.currentOptions.containsKey(player.getUniqueId())) {
+					
+					SQTechBase.currentOptions.put(owner.getUniqueId(), new PlayerOptions());
+					
+				}
+				
+				if (SQTechBase.currentOptions.get(player.getUniqueId()).machineGUI) {
+					
+					machine.getGUI().open(owner);
+					return;
+					
+				}
+				
+			}
+			
+		}
+		
+		Inventory gui = Bukkit.createInventory(owner, 27, ChatColor.BLUE + "SQTech");
+
+		gui.setItem(0, InventoryUtils.createSpecialItem(Material.CHEST, (short) 0, "Exports", new String[] {ChatColor.RED + "" + ChatColor.MAGIC + "Contraband"}));
+		gui.setItem(1, InventoryUtils.createSpecialItem(Material.CHEST, (short) 0, "Imports", new String[] {ChatColor.RED + "" + ChatColor.MAGIC + "Contraband"}));
 		
 		if (machine != null) {
 			
@@ -109,6 +131,8 @@ public class GUIBlockGUI extends GUI {
 	public void click(InventoryClickEvent event) {
 		
 		if (event.getClickedInventory().getTitle().startsWith(ChatColor.BLUE + "SQTech")) {
+			
+			event.setCancelled(true);
 			
 			ItemStack clickedItem = event.getInventory().getItem(event.getSlot());
 			
@@ -212,27 +236,11 @@ public class GUIBlockGUI extends GUI {
 					
 					if (event.getInventory().getItem(event.getSlot()) != null) {
 						
-						GUIBlock guiBlock = null;
-						
-						for (Network listNetwork : SQTechBase.networks) {
-							
-							for (GUIBlock networkGUIBlock : listNetwork.getGUIBlocks()) {
-								
-								if (networkGUIBlock.getGUI() == this) {
-									
-									guiBlock = networkGUIBlock;
-									
-								}
-								
-							}
-							
-						}
-						
 						Machine machine = null;
 						
 						for (Machine listMachine : SQTechBase.machines) {
 							
-							if (listMachine.getGUIBlock().equals(guiBlock)) {
+							if (listMachine.getGUIBlock().getGUI() == this) {
 								
 								machine = listMachine;
 								
@@ -241,7 +249,7 @@ public class GUIBlockGUI extends GUI {
 						}
 						
 						if (machine != null) {
-						
+							
 							machine.getGUI().open(owner);
 						
 						}
@@ -352,7 +360,7 @@ public class GUIBlockGUI extends GUI {
 					
 					if (event.getClickedInventory().getItem(event.getSlot()) == null) {
 						
-						if (event.getCursor() != null) {
+						if (!event.getCursor().getType().equals(Material.AIR)) {
 							
 							GUIBlock guiBlock = null;
 							
@@ -420,7 +428,7 @@ public class GUIBlockGUI extends GUI {
 					
 					if (event.getClickedInventory().getItem(event.getSlot()) == null) {
 						
-						if (event.getCursor() != null) {
+						if (!event.getCursor().getType().equals(Material.AIR)) {
 							
 							GUIBlock guiBlock = null;
 							
@@ -493,9 +501,9 @@ public class GUIBlockGUI extends GUI {
 			
 		} else {
 			
-			if (!event.getAction().equals(InventoryAction.MOVE_TO_OTHER_INVENTORY)) {
+			if (event.getAction().equals(InventoryAction.MOVE_TO_OTHER_INVENTORY)) {
 				
-				event.setCancelled(false);
+				event.setCancelled(true);
 				
 			}
 

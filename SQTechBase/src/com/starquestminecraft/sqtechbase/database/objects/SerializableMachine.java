@@ -29,7 +29,9 @@ public class SerializableMachine implements Serializable {
 	boolean exportsEnergy;
 	boolean importsEnergy;
 	
-	HashMap<String, Object> data;
+	HashMap<String, Object> data = new HashMap<String, Object>();
+	
+	boolean enabled;
 	
 	public SerializableMachine(Machine machine) {
 		
@@ -59,6 +61,8 @@ public class SerializableMachine implements Serializable {
 			}
 			
 		}
+		
+		enabled = machine.enabled;
 		
 	}
 	
@@ -117,6 +121,8 @@ public class SerializableMachine implements Serializable {
 			machine.importsEnergy = importsEnergy;
 			
 			machine.data.putAll(data);
+			
+			machine.enabled = enabled;
 			
 			return machine;
 			

@@ -18,10 +18,13 @@ import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.dynmap.markers.Marker;
+import org.dynmap.markers.PolyLineMarker;
 
 import com.sk89q.worldedit.BlockVector;
 import com.sk89q.worldedit.BlockVector2D;
 import com.sk89q.worldguard.protection.ApplicableRegionSet;
+import com.sk89q.worldguard.protection.flags.DefaultFlag;
+import com.sk89q.worldguard.protection.flags.StateFlag.State;
 import com.sk89q.worldguard.protection.regions.ProtectedCuboidRegion;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import com.whirlwindgames.dibujaron.sqempire.database.object.EmpirePercentage;
@@ -63,11 +66,15 @@ public class EmpireCommand implements CommandExecutor{
 			ep.setEmpire(Empire.NONE);
 			ep.publishData();
 			SQEmpire.economy.withdrawPlayer(p, SQEmpire.economy.getBalance(p));
-			SQEmpire.permission.playerAddGroup(p,"Guest");
+			Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "pp user " + p.getName() + " addgroup Guest");
 			Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "pp user " + p.getName() + " removegroup Yavari0");
 			Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "pp user " + p.getName() + " removegroup Arator0");
 			Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "pp user " + p.getName() + " removegroup Requiem0");
 			BungeePlayerHandler.sendPlayer(p, "CoreSystem", "CoreSystem", 0, 102, 0);
+		} else if (cmd.getName().equalsIgnoreCase("setdominantempire") &&  sender instanceof ConsoleCommandSender) {
+			
+			SQEmpire.dominantEmpire = Empire.fromString(args[0]);
+			
 		} else {
 			
 			if(!(sender instanceof Player)){
@@ -87,6 +94,7 @@ public class EmpireCommand implements CommandExecutor{
 	}
 	
 	private void processEmpireCommand(Player p, String[] args){
+		
 		if(args.length == 0){
 			
 			EmpirePlayer ep = EmpirePlayer.getOnlinePlayer(p);
@@ -98,6 +106,7 @@ public class EmpireCommand implements CommandExecutor{
 			if (p.hasPermission("SQEmpire.manageControlPoints")) {
 				
 				p.sendMessage(ChatColor.GOLD + "/empire point - manages control points");
+				p.sendMessage(ChatColor.GOLD + "/empire connection - manages battle connections");
 				
 			}
 			
@@ -113,7 +122,15 @@ public class EmpireCommand implements CommandExecutor{
 				
 			}
 			
-		} else{
+			if (p.hasPermission("SQEmpire.reloadEmpire")) {
+				
+				p.sendMessage(ChatColor.GOLD + "/empire reload - reloads the config");
+				
+			}
+			
+			p.sendMessage(ChatColor.GOLD + "---------------");
+			
+		} else {
 			
 			if (args[0].equalsIgnoreCase("help")) {
 
@@ -126,6 +143,7 @@ public class EmpireCommand implements CommandExecutor{
 				if (p.hasPermission("SQEmpire.manageControlPoints")) {
 					
 					p.sendMessage(ChatColor.GOLD + "/empire point - manages control points");
+					p.sendMessage(ChatColor.GOLD + "/empire connection - manages battle connections");
 					
 				}
 				
@@ -134,6 +152,20 @@ public class EmpireCommand implements CommandExecutor{
 					p.sendMessage(ChatColor.GOLD + "/empire capture - captures a control point");
 					
 				}
+				
+				if (p.hasPermission("SQEmpire.checkEmpire")) {
+					
+					p.sendMessage(ChatColor.GOLD + "/empire check <player> - checks the empire of a player");
+					
+				}
+				
+				if (p.hasPermission("SQEmpire.reloadEmpire")) {
+					
+					p.sendMessage(ChatColor.GOLD + "/empire reload - reloads the config");
+					
+				}
+				
+				p.sendMessage(ChatColor.GOLD + "---------------");
 				
 			} else if (args[0].equalsIgnoreCase("join")) {
 				
@@ -165,13 +197,26 @@ public class EmpireCommand implements CommandExecutor{
 					
 				}
 				
+			} else if (args[0].equalsIgnoreCase("reload")) {
+				
+				if (p.hasPermission("SQEmpire.reloadEmpire")) {
+					
+					SQEmpire.getInstance().reload();
+					
+					p.sendMessage(ChatColor.GOLD + "Config reloaded");
+					
+				}
+				
 			} else if (args[0].equalsIgnoreCase("point")) {
 				
 				if (p.hasPermission("SQEmpire.manageControlPoints")) {
 					
 					if (args.length == 1) {
 						
+						p.sendMessage(ChatColor.GOLD + "/empire point list - lists all control points in the current territory");
 						p.sendMessage(ChatColor.GOLD + "/empire point add - adds a control point");
+						p.sendMessage(ChatColor.GOLD + "/empire point remove <number> - removes a control point");
+						p.sendMessage(ChatColor.GOLD + "---------------");
 						
 					} else {
 						
@@ -184,85 +229,7 @@ public class EmpireCommand implements CommandExecutor{
 								p.sendMessage(ChatColor.RED + "You must be in a region to do that");
 								
 								return;
-								
-							} else if (regions.size() == 1) {
-								
-								List<ProtectedRegion> protectedRegions = new ArrayList<ProtectedRegion>();
-								protectedRegions.addAll(regions.getRegions());
-								
-								for (Territory territory : SQEmpire.territories) {
 									
-									if (territory.name.equals(protectedRegions.get(0).getId())) {
-										
-										int capturePoints = SQEmpire.config.getConfigurationSection("regions." + territory.name + ".capture points").getKeys(false).size();
-										
-										SQEmpire.config.set("regions." + territory.name + ".capture points." + "point" + (capturePoints + 1) + ".owner", "None");
-										SQEmpire.config.set("regions." + territory.name + ".capture points." + "point" + (capturePoints + 1) + ".position", p.getLocation().getChunk().getX() + "," + p.getLocation().add(0, -2, 0).getBlockY() + "," + p.getLocation().getChunk().getZ());
-										
-										SQEmpire.getInstance().saveConfig();
-										
-										final CapturePoint capturePoint = new CapturePoint();
-						        		
-						        		capturePoint.owner = Empire.fromString("None");
-						        		capturePoint.configPath = "regions." + territory.name + ".capture points." + "point" + (capturePoints + 1);
-						        		
-						        		capturePoint.x = p.getLocation().getChunk().getX();
-						        		capturePoint.y = p.getLocation().add(0, -2, 0).getBlockY();
-						        		capturePoint.z = p.getLocation().getChunk().getZ();
-						        		
-						        		capturePoint.name = territory.name + "-" + (capturePoints + 1);
-						        		
-						        		territory.capturePoints.add(capturePoint);
-						        		
-						        		final int xMultiplier = capturePoint.x / capturePoint.x;
-						            	final int zMultiplier = capturePoint.z / capturePoint.z;
-						            	
-						            	Marker marker = SQEmpire.markerSet.createMarker(territory.name + "-" + (capturePoints + 1), territory.name + "-" + (capturePoints + 1), Bukkit.getWorlds().get(0).getName(), (double) capturePoint.x * 16 + (xMultiplier * 7.5), (double) capturePoint.y, (double) capturePoint.z * 16 + (zMultiplier * 7.5), SQEmpire.markerAPI.getMarkerIcon("temple"), false);
-						            	marker.setDescription("Owner: " + capturePoint.owner.getName());
-						            	
-						            	BukkitScheduler scheduler = Bukkit.getScheduler();
-						            	
-						            	scheduler.scheduleSyncDelayedTask(SQEmpire.getInstance(), new Runnable() {
-						            		
-						            		public void run() {
-						            			
-						            			SQEmpire.spawnRectangle(capturePoint.x * 16 + (xMultiplier * 6), capturePoint.y, capturePoint.z * 16 + (zMultiplier * 6), 4, 4, Material.IRON_BLOCK, 0);
-								            	
-								            	SQEmpire.spawnBeacon(capturePoint.x * 16 + (xMultiplier * 7), capturePoint.y, capturePoint.z * 16 + (zMultiplier * 7));
-								            	SQEmpire.spawnBeacon(capturePoint.x * 16 + (xMultiplier * 8), capturePoint.y, capturePoint.z * 16 + (zMultiplier * 7));
-								            	SQEmpire.spawnBeacon(capturePoint.x * 16 + (xMultiplier * 7), capturePoint.y, capturePoint.z * 16 + (zMultiplier * 8));
-								            	SQEmpire.spawnBeacon(capturePoint.x * 16 + (xMultiplier * 8), capturePoint.y, capturePoint.z * 16 + (zMultiplier * 8));
-								    			
-								    			if (capturePoint.owner.equals(Empire.ARATOR)) {
-								    				
-								    				SQEmpire.spawnRectangle(capturePoint.x * 16 + (xMultiplier * 6), capturePoint.y + 1, capturePoint.z * 16 + (zMultiplier * 6), 4, 4, Material.STAINED_GLASS, 11);
-								    				
-								    			} else if (capturePoint.owner.equals(Empire.YAVARI)) {
-								    				
-								    				SQEmpire.spawnRectangle(capturePoint.x * 16 + (xMultiplier * 6), capturePoint.y + 1, capturePoint.z * 16 + (zMultiplier * 6), 4, 4, Material.STAINED_GLASS, 10);
-								    				
-								    			} else if (capturePoint.owner.equals(Empire.REQUIEM)) {
-								    				
-								    				SQEmpire.spawnRectangle(capturePoint.x * 16 + (xMultiplier * 6), capturePoint.y + 1, capturePoint.z * 16 + (zMultiplier * 6), 4, 4, Material.STAINED_GLASS, 14);
-								    				
-								    			} else {
-								    				
-								    				SQEmpire.spawnRectangle(capturePoint.x * 16 + (xMultiplier * 6), capturePoint.y + 1, capturePoint.z * 16 + (zMultiplier * 6), 4, 4, Material.STAINED_GLASS, 0);
-								    				
-								    			}
-						            			
-						            		}
-						            		
-						            	});
-
-						    			p.sendMessage(ChatColor.GOLD + "Capture Point created");
-						    			
-						    			return;
-										
-									}
-									
-								}
-								
 							} else {
 								
 								List<ProtectedRegion> protectedRegions = new ArrayList<ProtectedRegion>();
@@ -272,18 +239,28 @@ public class EmpireCommand implements CommandExecutor{
 									
 									for (Territory territory : SQEmpire.territories) {
 										
-										if (territory.name.equals(region.getId())) {
+										if (territory.name.equalsIgnoreCase(region.getId())) {
 											
-											int capturePoints = SQEmpire.config.getConfigurationSection("regions." + territory.name + ".capture points").getKeys(false).size();
+											int capturePoints = 0;
 											
-											SQEmpire.config.set("regions." + territory.name + ".capture points." + "point" + (capturePoints + 1) + ".owner", "None");
-											SQEmpire.config.set("regions." + territory.name + ".capture points." + "point" + (capturePoints + 1) + ".position", p.getLocation().getChunk().getX() + "," + p.getLocation().add(0, -2, 0).getBlockY() + "," + p.getLocation().getChunk().getZ());
+											if (SQEmpire.config.getConfigurationSection("regions." + territory.name.replace('_', ' ') + ".capture points") != null) {
+												
+												capturePoints = SQEmpire.config.getConfigurationSection("regions." + territory.name.replace('_', ' ') + ".capture points").getKeys(false).size();
+												
+											}
 											
+											territory.name = territory.name.replace('_', ' ');											
+											SQEmpire.config.set("regions." + territory.name + ".capture points.point" + (capturePoints + 1) + ".owner", "None");
+											SQEmpire.config.set("regions." + territory.name + ".capture points.point" + (capturePoints + 1) + ".position", p.getLocation().getChunk().getX() + "," + p.getLocation().add(0, -2, 0).getBlockY() + "," + p.getLocation().getChunk().getZ());
+											territory.name = territory.name.replace(' ', '_');	
 											SQEmpire.getInstance().saveConfig();
 											
 											final CapturePoint capturePoint = new CapturePoint();
 							        		
 							        		capturePoint.owner = Empire.fromString("None");
+							        		capturePoint.name = territory.name + "-" + (capturePoints + 1);
+							        		
+							        		capturePoint.configPath = "regions." + territory.name.replace('_', ' ') + ".capture points.point" + (capturePoints + 1);
 							        		
 							        		capturePoint.x = p.getLocation().getChunk().getX();
 							        		capturePoint.y = p.getLocation().add(0, -2, 0).getBlockY();
@@ -315,8 +292,15 @@ public class EmpireCommand implements CommandExecutor{
 							                	SQEmpire.worldGuardPlugin.getRegionManager(Bukkit.getWorlds().get(0)).addRegion(new ProtectedCuboidRegion(capturePoint.name, new BlockVector(capturePoint.x * 16, 0, capturePoint.z * 16), new BlockVector((capturePoint.x * 16) + (xMultiplier * 16), Bukkit.getWorlds().get(0).getMaxHeight(), (capturePoint.z * 16) + (zMultiplier * 16))));
 							                	
 							                }
+							                
+							                pointRegion = (ProtectedCuboidRegion) SQEmpire.worldGuardPlugin.getRegionManager(Bukkit.getWorlds().get(0)).getRegion(capturePoint.name);
+					                		
+							                pointRegion.setFlag(DefaultFlag.PVP, State.ALLOW);
+							                pointRegion.setFlag(DefaultFlag.GHAST_FIREBALL, State.DENY);
+							                pointRegion.setFlag(DefaultFlag.OTHER_EXPLOSION, State.DENY);
+							                pointRegion.setFlag(DefaultFlag.TNT, State.DENY);
 							            	
-							            	Marker marker = SQEmpire.markerSet.createMarker(territory.name + "-" + (capturePoints + 1), territory.name + "-" + (capturePoints + 1), Bukkit.getWorlds().get(0).getName(), (double) capturePoint.x * 16 + (xMultiplier * 7.5), (double) capturePoint.y, (double) capturePoint.z * 16 + (zMultiplier * 7.5), SQEmpire.markerAPI.getMarkerIcon("temple"), false);
+							            	Marker marker = SQEmpire.markerSet.createMarker(territory.name.replace('_', ' ') + "-" + (capturePoints + 1), territory.name.replace('_', ' ') + "-" + (capturePoints + 1), Bukkit.getWorlds().get(0).getName(), (double) capturePoint.x * 16 + (xMultiplier * 7.5), (double) capturePoint.y, (double) capturePoint.z * 16 + (zMultiplier * 7.5), SQEmpire.markerAPI.getMarkerIcon("temple"), false);
 							            	marker.setDescription("Owner: " + capturePoint.owner.getName());
 							            	
 							            	BukkitScheduler scheduler = Bukkit.getScheduler();
@@ -326,7 +310,8 @@ public class EmpireCommand implements CommandExecutor{
 							            		public void run() {
 							            			
 							            			SQEmpire.spawnRectangle(capturePoint.x * 16 + (xMultiplier * 6), capturePoint.y, capturePoint.z * 16 + (zMultiplier * 6), 4, 4, Material.IRON_BLOCK, 0);
-									            	
+							                    	SQEmpire.spawnRectangle(capturePoint.x * 16 + (xMultiplier * 6), capturePoint.y - 2, capturePoint.z * 16 + (zMultiplier * 6), 4, 4, Material.SLIME_BLOCK, 0); 
+							            			
 									            	SQEmpire.spawnBeacon(capturePoint.x * 16 + (xMultiplier * 7), capturePoint.y, capturePoint.z * 16 + (zMultiplier * 7));
 									            	SQEmpire.spawnBeacon(capturePoint.x * 16 + (xMultiplier * 8), capturePoint.y, capturePoint.z * 16 + (zMultiplier * 7));
 									            	SQEmpire.spawnBeacon(capturePoint.x * 16 + (xMultiplier * 7), capturePoint.y, capturePoint.z * 16 + (zMultiplier * 8));
@@ -349,7 +334,11 @@ public class EmpireCommand implements CommandExecutor{
 									    				SQEmpire.spawnRectangle(capturePoint.x * 16 + (xMultiplier * 6), capturePoint.y + 1, capturePoint.z * 16 + (zMultiplier * 6), 4, 4, Material.STAINED_GLASS, 0);
 									    				
 									    			}
-							            			
+									    			
+									    			SQEmpire.spawnRectangle(capturePoint.x * 16 + (xMultiplier * 6), capturePoint.y + 2, capturePoint.z * 16 + (zMultiplier * 6), 4, 4, Material.AIR, 0);
+									    			SQEmpire.spawnRectangle(capturePoint.x * 16 + (xMultiplier * 6), capturePoint.y + 3, capturePoint.z * 16 + (zMultiplier * 6), 4, 4, Material.AIR, 0);
+									    			SQEmpire.spawnRectangle(capturePoint.x * 16 + (xMultiplier * 6), capturePoint.y + 4, capturePoint.z * 16 + (zMultiplier * 6), 4, 4, Material.AIR, 0);
+									    			
 							            		}
 							            		
 							            	});
@@ -368,10 +357,293 @@ public class EmpireCommand implements CommandExecutor{
 							
 							p.sendMessage(ChatColor.RED + "You must be in a region to do that");
 							
+						} else if (args[1].equalsIgnoreCase("list")) {
+							
+							ApplicableRegionSet regions = SQEmpire.worldGuardPlugin.getRegionManager(Bukkit.getWorlds().get(0)).getApplicableRegions(p.getLocation());
+							
+							if (regions.size() == 0) {
+								
+								p.sendMessage(ChatColor.RED + "You must be in a region to do that");
+								
+								return;
+									
+							} else {
+								
+								List<ProtectedRegion> protectedRegions = new ArrayList<ProtectedRegion>();
+								protectedRegions.addAll(regions.getRegions());
+								
+								for (ProtectedRegion region : protectedRegions) {
+									
+									for (Territory territory : SQEmpire.territories) {
+										
+										if (territory.name.equalsIgnoreCase(region.getId())) {
+											
+											for (int i = 0; i < territory.capturePoints.size(); i ++) {
+												
+												CapturePoint capturePoint = territory.capturePoints.get(i);
+												
+								        		final int xMultiplier = capturePoint.x / capturePoint.x;
+								            	final int zMultiplier = capturePoint.z / capturePoint.z;
+												
+												p.sendMessage(ChatColor.GOLD + "" + (i + 1) + "-" + "x:" + capturePoint.x * 16 + (xMultiplier * 6) + ", y:" + capturePoint.y + ",z:" + capturePoint.z * 16 + (zMultiplier * 6));
+
+											}
+											
+											p.sendMessage(ChatColor.GOLD + "---------------");
+							    			
+							    			return;
+											
+										}
+										
+									}
+									
+								}
+								
+							}
+							
+							p.sendMessage(ChatColor.RED + "You must be in a region to do that");
+							
+						} else if (args[1].equalsIgnoreCase("remove")) {
+							
+							ApplicableRegionSet regions = SQEmpire.worldGuardPlugin.getRegionManager(Bukkit.getWorlds().get(0)).getApplicableRegions(p.getLocation());
+							
+							if (regions.size() == 0) {
+								
+								p.sendMessage(ChatColor.RED + "You must be in a region to do that");
+								
+								return;
+									
+							} else {
+								
+								List<ProtectedRegion> protectedRegions = new ArrayList<ProtectedRegion>();
+								protectedRegions.addAll(regions.getRegions());
+								
+								for (ProtectedRegion region : protectedRegions) {
+									
+									for (Territory territory : SQEmpire.territories) {
+										
+										if (territory.name.equalsIgnoreCase(region.getId())) {
+											
+											for (int i = 0; i < territory.capturePoints.size(); i ++) {
+												
+												if ((i + 1) == Integer.parseInt(args[2])) {
+													
+													CapturePoint capturePoint = territory.capturePoints.get(i);
+													
+													SQEmpire.worldGuardPlugin.getRegionManager(Bukkit.getWorlds().get(0)).removeRegion(capturePoint.name);
+
+													SQEmpire.config.set(capturePoint.configPath, null);
+													SQEmpire.getInstance().saveConfig();
+													
+													List<Marker> markers = new ArrayList<Marker>();
+													markers.addAll(SQEmpire.markerSet.getMarkers());
+													
+													for (Marker marker : markers) {
+														
+														if (marker.getMarkerID().equals(territory.name.replace('_', ' ') + "-" + (i + 1))) {
+															
+															marker.deleteMarker();
+															
+														}
+														
+													}
+													
+													territory.capturePoints.remove(capturePoint);
+													capturePoint = null;
+														
+													p.sendMessage(ChatColor.GOLD + "The control point has been removed");
+													return;
+													
+												}
+												
+											}
+												
+											p.sendMessage(ChatColor.RED + "That is not a valid control point");
+							    			return;
+											
+										}
+										
+									}
+									
+								}
+								
+							}
+							
+							p.sendMessage(ChatColor.RED + "You must be in a region to do that");
+							
 						}
 						
 					}
 					
+				}
+			
+			} else if (args[0].equalsIgnoreCase("connection")) {
+						
+				if (p.hasPermission("SQEmpire.manageControlPoints")) {
+						
+					if (args.length == 1) {
+						
+						p.sendMessage(ChatColor.GOLD + "/empire connection list - lists all of the connections");
+						p.sendMessage(ChatColor.GOLD + "/empire connection add - adds or completes a connection");
+						p.sendMessage(ChatColor.GOLD + "/empire connection remove <name> - removes a connection");
+						p.sendMessage(ChatColor.GOLD + "---------------");
+						
+					} else {
+						
+						if (args[1].equalsIgnoreCase("add")) {
+							
+							ApplicableRegionSet regions = SQEmpire.worldGuardPlugin.getRegionManager(Bukkit.getWorlds().get(0)).getApplicableRegions(p.getLocation());
+							
+							if (regions.size() == 0) {
+								
+								p.sendMessage(ChatColor.RED + "You must be in a region to do that");
+								
+								return;
+									
+							} else {
+								
+								List<ProtectedRegion> protectedRegions = new ArrayList<ProtectedRegion>();
+								protectedRegions.addAll(regions.getRegions());
+								
+								for (ProtectedRegion region : protectedRegions) {
+									
+									for (Territory territory : SQEmpire.territories) {
+										
+										if (territory.name.equalsIgnoreCase(region.getId())) {
+											
+											if (!SQEmpire.territory1.containsKey(p.getName())) {
+												
+												SQEmpire.territory1.put(p.getName(), territory);
+												SQEmpire.territoryX.put(p.getName(), p.getLocation().getBlockX());
+												SQEmpire.territoryZ.put(p.getName(), p.getLocation().getBlockZ());
+												
+												p.sendMessage(ChatColor.GOLD + "Use '/empire connection add' at the endpoint");
+												
+												return;
+												
+											} else {
+												
+												if (SQEmpire.territory1.get(p.getName()).equals(territory)) {
+													
+													p.sendMessage(ChatColor.RED + "You must select another territory");
+													
+													return;
+													
+												} else {
+													
+													BattleConnection connection = new BattleConnection();
+													
+													connection.territory1 = SQEmpire.territory1.get(p.getName());
+													connection.territory2 = territory;
+													
+													connection.x1 = SQEmpire.territoryX.get(p.getName());
+													connection.z1 = SQEmpire.territoryZ.get(p.getName());
+													
+													connection.x2 = p.getLocation().getBlockX();
+													connection.z2 = p.getLocation().getBlockZ();
+													
+													SQEmpire.config.set("connections." + connection.getName() + ".region 1", connection.territory1.name.replace('_', ' '));
+													SQEmpire.config.set("connections." + connection.getName() + ".region 2", connection.territory2.name.replace('_', ' '));
+													SQEmpire.config.set("connections." + connection.getName() + ".x1", connection.x1);
+													SQEmpire.config.set("connections." + connection.getName() + ".z1", connection.z1);
+													SQEmpire.config.set("connections." + connection.getName() + ".x2", connection.x2);
+													SQEmpire.config.set("connections." + connection.getName() + ".z2", connection.z2);
+													
+													SQEmpire.getInstance().saveConfig();
+													
+													SQEmpire.connections.add(connection);
+													
+										        	PolyLineMarker marker = SQEmpire.markerSet.createPolyLineMarker(connection.getName(), connection.getName(), false, Bukkit.getWorlds().get(0).getName(), new double[]{connection.x1, connection.x2}, new double[]{100.0, 100.0}, new double[]{connection.z1, connection.z2}, false);
+										        	
+										        	marker.setLabel("Battle Connection");
+										        	marker.setLineStyle(3, 1, Integer.parseInt("ffff00", 16));
+												
+													SQEmpire.territory1.remove(p.getName());
+													SQEmpire.territoryX.remove(p.getName());
+													SQEmpire.territoryZ.remove(p.getName());
+										        	
+										        	p.sendMessage(ChatColor.GOLD + "Battle Connection created");
+										        	
+										        	return;
+										        	
+												}
+
+											}
+											
+										}
+										
+									}
+									
+								}
+								
+							}
+							
+							p.sendMessage(ChatColor.RED + "You must be in a territory to do that");
+							
+						} else if (args[1].equalsIgnoreCase("list")) {
+							
+							for (BattleConnection connection : SQEmpire.connections) {
+							
+								p.sendMessage(connection.getName());
+
+								
+							}
+							
+							p.sendMessage(ChatColor.GOLD + "---------------");
+							
+						} else if (args[1].equalsIgnoreCase("remove")) {
+									
+							String name = "";
+							
+							for (int i = 2; i < args.length; i ++) {
+								
+								if (i != 2) {
+									
+									name = name + " ";
+									
+								}
+								
+								name = name + args[i];
+								
+							}
+							
+							for (BattleConnection connection : SQEmpire.connections) {
+										
+								if (connection.getName().equalsIgnoreCase(name)) {
+								
+									SQEmpire.config.set("connections." + connection.getName(), null);
+									SQEmpire.getInstance().saveConfig();
+									
+									List<PolyLineMarker> markers = new ArrayList<PolyLineMarker>();
+									markers.addAll(SQEmpire.markerSet.getPolyLineMarkers());
+									
+									for (PolyLineMarker marker : markers) {
+										
+										if (marker.getMarkerID().equals(connection.getName())) {
+											
+											marker.deleteMarker();
+											
+										}
+										
+									}
+									
+									SQEmpire.connections.remove(connection);
+									connection = null;
+									
+									p.sendMessage(ChatColor.GOLD + "The battle connection has been removed");
+									return;
+									
+								}
+								
+							}
+							
+							p.sendMessage(ChatColor.RED + "That is not a valid battle connection");
+			    			return;
+			    			
+						}
+						
+					}
+							
 				}
 				
 			} else if (args[0].equalsIgnoreCase("capture") || args[0].equalsIgnoreCase("claim")) {
@@ -384,9 +656,13 @@ public class EmpireCommand implements CommandExecutor{
 						
 						for (CapturePoint point : territory.capturePoints) {
 							
-							if (point.health.containsKey(EmpirePlayer.getOnlinePlayer(p))) {
+							for (EmpirePlayer ep : point.health.keySet()) {
 								
-								capturing = true;
+								if (ep.getUUID().equals(p.getUniqueId())) {
+									
+									capturing = true;
+									
+								}
 								
 							}
 							
@@ -408,76 +684,6 @@ public class EmpireCommand implements CommandExecutor{
 							
 							return;
 							
-						} else if (regions.size() == 1) {
-							
-							List<ProtectedRegion> protectedRegions = new ArrayList<ProtectedRegion>();
-							protectedRegions.addAll(regions.getRegions());
-							
-							for (Territory territory : SQEmpire.territories) {
-								
-								if (territory.name.equals(protectedRegions.get(0).getId())) {
-									
-									if (SQEmpire.AratorBeachead.equals(territory) || SQEmpire.YavariBeachead.equals(territory) || SQEmpire.RequiemBeachead.equals(territory)) {
-										
-										p.sendMessage(ChatColor.RED + "You cannot capture a beachead");
-										
-										return;
-										
-									} else {
-										
-										EmpirePlayer ep = EmpirePlayer.getOnlinePlayer(p);
-										
-										if (SQEmpire.isBattleConnected(territory, ep.getEmpire()) || territory.owner.equals(ep.getEmpire())) {
-											
-											int chunkX = p.getLocation().getChunk().getX();
-											int chunkZ = p.getLocation().getChunk().getZ();
-											
-											int y = p.getLocation().getBlockY();
-											
-											for (CapturePoint capturePoint : territory.capturePoints) {
-												
-												if (chunkX == capturePoint.x && chunkZ == capturePoint.z && y > capturePoint.y + 1 && y < capturePoint.y + 3) {
-
-													if (!capturePoint.owner.equals(ep.getEmpire())) {
-
-										    			if (capturePoint.capture(p)) {
-										    				
-										    				p.sendMessage(ChatColor.GOLD + "Capturing point");
-										    				
-										    			} else {
-										    				
-										    				p.sendMessage(ChatColor.GOLD + "You are already captureing this point");
-										    				
-										    			}
-										    			
-										    			return;
-														
-													} else {
-														
-														p.sendMessage(ChatColor.RED + "You cannot capture your own control point");
-														
-														return;
-														
-													}
-													
-												}
-												
-											}
-											
-										} else {
-											
-											p.sendMessage(ChatColor.RED + "This territory is not battle connected to your empire");
-										
-											return;
-											
-										}
-										
-									}
-										
-								}								
-									
-							}
-							
 						} else {
 							
 							List<ProtectedRegion> protectedRegions = new ArrayList<ProtectedRegion>();
@@ -487,7 +693,7 @@ public class EmpireCommand implements CommandExecutor{
 								
 								for (Territory territory : SQEmpire.territories) {
 									
-									if (territory.name.equals(region.getId())) {
+									if (territory.name.equalsIgnoreCase(region.getId())) {
 										
 										if (SQEmpire.AratorBeachead.equals(territory) || SQEmpire.YavariBeachead.equals(territory) || SQEmpire.RequiemBeachead.equals(territory)) {
 											
@@ -518,7 +724,7 @@ public class EmpireCommand implements CommandExecutor{
 											    				
 											    			} else {
 											    				
-											    				p.sendMessage(ChatColor.GOLD + "You are already captureing this point");
+											    				p.sendMessage(ChatColor.GOLD + "You cannot capture anymore capture points");
 											    				
 											    			}
 											    			
@@ -656,22 +862,22 @@ public class EmpireCommand implements CommandExecutor{
 					}
 					p.sendMessage("You have succesfully joined empire " + e + "!");
 					if(e == Empire.ARATOR){
-						SQEmpire.permission.playerAddGroup(p,"Arator0");
+						Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "pp user " + p.getName() + " addgroup Arator0");
 						BungeePlayerHandler.sendPlayer(p, "AratorSystem", "AratorSystem", 2598, 100, 1500);
 						Bukkit.dispatchCommand(Bukkit.getConsoleSender(), 
 								"eb janesudo Aratorians, please welcome your newest member " + p.getName() + "!");
 					} else if(e == Empire.REQUIEM){
-						SQEmpire.permission.playerAddGroup(p,"Requiem0");
+						Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "pp user " + p.getName() + " addgroup Requiem0");
 						BungeePlayerHandler.sendPlayer(p, "QuillonSystem", "QuillonSystem", 1375, 100, -2381);
 						Bukkit.dispatchCommand(Bukkit.getConsoleSender(), 
 								"eb janesudo Requiem, please welcome your newest member " + p.getName() + "!");
 					} else if(e == Empire.YAVARI){
-						SQEmpire.permission.playerAddGroup(p,"Yavari0");
+						Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "pp user " + p.getName() + " addgroup Yavari0");
 						BungeePlayerHandler.sendPlayer(p, "YavarSystem", "YavarSystem", 0, 231, 2500);
 						Bukkit.dispatchCommand(Bukkit.getConsoleSender(), 
 								"eb janesudo Yavari, please welcome your newest member " + p.getName() + "!");
 					}
-					Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "bungeeperms user " + p.getName() + " removegroup Guest");
+					Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "pp user " + p.getName() + " removegroup Guest");
 				}
 			} else {
 				p.sendMessage("Incorrect usage, type /empire join <name>");
