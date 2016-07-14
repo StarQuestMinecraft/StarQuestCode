@@ -9,6 +9,8 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Chest;
 import org.bukkit.block.Dropper;
+import org.bukkit.block.Furnace;
+import org.bukkit.inventory.FurnaceInventory;
 import org.bukkit.inventory.ItemStack;
 
 public class BlockTranslation
@@ -17,6 +19,9 @@ public class BlockTranslation
 	final BlockFace direction;
 	ItemStack[] chestItems;
 	ItemStack[] dropperItems;
+	ItemStack furnaceFuel;
+	ItemStack furnaceBurnMaterial;
+	ItemStack furnaceResult;
 	
 	final List<BlockData> blocksData;
 	
@@ -39,6 +44,13 @@ public class BlockTranslation
 			{
 				this.dropperItems = ((Dropper) b.getState()).getInventory().getContents().clone();
 				((Dropper) b.getState()).getInventory().clear();
+			}
+			else if(b.getState() instanceof Furnace)
+			{
+				this.furnaceFuel = ((Furnace) b.getState()).getInventory().getFuel();
+				this.furnaceBurnMaterial = ((Furnace) b.getState()).getInventory().getSmelting();
+				this.furnaceResult = ((Furnace) b.getState()).getInventory().getResult();
+				((Furnace) b.getState()).getInventory().clear();
 			}
 		}
 	}
@@ -77,6 +89,13 @@ public class BlockTranslation
 					if(items != null)
 						((Dropper) newloc.getBlock().getState()).getInventory().addItem(items);
 				}
+			else if(newloc.getBlock().getState() instanceof Furnace)
+			{
+				FurnaceInventory furnaceInv = ((Furnace) newloc.getBlock().getState()).getInventory();
+				furnaceInv.setFuel(this.furnaceFuel);
+				furnaceInv.setResult(this.furnaceResult);
+				furnaceInv.setSmelting(this.furnaceBurnMaterial);
+			}
 		}
 	}
 }

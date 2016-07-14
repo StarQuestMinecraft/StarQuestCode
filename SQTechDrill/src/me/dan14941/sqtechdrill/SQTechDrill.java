@@ -4,7 +4,9 @@ import java.util.HashMap;
 
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitTask;
 
+import com.starquestminecraft.sqtechbase.Machine;
 import com.starquestminecraft.sqtechbase.SQTechBase;
 
 public class SQTechDrill extends JavaPlugin
@@ -15,11 +17,12 @@ public class SQTechDrill extends JavaPlugin
 	private static SQTechDrill plugin;
 	
     private HashMap<Player, Integer> active = new HashMap<Player, Integer>();
+    private HashMap<Machine, BukkitTask> machinesBurningFuel = new HashMap<Machine, BukkitTask>();
 	
 	public void onEnable()
 	{
 		plugin = this;
-		this.drill = new Drill(100, this);
+		this.drill = new Drill(10000, this);
 		SQTechBase.addMachineType(drill);
 		this.movingDrill = new MovingDrill(this);
 		this.eventSim = new EventSimulator();
@@ -27,8 +30,11 @@ public class SQTechDrill extends JavaPlugin
 		this.getConfig().options().copyDefaults(true);
         this.saveConfig();
         
-        @SuppressWarnings("unused")
-		UpgradeItem ui = new UpgradeItem(this);
+        if(getConfig().getBoolean("testing version") == true)
+        {
+        	@SuppressWarnings("unused")
+        	UpgradeItem ui = new UpgradeItem(this);
+        }
 	}
 	
 	/**
@@ -53,7 +59,7 @@ public class SQTechDrill extends JavaPlugin
 		return this.active.get(player);
 	}
 	
-	static SQTechDrill getMain()
+	public static SQTechDrill getMain()
 	{
 		return plugin;
 	}
@@ -62,4 +68,25 @@ public class SQTechDrill extends JavaPlugin
 	{
 		return this.getConfig().getInt("default speed");
 	}
+	
+	public int getEnergyPerBlockMined()
+	{
+		return this.getConfig().getInt("energy consumption per block");
+	}
+	
+	public void registerMachineBurningFuel(Machine machine, BukkitTask task)
+	{
+		this.machinesBurningFuel.put(machine, task);
+	}
+	
+	public BukkitTask getBurnFuelRunnable(Machine machine)
+	{
+		return this.machinesBurningFuel.get(machine);
+	}
+	
+	public void unregisterMachineFromBurningFuel(Machine machine)
+	{
+		this.machinesBurningFuel.remove(machine);
+	}
+	
 }

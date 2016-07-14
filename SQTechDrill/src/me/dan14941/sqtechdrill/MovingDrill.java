@@ -15,6 +15,8 @@ import org.bukkit.scheduler.BukkitTask;
 
 import com.starquestminecraft.sqtechbase.Machine;
 
+import me.dan14941.sqtechdrill.task.DrillMoveRunnable;
+
 public class MovingDrill implements Listener
 {
 	private BukkitTask run;
@@ -69,7 +71,7 @@ public class MovingDrill implements Listener
         this.run = new DrillMoveRunnable(drill, forward, this, player).runTask(this.main);
     }
 	
-	void restartDrillMove(final int delay, final Machine drill, final Player player)
+	public void restartDrillMove(final int delay, final Machine drill, final Player player)
 	{
 		List<Block> frontBlocks = getBlocksInFront(drill);
 		for (Block block : frontBlocks)
@@ -90,7 +92,7 @@ public class MovingDrill implements Listener
 	 * @param drill
 	 * @return a List of the blocks in front of the drill head arranged in a 3 by 3 grid
 	 */
-	static List<Block> getBlocksInFront(Machine drill)
+	public static List<Block> getBlocksInFront(Machine drill)
 	{
 		BlockFace forward = Drill.getDrillForward(drill.getGUIBlock().getLocation().getBlock());
 		List<Block> blocksInfront = new ArrayList<Block>();
@@ -141,7 +143,7 @@ public class MovingDrill implements Listener
 	 * @param drill
 	 * @return
 	 */
-	static boolean moveDrill(BlockFace forward, Machine drill)
+	public static boolean moveDrill(BlockFace forward, Machine drill)
 	{
 		List<Block> frontBlocks = getBlocksInFront(drill);
 		for(Block block : frontBlocks)
@@ -149,14 +151,23 @@ public class MovingDrill implements Listener
 			if(block.getType() == null)
 				return false;
 		}
-
+		
+		if(forward != BlockFace.DOWN)
+		{
+			Block support = drill.getGUIBlock().getLocation().getBlock().getRelative(BlockFace.DOWN, 2).getRelative(forward);
+			if(support.isEmpty() || support.isLiquid())
+			{
+				drill.data.put("isActive", false);
+				return false;
+			}
+		}
 		Block guiBlock = drill.getGUIBlock().getLocation().getBlock();
 
 		List<Block> machineBlocks = new ArrayList<Block>();
 		machineBlocks.add(guiBlock.getRelative(forward));
 		machineBlocks.add(guiBlock);
 		machineBlocks.add(Drill.detectChest(guiBlock));
-		machineBlocks.add(SQTechDrill.getMain().drill.detectDropper(guiBlock, forward));
+		machineBlocks.add(SQTechDrill.getMain().drill.detectFuelInventory(guiBlock, forward));
 		for(Block baseBlock : SQTechDrill.getMain().drill.detectBase(guiBlock, forward))
 			if(baseBlock != null)
 				machineBlocks.add(baseBlock);
@@ -165,6 +176,8 @@ public class MovingDrill implements Listener
 		
 		BlockTranslation movement = new BlockTranslation(machineBlocks, forward);
 		movement.cut();
+		
+		drill.setEnergy(drill.getEnergy() - 10);
 
 		return true;
 	}

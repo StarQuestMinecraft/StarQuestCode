@@ -1,11 +1,16 @@
-package me.dan14941.sqtechdrill;
+package me.dan14941.sqtechdrill.task;
 
-import org.bukkit.scheduler.*;
 import com.starquestminecraft.sqtechbase.*;
+
+import me.dan14941.sqtechdrill.Drill;
+import me.dan14941.sqtechdrill.MovingDrill;
+import me.dan14941.sqtechdrill.SQTechDrill;
+
 import org.bukkit.*;
 import org.bukkit.block.*;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.*;
 
@@ -31,7 +36,7 @@ public class DrillMoveRunnable extends BukkitRunnable
 			this.cancel(); // If not then stop the runnable
 			return;
 		}
-
+		
 		final List<Block> frontBlocks = MovingDrill.getBlocksInFront(this.drill); // gets the blocks in front of the drill
 		List<Object> values = this.checkFrontBlocks(frontBlocks); // check the blocks in front and return a List of
 		int air = 0;											  // Objects being the amount of air and if liquid is present
@@ -46,6 +51,8 @@ public class DrillMoveRunnable extends BukkitRunnable
 		}
 		
 		//System.out.println(" " + air  + liquidPresent);
+		
+		int energyPerBlock = SQTechDrill.getMain().getEnergyPerBlockMined();
 		
 		if (air == frontBlocks.size() && !liquidPresent) // checks if all block in front of the drill are air
 		{
@@ -96,9 +103,18 @@ public class DrillMoveRunnable extends BukkitRunnable
 						cancel();
 						return;
 					}
+					else if(drill.getEnergy() < energyPerBlock)
+					{
+						player.sendMessage(ChatColor.RED + "A drill has run out of energy.");
+						drill.data.put("isActive", false); // turn the drill off
+						cancel();
+						return;
+					}
+					
 					final Collection<ItemStack> drops = b.getDrops();
 					b.setType(Material.AIR);
 					count++;
+					drill.setEnergy(drill.getEnergy() - energyPerBlock); // remove the energy
 					
 					Chest chest = (Chest) Drill.detectChest(drill.getGUIBlock().getLocation().getBlock()).getState();
 					for(ItemStack item : drops)

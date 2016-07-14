@@ -10,6 +10,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Chest;
 import org.bukkit.block.Dropper;
+import org.bukkit.block.Furnace;
 import org.bukkit.entity.Player;
 
 import com.starquestminecraft.sqtechbase.GUIBlock;
@@ -17,11 +18,12 @@ import com.starquestminecraft.sqtechbase.MachineType;
 import com.starquestminecraft.sqtechbase.gui.GUI;
 
 public class Drill extends MachineType
-{
+{	
 	String name = "Drill";
 	BlockFace forward;
 
 	private SQTechDrill main;
+	private List<BlockFace> diamond = new ArrayList<BlockFace>();
 
 	final Material[] drillHeadOptions = {Material.DIAMOND_BLOCK, Material.IRON_BLOCK};
 
@@ -30,6 +32,11 @@ public class Drill extends MachineType
 		super(maxEnergy);
 		this.autodetect = true;
 		this.main = main;
+		
+		diamond.add(BlockFace.NORTH);
+		diamond.add(BlockFace.EAST);
+		diamond.add(BlockFace.SOUTH);
+		diamond.add(BlockFace.WEST);
 	}
 
 	@Override
@@ -39,7 +46,7 @@ public class Drill extends MachineType
 		Location lapizLoc = guiBlock.getLocation(); // gets the loc of the lapiz block
 		ArrayList<Block> baseBlocks;
 		Block chest;
-		Block dropper;
+		Block fuelInventory;
 
 		List<Object> drillHeadResult = this.detectDrillHead(lapizLoc);
 		for(Object obj : drillHeadResult)
@@ -55,9 +62,9 @@ public class Drill extends MachineType
 
 		baseBlocks = this.detectBase(lapizLoc.getBlock(), forward);
 		chest = Drill.detectChest(lapizLoc.getBlock());
-		dropper = this.detectDropper(lapizLoc.getBlock(), forward);
+		fuelInventory = this.detectFuelInventory(lapizLoc.getBlock(), forward);
 		
-		if(chest == null || baseBlocks == null || baseBlocks.isEmpty() || dropper == null)
+		if(chest == null || baseBlocks == null || baseBlocks.isEmpty() || fuelInventory == null)
 			return false;
 
 		return true; // detected drill
@@ -76,27 +83,23 @@ public class Drill extends MachineType
 	}
 	
 	/**
-	 * Detects if a dropper is placed in the correct position and returns the dropper Block or null if no dropper was found.
+	 * Detects if a dropper or furnace is placed in the correct position and returns the Block or null if no correct Block was found.
 	 * @param base the GuiBlock
 	 * @param forward the forward BlockFace of the drill
-	 * @return the dropper Block
+	 * @return the dropper or furnace Block
 	 */
-	public Block detectDropper(Block base, BlockFace forward)
+	public Block detectFuelInventory(Block base, BlockFace forward)
 	{
-		List<BlockFace> diamond = new ArrayList<BlockFace>();
-		diamond.add(BlockFace.NORTH);
-		diamond.add(BlockFace.EAST);
-		diamond.add(BlockFace.SOUTH);
-		diamond.add(BlockFace.WEST);
-
 		for(BlockFace bf : diamond)
 		{
-			if(base.getRelative(bf).getState() instanceof Dropper)
+			if(base.getRelative(bf).getState() instanceof Dropper || base.getRelative(bf).getState() instanceof Furnace)
 				return base.getRelative(bf);
 		}
 		
-		if(base.getRelative(BlockFace.DOWN).getRelative(getBlockFaceBack(forward)).getState() instanceof Dropper)
-				return base.getRelative(BlockFace.DOWN).getRelative(getBlockFaceBack(forward));
+		Block relativePossibleLoc = base.getRelative(BlockFace.DOWN).getRelative(getBlockFaceBack(forward));
+		
+		if(relativePossibleLoc.getState() instanceof Dropper || relativePossibleLoc.getState() instanceof Furnace)
+				return relativePossibleLoc;
 
 		return null;
 	}
