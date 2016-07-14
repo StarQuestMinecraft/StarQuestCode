@@ -30,9 +30,9 @@ public class SQLDatabase {
 	static final String CLEAR_MACHINES = "DELETE FROM minecraft.machines WHERE server = ?";
 	static final String CREATE_MACHINES = "CREATE TABLE IF NOT EXISTS minecraft.machines (ID int NOT NULL AUTO_INCREMENT, server varchar(32), object BLOB, primary key (ID))";
 	
-	static final String WRITE_OPTION = "INSERT INTO minecraft.tech_options(uuid, object) VALUES (?, ?) ON DUPLICATE KEY UPDATE object = VALUES(?)";
+	static final String WRITE_OPTION = "INSERT INTO minecraft.tech_options(uuid, object) VALUES (?, ?) ON DUPLICATE KEY UPDATE object = ?";
 	static final String READ_OPTIONS = "SELECT * FROM minecraft.tech_options WHERE uuid = ?";
-	static final String CREATE_OPTIONS = "CREATE TABLE IF NOT EXISTS minecraft.tech_options (uuid varchar, object BLOB, primary key (uuid))";
+	static final String CREATE_OPTIONS = "CREATE TABLE IF NOT EXISTS minecraft.tech_options (uuid varchar(36), object BLOB, primary key (uuid))";
 	
 	public SQLDatabase() {
 		
@@ -154,7 +154,7 @@ public class SQLDatabase {
 		PreparedStatement pstmt = conn.prepareStatement(WRITE_OPTION);
 
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		ObjectOutputStream oos;
+		ObjectOutputStream oos = null;
 		
 		try {
 			
@@ -175,6 +175,10 @@ public class SQLDatabase {
 		pstmt.setBinaryStream(2, bais, length);
 		pstmt.setBinaryStream(3, bais, length);
 			
+		bais.close();
+		oos.close();
+		baos.close();
+		
 		pstmt.executeUpdate();
 
 	}

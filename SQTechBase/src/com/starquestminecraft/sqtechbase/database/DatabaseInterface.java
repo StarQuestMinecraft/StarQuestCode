@@ -151,6 +151,7 @@ public class DatabaseInterface {
 			
 		}
 		
+		
 		try {
 			
 			SQLDatabase.updateOptions(SQLDatabase.con.getConnection(), player.getUniqueId(), options);
@@ -193,6 +194,9 @@ public class DatabaseInterface {
 						}
 						
 					}
+					
+					ois.close();
+					baip.close();
 					
 				} catch (Exception e) {
 

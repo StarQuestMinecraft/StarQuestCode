@@ -83,7 +83,7 @@ public class GUIBlockGUI extends GUI {
 		
 		if (machine != null) {
 			
-			gui.setItem(8, InventoryUtils.createSpecialItem(Material.REDSTONE, (short) 0, "Machine", new String[] {ChatColor.RED + "" + ChatColor.MAGIC + "Contraband"}));
+			gui.setItem(26, InventoryUtils.createSpecialItem(Material.SPONGE, (short) 0, "Machine", new String[] {ChatColor.RED + "" + ChatColor.MAGIC + "Contraband"}));
 			
 			if (machine.getMachineType().getMaxEnergy() > 0) {
 				
@@ -152,7 +152,7 @@ public class GUIBlockGUI extends GUI {
 					
 					new ImportGUI(owner, id).open();
 					
-				} else if (event.getSlot() == 8) {
+				} else if (event.getSlot() == 26) {
 					
 					if (event.getInventory().getItem(event.getSlot()) != null) {
 						

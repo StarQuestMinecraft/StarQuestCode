@@ -10,8 +10,8 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.block.Furnace;
 import org.bukkit.scheduler.BukkitScheduler;
 
-import com.starquestminecraft.sqtechbase.Machine;
 import com.starquestminecraft.sqtechbase.SQTechBase;
+import com.starquestminecraft.sqtechbase.objects.Machine;
 import com.starquestminecraft.sqtechbase.util.ObjectUtils;
 import com.starquestminecraft.sqtechenergy.Fuel;
 

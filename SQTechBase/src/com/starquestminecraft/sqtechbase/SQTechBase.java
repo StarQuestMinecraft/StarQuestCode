@@ -83,8 +83,7 @@ public class SQTechBase extends JavaPlugin {
 		config = getConfig();
 		
 		this.getServer().getPluginManager().registerEvents(new GUIBlockEvents(), this);
-		this.getServer().getPluginManager().registerEvents(new PlayerEvents(), this);
-		
+
 		if (Bukkit.getPluginManager().isPluginEnabled("Movecraft")) {
 			
 			this.getServer().getPluginManager().registerEvents(new MovecraftEvents(), this);
@@ -96,6 +95,8 @@ public class SQTechBase extends JavaPlugin {
 		(new EnergyTask()).run();
 		
 		new SQLDatabase();
+		
+		this.getServer().getPluginManager().registerEvents(new PlayerEvents(), this);
 		
 		BukkitScheduler bukkitScheduler =  Bukkit.getScheduler();
 		
@@ -115,10 +116,10 @@ public class SQTechBase extends JavaPlugin {
 	
 	public static void printHelp (CommandSender sender) {
 		
-		sender.sendMessage(ChatColor.GOLD + "-----------------------------------------------------");
+		sender.sendMessage(ChatColor.GOLD + "---------------------------------------------");
 		sender.sendMessage(ChatColor.GOLD + "/sqtech help" + ChatColor.BLUE + " - Shows this");
 		sender.sendMessage(ChatColor.GOLD + "/sqtech options" + ChatColor.BLUE + " - Shows a gui with options");
-		sender.sendMessage(ChatColor.GOLD + "-----------------------------------------------------");
+		sender.sendMessage(ChatColor.GOLD + "---------------------------------------------");
 	}
 	
 	public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args) {
