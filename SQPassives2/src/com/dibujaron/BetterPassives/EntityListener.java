@@ -6,6 +6,7 @@ import java.util.Random;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Creeper;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -103,6 +104,10 @@ public class EntityListener implements Listener {
 			// Ghast spawning
 			if(type == EntityType.GHAST)
 			{
+				if (event.getEntity().getLocation().add(0.0, 25.0, 0.0).getBlock().getRelative(BlockFace.DOWN, 2).getType() != Material.AIR) {
+					event.setCancelled(true);
+					return;
+				}
 				//System.out.println("Entity Loc: " + event.getEntity().getLocation());
 				Ghast g = (Ghast) event.getLocation().getWorld().spawn(event.getEntity().getLocation().add(0, 25, 0), Ghast.class);
 				g.setAI(true);

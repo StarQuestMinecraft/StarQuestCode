@@ -64,20 +64,28 @@ public class BetterPassives extends JavaPlugin {
 		return null;
 	}
 
-	public ItemStack getTameItem(Entity entity) {
+	public List<Material> getTameItems(Entity entity) {
 		EntityType type = entity.getType();
 
+		List<Material> materials = new ArrayList<Material>();
+		
 		if (type == EntityType.PIG)
-			return new ItemStack(Material.CARROT_ITEM);
+			materials.add(Material.CARROT_ITEM);
 		if ((type == EntityType.COW) || (type == EntityType.SHEEP) || (type == EntityType.MUSHROOM_COW))
-			return new ItemStack(Material.WHEAT);
+			materials.add(Material.WHEAT);
 		if (type == EntityType.WOLF)
-			return new ItemStack(Material.BONE);
+			materials.add(Material.BONE);
 		if (type == EntityType.CHICKEN)
-			return new ItemStack(Material.SEEDS);
+			materials.add(Material.SEEDS);
 		if (type == EntityType.OCELOT)
-			return new ItemStack(Material.RAW_FISH);
-		return null;
+			materials.add(Material.RAW_FISH);
+		if (type == EntityType.RABBIT) {
+			materials.add(Material.CARROT_ITEM);
+			materials.add(Material.GOLDEN_CARROT);
+			materials.add(Material.YELLOW_FLOWER);
+		}
+		
+		return materials;
 	}
 
 	public String getRandomName(Entity entity) {

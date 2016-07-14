@@ -1,6 +1,7 @@
 package com.dibujaron.BetterPassives;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Effect;
@@ -28,19 +29,21 @@ public class PlayerListener implements Listener {
 		}
 
 		if (event.getPlayer().getInventory().getItemInMainHand().getType() == Material.IRON_HOE) {
-			LivingEntity entity = (LivingEntity) event.getRightClicked();
-			if (entity.getCustomName() == null)
-				return;
+			if (!this.editingPlayers.contains(event.getPlayer())) {
+				LivingEntity entity = (LivingEntity) event.getRightClicked();
+				if (entity.getCustomName() == null)
+					return;
 
-			event.getPlayer().sendMessage(ChatColor.GREEN + "**********************************");
-			event.getPlayer().sendMessage(ChatColor.YELLOW + "Type the entity's new name");
-			event.getPlayer().sendMessage(ChatColor.GREEN + "**********************************");
-			this.editingPlayers.add(event.getPlayer());
-			this.p.setMetadata(event.getPlayer(), "target", event.getRightClicked());
+				event.getPlayer().sendMessage(ChatColor.GREEN + "**********************************");
+				event.getPlayer().sendMessage(ChatColor.YELLOW + "Type the entity's new name");
+				event.getPlayer().sendMessage(ChatColor.GREEN + "**********************************");
+				this.editingPlayers.add(event.getPlayer());
+				this.p.setMetadata(event.getPlayer(), "target", event.getRightClicked());
+			}
 		}
 
-		ItemStack stak = this.p.getTameItem(event.getRightClicked());
-		if (stak != null && stak.isSimilar(event.getPlayer().getInventory().getItemInMainHand())) {
+		List<Material> mat = this.p.getTameItems(event.getRightClicked());
+		if (mat.size() != 0 && mat.contains(event.getPlayer().getInventory().getItemInMainHand().getType())) {
 			LivingEntity entity = (LivingEntity) event.getRightClicked();
 			if (entity.getCustomName() != null)
 				return;

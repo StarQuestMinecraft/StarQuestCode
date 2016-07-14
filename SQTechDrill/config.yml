@@ -1,0 +1,3 @@
+# Speed is measured in how long it takes for a block to break
+# in ticks.
+default speed: 20
