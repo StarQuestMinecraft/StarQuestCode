@@ -1,4 +1,4 @@
-package com.starquestminecraft.sqtechbase;
+package com.starquestminecraft.sqtechbase.events;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,9 +19,15 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitScheduler;
 
+import com.starquestminecraft.sqtechbase.SQTechBase;
+import com.starquestminecraft.sqtechbase.objects.GUIBlock;
+import com.starquestminecraft.sqtechbase.objects.Machine;
+import com.starquestminecraft.sqtechbase.objects.MachineType;
+import com.starquestminecraft.sqtechbase.objects.Network;
+
 import net.md_5.bungee.api.ChatColor;
 
-public class Events implements Listener {
+public class GUIBlockEvents implements Listener {
 	
 	@EventHandler
 	public void onBlockPistonExtend(final BlockPistonExtendEvent event) {
@@ -36,13 +42,42 @@ public class Events implements Listener {
 					
 				public void run() {
 					
-					new Network(block.getRelative(1, 0, 0));
-					new Network(block.getRelative(-1, 0, 0));
-					new Network(block.getRelative(0, 1, 0));
-					new Network(block.getRelative(0, -1, 0));
-					new Network(block.getRelative(0, 0, 1));
-					new Network(block.getRelative(0, 0, -1));
+					Block origBlock = event.getBlock().getRelative(event.getDirection(), 1);
+					
+					if (block.getType().equals(Material.LAPIS_BLOCK)) {
+
+						for (Network network : SQTechBase.networks) {
+							
+							for (GUIBlock guiBlock : network.getGUIBlocks()) {
+								
+								if (origBlock.getLocation().equals(guiBlock.getLocation())) {
+									
+									guiBlock.changeLocation(block.getLocation());
+									
+								}
+								
+							}
+							
+						}
 						
+					} else {
+						
+						new Network(block.getRelative(1, 0, 0));
+						new Network(block.getRelative(-1, 0, 0));
+						new Network(block.getRelative(0, 1, 0));
+						new Network(block.getRelative(0, -1, 0));
+						new Network(block.getRelative(0, 0, 1));
+						new Network(block.getRelative(0, 0, -1));
+						
+						new Network(origBlock.getRelative(1, 0, 0));
+						new Network(origBlock.getRelative(-1, 0, 0));
+						new Network(origBlock.getRelative(0, 1, 0));
+						new Network(origBlock.getRelative(0, -1, 0));
+						new Network(origBlock.getRelative(0, 0, 1));
+						new Network(origBlock.getRelative(0, 0, -1));
+						
+					}
+
 				}
 					
 			}, 4);
@@ -56,7 +91,7 @@ public class Events implements Listener {
 		
 		if (!event.isCancelled()) {
 
-			final Block block = event.getBlock().getRelative(event.getDirection().getOppositeFace(), 2);
+			final Block block = event.getBlock().getRelative(event.getDirection().getOppositeFace(), 1);
 			
 			BukkitScheduler bukkitScheduler = Bukkit.getScheduler();
 				
@@ -64,12 +99,41 @@ public class Events implements Listener {
 					
 				public void run() {
 					
-					new Network(block.getRelative(1, 0, 0));
-					new Network(block.getRelative(-1, 0, 0));
-					new Network(block.getRelative(0, 1, 0));
-					new Network(block.getRelative(0, -1, 0));
-					new Network(block.getRelative(0, 0, 1));
-					new Network(block.getRelative(0, 0, -1));
+					Block origBlock = event.getBlock().getRelative(event.getDirection().getOppositeFace(), 2);
+					
+					if (block.getType().equals(Material.LAPIS_BLOCK)) {
+						
+						for (Network network : SQTechBase.networks) {
+							
+							for (GUIBlock guiBlock : network.getGUIBlocks()) {
+								
+								if (origBlock.getLocation().equals(guiBlock.getLocation())) {
+									
+									guiBlock.changeLocation(block.getLocation());
+									
+								}
+								
+							}
+							
+						}
+						
+					} else {
+						
+						new Network(block.getRelative(1, 0, 0));
+						new Network(block.getRelative(-1, 0, 0));
+						new Network(block.getRelative(0, 1, 0));
+						new Network(block.getRelative(0, -1, 0));
+						new Network(block.getRelative(0, 0, 1));
+						new Network(block.getRelative(0, 0, -1));
+						
+						new Network(origBlock.getRelative(1, 0, 0));
+						new Network(origBlock.getRelative(-1, 0, 0));
+						new Network(origBlock.getRelative(0, 1, 0));
+						new Network(origBlock.getRelative(0, -1, 0));
+						new Network(origBlock.getRelative(0, 0, 1));
+						new Network(origBlock.getRelative(0, 0, -1));
+						
+					}
 						
 				}
 					
@@ -103,6 +167,32 @@ public class Events implements Listener {
 			
 			Material type = event.getBlock().getType();
 			
+			if (type.equals(Material.LAPIS_BLOCK)) {
+				
+				for (Network network : SQTechBase.networks) {
+					
+					for (int i = 0; i < network.getGUIBlocks().size(); i ++) {
+						
+						if (network.getGUIBlocks().get(i).getLocation().getBlock().equals(event.getBlock())) {
+							
+							List<GUIBlock> guiBlocks = network.getGUIBlocks();
+							guiBlocks.remove(i);
+							network.setGUIBlocks(guiBlocks);
+							
+							if (event.getBlock().hasMetadata("guiblock")) {
+								
+								event.getBlock().removeMetadata("guiblock", SQTechBase.getPluginMain());
+								
+							}
+							
+						}
+						
+					}
+					
+				}
+				
+			}
+			
 			if (type.equals(Material.LAPIS_BLOCK) || type.equals(Material.STAINED_GLASS) || type.equals(Material.GLASS)) {
 
 				BukkitScheduler bukkitScheduler = Bukkit.getScheduler();
@@ -135,11 +225,11 @@ public class Events implements Listener {
 
 			for(Network network : SQTechBase.networks) {
 				
-				for (int i = 0; i < network.GUIBlocks.size(); i ++) {
+				for (int i = 0; i < network.getGUIBlocks().size(); i ++) {
 					
-					if (network.GUIBlocks.get(i).getLocation().equals(event.getClickedBlock().getLocation())) {
-						
-						if (network.GUIBlocks.get(i).getLocation().getBlock().getType().equals(Material.LAPIS_BLOCK)) {
+					if (network.getGUIBlocks().get(i).getLocation().equals(event.getClickedBlock().getLocation())) {
+					
+						if (network.getGUIBlocks().get(i).getLocation().getBlock().getType().equals(Material.LAPIS_BLOCK)) {
 							
 							if (!event.getPlayer().isSneaking()) {
 								
@@ -150,7 +240,7 @@ public class Events implements Listener {
 								
 								for (Machine machine : SQTechBase.machines) {
 									
-									if (machine.getGUIBlock().equals(network.GUIBlocks.get(i))) {
+									if (machine.getGUIBlock().equals(network.getGUIBlocks().get(i))) {
 										
 										if (machine.detectStructure()) {
 											
@@ -175,9 +265,9 @@ public class Events implements Listener {
 										
 										if (machineType.autodetect) {
 											
-											if (machineType.detectStructure(network.GUIBlocks.get(i))) {
+											if (machineType.detectStructure(network.getGUIBlocks().get(i))) {
 												
-												Machine machine = new Machine(0, network.GUIBlocks.get(i), machineType);
+												Machine machine = new Machine(0, network.getGUIBlocks().get(i), machineType);
 												
 												SQTechBase.machines.add(machine);
 												
@@ -191,7 +281,7 @@ public class Events implements Listener {
 								
 								if (!SQTechBase.currentGui.containsKey(event.getPlayer())) {
 									
-									network.GUIBlocks.get(i).getGUI().open(event.getPlayer());
+									network.getGUIBlocks().get(i).getGUI(event.getPlayer()).open();
 									
 								}
 

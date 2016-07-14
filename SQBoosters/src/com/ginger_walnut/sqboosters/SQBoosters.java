@@ -436,7 +436,9 @@ public class SQBoosters extends JavaPlugin {
 						
 						player.sendMessage(ChatColor.RED + "That person must have an active booster");
 						
-					}
+						return false;
+						
+					} 
 					
 					try {
 						
@@ -461,7 +463,7 @@ public class SQBoosters extends JavaPlugin {
 						SQBoosters.cc3.getAccountManager().getAccount(player.getName()).withdraw(amount, player.getWorld().getName(), "credit");
 						SQBoosters.cc3.getAccountManager().getAccount(args[0]).deposit(amount, player.getWorld().getName(), "credit");
 						
-						Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "eb janesudo " + ChatColor.GOLD + player.getName() + " has thanked " + args[0] + " with " + args[1] + " credits");
+						Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "eb janesudo " + ChatColor.GOLD + player.getName() + " has thanked " + args[0] + " with " + amount + " credits");
 								
 					} else {
 						

@@ -19,8 +19,15 @@ import org.bukkit.scheduler.BukkitScheduler;
 
 import com.starquestminecraft.sqtechbase.database.DatabaseInterface;
 import com.starquestminecraft.sqtechbase.database.SQLDatabase;
+import com.starquestminecraft.sqtechbase.events.GUIBlockEvents;
+import com.starquestminecraft.sqtechbase.events.MovecraftEvents;
+import com.starquestminecraft.sqtechbase.events.PlayerEvents;
 import com.starquestminecraft.sqtechbase.gui.GUI;
 import com.starquestminecraft.sqtechbase.gui.options.OptionGUI;
+import com.starquestminecraft.sqtechbase.objects.Machine;
+import com.starquestminecraft.sqtechbase.objects.MachineType;
+import com.starquestminecraft.sqtechbase.objects.Network;
+import com.starquestminecraft.sqtechbase.objects.PlayerOptions;
 import com.starquestminecraft.sqtechbase.tasks.DatabaseTask;
 import com.starquestminecraft.sqtechbase.tasks.EnergyTask;
 import com.starquestminecraft.sqtechbase.tasks.ItemMovingTask;
@@ -75,7 +82,8 @@ public class SQTechBase extends JavaPlugin {
 		
 		config = getConfig();
 		
-		this.getServer().getPluginManager().registerEvents(new Events(), this);
+		this.getServer().getPluginManager().registerEvents(new GUIBlockEvents(), this);
+		this.getServer().getPluginManager().registerEvents(new PlayerEvents(), this);
 		
 		if (Bukkit.getPluginManager().isPluginEnabled("Movecraft")) {
 			
@@ -134,7 +142,7 @@ public class SQTechBase extends JavaPlugin {
 						Player player = (Player) sender;
 						
 						OptionGUI optionGUI = new OptionGUI(player);
-						optionGUI.open(player);		
+						optionGUI.open();		
 						
 					} else {
 						

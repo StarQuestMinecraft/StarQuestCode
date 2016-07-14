@@ -4,12 +4,15 @@ import java.io.ByteArrayInputStream;
 import java.io.ObjectInputStream;
 import java.sql.ResultSet;
 
-import com.starquestminecraft.sqtechbase.GUIBlock;
-import com.starquestminecraft.sqtechbase.Machine;
-import com.starquestminecraft.sqtechbase.Network;
+import org.bukkit.entity.Player;
+
 import com.starquestminecraft.sqtechbase.SQTechBase;
 import com.starquestminecraft.sqtechbase.database.objects.SerializableGUIBlock;
 import com.starquestminecraft.sqtechbase.database.objects.SerializableMachine;
+import com.starquestminecraft.sqtechbase.objects.GUIBlock;
+import com.starquestminecraft.sqtechbase.objects.Machine;
+import com.starquestminecraft.sqtechbase.objects.Network;
+import com.starquestminecraft.sqtechbase.objects.PlayerOptions;
 
 public class DatabaseInterface {
 	
@@ -70,12 +73,11 @@ public class DatabaseInterface {
 
 						Network network = new Network(guiBlock.getLocation().getBlock());
 						
-						for (GUIBlock networkGUIBlock : network.getGUIBlocks()) {
+						for (int i = 0; i < network.getGUIBlocks().size(); i ++) {
 							
-							if (guiBlock.getLocation().equals(networkGUIBlock.getLocation())) {
+							if (guiBlock.getLocation().equals(network.getGUIBlocks().get(i).getLocation())) {
 								
-								networkGUIBlock.setExports(guiBlock.getExports());
-								networkGUIBlock.setImports(guiBlock.getImports());
+								network.getGUIBlocks().set(i, guiBlock);
 								
 							}
 							
@@ -128,6 +130,82 @@ public class DatabaseInterface {
 			
 		} catch (Exception e) {
 
+			e.printStackTrace();
+			
+		}
+		
+	}
+	
+	public static void updateOptions(Player player) {
+		
+		PlayerOptions options;
+		
+		if (SQTechBase.currentOptions.containsKey(player.getUniqueId())) {
+			
+			options = SQTechBase.currentOptions.get(player.getUniqueId());
+			
+		} else {
+			
+			options = new PlayerOptions();
+			SQTechBase.currentOptions.put(player.getUniqueId(), options);
+			
+		}
+		
+		try {
+			
+			SQLDatabase.updateOptions(SQLDatabase.con.getConnection(), player.getUniqueId(), options);
+		
+		} catch (Exception e) {
+			
+			e.printStackTrace();
+		
+		}
+		
+	}
+	
+	public static void readOptions(Player player) {
+		
+		try {
+		
+			ResultSet rs = SQLDatabase.readOption(SQLDatabase.con.getConnection(), player.getUniqueId());
+			
+			while (rs.next()) {
+				
+				try {
+				
+					byte[] bytes = (byte[]) rs.getObject("object");
+					
+					ByteArrayInputStream baip = new ByteArrayInputStream(bytes);
+					ObjectInputStream ois = new ObjectInputStream(baip);
+					
+					PlayerOptions options = (PlayerOptions) ois.readObject();
+					
+					if (options != null) {
+	
+						if (SQTechBase.currentOptions.containsKey(player.getUniqueId())) {
+							
+							SQTechBase.currentOptions.replace(player.getUniqueId(), options);
+							
+						} else {
+							
+							SQTechBase.currentOptions.put(player.getUniqueId(), options);
+							
+						}
+						
+					}
+					
+				} catch (Exception e) {
+
+					e.printStackTrace();
+					
+				}
+	
+			}
+			
+			rs.close();
+			
+		} catch (Exception e) {
+			
 			e.printStackTrace();
 			
 		}

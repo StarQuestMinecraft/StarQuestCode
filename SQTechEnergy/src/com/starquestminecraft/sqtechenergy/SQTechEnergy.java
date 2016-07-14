@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
-import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -69,7 +68,7 @@ public class SQTechEnergy extends JavaPlugin{
 			
 		}
 		
-		SQTechBase.addMachineType(new BasicGenerator(10000));
+		SQTechBase.addMachineType(new BasicGenerator());
 		
 		(new GeneratorTask()).run();
 		

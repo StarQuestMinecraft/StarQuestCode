@@ -7,10 +7,10 @@ import java.util.List;
 import org.bukkit.Bukkit;
 import org.bukkit.scheduler.BukkitScheduler;
 
-import com.starquestminecraft.sqtechbase.GUIBlock;
-import com.starquestminecraft.sqtechbase.Machine;
-import com.starquestminecraft.sqtechbase.Network;
 import com.starquestminecraft.sqtechbase.SQTechBase;
+import com.starquestminecraft.sqtechbase.objects.GUIBlock;
+import com.starquestminecraft.sqtechbase.objects.Machine;
+import com.starquestminecraft.sqtechbase.objects.Network;
 
 public class EnergyTask extends Thread {
 
@@ -45,15 +45,19 @@ public class EnergyTask extends Thread {
 						
 						if (machine != null) {
 							
-							if (machine.exportsEnergy) {
+							if (machine.enabled) {
 								
-								exportMachines.add(machine);
+								if (machine.exportsEnergy) {
+									
+									exportMachines.add(machine);
+									
+								}
 								
-							}
-							
-							if (machine.importsEnergy) {
-								
-								importMachines.add(machine);
+								if (machine.importsEnergy) {
+									
+									importMachines.add(machine);
+									
+								}
 								
 							}
 							
@@ -67,7 +71,7 @@ public class EnergyTask extends Thread {
 						
 						for (Machine exportMachine : exportMachines) {
 							
-							if (importMachine.equals(exportMachine)) {
+							if (importMachine == exportMachine) {
 								
 								if (importMachine.getMachineType().getMaxEnergy() != importMachine.getEnergy()) {
 									
@@ -113,7 +117,11 @@ public class EnergyTask extends Thread {
 						
 					}
 					
-					while (justImportMap.size() > 0 && energyLeftMap.size() > 0) {
+					int i = 0;
+					
+					while (justImportMap.size() > 0 && energyLeftMap.size() > 0 && i < 5000) {
+						
+						i ++;
 						
 						List<Machine> exportRemoves = new ArrayList<Machine>();
 						List<Machine> importRemoves = new ArrayList<Machine>();
@@ -286,7 +294,11 @@ public class EnergyTask extends Thread {
 					
 					if (justImportMap.size() == 0 && energyLeftMap.size() > 0) {
 						
-						while (bothMachines.size() > 0 && energyLeftMap.size() > 0) {
+						i = 0;
+						
+						while (bothMachines.size() > 0 && energyLeftMap.size() > 0 && i < 5000) {
+							
+							i ++;
 							
 							List<Machine> exportRemoves = new ArrayList<Machine>();
 							List<Machine> importRemoves = new ArrayList<Machine>();
@@ -387,22 +399,18 @@ public class EnergyTask extends Thread {
 								}
 								
 								for (Machine importMachine : bothMachines.keySet()) {
-									
-									if (!importMachine.equals(smallestExport)) {
 										
-										importMachine.setEnergy(importMachine.getEnergy() + energy);
-										importMachine.getMachineType().updateEnergy(importMachine);
+									importMachine.setEnergy(importMachine.getEnergy() + energy);
+									importMachine.getMachineType().updateEnergy(importMachine);
 										
-										if (importMachine.getEnergy() == importMachine.getMachineType().getMaxEnergy()) {
+									if (importMachine.getEnergy() == importMachine.getMachineType().getMaxEnergy()) {
 											
-											bothMachines.remove(importMachine);
+										bothMachines.remove(importMachine);
 											
-										} else {
+									} else {
 											
-											bothMachines.replace(importMachine, importMachine.getMachineType().getMaxEnergy() - importMachine.getEnergy());
+										bothMachines.replace(importMachine, importMachine.getMachineType().getMaxEnergy() - importMachine.getEnergy());
 											
-										}
-										
 									}
 									
 								}

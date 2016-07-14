@@ -474,8 +474,12 @@ public class SQEmpire extends JavaPlugin{
 			
 			for (CapturePoint capturePoint : territory.capturePoints) {
 				
-				capturePoint.text.remove();
-				
+				if (capturePoint.text != null) {
+					
+					capturePoint.text.remove();
+					
+				}
+
 				int xMultiplier = capturePoint.x / capturePoint.x;
 	        	int zMultiplier = capturePoint.z / capturePoint.z;
 				
@@ -491,52 +495,76 @@ public class SQEmpire extends JavaPlugin{
 			
 			for (PS ps : BoardColl.get().getFactionToChunks().get(faction)) {
 				
-				int x = ps.asBukkitChunk().getX();
-				int z = ps.asBukkitChunk().getZ();
-				
-				int xMultiplier = x / x;
-				int zMultiplier = z / z;
-				
-				Location location = new Location(ps.asBukkitWorld(), (x * 16) + (xMultiplier * 7), 100, (z * 16) + (zMultiplier * 7));
-
-				ApplicableRegionSet regions = SQEmpire.worldGuardPlugin.getRegionManager(Bukkit.getWorlds().get(0)).getApplicableRegions(location);
-				
-				List<ProtectedRegion> protectedRegions = new ArrayList<ProtectedRegion>();
-				protectedRegions.addAll(regions.getRegions());
-				
-				for (ProtectedRegion region : protectedRegions) {
+				if (ps.isWorldLoadedOnThisServer()) {
 					
-					for (Territory territory : SQEmpire.territories) {
+					int x = ps.asBukkitChunk().getX();
+					int z = ps.asBukkitChunk().getZ();
+					
+					int xMultiplier;
+					int zMultiplier;
+					
+					if (x == 0) {
 						
-						if (territory.name.equalsIgnoreCase(region.getId())) {
+						xMultiplier = 1;
+						
+					} else {
+						
+						xMultiplier = x / Math.abs(x);
+						
+					}
+					
+					if (z == 0) {
+						
+						zMultiplier = 1;
+						
+					} else {
+						
+						zMultiplier = z / Math.abs(z);
+						
+					}
+
+					Location location = new Location(ps.asBukkitWorld(), (x * 16) + (xMultiplier * 7), 100, (z * 16) + (zMultiplier * 7));
+
+					ApplicableRegionSet regions = SQEmpire.worldGuardPlugin.getRegionManager(Bukkit.getWorlds().get(0)).getApplicableRegions(location);
+					
+					List<ProtectedRegion> protectedRegions = new ArrayList<ProtectedRegion>();
+					protectedRegions.addAll(regions.getRegions());
+					
+					for (ProtectedRegion region : protectedRegions) {
+						
+						for (Territory territory : SQEmpire.territories) {
 							
-							if (territory.age >= 3) {
+							if (territory.name.equalsIgnoreCase(region.getId())) {
 								
-								Empire factionEmpire = Empire.NONE;
-								
-								if (faction.getFlag("arator")) {
+								if (territory.age >= 3) {
 									
-									factionEmpire = Empire.ARATOR;
+									Empire factionEmpire = Empire.NONE;
 									
-								}
-								
-								if (faction.getFlag("requiem")) {
-									
-									factionEmpire = Empire.REQUIEM;
-									
-								}
-								
-								if (faction.getFlag("yavari")) {
-									
-									factionEmpire = Empire.YAVARI;
-									
-								}
-								
-								if (!factionEmpire.equals(territory.owner)) {
-									
-									if (!SQEmpire.isBattleConnected(territory, factionEmpire)) {
+									if (faction.getFlag("arator")) {
 										
-										Board.get(faction).setFactionAt(ps, FactionColl.get().getNone());
+										factionEmpire = Empire.ARATOR;
+										
+									}
+									
+									if (faction.getFlag("requiem")) {
+										
+										factionEmpire = Empire.REQUIEM;
+										
+									}
+									
+									if (faction.getFlag("yavari")) {
+										
+										factionEmpire = Empire.YAVARI;
+										
+									}
+									
+									if (factionEmpire != Empire.NONE) {
+										
+										if (!factionEmpire.equals(territory.owner)) {
+												
+											BoardColl.get().setFactionAt(ps, FactionColl.get().getNone());
+											
+										}
 										
 									}
 									

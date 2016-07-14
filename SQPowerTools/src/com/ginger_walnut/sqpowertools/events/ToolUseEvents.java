@@ -161,8 +161,6 @@ public class ToolUseEvents implements Listener {
 					
 					if (!unbreakable) {
 						
-						System.out.print(handItem.getDurability());
-						
 						if (handItem.getDurability() >= 1541) {
 							
 							if (handItem.getDurability() >= 1551) {

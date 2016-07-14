@@ -1,17 +1,19 @@
-package com.starquestminecraft.sqtechbase;
+package com.starquestminecraft.sqtechbase.objects;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.bukkit.Location;
+import org.bukkit.block.Block;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.FixedMetadataValue;
 
+import com.starquestminecraft.sqtechbase.SQTechBase;
 import com.starquestminecraft.sqtechbase.gui.GUI;
+import com.starquestminecraft.sqtechbase.gui.guiblock.GUIBlockGUI;
 
 public class GUIBlock {
-
-	GUI gui;
 	Location location;
 	
 	List<ItemStack> imports = new ArrayList<ItemStack>();
@@ -19,9 +21,8 @@ public class GUIBlock {
 	
 	public int id = -1;
 	
-	public GUIBlock(GUI gui, Location location) {
+	public GUIBlock(Location location) {
 		
-		this.gui = gui;
 		this.location = location;
 		
 		boolean isMachine = false;
@@ -30,7 +31,7 @@ public class GUIBlock {
 			
 			if (machine.getGUIBlock().getLocation().equals(location)) {
 				
-				machine.guiBlock = this;
+				//machine.guiBlock = this;
 				isMachine = true;
 				
 			}
@@ -91,9 +92,9 @@ public class GUIBlock {
 		
 	}
 	
-	public GUI getGUI() {
+	public GUI getGUI(Player player) {
 		
-		return gui;
+		return new GUIBlockGUI(player, id);
 		
 	}
 	
@@ -103,7 +104,7 @@ public class GUIBlock {
 		
 	}
 	
-	void setLocation(Location location) {
+	public void setLocation(Location location) {
 		
 		this.location = location;
 		
@@ -128,6 +129,16 @@ public class GUIBlock {
 		new Network(location.getBlock().getRelative(0, -1, 0));
 		new Network(location.getBlock().getRelative(0, 0, 1));
 		new Network(location.getBlock().getRelative(0, 0, -1));
+		
+		Block oldBlock = oldLocation.getBlock();
+		
+		if (oldBlock.hasMetadata("guiblock")) {
+			
+			oldBlock.removeMetadata("guiblock", SQTechBase.getPluginMain());
+			
+		}
+		
+		location.getBlock().setMetadata("guiblock", new FixedMetadataValue(SQTechBase.getPluginMain(), id));
 		
 	}
 	

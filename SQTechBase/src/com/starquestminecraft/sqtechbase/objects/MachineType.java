@@ -1,5 +1,6 @@
-package com.starquestminecraft.sqtechbase;
+package com.starquestminecraft.sqtechbase.objects;
 
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import com.starquestminecraft.sqtechbase.gui.GUI;
@@ -23,9 +24,9 @@ public class MachineType {
 		
 	}
 	
-	public GUI getGUI() {
+	public GUI getGUI(Player player, int id) {
 		
-		return new GUI();
+		return new GUI(player, id);
 		
 	}
 	

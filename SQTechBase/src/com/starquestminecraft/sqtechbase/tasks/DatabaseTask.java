@@ -1,6 +1,7 @@
 package com.starquestminecraft.sqtechbase.tasks;
 
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitScheduler;
 
 import com.starquestminecraft.sqtechbase.SQTechBase;
@@ -27,6 +28,12 @@ public class DatabaseTask extends Thread{
 					SQLDatabase.clearGUIBlocks(SQLDatabase.con.getConnection(), SQTechBase.config.getString("server name"));
 					
 					DatabaseInterface.saveObjects();
+					
+					for (Player player : Bukkit.getOnlinePlayers()) {
+						
+						DatabaseInterface.updateOptions(player);
+						
+					}
 					
 				} catch (Exception e) {
 

@@ -8,16 +8,12 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Furnace;
-import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitScheduler;
 
 import com.starquestminecraft.sqtechbase.Machine;
 import com.starquestminecraft.sqtechbase.SQTechBase;
-import com.starquestminecraft.sqtechbase.util.InventoryUtils;
 import com.starquestminecraft.sqtechbase.util.ObjectUtils;
 import com.starquestminecraft.sqtechenergy.Fuel;
-
-import net.md_5.bungee.api.ChatColor;
 
 public class GeneratorTask extends Thread {
 
@@ -66,23 +62,7 @@ public class GeneratorTask extends Thread {
 												
 										}
 										
-										for (Player player : SQTechBase.currentGui.keySet()) {
-											
-											if (SQTechBase.currentGui.get(player) == machine.getGUI()) {
-												
-												if (player.getOpenInventory() != null) {
-													
-													if (player.getOpenInventory().getTitle().equals(ChatColor.BLUE + "SQTech - Basic Generator")) {
-														
-														player.getOpenInventory().setItem(8, InventoryUtils.createSpecialItem(Material.REDSTONE, (short) 0, "Energy: " + machine.getEnergy(), new String[] {ChatColor.RED + "" + ChatColor.MAGIC + "Contraband"}));
-														
-													}
-													
-												}
-												
-											}
-											
-										}
+										machine.getMachineType().updateEnergy(machine);
 											
 									}
 									

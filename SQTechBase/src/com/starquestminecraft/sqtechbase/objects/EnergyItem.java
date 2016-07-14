@@ -1,4 +1,4 @@
-package com.starquestminecraft.sqtechbase;
+package com.starquestminecraft.sqtechbase.objects;
 
 import java.util.ArrayList;
 import java.util.List;

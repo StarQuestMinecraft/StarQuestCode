@@ -1,4 +1,4 @@
-package com.starquestminecraft.sqtechbase;
+package com.starquestminecraft.sqtechbase.objects;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,9 +6,10 @@ import java.util.List;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.scheduler.BukkitScheduler;
 
-import com.starquestminecraft.sqtechbase.gui.GUIBlockGUI;
+import com.starquestminecraft.sqtechbase.SQTechBase;
 
 public class Network {
 
@@ -20,9 +21,13 @@ public class Network {
 	public List<Block> detectedGUIBlocks = new ArrayList<Block>();
 	public List<Block> detectedWireBlocks = new ArrayList<Block>();
 	
+	Block startBlock;
+	
 	public Network(Block startingBlock) {
 		
 		if (startingBlock.getType().equals(Material.LAPIS_BLOCK) || startingBlock.getType().equals(Material.STAINED_GLASS) || startingBlock.getType().equals(Material.GLASS)) {
+			
+			startBlock = startingBlock;
 			
 			attemptedBlocks.clear();
 			attemptableBlocksFrom.clear();
@@ -99,7 +104,7 @@ public class Network {
 			
 			for (Block block : detectedGUIBlocks) {
 				
-				GUIBlocks.add(new GUIBlock(new GUIBlockGUI(), block.getLocation()));
+				GUIBlocks.add(new GUIBlock(block.getLocation()));
 				
 				List<Network> networks = new ArrayList<Network>();
 				networks.addAll(SQTechBase.networks);
@@ -120,9 +125,12 @@ public class Network {
 				
 			}
 			
+			List<GUIBlock> removeBlocks = new ArrayList<GUIBlock>();
+			removeBlocks.addAll(GUIBlocks);
+			
 			for (Network network : mergeNetworks) {
 				
-				merge(network);
+				removeBlocks.removeAll(merge(network));
 				
 			}
 			
@@ -196,8 +204,10 @@ public class Network {
 		
 	}
 	
-	public void merge(final Network network) {
+	public List<GUIBlock> merge(final Network network) {
 			
+		List<GUIBlock> notRemoveBlocks = new ArrayList<GUIBlock>();
+		
 		BukkitScheduler scheduler = Bukkit.getScheduler();
 		scheduler.scheduleSyncDelayedTask(SQTechBase.getPluginMain(), new Runnable() {
 			
@@ -209,26 +219,37 @@ public class Network {
 			
 		}, 1);
 		
-
-
+		
 		for (GUIBlock guiBlock : network.GUIBlocks) {
 			
-			for (GUIBlock selfGUIBlock : GUIBlocks) {
+			for (int i = 0; i < GUIBlocks.size(); i ++) {
 				
-				if (guiBlock.getLocation().equals(selfGUIBlock.getLocation())) {
+				/*if (selfGUIBlock.getLocation().equals(startBlock.getLocation())) {
+					
+					notRemoveBlocks.add(selfGUIBlock);
+					
+				}*/
+				
+				if (guiBlock.getLocation().equals(GUIBlocks.get(i).getLocation())) {
+					
+					/*notRemoveBlocks.add(selfGUIBlock);
 					
 					selfGUIBlock.exports = guiBlock.exports;
 					selfGUIBlock.imports = guiBlock.imports;
+					//selfGUIBlock.id = guiBlock.id;
 					
 					for (Machine machine : SQTechBase.machines) {
 						
-						if (machine.guiBlock.equals(guiBlock)) {
+						if (machine.guiBlock == guiBlock) {
 														
 							machine.guiBlock = selfGUIBlock;
 							
 						}
 						
-					}
+					}*/
+					
+					GUIBlocks.set(i, guiBlock);
+					guiBlock.getLocation().getBlock().setMetadata("guiblock", new FixedMetadataValue(SQTechBase.getPluginMain(), guiBlock.id));
 					
 				}
 				
@@ -236,11 +257,19 @@ public class Network {
 			
 		}
 		
+		return notRemoveBlocks;
+		
 	}
 	
 	public List<GUIBlock> getGUIBlocks() {
 		
 		return GUIBlocks;
+		
+	}
+	
+	public void setGUIBlocks(List<GUIBlock> GUIBlocks) {
+		
+		this.GUIBlocks = GUIBlocks;
 		
 	}
 	

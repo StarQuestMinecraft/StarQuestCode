@@ -15,6 +15,7 @@ import com.starquestminecraft.sqtechbase.Machine;
 import com.starquestminecraft.sqtechbase.SQTechBase;
 import com.starquestminecraft.sqtechbase.gui.GUI;
 import com.starquestminecraft.sqtechbase.util.InventoryUtils;
+import com.starquestminecraft.sqtechbase.util.ObjectUtils;
 import com.starquestminecraft.sqtechenergy.Fuel;
 import com.starquestminecraft.sqtechenergy.SQTechEnergy;
 
@@ -22,29 +23,19 @@ import net.md_5.bungee.api.ChatColor;
 
 public class BasicGeneratorGUI extends GUI{
 
-	public BasicGeneratorGUI() {
+	public BasicGeneratorGUI(Player player, int id) {
+		
+		super(player, id);
 		
 	}
 	
 	@Override	
-	public void open(Player player) {
-		
-		owner = player;
-		
+	public void open() {
+
 		Inventory gui = Bukkit.createInventory(owner, 27, ChatColor.BLUE + "SQTech - Basic Generator");
 
-		Machine machine = null;
-		
-		for (Machine machineList : SQTechBase.machines) {
-			
-			if (machineList.getGUI().equals(this)) {
+		Machine machine = ObjectUtils.getMachineFromMachineGUI(this);
 				
-				machine = machineList;
-				
-			}
-			
-		}
-			
 		gui.setItem(8, InventoryUtils.createSpecialItem(Material.REDSTONE, (short) 0, "Energy: " + machine.getEnergy(), new String[] {ChatColor.RED + "" + ChatColor.MAGIC + "Contraband"}));
 		gui.setItem(26, InventoryUtils.createSpecialItem(Material.WOOD_DOOR, (short) 0, "Back", new String[] {ChatColor.RED + "" + ChatColor.MAGIC + "Contraband"}));
 		
@@ -76,27 +67,31 @@ public class BasicGeneratorGUI extends GUI{
 	@Override
 	public void click(final InventoryClickEvent event) {
 		
-		if (event.getClickedInventory().getTitle().startsWith(ChatColor.BLUE + "SQTech")) {
+		if (event.getClickedInventory() != null) {
 			
-			event.setCancelled(true);
-			
-			ItemStack clickedItem = event.getInventory().getItem(event.getSlot());
-			
-			boolean normalItem = true;
-			
-			if (clickedItem == null) {
+			if (event.getClickedInventory().getTitle().startsWith(ChatColor.BLUE + "SQTech")) {
 				
-				normalItem = false;
+				event.setCancelled(true);
 				
-			} else {
+				ItemStack clickedItem = event.getInventory().getItem(event.getSlot());
 				
-				if (clickedItem.hasItemMeta()) {
+				boolean normalItem = true;
+				
+				if (clickedItem == null) {
 					
-					if (clickedItem.getItemMeta().hasLore()) {
+					normalItem = false;
+					
+				} else {
+					
+					if (clickedItem.hasItemMeta()) {
 						
-						if (clickedItem.getItemMeta().getLore().contains(ChatColor.RED + "" + ChatColor.MAGIC + "Contraband")) {
+						if (clickedItem.getItemMeta().hasLore()) {
 							
-							normalItem = false;
+							if (clickedItem.getItemMeta().getLore().contains(ChatColor.RED + "" + ChatColor.MAGIC + "Contraband")) {
+								
+								normalItem = false;
+								
+							}
 							
 						}
 						
@@ -104,90 +99,68 @@ public class BasicGeneratorGUI extends GUI{
 					
 				}
 				
-			}
-			
-			if (normalItem) {
-				
-				event.setCancelled(false);
-				
-			}
-			
-			if (event.getClickedInventory().getTitle().equals(ChatColor.BLUE + "SQTech - Basic Generator")) {
-
-				if (event.getSlot() == 26) {
-			
-					GUIBlock guiBlock = null;
-					
-					for (Machine machine : SQTechBase.machines) {
-						
-						if (machine.getGUI().equals(this)) {
-							
-							guiBlock = machine.getGUIBlock();
-							
-						}
-						
-					}
-					
-					guiBlock.getGUI().open(owner);
-					
-				} else if (event.getSlot() == 10) {
+				if (normalItem) {
 					
 					event.setCancelled(false);
 					
-					Machine machine1 = null;
-					
-					for (Machine listMachine : SQTechBase.machines) {
-						
-						if (listMachine.getGUI().equals(this)) {
-							
-							machine1 = listMachine;
-							
-						}
-						
-					}
-					
-					final Machine machine = machine1;
-					
-					Bukkit.getScheduler().scheduleSyncDelayedTask(SQTechEnergy.getPluginMain(), new Runnable() {
-						
-						public void run() {
-							
-							if (!event.getClickedInventory().getItem(event.getSlot()).getType().equals(Material.AIR)) {
+				}
+				
+				if (event.getClickedInventory().getTitle().equals(ChatColor.BLUE + "SQTech - Basic Generator")) {
 
-								for (Fuel fuel : SQTechEnergy.fuels) {
-									
-									if (fuel.generator.equals(machine.getMachineType().name)) {
+					if (event.getSlot() == 26) {
+				
+						GUIBlock guiBlock = ObjectUtils.getMachineFromMachineGUI(this).getGUIBlock();
+						
+						guiBlock.getGUI(owner).open();
+						
+					} else if (event.getSlot() == 10) {
+						
+						event.setCancelled(false);
+						
+						final Machine machine = ObjectUtils.getMachineFromMachineGUI(this);
+						
+						Bukkit.getScheduler().scheduleSyncDelayedTask(SQTechEnergy.getPluginMain(), new Runnable() {
+							
+							public void run() {
+								
+								if (!event.getClickedInventory().getItem(event.getSlot()).getType().equals(Material.AIR)) {
+
+									for (Fuel fuel : SQTechEnergy.fuels) {
 										
-										if (event.getClickedInventory().getItem(event.getSlot()).getTypeId() == fuel.id) {
+										if (fuel.generator.equals(machine.getMachineType().name)) {
 											
-											if (machine.data.containsKey("fuel")) {
+											if (event.getClickedInventory().getItem(event.getSlot()).getTypeId() == fuel.id) {
 												
-												if (machine.data.get("fuel") instanceof HashMap<?,?>) {
+												if (machine.data.containsKey("fuel")) {
 													
-													HashMap<Fuel, Integer> currentFuels = (HashMap<Fuel, Integer>) machine.data.get("fuel");
-													
-													if (currentFuels.containsKey(fuel)) {
+													if (machine.data.get("fuel") instanceof HashMap<?,?>) {
 														
-														currentFuels.replace(fuel, currentFuels.get(fuel) + (event.getClickedInventory().getItem(event.getSlot()).getAmount() * fuel.burnTime));
+														HashMap<Fuel, Integer> currentFuels = (HashMap<Fuel, Integer>) machine.data.get("fuel");
 														
-													} else {
+														if (currentFuels.containsKey(fuel)) {
+															
+															currentFuels.replace(fuel, currentFuels.get(fuel) + (event.getClickedInventory().getItem(event.getSlot()).getAmount() * fuel.burnTime));
+															
+														} else {
+															
+															currentFuels.put(fuel, event.getClickedInventory().getItem(event.getSlot()).getAmount() * fuel.burnTime);
+															
+														}
 														
-														currentFuels.put(fuel, event.getClickedInventory().getItem(event.getSlot()).getAmount() * fuel.burnTime);
+														event.getClickedInventory().setItem(event.getSlot(), new ItemStack(Material.AIR));
 														
 													}
+													
+												} else {
+													
+													machine.data.put("fuel", new HashMap<Fuel, Integer>());
+													
+													HashMap<Fuel, Integer> currentFuels = (HashMap<Fuel, Integer>) machine.data.get("fuel");
+													currentFuels.put(fuel, event.getClickedInventory().getItem(event.getSlot()).getAmount() * fuel.burnTime);
 													
 													event.getClickedInventory().setItem(event.getSlot(), new ItemStack(Material.AIR));
 													
 												}
-												
-											} else {
-												
-												machine.data.put("fuel", new HashMap<Fuel, Integer>());
-												
-												HashMap<Fuel, Integer> currentFuels = (HashMap<Fuel, Integer>) machine.data.get("fuel");
-												currentFuels.put(fuel, event.getClickedInventory().getItem(event.getSlot()).getAmount() * fuel.burnTime);
-												
-												event.getClickedInventory().setItem(event.getSlot(), new ItemStack(Material.AIR));
 												
 											}
 											
@@ -199,23 +172,23 @@ public class BasicGeneratorGUI extends GUI{
 								
 							}
 							
-						}
-						
-					});
-	
+						});
+		
+					}
+					
+				}
+				
+			} else {
+				
+				if (event.getAction().equals(InventoryAction.MOVE_TO_OTHER_INVENTORY)) {
+					
+					event.setCancelled(true);
+					
 				}
 				
 			}
 			
-		} else {
-			
-			if (event.getAction().equals(InventoryAction.MOVE_TO_OTHER_INVENTORY)) {
-				
-				event.setCancelled(true);
-				
-			}
-			
-		}
+		}	
 		
 	}
 	

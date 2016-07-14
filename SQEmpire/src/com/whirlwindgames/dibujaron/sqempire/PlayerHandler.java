@@ -202,12 +202,8 @@ public class PlayerHandler implements Listener{
 								
 								if (!territory.owner.equals(empire)) {
 									
-									if (!SQEmpire.isBattleConnected(territory, empire)) {
-										
-										event.setCancelled(true);
-										return;
-										
-									}
+									event.setCancelled(true);
+									return;	
 									
 								}
 								

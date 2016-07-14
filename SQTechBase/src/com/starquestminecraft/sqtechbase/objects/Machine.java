@@ -1,9 +1,12 @@
-package com.starquestminecraft.sqtechbase;
+package com.starquestminecraft.sqtechbase.objects;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import org.bukkit.entity.Player;
+
+import com.starquestminecraft.sqtechbase.SQTechBase;
 import com.starquestminecraft.sqtechbase.gui.GUI;
 
 public class Machine {
@@ -13,8 +16,6 @@ public class Machine {
 	GUIBlock guiBlock;
 	
 	MachineType machineType;
-	
-	GUI gui;
 	
 	public boolean exportsEnergy;
 	public boolean importsEnergy;
@@ -30,8 +31,6 @@ public class Machine {
 		this.guiBlock = guiBlock;
 		
 		this.machineType = machineType;
-		
-		gui = machineType.getGUI();
 		
 		List<Machine> removeMachines = new ArrayList<Machine>();
 		
@@ -55,9 +54,9 @@ public class Machine {
 		
 	}
 	
-	public GUI getGUI() {
+	public GUI getGUI(Player player) {
 		
-		return gui;
+		return machineType.getGUI(player, guiBlock.id);
 		
 	}
 	
@@ -90,7 +89,6 @@ public class Machine {
 		
 		machineType = newMachineType;
 		
-		gui = machineType.getGUI();
-		
 	}
+	
 }

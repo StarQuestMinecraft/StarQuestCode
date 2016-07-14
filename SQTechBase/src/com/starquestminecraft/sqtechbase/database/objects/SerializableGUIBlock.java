@@ -9,8 +9,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
-import com.starquestminecraft.sqtechbase.GUIBlock;
-import com.starquestminecraft.sqtechbase.gui.GUIBlockGUI;
+import com.starquestminecraft.sqtechbase.objects.GUIBlock;
 import com.starquestminecraft.sqtechbase.util.InventoryUtils;
 
 import net.md_5.bungee.api.ChatColor;
@@ -57,17 +56,17 @@ public class SerializableGUIBlock implements Serializable{
 
 		if (Bukkit.getWorld(world) != null) {
 			
-			GUIBlock guiBlock = new GUIBlock(new GUIBlockGUI(), new Location(Bukkit.getWorld(world), x, y, z));
+			GUIBlock guiBlock = new GUIBlock(new Location(Bukkit.getWorld(world), x, y, z));
 			
 			for (int i = 0; i < importIDs.size(); i ++) {
 				
 				guiBlock.addImport(InventoryUtils.createSpecialItem(Material.getMaterial(importIDs.get(i)), importDatas.get(i), "", new String[] {ChatColor.RED + "" + ChatColor.MAGIC + "Contraband"}));
-			
+				
 			}
 			
 			for (int i = 0; i < exportIDs.size(); i ++) {
 				
-				guiBlock.addImport(InventoryUtils.createSpecialItem(Material.getMaterial(exportIDs.get(i)), exportDatas.get(i), "", new String[] {ChatColor.RED + "" + ChatColor.MAGIC + "Contraband"}));
+				guiBlock.addExport(InventoryUtils.createSpecialItem(Material.getMaterial(exportIDs.get(i)), exportDatas.get(i), "", new String[] {ChatColor.RED + "" + ChatColor.MAGIC + "Contraband"}));
 				
 			}
 			

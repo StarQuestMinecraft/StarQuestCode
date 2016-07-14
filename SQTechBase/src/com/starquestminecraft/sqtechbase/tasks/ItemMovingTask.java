@@ -13,10 +13,10 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitScheduler;
 
-import com.starquestminecraft.sqtechbase.GUIBlock;
-import com.starquestminecraft.sqtechbase.Machine;
-import com.starquestminecraft.sqtechbase.Network;
 import com.starquestminecraft.sqtechbase.SQTechBase;
+import com.starquestminecraft.sqtechbase.objects.GUIBlock;
+import com.starquestminecraft.sqtechbase.objects.Machine;
+import com.starquestminecraft.sqtechbase.objects.Network;
 import com.starquestminecraft.sqtechbase.util.BlockUtils;
 
 public class ItemMovingTask extends Thread {

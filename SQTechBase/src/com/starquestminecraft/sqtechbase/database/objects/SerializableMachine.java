@@ -8,11 +8,11 @@ import java.util.HashMap;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 
-import com.starquestminecraft.sqtechbase.GUIBlock;
-import com.starquestminecraft.sqtechbase.Machine;
-import com.starquestminecraft.sqtechbase.MachineType;
-import com.starquestminecraft.sqtechbase.Network;
 import com.starquestminecraft.sqtechbase.SQTechBase;
+import com.starquestminecraft.sqtechbase.objects.GUIBlock;
+import com.starquestminecraft.sqtechbase.objects.Machine;
+import com.starquestminecraft.sqtechbase.objects.MachineType;
+import com.starquestminecraft.sqtechbase.objects.Network;
 
 public class SerializableMachine implements Serializable {
 

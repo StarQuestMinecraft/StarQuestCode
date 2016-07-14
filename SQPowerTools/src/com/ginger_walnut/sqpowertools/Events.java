@@ -115,8 +115,6 @@ public class Events implements Listener {
 							
 							if (inventory.getItem(event.getSlot()) == null) {
 								
-								System.out.print(event.getAction());
-								
 								if (event.getAction().equals(InventoryAction.PLACE_ONE)) {
 									
 									int amount = event.getCursor().getAmount();

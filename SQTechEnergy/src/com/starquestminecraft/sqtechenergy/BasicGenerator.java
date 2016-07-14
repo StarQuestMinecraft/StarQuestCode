@@ -7,7 +7,6 @@ import java.util.List;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.block.Furnace;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -24,9 +23,9 @@ import net.md_5.bungee.api.ChatColor;
 
 public class BasicGenerator extends MachineType {
 	
-	public BasicGenerator(int maxEnergy) {
+	public BasicGenerator() {
 		
-		super(maxEnergy);
+		super(10000);		
 		name = "Basic Generator";
 		
 	}
@@ -65,9 +64,9 @@ public class BasicGenerator extends MachineType {
 	}
 	
 	@Override
-	public GUI getGUI() {
+	public GUI getGUI(Player player, int id) {
 		
-		return new BasicGeneratorGUI();
+		return new BasicGeneratorGUI(player, id);
 		
 	}
 	
@@ -131,7 +130,7 @@ public class BasicGenerator extends MachineType {
 		
 		for (Player player : SQTechBase.currentGui.keySet()) {
 			
-			if (SQTechBase.currentGui.get(player) == machine.getGUI()) {
+			if (SQTechBase.currentGui.get(player).id == machine.getGUIBlock().id) {
 				
 				if (player.getOpenInventory() != null) {
 					

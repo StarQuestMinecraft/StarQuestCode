@@ -6,20 +6,15 @@ import java.util.List;
 import net.md_5.bungee.api.ChatColor;
 
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
-import com.starquestminecraft.sqtechbase.GUIBlock;
-import com.starquestminecraft.sqtechbase.Machine;
-import com.starquestminecraft.sqtechbase.Network;
-import com.starquestminecraft.sqtechbase.PlayerOptions;
 import com.starquestminecraft.sqtechbase.SQTechBase;
 import com.starquestminecraft.sqtechbase.gui.GUI;
-import com.starquestminecraft.sqtechbase.util.InventoryUtils;
+import com.starquestminecraft.sqtechbase.objects.PlayerOptions;
 
 public class OptionGUI extends GUI {
 
@@ -28,7 +23,7 @@ public class OptionGUI extends GUI {
 	
 	public OptionGUI(Player player) {
 		
-		owner = player;
+		super(player, 0);
 	
 		if (!SQTechBase.currentOptions.containsKey(owner.getUniqueId())) {
 			
@@ -56,9 +51,7 @@ public class OptionGUI extends GUI {
 	}
 	
 	@Override
-	public void open(Player player) {
-		
-		owner = player;
+	public void open() {
 		
 		Inventory gui = Bukkit.createInventory(owner, 18, ChatColor.BLUE + "SQTech - Options");
 		
@@ -162,7 +155,7 @@ public class OptionGUI extends GUI {
 
 				}
 				
-				this.open(owner);
+				this.open();
 				
 			}
 			
