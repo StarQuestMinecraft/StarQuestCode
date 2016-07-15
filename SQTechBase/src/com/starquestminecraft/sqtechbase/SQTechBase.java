@@ -62,6 +62,12 @@ public class SQTechBase extends JavaPlugin {
 		
 		DatabaseInterface.saveObjects();
 		
+		for (Player player : Bukkit.getOnlinePlayers()) {
+			
+			DatabaseInterface.updateOptions(player);
+			
+		}
+		
 	}
 	
 	@SuppressWarnings("deprecation")

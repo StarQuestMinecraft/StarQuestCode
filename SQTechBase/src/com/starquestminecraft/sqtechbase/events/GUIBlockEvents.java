@@ -193,7 +193,7 @@ public class GUIBlockEvents implements Listener {
 				
 			}
 			
-			if (type.equals(Material.LAPIS_BLOCK) || type.equals(Material.STAINED_GLASS) || type.equals(Material.GLASS)) {
+			if (type.equals(Material.LAPIS_BLOCK) || type.equals(Material.STAINED_GLASS) || type.equals(Material.GLASS) || type.equals(Material.END_ROD)) {
 
 				BukkitScheduler bukkitScheduler = Bukkit.getScheduler();
 				

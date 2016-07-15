@@ -150,8 +150,7 @@ public class DatabaseInterface {
 			SQTechBase.currentOptions.put(player.getUniqueId(), options);
 			
 		}
-		
-		
+
 		try {
 			
 			SQLDatabase.updateOptions(SQLDatabase.con.getConnection(), player.getUniqueId(), options);
@@ -177,6 +176,7 @@ public class DatabaseInterface {
 					byte[] bytes = (byte[]) rs.getObject("object");
 					
 					ByteArrayInputStream baip = new ByteArrayInputStream(bytes);
+					
 					ObjectInputStream ois = new ObjectInputStream(baip);
 					
 					PlayerOptions options = (PlayerOptions) ois.readObject();
