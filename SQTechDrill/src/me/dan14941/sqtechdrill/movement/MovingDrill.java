@@ -1,4 +1,4 @@
-package me.dan14941.sqtechdrill;
+package me.dan14941.sqtechdrill.movement;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,6 +15,9 @@ import org.bukkit.scheduler.BukkitTask;
 
 import com.starquestminecraft.sqtechbase.Machine;
 
+import me.dan14941.sqtechdrill.Drill;
+import me.dan14941.sqtechdrill.EventSimulator;
+import me.dan14941.sqtechdrill.SQTechDrill;
 import me.dan14941.sqtechdrill.task.DrillMoveRunnable;
 
 public class MovingDrill implements Listener
@@ -178,6 +181,7 @@ public class MovingDrill implements Listener
 		movement.cut();
 		
 		drill.setEnergy(drill.getEnergy() - 10);
+		SQTechDrill.getMain().drill.updateEnergy(drill);
 
 		return true;
 	}

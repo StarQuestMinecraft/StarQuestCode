@@ -12,15 +12,16 @@ import com.starquestminecraft.sqtechbase.Machine;
 import me.dan14941.sqtechdrill.Drill;
 import me.dan14941.sqtechdrill.SQTechDrill;
 
-public class BurnFuelRunnable extends BukkitRunnable
+public class BurnFuelTask extends BukkitRunnable
 {
 
 	private final Machine drill;
-	public BurnFuelRunnable(Machine drill)
+	public BurnFuelTask(final Machine drill)
 	{
 		this.drill = drill;
 	}
 	
+	@SuppressWarnings("deprecation")
 	@Override
 	public void run()
 	{
@@ -41,19 +42,45 @@ public class BurnFuelRunnable extends BukkitRunnable
 		int maxEnergy = SQTechDrill.getMain().drill.getMaxEnergy();
 		
 		ItemStack fuel = furnaceInv.getFuel();
-		if(fuel != null && fuel.getType() == Material.COAL)
+		if(fuel != null && fuel.getType() == Material.COAL && fuel.getData().getData() == 0)
 		{
 			if(drill.getEnergy() >= maxEnergy)
 			{
 				SQTechDrill.getMain().unregisterMachineFromBurningFuel(drill);
+				furnace.setBurnTime((short) 0);
 				cancel();
 				return;
 			}
 			
+			// System.out.println("Max: " + SQTechDrill.getMain().drill.getMaxEnergy() + " Current: " + drill.getEnergy());
+			
 			int fuelAmount = fuel.getAmount();
-			furnace.setBurnTime((short) 31); // set the furnace to burn
+			final int burnTime = SQTechDrill.getMain().getCoalBurnTime();
+			
+			furnace.setBurnTime((short) burnTime); // set the furnace to burn
+			furnace.setCookTime((short) 0);
+			
 			fuel.setAmount((fuelAmount)-1); // remove one
-			drill.setEnergy(drill.getEnergy() + 1000);
+			
+			new BukkitRunnable()
+			{
+				int count = 0;
+				@Override
+				public void run()
+				{	
+					if(count == burnTime)
+					{
+						cancel();
+						count = 1;
+						return;
+					}
+					
+					drill.setEnergy(drill.getEnergy() + SQTechDrill.getMain().getCoalFuelPerTick()); // Adds the fuel
+					
+					count++;
+				}
+			}.runTaskTimer(SQTechDrill.getMain(), 0, 0); // runs every tick
+			
 			if(fuel.getAmount() == 0)
 			{
 				furnaceInv.setFuel(new ItemStack(Material.AIR));
@@ -61,6 +88,7 @@ public class BurnFuelRunnable extends BukkitRunnable
 				cancel();
 				return;
 			}
+			
 		}
 		else if(fuel == null)
 		{

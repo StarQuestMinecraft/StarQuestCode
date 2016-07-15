@@ -10,8 +10,8 @@ import com.gmail.nossr50.events.fake.FakeBlockBreakEvent;
 
 public class EventSimulator
 {
-	static Event pretendEvent;
-	static boolean pretendEventCancelled;
+	public static Event pretendEvent;
+	public static boolean pretendEventCancelled;
 	
 	/**
      * Pretends a block break event to determine whether it would be allowed to

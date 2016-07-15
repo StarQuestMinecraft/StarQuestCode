@@ -1,4 +1,4 @@
-package me.dan14941.sqtechdrill;
+package me.dan14941.sqtechdrill.gui;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -23,7 +23,9 @@ import com.starquestminecraft.sqtechbase.gui.GUI;
 import com.starquestminecraft.sqtechbase.util.InventoryUtils;
 import com.starquestminecraft.sqtechbase.util.ObjectUtils;
 
-import me.dan14941.sqtechdrill.task.BurnFuelRunnable;
+import me.dan14941.sqtechdrill.Drill;
+import me.dan14941.sqtechdrill.SQTechDrill;
+import me.dan14941.sqtechdrill.task.BurnFuelTask;
 
 public class DrillGUI extends GUI
 {
@@ -112,13 +114,13 @@ public class DrillGUI extends GUI
 				BFRun = main.getBurnFuelRunnable(machine);
 				if(BFRun == null) // The machine isn't burning fuel
 				{
-					BFRun = new BurnFuelRunnable(machine).runTaskTimer(main, 0, 30); // repeats every 1 1/2 seconds
+					BFRun = new BurnFuelTask(machine).runTaskTimer(main, 0, SQTechDrill.getMain().getCoalBurnTime()); // repeats every number of ticks set in config
 					main.registerMachineBurningFuel(machine, BFRun);
 				}
 			}
 
 		gui.setItem(8, InventoryUtils.createSpecialItem(Material.WOOD_DOOR, (short) 0, ChatColor.GOLD + "Back", new String[] {ChatColor.RED + "" + ChatColor.MAGIC + "Contraband"}));	
-		gui.setItem(7, InventoryUtils.createSpecialItem(Material.REDSTONE, (short) 0, ChatColor.GREEN + "Energy: " + machine.getEnergy(), new String[] {ChatColor.RED + "" + ChatColor.MAGIC + "Contraband"}));	
+		gui.setItem(7, InventoryUtils.createSpecialItem(Material.REDSTONE, (short) 0, ChatColor.GREEN + "Energy: " + machine.getEnergy(), new String[] {ChatColor.GOLD + "Click to refresh", ChatColor.RED + "" + ChatColor.MAGIC + "Contraband"}));	
 		gui.setItem(4, onButton);
 
 		owner.openInventory(gui);
@@ -134,7 +136,7 @@ public class DrillGUI extends GUI
 	@Override
 	public void click(InventoryClickEvent event)
 	{
-		if(event.getClickedInventory().getTitle().startsWith(ChatColor.BLUE + "Drill"))
+		if(event.getClickedInventory() != null && event.getClickedInventory().getTitle().startsWith(ChatColor.BLUE + "Drill"))
 		{
 			event.setCancelled(true);
 
@@ -154,6 +156,10 @@ public class DrillGUI extends GUI
 				guiBlock.getGUI(owner).open(); // Opens the GUIBlock's gui
 				return;
 
+			}
+			else if(event.getSlot() == 7)
+			{
+				event.getClickedInventory().setItem(7, InventoryUtils.createSpecialItem(Material.REDSTONE, (short) 0, ChatColor.GREEN + "Energy: " + machine.getEnergy(), new String[] {ChatColor.GOLD + "Click to refresh", ChatColor.RED + "" + ChatColor.MAGIC + "Contraband"}));
 			}
 			else if(event.getSlot() == 4) // or if the start/stop button was clicked
 			{

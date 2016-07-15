@@ -2,12 +2,15 @@ package me.dan14941.sqtechdrill;
 
 import java.util.HashMap;
 
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
 
 import com.starquestminecraft.sqtechbase.Machine;
 import com.starquestminecraft.sqtechbase.SQTechBase;
+
+import me.dan14941.sqtechdrill.movement.MovingDrill;
 
 public class SQTechDrill extends JavaPlugin
 {
@@ -22,6 +25,7 @@ public class SQTechDrill extends JavaPlugin
 	public void onEnable()
 	{
 		plugin = this;
+		
 		this.drill = new Drill(10000, this);
 		SQTechBase.addMachineType(drill);
 		this.movingDrill = new MovingDrill(this);
@@ -34,6 +38,15 @@ public class SQTechDrill extends JavaPlugin
         {
         	@SuppressWarnings("unused")
         	UpgradeItem ui = new UpgradeItem(this);
+        }
+	}
+	
+	public void onDisable()
+	{
+		for(Machine machine : SQTechBase.machines)
+        {
+        	if(machine.getMachineType().name == "Drill")
+        		machine.data.put("isActive", false); // Turn all drills off
         }
 	}
 	
@@ -87,6 +100,16 @@ public class SQTechDrill extends JavaPlugin
 	public void unregisterMachineFromBurningFuel(Machine machine)
 	{
 		this.machinesBurningFuel.remove(machine);
+	}
+	
+	public int getCoalFuelPerTick()
+	{
+		return this.getConfig().getInt("fuel.coal.energy per tick");
+	}
+	
+	public int getCoalBurnTime()
+	{
+		return this.getConfig().getInt("fuel.coal.burn time");
 	}
 	
 }

@@ -3,3 +3,8 @@
 default speed: 20
 energy consumption per block: 50
 testing version: false
+
+fuel:
+  coal:
+    energy per tick: 2
+    burn time: 500

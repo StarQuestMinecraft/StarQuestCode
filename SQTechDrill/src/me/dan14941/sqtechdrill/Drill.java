@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -14,8 +15,13 @@ import org.bukkit.block.Furnace;
 import org.bukkit.entity.Player;
 
 import com.starquestminecraft.sqtechbase.GUIBlock;
+import com.starquestminecraft.sqtechbase.Machine;
 import com.starquestminecraft.sqtechbase.MachineType;
+import com.starquestminecraft.sqtechbase.SQTechBase;
 import com.starquestminecraft.sqtechbase.gui.GUI;
+import com.starquestminecraft.sqtechbase.util.InventoryUtils;
+
+import me.dan14941.sqtechdrill.gui.DrillGUI;
 
 public class Drill extends MachineType
 {	
@@ -80,6 +86,29 @@ public class Drill extends MachineType
 	public String getName()
 	{
 		return name;
+	}
+	
+	@Override
+	public void updateEnergy(Machine machine) {
+		
+		for (Player player : SQTechBase.currentGui.keySet()) {
+			
+			if (SQTechBase.currentGui.get(player).id == machine.getGUIBlock().id) {
+				
+				if (player.getOpenInventory() != null) {
+					
+					if (player.getOpenInventory().getTitle().equals(ChatColor.BLUE + "Drill")) {
+						
+						player.getOpenInventory().setItem(7, InventoryUtils.createSpecialItem(Material.REDSTONE, (short) 0, ChatColor.GREEN + "Energy: " + machine.getEnergy(), new String[] {ChatColor.GOLD + "Click to refresh", ChatColor.RED + "" + ChatColor.MAGIC + "Contraband"}));
+						
+					}
+					
+				}
+				
+			}
+			
+		}
+		
 	}
 	
 	/**

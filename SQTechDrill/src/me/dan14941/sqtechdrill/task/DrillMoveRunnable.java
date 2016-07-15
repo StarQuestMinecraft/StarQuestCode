@@ -3,8 +3,8 @@ package me.dan14941.sqtechdrill.task;
 import com.starquestminecraft.sqtechbase.*;
 
 import me.dan14941.sqtechdrill.Drill;
-import me.dan14941.sqtechdrill.MovingDrill;
 import me.dan14941.sqtechdrill.SQTechDrill;
+import me.dan14941.sqtechdrill.movement.MovingDrill;
 
 import org.bukkit.*;
 import org.bukkit.block.*;

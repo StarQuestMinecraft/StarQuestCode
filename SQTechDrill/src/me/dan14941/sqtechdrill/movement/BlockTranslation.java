@@ -1,4 +1,4 @@
-package me.dan14941.sqtechdrill;
+package me.dan14941.sqtechdrill.movement;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,6 +12,8 @@ import org.bukkit.block.Dropper;
 import org.bukkit.block.Furnace;
 import org.bukkit.inventory.FurnaceInventory;
 import org.bukkit.inventory.ItemStack;
+
+import me.dan14941.sqtechdrill.BlockData;
 
 public class BlockTranslation
 {
