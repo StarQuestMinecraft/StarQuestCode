@@ -1,0 +1,6 @@
+name: SQTowerDefence
+version: 1.0
+description: SQTech addon; adds defensive tower structures
+main: com.starquestminecraft.sqtowerdefence.SQTowerDefence
+depend: [SQTechBase]
+loadbefore: [SQAutomators]
