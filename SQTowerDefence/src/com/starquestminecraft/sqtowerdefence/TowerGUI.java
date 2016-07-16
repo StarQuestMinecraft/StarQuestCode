@@ -50,7 +50,7 @@ public class TowerGUI extends GUI {
 		Machine machine = ObjectUtils.getMachineFromMachineGUI(this);
 		
 				guiBlock = machine.getGUIBlock();
-				if(machine.getClass().equals(TowerMachine.class)) {
+				if(machine.data.containsKey("turret")) {
 					towerMachine = (TowerMachine) machine;
 				}
 				else {
@@ -60,7 +60,7 @@ public class TowerGUI extends GUI {
 					towerMachine = tower;
 				}
 				
-				turret = towerMachine.turret;
+				turret = ((Turret) (towerMachine.data.get("turret")));
 			
 		
 		
@@ -121,7 +121,7 @@ public class TowerGUI extends GUI {
 		if(!com.starquestminecraft.sqtowerdefence.SQTowerDefence.isChecking) {
 			SQTowerDefence plugin = com.starquestminecraft.sqtowerdefence.SQTowerDefence.sqtdInstance;
 			Turret t = new Turret(TurretType.BASE, null, null, 0, 0.0, 0.0, 0.0, 0.0, "EntityCheck");
-			t.setWorld(owner.getWorld());
+			t.worldName = owner.getWorld().getName();
 			BukkitTask task = new SQTDTask(plugin, t).runTaskLater(plugin, 300);
 			com.starquestminecraft.sqtowerdefence.SQTowerDefence.isChecking = true;
 		}
@@ -166,7 +166,7 @@ public class TowerGUI extends GUI {
 					
 				Turret t = turretList.get(event.getSlot()).createNewTurret();
 				EmpirePlayer ep = EmpirePlayer.getOnlinePlayer(owner);
-				t.turretEmpire = ep.getEmpire();
+				t.turretEmpire = ep.getEmpire().toString();
 				
 				Economy economy = com.starquestminecraft.sqtowerdefence.SQTowerDefence.sqtdInstance.getEconomy();
 				Double balance = economy.getBalance(owner);
@@ -184,17 +184,19 @@ public class TowerGUI extends GUI {
 					blockThree.setType(Material.SMOOTH_BRICK);
 					blockFour.setType(Material.SMOOTH_BRICK);
 					blockFive.setType(material);
-					t.setActionPoint(blockFive.getLocation());
-					t.setWorld(owner.getWorld());
-					t.setParentMachine(towerMachine);
+					t.worldName = owner.getWorld().getName();
+					t.guiX = guiBlock.getLocation().getX();
+					t.guiY = guiBlock.getLocation().getY();
+					t.guiZ = guiBlock.getLocation().getZ();
 					t.setTurretBlock(blockTwo, 1);
 					t.setTurretBlock(blockThree, 2);
 					t.setTurretBlock(blockFour, 3);
 					t.setTurretBlock(blockFive, 4);
-					t.owner = owner;
+					t.owner = owner.getDisplayName();
 					economy.withdrawPlayer(owner, t.cost);
-					towerMachine.turret = t;
-					towerMachine.turret.runTurret();
+					towerMachine.data.put("turret", t);
+					turret = t;
+					turret.runTurret();
 					
 					close = false;
 					openNewInventory(0);
@@ -220,9 +222,11 @@ public class TowerGUI extends GUI {
 					String upgradeName = itemName.substring(10, itemName.length());
 					boolean conflicts = false;
 					
-					for(int i=0; i<towerMachine.turret.possibleUpgrades.size(); i++) {
+					ArrayList<Upgrade> possibleUpgrades = turret.possibleUpgrades;
+					
+					for(int i=0; i<possibleUpgrades.size(); i++) {
 						
-						Upgrade u = towerMachine.turret.possibleUpgrades.get(i);
+						Upgrade u = possibleUpgrades.get(i);
 						if(u.getUpgradeType().toString().equalsIgnoreCase(upgradeName)) {
 							upgrade = u;
 						}
@@ -237,9 +241,11 @@ public class TowerGUI extends GUI {
 					
 					if(upgrade == null) {
 						
-						for(int i=0; i<towerMachine.turret.conflictingUpgrades.size(); i++) {
+						ArrayList<Upgrade> conflictingUpgrades = turret.conflictingUpgrades;
+						
+						for(int i=0; i<conflictingUpgrades.size(); i++) {
 							
-							Upgrade u = towerMachine.turret.conflictingUpgrades.get(i);
+							Upgrade u = conflictingUpgrades.get(i);
 							if(u.getUpgradeType().toString().equalsIgnoreCase(upgradeName)) {
 								upgrade = u;
 							}
@@ -254,7 +260,7 @@ public class TowerGUI extends GUI {
 						
 					}
 					
-					if(towerMachine.turret.buyNewUpgrade(owner, upgrade)) {
+					if(turret.buyNewUpgrade(owner, upgrade)) {
 						close = false;
 						openNewInventory(0);
 						close = true;
@@ -265,27 +271,31 @@ public class TowerGUI extends GUI {
 					ItemStack item = event.getCurrentItem();
 					PotionType pType = getPotionType(item.getItemMeta());
 					
-					for(int i=0; i<towerMachine.turret.possibleUpgrades.size(); i++) {
-						Upgrade u = towerMachine.turret.possibleUpgrades.get(i);
+					ArrayList<Upgrade> possibleUpgrades = turret.possibleUpgrades;
+					
+					for(int i=0; i<possibleUpgrades.size(); i++) {
+						Upgrade u = possibleUpgrades.get(i);
 						if(u.getUpgradeType().equals(UpgradeType.POTION_EFFECT)) {
 							Integer effectID = u.getBoost().intValue();
 							PotionType potionType = PotionType.getByEffect(PotionEffectType.getById(effectID));
 							if(potionType.equals(pType)) {
-								if(towerMachine.turret.buyNewUpgrade(owner, u)) {
-									towerMachine.turret.addPotionType(pType);
+								if(turret.buyNewUpgrade(owner, u)) {
+									turret.addPotionType(pType);
 								}
 							}
 						}
 					}
 					
-					for(int i=0; i<towerMachine.turret.conflictingUpgrades.size(); i++) {
-						Upgrade u = towerMachine.turret.conflictingUpgrades.get(i);
+					ArrayList<Upgrade> conflictingUpgrades = turret.conflictingUpgrades;
+					
+					for(int i=0; i<conflictingUpgrades.size(); i++) {
+						Upgrade u = conflictingUpgrades.get(i);
 						if(u.getUpgradeType().equals(UpgradeType.POTION_EFFECT)) {
 							Integer effectID = u.getBoost().intValue();
 							PotionType potionType = PotionType.getByEffect(PotionEffectType.getById(effectID));
 							if(potionType.equals(pType)) {
-								if(towerMachine.turret.buyNewUpgrade(owner, u)) {
-									towerMachine.turret.addPotionType(pType);
+								if(turret.buyNewUpgrade(owner, u)) {
+									turret.addPotionType(pType);
 								}
 							}
 						}
@@ -296,11 +306,11 @@ public class TowerGUI extends GUI {
 					close = true;
 				}
 				else if(itemName.contains("Toggle Friendly Fire")) {
-					if(towerMachine.turret.friendlyFire) {
-						towerMachine.turret.friendlyFire = false;
+					if(turret.friendlyFire) {
+						turret.friendlyFire = false;
 					}
 					else {
-						towerMachine.turret.friendlyFire = true;
+						turret.friendlyFire = true;
 					}
 					close = false;
 					openNewInventory(0);
@@ -309,11 +319,11 @@ public class TowerGUI extends GUI {
 				else if(itemName.contains("Repair")) {
 					Economy economy = com.starquestminecraft.sqtowerdefence.SQTowerDefence.sqtdInstance.getEconomy();
 					Double balance = economy.getBalance(owner);
-					if(balance < towerMachine.turret.cost) {
+					if(balance < turret.cost) {
 						owner.sendMessage("You cannot afford to repair this turret!");
 						return;
 					}
-					economy.withdrawPlayer(owner, towerMachine.turret.cost);
+					economy.withdrawPlayer(owner, turret.cost);
 					
 					Block mainBlock = guiBlock.getLocation().getBlock();
 					Block blockTwo = mainBlock.getRelative(BlockFace.UP);
@@ -346,7 +356,7 @@ public class TowerGUI extends GUI {
 	
 	public void openNewInventory(Integer inv) {	
 		
-		Turret t = towerMachine.turret;
+		Turret t = turret;
 		ArrayList<Upgrade> upgradeList = new ArrayList<Upgrade>();
 		
 		if(inv == 0) {
@@ -356,7 +366,7 @@ public class TowerGUI extends GUI {
 			upgradeList = t.conflictingUpgrades;
 		}
 					
-			Inventory newGUI = Bukkit.createInventory(owner, 27, ChatColor.GRAY + towerMachine.turret.getName());				
+			Inventory newGUI = Bukkit.createInventory(owner, 27, ChatColor.GRAY + turret.getName());				
 			
 			for(int i=0; i<upgradeList.size(); i++) {
 				Upgrade u = upgradeList.get(i);
@@ -515,6 +525,7 @@ public class TowerGUI extends GUI {
 							PotionType potionType = potionTypes.get(i);
 							potionsLoreList.add(ChatColor.RESET + "" + ChatColor.GOLD + potionType.toString());
 						}
+						potionsLoreList.add(ChatColor.RED + "" + ChatColor.MAGIC + "Contraband");
 						potionsMeta.setLore(potionsLoreList);
 						potions.setItemMeta(potionsMeta);
 						newGUI.setItem(3, potions);

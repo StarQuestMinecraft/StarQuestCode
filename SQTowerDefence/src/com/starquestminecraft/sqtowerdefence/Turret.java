@@ -1,5 +1,6 @@
 package com.starquestminecraft.sqtowerdefence;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,26 +26,32 @@ import org.bukkit.potion.PotionType;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.Vector;
 
+import com.starquestminecraft.sqtechbase.SQTechBase;
+import com.starquestminecraft.sqtechbase.objects.GUIBlock;
+import com.starquestminecraft.sqtechbase.objects.Machine;
+import com.starquestminecraft.sqtechbase.objects.Network;
+import com.starquestminecraft.sqtechbase.util.ObjectUtils;
 import com.whirlwindgames.dibujaron.sqempire.Empire;
 import com.whirlwindgames.dibujaron.sqempire.database.object.EmpirePlayer;
 
 import net.milkbowl.vault.economy.Economy;
 
 
-public class Turret{
+public class Turret implements Serializable {
 	
+	private static final long serialVersionUID = 323176463162027214L;
 	ArrayList<Upgrade> upgrades = new ArrayList<Upgrade>();
 	ArrayList<Upgrade> possibleUpgrades = new ArrayList<Upgrade>();
 	ArrayList<Upgrade> conflictingUpgrades = new ArrayList<Upgrade>();
 	ArrayList<PotionType> unlockedPotionTypes = new ArrayList<PotionType>();
-	TowerMachine parentMachine;
+	Double guiX = 0.0;
+	Double guiY = 0.0;
+	Double guiZ = 0.0;
 	TurretType type = TurretType.BASE;
-	Empire turretEmpire = Empire.NONE;
-	Player owner;
-	Player targetPlayer;
-	Location actionPoint;
-	Location inventoryLocation;
-	World world;
+	String turretEmpire = "NONE";
+	String owner;
+	String targetedPlayer;
+	String worldName;
 	Integer speed = 0;
 	Double damage = 0.0;
 	Double accuracy = 0.0;
@@ -104,13 +111,75 @@ public class Turret{
 	}
 	
 	public Turret createNewTurret() {
-		Turret turret = new Turret(type, possibleUpgrades, conflictingUpgrades, speed, damage, accuracy, cost, range, name);
+		ArrayList<Upgrade> newPossibleUpgrades = new ArrayList<Upgrade>();
+		ArrayList<Upgrade> newConflictingUpgrades = new ArrayList<Upgrade>();
+		
+		if(!possibleUpgrades.isEmpty()) {
+			for(int i=0; i<possibleUpgrades.size(); i++) {
+				Upgrade u = possibleUpgrades.get(i).createNewUpgrade();
+				newPossibleUpgrades.add(u);
+			}
+		}
+		
+		if(!conflictingUpgrades.isEmpty()) {
+			for(int i=0; i<conflictingUpgrades.size(); i++) {
+				Upgrade u = conflictingUpgrades.get(i).createNewUpgrade();
+				newConflictingUpgrades.add(u);
+			}
+		}
+		
+		
+		
+		Turret turret = new Turret(type, newPossibleUpgrades, newConflictingUpgrades, speed, damage, accuracy, cost, range, name);
 		return turret;
 	}
 	
 	public void runTurret() {
 		
 		SQTowerDefence plugin = com.starquestminecraft.sqtowerdefence.SQTowerDefence.sqtdInstance;
+		
+		Machine parentMachine = null;
+		
+		World world = Bukkit.getWorld(worldName);
+		
+		Location guiBlockLocation = new Location(world, guiX, guiY, guiZ);
+		
+		for(Network n : SQTechBase.networks) {
+			Bukkit.broadcastMessage("1");
+			for(GUIBlock g : n.getGUIBlocks()) {
+				Bukkit.broadcastMessage("2");
+				if(g.getLocation().equals(guiBlockLocation)) {
+					Bukkit.broadcastMessage("3");
+					for(Machine machine : ObjectUtils.getAllMachinesOfType("Tower")) {
+						Bukkit.broadcastMessage("4");
+						if(machine.getGUIBlock().equals(g)) {
+							Bukkit.broadcastMessage("5");
+							parentMachine = machine;
+							
+						}
+						
+					}
+					
+				}
+				
+			}
+			
+		}
+		
+		if(parentMachine != null) {
+			Bukkit.broadcastMessage(parentMachine.toString());
+		}
+		else {
+			Bukkit.broadcastMessage(":I");
+		}
+		
+		Location actionPoint = parentMachine.getGUIBlock().getLocation();
+		actionPoint.add(0.0, 4.0, 0.0);
+		Player targetPlayer = null;
+		
+		if(targetedPlayer != null) {
+			targetPlayer = Bukkit.getPlayer(targetedPlayer);
+		}
 		
 		if(parentMachine.getEnergy() < 10) {
 			BukkitTask task = new SQTDTask(plugin, this).runTaskLater(plugin, 40);
@@ -133,22 +202,24 @@ public class Turret{
 					EmpirePlayer ep = EmpirePlayer.getOnlinePlayer(p);
 					
 					if(!friendlyFire) {	
-						if(ep.getEmpire() != turretEmpire) {
+						if(ep.getEmpire() != Empire.fromString(turretEmpire)) {
 							if(targetPlayer != null) {
 								
 									if(p.getLocation().distance(runLocation) < targetPlayer.getLocation().distance(runLocation)) {	
+										targetedPlayer = p.getDisplayName();
 										targetPlayer = p;
 									}
 									
 							}
 							else {
+								targetedPlayer = p.getDisplayName();
 								targetPlayer = p;
 							}
 						}
 					}
 					else {
 						
-						if(ep.getEmpire() == turretEmpire) {
+						if(ep.getEmpire() == Empire.fromString(turretEmpire)) {
 							if(targetPlayer != null) {
 								
 									if(p.getLocation().distance(runLocation) < targetPlayer.getLocation().distance(runLocation)) {	
@@ -333,16 +404,12 @@ public class Turret{
 		}
 	}
 	
-	public void setWorld(World newWorld) {
-		world = newWorld;
+	public void setWorld(String newWorld) {
+		worldName = newWorld;
 	}
 	
 	public void addPotionType(PotionType potionType) {
 		unlockedPotionTypes.add(potionType);
-	}
-	
-	public void setActionPoint(Location location) {
-		actionPoint = location;
 	}
 
 	public void changeTurretType(Turret turret) {
@@ -377,6 +444,38 @@ public class Turret{
 			default:
 				break;
 		}
+		
+		Machine parentMachine = null;
+		
+		World world = Bukkit.getWorld(worldName);
+		
+		Location guiBlockLocation = new Location(world, guiX, guiY, guiZ);
+		
+		for(Network n : SQTechBase.networks) {
+			
+			for(GUIBlock g : n.getGUIBlocks()) {
+				
+				if(g.getLocation().equals(guiBlockLocation)) {
+					
+					for(Machine machine : ObjectUtils.getAllMachinesOfType("Tower")) {
+						
+						if(machine.getGUIBlock().equals(g)) {
+							
+							parentMachine = machine;
+							
+						}
+						
+					}
+					
+				}
+				
+			}
+			
+		}
+		
+		Location actionPoint = parentMachine.getGUIBlock().getLocation();
+		actionPoint.add(0.0, 4.0, 0.0);
+		
 		actionPoint.getBlock().setType(material);
 	}
 
@@ -418,10 +517,6 @@ public class Turret{
 	
 	public void setUpgrades(ArrayList<Upgrade> upgradeList) {
 		upgrades = upgradeList;
-	}
-	
-	public void setParentMachine(TowerMachine towerMachine) {
-		parentMachine = towerMachine;
 	}
 	
 	public boolean buyNewUpgrade(Player player, Upgrade upgrade) {
@@ -559,6 +654,34 @@ public class Turret{
 	}
 	
 	public boolean checkTurret() {
+		
+		Machine parentMachine = null;
+		
+		World world = Bukkit.getWorld(worldName);
+		
+		Location guiBlockLocation = new Location(world, guiX, guiY, guiZ);
+		
+		for(Network n : SQTechBase.networks) {
+			
+			for(GUIBlock g : n.getGUIBlocks()) {
+				
+				if(g.getLocation().equals(guiBlockLocation)) {
+					
+					for(Machine machine : ObjectUtils.getAllMachinesOfType("Tower")) {
+						
+						if(machine.getGUIBlock().equals(g)) {
+							
+							parentMachine = machine;
+							
+						}
+						
+					}
+					
+				}
+				
+			}
+			
+		}
 		
 		Block blockOne = parentMachine.getGUIBlock().getLocation().getBlock().getRelative(BlockFace.UP);
 		Block blockTwo = blockOne.getRelative(BlockFace.UP);
