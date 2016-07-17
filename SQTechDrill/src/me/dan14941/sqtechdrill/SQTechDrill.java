@@ -25,7 +25,7 @@ public class SQTechDrill extends JavaPlugin
 	{
 		plugin = this;
 		
-		this.drill = new Drill(10000, this);
+		this.drill = new Drill(this.getDrillMaxEnergyFromConfig(), this);
 		SQTechBase.addMachineType(drill);
 		this.movingDrill = new MovingDrill(this);
 		this.eventSim = new EventSimulator();
@@ -89,6 +89,11 @@ public class SQTechDrill extends JavaPlugin
 	public int getEnergyPerBlockMined()
 	{
 		return this.getConfig().getInt("energy consumption per block");
+	}
+	
+	public int getDrillMaxEnergyFromConfig()
+	{
+		return this.getConfig().getInt("max energy");
 	}
 	
 	public void registerMachineBurningFuel(Machine machine, BukkitTask task)

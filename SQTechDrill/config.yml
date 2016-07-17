@@ -3,6 +3,7 @@
 normal speed: 20
 fast speed: 10
 energy consumption per block: 50
+max energy: 10000
 testing version: false
 # Fuel names are the same as the Bukkit API material names
 fuel:
