@@ -11,14 +11,18 @@ import com.starquestminecraft.sqtechbase.objects.Machine;
 
 import me.dan14941.sqtechdrill.Drill;
 import me.dan14941.sqtechdrill.SQTechDrill;
+import me.dan14941.sqtechdrill.object.Fuel;
 
 public class BurnFuelTask extends BukkitRunnable
 {
-
+	
 	private final Machine drill;
-	public BurnFuelTask(final Machine drill)
+	private final Fuel fuelItem;
+	
+	public BurnFuelTask(final Machine drill, final Fuel fuelItem)
 	{
 		this.drill = drill;
+		this.fuelItem = fuelItem;
 	}
 	
 	@SuppressWarnings("deprecation")
@@ -42,8 +46,17 @@ public class BurnFuelTask extends BukkitRunnable
 		int maxEnergy = SQTechDrill.getMain().drill.getMaxEnergy();
 		
 		ItemStack fuel = furnaceInv.getFuel();
-		if(fuel != null && fuel.getType() == Material.COAL && fuel.getData().getData() == 0)
+		
+		if(fuel != null && fuelItem.isRegisteredFuel() == true)
 		{
+			if(fuelItem.getMaterial() == Material.COAL && fuel.getData().getData() != 0)
+			{
+				SQTechDrill.getMain().unregisterMachineFromBurningFuel(drill);
+				furnace.setBurnTime((short) 0);
+				cancel();
+				return;
+			}
+			
 			if(drill.getEnergy() >= maxEnergy)
 			{
 				SQTechDrill.getMain().unregisterMachineFromBurningFuel(drill);
@@ -52,10 +65,8 @@ public class BurnFuelTask extends BukkitRunnable
 				return;
 			}
 			
-			// System.out.println("Max: " + SQTechDrill.getMain().drill.getMaxEnergy() + " Current: " + drill.getEnergy());
-			
-			int fuelAmount = fuel.getAmount();
-			final int burnTime = SQTechDrill.getMain().getCoalBurnTime();
+			final int fuelAmount = fuel.getAmount();
+			final int burnTime = fuelItem.getBurnTime();
 			
 			furnace.setBurnTime((short) burnTime); // set the furnace to burn
 			furnace.setCookTime((short) 0);
@@ -75,7 +86,7 @@ public class BurnFuelTask extends BukkitRunnable
 						return;
 					}
 					
-					drill.setEnergy(drill.getEnergy() + SQTechDrill.getMain().getCoalFuelPerTick()); // Adds the fuel
+					drill.setEnergy(drill.getEnergy() + fuelItem.getEnergyPerTick()); // Adds the fuel
 					
 					count++;
 				}
@@ -88,9 +99,14 @@ public class BurnFuelTask extends BukkitRunnable
 				cancel();
 				return;
 			}
-			
 		}
 		else if(fuel == null)
+		{
+			SQTechDrill.getMain().unregisterMachineFromBurningFuel(drill);
+			cancel();
+			return;
+		}
+		else if(fuelItem.isRegisteredFuel() == false)
 		{
 			SQTechDrill.getMain().unregisterMachineFromBurningFuel(drill);
 			cancel();

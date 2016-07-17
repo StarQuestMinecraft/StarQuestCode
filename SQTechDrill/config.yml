@@ -4,8 +4,17 @@ normal speed: 20
 fast speed: 10
 energy consumption per block: 50
 testing version: false
-
+# Fuel names are the same as the Bukkit API material names
 fuel:
-  coal:
+  COAL:
     energy per tick: 2
     burn time: 500
+  WOOD:
+    energy per tick: 4
+    burn time: 100
+  LOG:
+    energy per tick: 4
+    burn time: 400
+  LOG_2:
+    energy per tick: 4
+    burn time: 400

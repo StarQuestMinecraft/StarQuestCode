@@ -25,6 +25,7 @@ import com.starquestminecraft.sqtechbase.util.ObjectUtils;
 
 import me.dan14941.sqtechdrill.Drill;
 import me.dan14941.sqtechdrill.SQTechDrill;
+import me.dan14941.sqtechdrill.object.Fuel;
 import me.dan14941.sqtechdrill.task.BurnFuelTask;
 
 public class DrillGUI extends GUI
@@ -114,8 +115,12 @@ public class DrillGUI extends GUI
 				BFRun = main.getBurnFuelRunnable(machine);
 				if(BFRun == null) // The machine isn't burning fuel
 				{
-					BFRun = new BurnFuelTask(machine).runTaskTimer(main, 0, SQTechDrill.getMain().getCoalBurnTime()); // repeats every number of ticks set in config
-					main.registerMachineBurningFuel(machine, BFRun);
+					if(((Furnace) fuelInventory.getState()).getInventory().getFuel() != null)
+					{
+						Fuel fuel = new Fuel(((Furnace) fuelInventory.getState()).getInventory().getFuel().getType());
+						BFRun = new BurnFuelTask(machine, fuel).runTaskTimer(main, 0, fuel.getBurnTime()); // repeats every number of ticks set in config
+						main.registerMachineBurningFuel(machine, BFRun);
+					}
 				}
 			}
 

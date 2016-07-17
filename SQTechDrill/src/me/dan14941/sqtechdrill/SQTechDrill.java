@@ -106,14 +106,4 @@ public class SQTechDrill extends JavaPlugin
 		this.machinesBurningFuel.remove(machine);
 	}
 	
-	public int getCoalFuelPerTick()
-	{
-		return this.getConfig().getInt("fuel.coal.energy per tick");
-	}
-	
-	public int getCoalBurnTime()
-	{
-		return this.getConfig().getInt("fuel.coal.burn time");
-	}
-	
 }
