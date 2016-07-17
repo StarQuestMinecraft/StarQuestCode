@@ -1,6 +1,7 @@
 # Speed is measured in how long it takes for a block to break
 # in ticks.
-default speed: 20
+normal speed: 20
+fast speed: 10
 energy consumption per block: 50
 testing version: false
 

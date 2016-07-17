@@ -76,9 +76,14 @@ public class SQTechDrill extends JavaPlugin
 		return plugin;
 	}
 	
-	public int getDefaultDrillSpeed()
+	public int getNormalDrillSpeed() //iron block
 	{
-		return this.getConfig().getInt("default speed");
+		return this.getConfig().getInt("normal speed");
+	}
+	
+	public int getFastDrillSpeed()
+	{
+		return this.getConfig().getInt("fast speed");
 	}
 	
 	public int getEnergyPerBlockMined()
