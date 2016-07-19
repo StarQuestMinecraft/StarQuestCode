@@ -45,13 +45,13 @@ public class BlasterEvents implements Listener {
 						List<String> lore = handItem.getItemMeta().getLore();
 							
 						if (lore.contains(ChatColor.DARK_PURPLE + "Power Tool")) {
-								
-							handItem = SQPowerTools.fixPowerTool(handItem);
-							player.getInventory().setItemInMainHand(handItem);
 							
 							PowerToolType type = SQPowerTools.getType(handItem);
 							
 							if (type.blasterStats != null) {
+								
+								handItem = SQPowerTools.fixPowerTool(handItem);
+								player.getInventory().setItemInMainHand(handItem);
 								
 								event.setCancelled(true);
 								

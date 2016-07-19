@@ -10,6 +10,7 @@ import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import com.starquestminecraft.sqtechbase.SQTechBase;
+import com.starquestminecraft.sqtechenergy.tasks.ChargerTask;
 import com.starquestminecraft.sqtechenergy.tasks.GeneratorTask;
 
 public class SQTechEnergy extends JavaPlugin{
@@ -17,7 +18,7 @@ public class SQTechEnergy extends JavaPlugin{
 	public final Logger logger = Logger.getLogger("Minecraft");
 	static SQTechEnergy plugin;
 	
-	static FileConfiguration config = null;
+	public static FileConfiguration config = null;
 	
 	public static List<Fuel> fuels = new ArrayList<Fuel>();
 	
@@ -69,8 +70,11 @@ public class SQTechEnergy extends JavaPlugin{
 		}
 		
 		SQTechBase.addMachineType(new BasicGenerator());
+		SQTechBase.addMachineType(new Charger());
+		SQTechBase.addMachineType(new PowerCauldron());
 		
 		(new GeneratorTask()).run();
+		(new ChargerTask()).run();
 		
 	}
 	

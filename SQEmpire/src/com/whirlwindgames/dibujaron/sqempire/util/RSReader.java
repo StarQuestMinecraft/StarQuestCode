@@ -2,6 +2,9 @@ package com.whirlwindgames.dibujaron.sqempire.util;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 
 public class RSReader {
 
@@ -20,6 +23,15 @@ public class RSReader {
 			e.printStackTrace();
 		}
 		return false;
+	}
+	
+	public Date getDate(String col) {
+		try{
+			return rs.getDate(col);
+		}catch(SQLException e){
+			e.printStackTrace();
+		}
+		return new GregorianCalendar().getTime();
 	}
 	
 	public String getString(String col){

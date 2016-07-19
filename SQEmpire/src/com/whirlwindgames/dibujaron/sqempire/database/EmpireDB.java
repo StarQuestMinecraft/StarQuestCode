@@ -20,10 +20,7 @@ public class EmpireDB {
 	
 	static{
 		command("CREATE TABLE IF NOT EXISTS minecraft.empire_player"
-				+ " (uuid VARCHAR(36),lname VARCHAR(16), empire INT(11),"
-				+ "power_0 INT(11),power_1 INT(11),power_2 INT(11),power_3 INT(11),power_4 INT(11),"
-				+ "lastSeen_0 INT(11),lastSeen_1 INT(11),lastSeen_2 INT(11),lastSeen_3 INT(11),lastSeen_4 INT(11),"
-				+ " PRIMARY KEY (`uuid`))");
+				+ " (uuid VARCHAR(36),lname VARCHAR(16), empire INT(11), lastSeen INT(11), lastChanged datetime, PRIMARY KEY (uuid))");
 		command("CREATE TABLE IF NOT EXISTS minecraft.empire_board(id INT(11),"
 				+ "planet INT(11),cx INT(11),cz INT(11),empire INT(11), PRIMARY KEY(id))");
 		command("CREATE TABLE IF NOT EXISTS minecraft.empire_faction(factionID VARCHAR(36),"

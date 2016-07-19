@@ -1,13 +1,11 @@
 package com.whirlwindgames.dibujaron.sqempire;
 
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.DyeColor;
 import org.bukkit.block.Banner;
 import org.bukkit.block.Block;
 import org.bukkit.block.banner.Pattern;
 import org.bukkit.block.banner.PatternType;
-import org.bukkit.scheduler.BukkitScheduler;
 
 public enum Empire {
 	NONE(0, ChatColor.DARK_GRAY, ChatColor.GRAY, "None"),

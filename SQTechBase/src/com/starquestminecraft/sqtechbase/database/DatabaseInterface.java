@@ -3,6 +3,8 @@ package com.starquestminecraft.sqtechbase.database;
 import java.io.ByteArrayInputStream;
 import java.io.ObjectInputStream;
 import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.bukkit.entity.Player;
 
@@ -18,42 +20,45 @@ public class DatabaseInterface {
 	
 	public static void saveObjects() {
 		
+		SQTechBase.getPluginMain().reloadConfig();
+		SQTechBase.config = SQTechBase.getPluginMain().getConfig();
+		
+		List<GUIBlock> guiBlocks = new ArrayList<GUIBlock>();
+		
 		for (Network network : SQTechBase.networks) {
 			
 			for (GUIBlock guiBlock : network.getGUIBlocks()) {
 				
-				try {
-					
-					SQLDatabase.writeGUIBlock(SQLDatabase.con.getConnection(), SQTechBase.config.getString("server name"), guiBlock);
-					
-				} catch (Exception e) {
-
-					e.printStackTrace();
-					
-				}
+				guiBlocks.add(guiBlock);
 				
 			}
 			
 		}
 		
-		for (Machine machine : SQTechBase.machines) {
+		try {
 			
-			try {
-				
-				SQLDatabase.writeMachine(SQLDatabase.con.getConnection(), SQTechBase.config.getString("server name"), machine);
-				
-			} catch (Exception e) {
+			SQLDatabase.writeGUIBlocks(SQLDatabase.con.getConnection(), SQTechBase.config.getString("server name"), guiBlocks);
+			
+		} catch (Exception e) {
 
-				e.printStackTrace();
-				
-			}
+			e.printStackTrace();
 			
 		}
 		
+		try {
+			
+			SQLDatabase.writeMachines(SQLDatabase.con.getConnection(), SQTechBase.config.getString("server name"), SQTechBase.machines);
+			
+		} catch (Exception e) {
+
+			e.printStackTrace();
+			
+		}
+
 	}
 	
 	public static void readObjects() {
-		
+
 		try {
 			
 			ResultSet rs = SQLDatabase.readGUIBlocks(SQLDatabase.con.getConnection(), SQTechBase.config.getString("server name"));
@@ -71,7 +76,7 @@ public class DatabaseInterface {
 					
 					if (guiBlock != null) {
 
-						Network network = new Network(guiBlock.getLocation().getBlock());
+						Network network = new Network(guiBlock.getLocation().getBlock(), false);
 						
 						for (int i = 0; i < network.getGUIBlocks().size(); i ++) {
 							

@@ -23,7 +23,7 @@ public class Network {
 	
 	Block startBlock;
 	
-	public Network(Block startingBlock) {
+	public Network(Block startingBlock, boolean detectMachines) {
 		
 		if (startingBlock.getType().equals(Material.LAPIS_BLOCK) || startingBlock.getType().equals(Material.STAINED_GLASS) || startingBlock.getType().equals(Material.GLASS) || startingBlock.getType().equals(Material.END_ROD)) {
 			
@@ -104,7 +104,7 @@ public class Network {
 			
 			for (Block block : detectedGUIBlocks) {
 				
-				GUIBlocks.add(new GUIBlock(block.getLocation()));
+				GUIBlocks.add(new GUIBlock(block.getLocation(), detectMachines));
 				
 				List<Network> networks = new ArrayList<Network>();
 				networks.addAll(SQTechBase.networks);

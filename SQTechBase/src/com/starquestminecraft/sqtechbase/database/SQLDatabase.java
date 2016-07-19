@@ -8,6 +8,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.util.List;
 import java.util.UUID;
 
 import com.starquestminecraft.sqtechbase.database.objects.SerializableGUIBlock;
@@ -20,12 +21,12 @@ public class SQLDatabase {
 
 	public static BedspawnConnectionProvider con;
 
-	static final String WRITE_GUIBLOCK = "INSERT INTO minecraft.guiblocks(server, object) VALUES (?, ?)";
+	static final String WRITE_GUIBLOCKS = "INSERT INTO minecraft.guiblocks(server, object) VALUES (?, ?)";
 	static final String READ_GUIBLOCKS = "SELECT * FROM minecraft.guiblocks WHERE server = ?";
 	static final String CLEAR_GUIBLOCKS = "DELETE FROM minecraft.guiblocks WHERE server = ?";
 	static final String CREATE_GUIBLOCKS = "CREATE TABLE IF NOT EXISTS minecraft.guiblocks (ID int NOT NULL AUTO_INCREMENT, server varchar(32), object BLOB, primary key (ID))";
 	
-	static final String WRITE_MACHINE = "INSERT INTO minecraft.machines(server, object) VALUES (?, ?)";
+	static final String WRITE_MACHINES = "INSERT INTO minecraft.machines(server, object) VALUES (?, ?)";
 	static final String READ_MACHINES = "SELECT * FROM minecraft.machines WHERE server = ?";
 	static final String CLEAR_MACHINES = "DELETE FROM minecraft.machines WHERE server = ?";
 	static final String CREATE_MACHINES = "CREATE TABLE IF NOT EXISTS minecraft.machines (ID int NOT NULL AUTO_INCREMENT, server varchar(32), object BLOB, primary key (ID))";
@@ -58,28 +59,44 @@ public class SQLDatabase {
 		
 	}
 
-	public static void writeGUIBlock(Connection conn, String server, GUIBlock guiBlock) throws Exception {
+	public static void writeGUIBlocks(Connection conn, String server, List<GUIBlock> guiBlocks) throws Exception {
 		
-		PreparedStatement pstmt = conn.prepareStatement(WRITE_GUIBLOCK);
+		if (guiBlocks.size() > 0) {
+			
+			String query = WRITE_GUIBLOCKS;
+			
+			for (int i = 0; i < guiBlocks.size() - 1; i ++) {
+				
+				query = query + ", (?, ?)";
+				
+			}
+			
+			PreparedStatement pstmt = conn.prepareStatement(query);
 
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		ObjectOutputStream oos;
-		
-		try {
-			
-			oos = new ObjectOutputStream(baos);
-			oos.writeObject(new SerializableGUIBlock(guiBlock));
-			
-		} catch (IOException e) {
-			
-			e.printStackTrace();
+			for (int i = 0; i < guiBlocks.size(); i ++) {
+				
+				ByteArrayOutputStream baos = new ByteArrayOutputStream();
+				ObjectOutputStream oos;
+				
+				try {
+					
+					oos = new ObjectOutputStream(baos);
+					oos.writeObject(new SerializableGUIBlock(guiBlocks.get(i)));
+					
+				} catch (IOException e) {
+					
+					e.printStackTrace();
+					
+				}
+				
+				pstmt.setString(((i + 1) * 2) - 1, server);
+				pstmt.setBinaryStream((i + 1) * 2, new ByteArrayInputStream(baos.toByteArray()), baos.toByteArray().length);
+				
+			}
+
+			pstmt.executeUpdate();
 			
 		}
-		
-		pstmt.setString(1, server);
-		pstmt.setBinaryStream(2, new ByteArrayInputStream(baos.toByteArray()), baos.toByteArray().length);
-		
-		pstmt.executeUpdate();
 
 	}
 
@@ -103,28 +120,44 @@ public class SQLDatabase {
 		
 	}
 	
-	public static void writeMachine(Connection conn, String server, Machine machine) throws Exception {
+	public static void writeMachines(Connection conn, String server, List<Machine> machines) throws Exception {
 		
-		PreparedStatement pstmt = conn.prepareStatement(WRITE_MACHINE);
+		if (machines.size() > 0) {
+			
+			String query = WRITE_MACHINES;
+			
+			for (int i = 0; i < machines.size() - 1; i ++) {
+				
+				query = query + ", (?, ?)";
+				
+			}
+			
+			PreparedStatement pstmt = conn.prepareStatement(query);
 
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		ObjectOutputStream oos;
-		
-		try {
-			
-			oos = new ObjectOutputStream(baos);
-			oos.writeObject(new SerializableMachine(machine));
-			
-		} catch (IOException e) {
-			
-			e.printStackTrace();
+			for (int i = 0; i < machines.size(); i ++) {
+				
+				ByteArrayOutputStream baos = new ByteArrayOutputStream();
+				ObjectOutputStream oos;
+				
+				try {
+					
+					oos = new ObjectOutputStream(baos);
+					oos.writeObject(new SerializableMachine(machines.get(i)));
+					
+				} catch (IOException e) {
+					
+					e.printStackTrace();
+					
+				}
+				
+				pstmt.setString(((i + 1) * 2) - 1, server);
+				pstmt.setBinaryStream((i + 1) * 2, new ByteArrayInputStream(baos.toByteArray()), baos.toByteArray().length);
+				
+			}
+
+			pstmt.executeUpdate();
 			
 		}
-		
-		pstmt.setString(1, server);
-		pstmt.setBinaryStream(2, new ByteArrayInputStream(baos.toByteArray()), baos.toByteArray().length);
-		
-		pstmt.executeUpdate();
 
 	}
 

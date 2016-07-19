@@ -36,11 +36,23 @@ public class Machine {
 		
 		for (Machine machine : SQTechBase.machines) {
 			
-			if (machine.getGUIBlock() == guiBlock) {
+			if (machine.getGUIBlock().getLocation().equals(guiBlock.getLocation()) && machine != this) {
 				
 				removeMachines.add(machine);
 				
 			}
+			
+		}
+		
+		if (machineType.defaultExport) {
+			
+			exportsEnergy = true;
+			
+		}
+		
+		if (machineType.defaultImport) {
+			
+			importsEnergy = true;
 			
 		}
 		
@@ -82,12 +94,36 @@ public class Machine {
 		
 		this.energy = energy;
 		
+		machineType.updateEnergy(this);
+		
 	}
 	
 	
 	public void changeMachineType(MachineType newMachineType) {
 		
 		machineType = newMachineType;
+		
+	}
+	
+	public boolean check() {
+		
+		for (Network network : SQTechBase.networks) {
+			
+			for (GUIBlock guiBlock : network.getGUIBlocks()) {
+				
+				if (guiBlock == this.guiBlock) {
+					
+					return true;
+					
+				}
+				
+			}
+			
+		}
+
+		SQTechBase.machines.remove(this);
+		
+		return false;
 		
 	}
 	

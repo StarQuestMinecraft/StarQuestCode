@@ -2,14 +2,12 @@ package com.whirlwindgames.dibujaron.sqempire;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.dynmap.markers.AreaMarker;
 import org.dynmap.markers.Marker;
@@ -187,7 +185,7 @@ public class CaptureTask extends Thread {
 										
 							            if (!(SQEmpire.AratorBeachead.equals(empireTerritory) || SQEmpire.YavariBeachead.equals(empireTerritory) || SQEmpire.RequiemBeachead.equals(empireTerritory))) {
 							            	
-							                ProtectedPolygonalRegion region = (ProtectedPolygonalRegion) SQEmpire.worldGuardPlugin.getRegionManager(Bukkit.getWorlds().get(0)).getRegion(empireTerritory.name);
+							                ProtectedPolygonalRegion region = (ProtectedPolygonalRegion) SQEmpire.worldGuardPlugin.getRegionManager(Bukkit.getWorlds().get(0)).getRegion("SQEmpire-" + empireTerritory.name);
 							                
 							        		DefaultDomain domain = new DefaultDomain();
 							        		

@@ -18,6 +18,9 @@ import com.starquestminecraft.sqtechbase.objects.GUIBlock;
 import com.starquestminecraft.sqtechbase.objects.Machine;
 import com.starquestminecraft.sqtechbase.objects.Network;
 import com.starquestminecraft.sqtechbase.util.BlockUtils;
+import com.starquestminecraft.sqtechbase.util.InventoryUtils;
+
+import net.md_5.bungee.api.ChatColor;
 
 public class ItemMovingTask extends Thread {
 
@@ -53,6 +56,85 @@ public class ItemMovingTask extends Thread {
 								guiBlocks.add(guiBlock);
 								
 								exports.put(export, guiBlocks);
+								
+							}
+							
+						}
+						
+						if (guiBlock.exportAll) {
+							
+							List<ItemStack> items = new ArrayList<ItemStack>();
+							
+							for (Block block : BlockUtils.getAdjacentBlocks(guiBlock.getLocation().getBlock())) {
+								
+								Inventory inventory = null;
+								
+								if (block.getType().equals(Material.CHEST)) {
+									
+									Chest chest = (Chest) block.getState();
+									
+									inventory = chest.getBlockInventory();
+									
+								}
+								
+								if (block.getType().equals(Material.DROPPER)) {
+									
+									Dropper dropper = (Dropper) block.getState();
+									
+									inventory = dropper.getInventory();
+									
+								}
+								
+								if (inventory != null) {
+									
+									for (ItemStack itemStack : inventory.getContents()) {
+										
+										if (itemStack != null) {
+											
+											boolean contains = false;
+											
+											for (ItemStack item : items) {
+												
+												if (item.getType().equals(itemStack.getType()) && item.getDurability() == itemStack.getDurability()) {
+													
+													contains = true;
+													
+												}
+												
+											}
+											
+											if (!contains) {
+												
+												items.add(InventoryUtils.createSpecialItem(itemStack.getType(), itemStack.getDurability(), "", new String[] {ChatColor.RED + "" + ChatColor.MAGIC + "Contraband"}));
+												
+											}
+											
+										}
+										
+									}
+									
+								}
+								
+							}
+							
+							for (ItemStack item : items) {
+								
+								if (exports.containsKey(item)) {
+									
+									List<GUIBlock> guiBlocks = exports.get(item);
+									guiBlocks.add(guiBlock);
+									
+									exports.remove(item);
+									exports.put(item, guiBlocks);
+									
+								} else {
+									
+									List<GUIBlock> guiBlocks = new ArrayList<GUIBlock>();
+									guiBlocks.add(guiBlock);
+									
+									exports.put(item, guiBlocks);
+									
+								}
 								
 							}
 							

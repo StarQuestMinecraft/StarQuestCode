@@ -57,6 +57,7 @@ public class SerializableMachine implements Serializable {
 			} catch (Exception exception) {
 				
 				System.out.print("SQTechBase: machine with type " + machineType + " was unable to save data with key " + key);
+				exception.printStackTrace();
 				
 			}
 			
@@ -71,31 +72,6 @@ public class SerializableMachine implements Serializable {
 		if (Bukkit.getWorld(world) != null) {
 			
 			Location location = new Location(Bukkit.getWorld(world), x, y,z);
-			
-			GUIBlock guiBlock = null;
-			
-			for (Network network : SQTechBase.networks) {
-				
-				for (GUIBlock listGUIBlock : network.getGUIBlocks()) {
-					
-					if (listGUIBlock.getLocation().equals(location)) {
-						
-						guiBlock = listGUIBlock;
-						
-						guiBlock.setExports(listGUIBlock.getExports());
-						guiBlock.setImports(listGUIBlock.getImports());
-						
-					}
-					
-				}
-				
-			}
-			
-			if (guiBlock == null) {
-				
-				return null;
-				
-			}
 			
 			MachineType type = null;
 			
@@ -115,17 +91,33 @@ public class SerializableMachine implements Serializable {
 				
 			}
 			
-			Machine machine = new Machine(energy, guiBlock, type);
-			
-			machine.exportsEnergy = exportsEnergy;
-			machine.importsEnergy = importsEnergy;
-			
-			machine.data.putAll(data);
-			
-			machine.enabled = enabled;
-			
-			return machine;
-			
+			for (Network network : SQTechBase.networks) {
+				
+				for (GUIBlock guiBlock : network.getGUIBlocks()) {
+					
+					if (guiBlock.getLocation().equals(location)) {
+						
+						if (type.detectStructure(guiBlock)) {
+							
+							Machine machine = new Machine(energy, guiBlock, type);
+							
+							machine.exportsEnergy = exportsEnergy;
+							machine.importsEnergy = importsEnergy;
+							
+							machine.data.putAll(data);
+							
+							machine.enabled = enabled;
+							
+							return machine;
+							
+						}
+						
+					}
+					
+				}
+				
+			}
+
 		}
 		
 		return null;

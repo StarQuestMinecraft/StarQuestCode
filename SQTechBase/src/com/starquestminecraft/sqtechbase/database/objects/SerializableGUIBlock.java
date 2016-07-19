@@ -29,6 +29,8 @@ public class SerializableGUIBlock implements Serializable{
 	List<Integer> exportIDs = new ArrayList<Integer>();
 	List<Short> exportDatas = new ArrayList<Short>();
 	
+	boolean exportAll;
+	
 	public SerializableGUIBlock (GUIBlock guiBlock) {
 		
 		x = guiBlock.getLocation().getBlockX();
@@ -50,28 +52,38 @@ public class SerializableGUIBlock implements Serializable{
 			
 		}
 		
+		exportAll = guiBlock.exportAll;
+		
 	}	
 	
 	public GUIBlock getGUIBlock() {
 
 		if (Bukkit.getWorld(world) != null) {
 			
-			GUIBlock guiBlock = new GUIBlock(new Location(Bukkit.getWorld(world), x, y, z));
+			Location location = new Location(Bukkit.getWorld(world), x, y, z);
 			
-			for (int i = 0; i < importIDs.size(); i ++) {
+			if (location.getBlock().getType().equals(Material.LAPIS_BLOCK)) {
 				
-				guiBlock.addImport(InventoryUtils.createSpecialItem(Material.getMaterial(importIDs.get(i)), importDatas.get(i), "", new String[] {ChatColor.RED + "" + ChatColor.MAGIC + "Contraband"}));
+				GUIBlock guiBlock = new GUIBlock(location, false);
+				
+				for (int i = 0; i < importIDs.size(); i ++) {
+					
+					guiBlock.addImport(InventoryUtils.createSpecialItem(Material.getMaterial(importIDs.get(i)), importDatas.get(i), "", new String[] {ChatColor.RED + "" + ChatColor.MAGIC + "Contraband"}));
+					
+				}
+				
+				for (int i = 0; i < exportIDs.size(); i ++) {
+					
+					guiBlock.addExport(InventoryUtils.createSpecialItem(Material.getMaterial(exportIDs.get(i)), exportDatas.get(i), "", new String[] {ChatColor.RED + "" + ChatColor.MAGIC + "Contraband"}));
+					
+				}
+				
+				guiBlock.exportAll = exportAll;
+				
+				return guiBlock;
 				
 			}
-			
-			for (int i = 0; i < exportIDs.size(); i ++) {
-				
-				guiBlock.addExport(InventoryUtils.createSpecialItem(Material.getMaterial(exportIDs.get(i)), exportDatas.get(i), "", new String[] {ChatColor.RED + "" + ChatColor.MAGIC + "Contraband"}));
-				
-			}
-			
-			return guiBlock;
-			
+
 		}
 		
 		return null;

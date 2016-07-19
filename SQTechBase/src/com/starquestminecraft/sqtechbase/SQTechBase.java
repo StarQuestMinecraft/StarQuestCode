@@ -9,6 +9,7 @@ import java.util.logging.Logger;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -19,11 +20,13 @@ import org.bukkit.scheduler.BukkitScheduler;
 
 import com.starquestminecraft.sqtechbase.database.DatabaseInterface;
 import com.starquestminecraft.sqtechbase.database.SQLDatabase;
-import com.starquestminecraft.sqtechbase.events.GUIBlockEvents;
-import com.starquestminecraft.sqtechbase.events.MovecraftEvents;
-import com.starquestminecraft.sqtechbase.events.PlayerEvents;
+import com.starquestminecraft.sqtechbase.events.MachinesLoadedEvent;
 import com.starquestminecraft.sqtechbase.gui.GUI;
 import com.starquestminecraft.sqtechbase.gui.options.OptionGUI;
+import com.starquestminecraft.sqtechbase.listeners.GUIBlockEvents;
+import com.starquestminecraft.sqtechbase.listeners.MovecraftEvents;
+import com.starquestminecraft.sqtechbase.listeners.PlayerEvents;
+import com.starquestminecraft.sqtechbase.objects.Fluid;
 import com.starquestminecraft.sqtechbase.objects.Machine;
 import com.starquestminecraft.sqtechbase.objects.MachineType;
 import com.starquestminecraft.sqtechbase.objects.Network;
@@ -48,9 +51,11 @@ public class SQTechBase extends JavaPlugin {
 	
 	public static FileConfiguration config = null;
 	
-	public static List<String> energyItemNames = new ArrayList<String>();
+	public static List<Fluid> fluids = new ArrayList<Fluid>();
 	
 	boolean enabled = false;
+	
+	public static int highestId = -1;
 	
 	@Override
 	public void onDisable() {
@@ -60,14 +65,19 @@ public class SQTechBase extends JavaPlugin {
 		
 		saveDefaultConfig();
 		
-		DatabaseInterface.saveObjects();
-		
-		for (Player player : Bukkit.getOnlinePlayers()) {
+		try {
 			
-			DatabaseInterface.updateOptions(player);
+			SQLDatabase.clearMachines(SQLDatabase.con.getConnection(), SQTechBase.config.getString("server name"));
+			SQLDatabase.clearGUIBlocks(SQLDatabase.con.getConnection(), SQTechBase.config.getString("server name"));
+			
+		} catch (Exception e) {
+			
+			e.printStackTrace();
 			
 		}
 		
+		DatabaseInterface.saveObjects();
+
 	}
 	
 	@SuppressWarnings("deprecation")
@@ -96,27 +106,22 @@ public class SQTechBase extends JavaPlugin {
 			
 		}
 
-		(new ItemMovingTask()).run();
-		(new StructureTask()).run();
-		(new EnergyTask()).run();
-		
 		new SQLDatabase();
 		
 		this.getServer().getPluginManager().registerEvents(new PlayerEvents(), this);
-		
-		BukkitScheduler bukkitScheduler =  Bukkit.getScheduler();
-		
-		bukkitScheduler.scheduleAsyncDelayedTask(this, new Runnable() {
-			
-			public void run() {
-				
-				DatabaseInterface.readObjects();
-				
-				(new DatabaseTask()).run();
-				
-			}
 
-		});
+		DatabaseInterface.readObjects();
+				
+		(new DatabaseTask()).run();
+		(new ItemMovingTask()).run();
+		(new StructureTask()).run();
+		(new EnergyTask()).run();				
+				
+		Bukkit.getServer().getPluginManager().callEvent(new MachinesLoadedEvent());
+
+		
+		fluids.add(new Fluid(0, Material.WATER_BUCKET, 0, "Water"));
+		fluids.add(new Fluid(0, Material.LAVA_BUCKET, 0, "Lava"));
 		
 	}
 	
@@ -180,12 +185,6 @@ public class SQTechBase extends JavaPlugin {
 	public static void addMachineType(MachineType machineType) {
 		
 		machineTypes.add(machineType);
-		
-	}
-	
-	public static void addEnergyItem(String name) {
-		
-		energyItemNames.add(name);
 		
 	}
 

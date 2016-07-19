@@ -1,4 +1,4 @@
-package com.starquestminecraft.sqtechbase.events;
+package com.starquestminecraft.sqtechbase.listeners;
 
 import net.countercraft.movecraft.event.CraftReleaseEvent;
 import net.countercraft.movecraft.utils.MovecraftLocation;
@@ -81,7 +81,7 @@ public class MovecraftEvents implements Listener {
 			
 			if (!detectedBlocks.contains(block)) {
 				
-				Network network = new Network(block);
+				Network network = new Network(block, true);
 				
 				for (GUIBlock guiBlock : network.getGUIBlocks()) {
 					

@@ -38,7 +38,6 @@ import com.ginger_walnut.sqpowertools.objects.Modifier;
 import com.ginger_walnut.sqpowertools.objects.PowerTool;
 import com.ginger_walnut.sqpowertools.objects.PowerToolType;
 import com.ginger_walnut.sqpowertools.tasks.BlasterTask;
-import com.ginger_walnut.sqpowertools.tasks.ChargerTask;
 import com.ginger_walnut.sqpowertools.tasks.CooldownTask;
 import com.ginger_walnut.sqpowertools.tasks.HoldingTask;
 import com.ginger_walnut.sqpowertools.utils.EffectUtils;
@@ -69,8 +68,7 @@ public class SQPowerTools extends JavaPlugin {
 			this.getServer().getPluginManager().registerEvents(new Events(), this);
 			this.getServer().getPluginManager().registerEvents(new ToolUseEvents(), this);
 			this.getServer().getPluginManager().registerEvents(new BlasterEvents(), this);
-			
-			(new ChargerTask()).run();
+
 			(new HoldingTask()).run();
 			(new CooldownTask()).run();
 			(new BlasterTask()).run();

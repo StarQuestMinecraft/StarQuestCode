@@ -18,9 +18,9 @@ import com.starquestminecraft.sqtechbase.util.ObjectUtils;
 
 import net.md_5.bungee.api.ChatColor;
 
-public class BasicGeneratorGUI extends GUI{
+public class ChargerGUI extends GUI {
 
-	public BasicGeneratorGUI(Player player, int id) {
+	public ChargerGUI(Player player, int id) {
 		
 		super(player, id);
 		
@@ -29,22 +29,14 @@ public class BasicGeneratorGUI extends GUI{
 	@Override	
 	public void open() {
 
-		Inventory gui = Bukkit.createInventory(owner, 27, ChatColor.BLUE + "SQTech - Basic Generator");
+		Inventory gui = Bukkit.createInventory(owner, 27, ChatColor.BLUE + "SQTech - Charger");
 
 		Machine machine = ObjectUtils.getMachineFromMachineGUI(this);
 				
 		gui.setItem(8, InventoryUtils.createSpecialItem(Material.REDSTONE, (short) 0, "Energy", new String[] {EnergyUtils.formatEnergy(machine.getEnergy()) + "/" + EnergyUtils.formatEnergy(machine.getMachineType().getMaxEnergy()), ChatColor.RED + "" + ChatColor.MAGIC + "Contraband"}));
 		gui.setItem(26, InventoryUtils.createSpecialItem(Material.WOOD_DOOR, (short) 0, "Back", new String[] {ChatColor.RED + "" + ChatColor.MAGIC + "Contraband"}));
 		
-		gui.setItem(0, InventoryUtils.createSpecialItem(Material.IRON_FENCE, (short) 0, " ", new String[] {ChatColor.RED + "" + ChatColor.MAGIC + "Contraband"}));
-		gui.setItem(2, InventoryUtils.createSpecialItem(Material.IRON_FENCE, (short) 0, " ", new String[] {ChatColor.RED + "" + ChatColor.MAGIC + "Contraband"}));
-		gui.setItem(9, InventoryUtils.createSpecialItem(Material.IRON_FENCE, (short) 0, " ", new String[] {ChatColor.RED + "" + ChatColor.MAGIC + "Contraband"}));
-		gui.setItem(11, InventoryUtils.createSpecialItem(Material.IRON_FENCE, (short) 0, " ", new String[] {ChatColor.RED + "" + ChatColor.MAGIC + "Contraband"}));
-		gui.setItem(18, InventoryUtils.createSpecialItem(Material.IRON_FENCE, (short) 0, " ", new String[] {ChatColor.RED + "" + ChatColor.MAGIC + "Contraband"}));
-		gui.setItem(19, InventoryUtils.createSpecialItem(Material.IRON_FENCE, (short) 0, " ", new String[] {ChatColor.RED + "" + ChatColor.MAGIC + "Contraband"}));
-		gui.setItem(20, InventoryUtils.createSpecialItem(Material.IRON_FENCE, (short) 0, " ", new String[] {ChatColor.RED + "" + ChatColor.MAGIC + "Contraband"}));
-		
-		gui.setItem(1, InventoryUtils.createSpecialItem(Material.PAPER, (short) 0, "Info", new String[] {"Fuel input", ChatColor.RED + "" + ChatColor.MAGIC + "Contraband"}));
+		gui.setItem(0, InventoryUtils.createSpecialItem(Material.PAPER, (short) 0, "Info", new String[] {"Put the item that will be charged",  "in the top slot of the furance", ChatColor.RED + "" + ChatColor.MAGIC + "Contraband"}));
 		
 		owner.openInventory(gui);
 		
@@ -102,17 +94,13 @@ public class BasicGeneratorGUI extends GUI{
 					
 				}
 				
-				if (event.getClickedInventory().getTitle().equals(ChatColor.BLUE + "SQTech - Basic Generator")) {
+				if (event.getClickedInventory().getTitle().equals(ChatColor.BLUE + "SQTech - Charger")) {
 
 					if (event.getSlot() == 26) {
 				
 						GUIBlock guiBlock = ObjectUtils.getMachineFromMachineGUI(this).getGUIBlock();
 						
 						guiBlock.getGUI(owner).open();
-						
-					} else if (event.getSlot() == 10) {
-						
-						event.setCancelled(false);
 						
 					}
 					

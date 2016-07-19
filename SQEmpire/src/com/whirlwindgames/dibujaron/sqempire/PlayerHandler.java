@@ -1,10 +1,7 @@
 package com.whirlwindgames.dibujaron.sqempire;
 
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -12,12 +9,13 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.event.block.BlockDamageEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -33,46 +31,44 @@ import com.massivecraft.massivecore.ps.PS;
 import com.sk89q.worldguard.protection.ApplicableRegionSet;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import com.whirlwindgames.dibujaron.sqempire.database.object.EmpirePlayer;
-import com.whirlwindgames.dibujaron.sqempire.util.AsyncUtil;
-
-import sun.java2d.pipe.Region;
 
 public class PlayerHandler implements Listener{
-
-	public PlayerHandler(){
-		/*AsyncUtil.scheduleOnHourTask(new Runnable(){
-			public void run(){
-				deductPowerOffline();
-			}
-		});*/
-	}
 	
 	@EventHandler
 	public void onPlayerJoin(PlayerJoinEvent event){
+		
 		EmpirePlayer.loadPlayerData(event.getPlayer());
+		
 	}
 	
 	@EventHandler
-	public void onPlayerQuit(PlayerQuitEvent event){
+	public void onPlayerQuit(final PlayerQuitEvent event){
+		
+		final EmpirePlayer player = EmpirePlayer.getOnlinePlayer(event.getPlayer());
+		
 		EmpirePlayer.unloadPlayerData(event.getPlayer());
+		
+		Bukkit.getScheduler().runTaskAsynchronously(SQEmpire.getInstance(), new Runnable() {
+			
+			public void run() {
+				
+				player.publishData();
+				
+			}
+			
+		});
+		
 	}
 	
-	private void deductPowerOffline(){
-		AsyncUtil.crashIfNotAsync();
-		return;
-		/*LinkedList<EmpirePlayer> playersToDeduct = EmpirePlayer.getPlayersOfflineMoreThan(SQEmpire.thisPlanet(), Settings.SAFE_POWERLOSS_TIME);
-		for(EmpirePlayer p : playersToDeduct){
-			int currentPower = p.getPowerOnPlanet(SQEmpire.thisPlanet());
-			int newPower = currentPower - Settings.POWER_LOSS_PER_DAY;
-			if(newPower < 0) newPower = 0;
-			p.updatePowerOnPlanet(SQEmpire.thisPlanet(), newPower);
-		}*/
+	@EventHandler
+	public void onPlayerKick(final PlayerKickEvent event){
+		
+		EmpirePlayer.getOnlinePlayer(event.getPlayer()).publishData();;
+		
 	}
 
 	@EventHandler
 	public void onBlockBreak(BlockBreakEvent event) {
-		
-		Empire empire = EmpirePlayer.getOnlinePlayer(event.getPlayer()).getEmpire();
 		
 		for (Territory territory : SQEmpire.territories) {
 			
@@ -116,7 +112,7 @@ public class PlayerHandler implements Listener{
 				
 				for (Territory territory : SQEmpire.territories) {
 					
-					if (territory.name.equalsIgnoreCase(region.getId())) {
+					if (("SQEmpire-" + territory.name).equalsIgnoreCase(region.getId())) {
 						
 						Empire empire = EmpirePlayer.getOnlinePlayer(event.getPlayer()).getEmpire(); 
 						
@@ -192,7 +188,7 @@ public class PlayerHandler implements Listener{
 					
 					for (Territory territory : SQEmpire.territories) {
 						
-						if (territory.name.equalsIgnoreCase(region.getId())) {
+						if (("SQEmpire-" + territory.name).equalsIgnoreCase(region.getId())) {
 							
 							if (event.getSender() instanceof Player) {
 								
@@ -237,21 +233,47 @@ public class PlayerHandler implements Listener{
 		}
 		
 	}
-	
-	@EventHandler
+    
+	@EventHandler(priority = EventPriority.LOW)
 	public void onMCMMOPlayerXpGain(McMMOPlayerXpGainEvent event) {
 		
 		if (!event.getXpGainReason().equals(XPGainReason.COMMAND)) {
 			
+			float multiplier = 1;
+			
+			if (SQEmpire.isCorePlanet) {
+				
+				multiplier = multiplier + .25f;
+				
+			}
+			
 			if (event.getSkill().equals(SkillType.ALCHEMY) || event.getSkill().equals(SkillType.ARCHERY)) {
 				
-				if (EmpirePlayer.getOnlinePlayer(event.getPlayer()).getEmpire().equals(SQEmpire.dominantEmpire)) {
+				Empire empire = EmpirePlayer.getOnlinePlayer(event.getPlayer()).getEmpire();
+				
+				if (empire.equals(SQEmpire.dominantEmpire)) {
 					
-					event.setRawXpGained(event.getRawXpGained() * 1.5f);
+					multiplier = multiplier + .5f;
 					
 				}
 				
+				if (SQEmpire.isCorePlanet) {
+					
+					for (Territory territory : SQEmpire.territories) {
+						
+						if (territory.owner == empire) {
+							
+							multiplier = multiplier + .05f;
+							
+						}
+						
+					}
+					
+				}
+
 			}
+			
+			event.setRawXpGained(event.getRawXpGained() * multiplier);
 			
 		}
 		

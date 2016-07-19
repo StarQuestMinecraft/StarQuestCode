@@ -1,11 +1,10 @@
 package com.whirlwindgames.dibujaron.sqempire;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Calendar;
 import java.util.List;
 
 import net.countercraft.movecraft.bungee.BungeePlayerHandler;
-import net.milkbowl.vault.economy.Economy;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -20,12 +19,15 @@ import org.bukkit.scheduler.BukkitScheduler;
 import org.dynmap.markers.Marker;
 import org.dynmap.markers.PolyLineMarker;
 
+import com.massivecraft.factions.entity.FactionColl;
+import com.massivecraft.factions.entity.MPlayer;
 import com.sk89q.worldedit.BlockVector;
 import com.sk89q.worldedit.BlockVector2D;
 import com.sk89q.worldguard.protection.ApplicableRegionSet;
 import com.sk89q.worldguard.protection.flags.DefaultFlag;
 import com.sk89q.worldguard.protection.flags.StateFlag.State;
 import com.sk89q.worldguard.protection.regions.ProtectedCuboidRegion;
+import com.sk89q.worldguard.protection.regions.ProtectedPolygonalRegion;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import com.whirlwindgames.dibujaron.sqempire.database.object.EmpirePercentage;
 import com.whirlwindgames.dibujaron.sqempire.database.object.EmpirePlayer;
@@ -61,16 +63,43 @@ public class EmpireCommand implements CommandExecutor{
 			}
 			return true;
 		} else if(cmd.getName().equalsIgnoreCase("empirereset") && sender.hasPermission("sqempire.reset")){
+			
+			boolean full = false;
+			
+			if (args.length > 1) {
+				
+				if (args[1].equals("full")) {
+					
+					full = true;
+					
+				}
+				
+			}
+			
 			Player p = Bukkit.getPlayer(args[0]);
 			EmpirePlayer ep = EmpirePlayer.getOnlinePlayer(p);
+			
+			Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "pp user " + p.getName() + " removegroup " + ep.getEmpire().getName() + "0");
+			Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "pp user " + p.getName() + " removegroup " + ep.getEmpire().getName() + "1");
+			Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "pp user " + p.getName() + " removegroup " + ep.getEmpire().getName() + "2");
+			Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "pp user " + p.getName() + " removegroup " + ep.getEmpire().getName() + "3");
+			Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "pp user " + p.getName() + " removegroup " + ep.getEmpire().getName() + "4");
+			Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "pp user " + p.getName() + " removegroup " + ep.getEmpire().getName() + "5");
+			
 			ep.setEmpire(Empire.NONE);
 			ep.publishData();
-			SQEmpire.economy.withdrawPlayer(p, SQEmpire.economy.getBalance(p));
-			Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "pp user " + p.getName() + " addgroup Guest");
-			Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "pp user " + p.getName() + " removegroup Yavari0");
-			Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "pp user " + p.getName() + " removegroup Arator0");
-			Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "pp user " + p.getName() + " removegroup Requiem0");
+			
 			BungeePlayerHandler.sendPlayer(p, "CoreSystem", "CoreSystem", 0, 102, 0);
+			
+			if (full) {
+				
+				SQEmpire.economy.withdrawPlayer(p, SQEmpire.economy.getBalance(p));
+				BungeePlayerHandler.wipePlayerInventory(p);
+				
+				MPlayer.get(p).setFaction(FactionColl.get().getNone());
+				
+			}
+
 		} else if (cmd.getName().equalsIgnoreCase("setdominantempire") &&  sender instanceof ConsoleCommandSender) {
 			
 			SQEmpire.dominantEmpire = Empire.fromString(args[0]);
@@ -100,6 +129,13 @@ public class EmpireCommand implements CommandExecutor{
 			EmpirePlayer ep = EmpirePlayer.getOnlinePlayer(p);
 			
 			p.sendMessage(ChatColor.GOLD + "Your empire is " + ep.getEmpire().getName() + ".");
+			
+			if (SQEmpire.dominantEmpire != Empire.NONE) {
+				
+				p.sendMessage(ChatColor.GOLD + SQEmpire.dominantEmpire.getName() + " currently has a mcmmo boost");
+				
+			}
+			
 			p.sendMessage(ChatColor.GOLD + "/empire help - Displays this");
 			p.sendMessage(ChatColor.GOLD + "/empire join <empire> - Join an empire");
 			
@@ -167,6 +203,41 @@ public class EmpireCommand implements CommandExecutor{
 				
 				p.sendMessage(ChatColor.GOLD + "---------------");
 				
+			} else if (args[0].equalsIgnoreCase("changeregions")) {
+				
+				if (p.getName().equals("Ginger_Walnut")) {
+					
+			        for (final Territory territory : SQEmpire.territories) {
+			        	
+			            ProtectedPolygonalRegion region = (ProtectedPolygonalRegion) SQEmpire.worldGuardPlugin.getRegionManager(Bukkit.getWorlds().get(0)).getRegion(territory.name);
+			        	
+			            if (region != null) {
+			            	
+			            	SQEmpire.worldGuardPlugin.getRegionManager(Bukkit.getWorlds().get(0)).removeRegion(territory.name);
+			            	SQEmpire.worldGuardPlugin.getRegionManager(Bukkit.getWorlds().get(0)).addRegion(new ProtectedPolygonalRegion("SQEmpire-" + territory.name, territory.points, 0, Bukkit.getWorlds().get(0).getMaxHeight()));
+			            	
+			            }
+			            
+			            for (CapturePoint capturePoint : territory.capturePoints) {
+			            	
+			            	ProtectedCuboidRegion pointRegion = (ProtectedCuboidRegion) SQEmpire.worldGuardPlugin.getRegionManager(Bukkit.getWorlds().get(0)).getRegion(capturePoint.name);
+			            	
+			                if (pointRegion != null) {
+
+			                	int xMultiplier = capturePoint.x / capturePoint.x;
+			                	int zMultiplier = capturePoint.z / capturePoint.z;
+			                	
+			                	SQEmpire.worldGuardPlugin.getRegionManager(Bukkit.getWorlds().get(0)).removeRegion(capturePoint.name);
+			                	SQEmpire.worldGuardPlugin.getRegionManager(Bukkit.getWorlds().get(0)).addRegion(new ProtectedCuboidRegion("SQEmpire-" + capturePoint.name, new BlockVector(capturePoint.x * 16, 0, capturePoint.z * 16), new BlockVector((capturePoint.x * 16) + (xMultiplier * 16), Bukkit.getWorlds().get(0).getMaxHeight(), (capturePoint.z * 16) + (zMultiplier * 16))));
+			                	
+			                }
+			            	
+			            }
+			            
+			        }
+					
+				}
+				
 			} else if (args[0].equalsIgnoreCase("join")) {
 				
 				cmdJoin(p, args);
@@ -201,7 +272,7 @@ public class EmpireCommand implements CommandExecutor{
 				
 				if (p.hasPermission("SQEmpire.reloadEmpire")) {
 					
-					SQEmpire.getInstance().reload();
+					SQEmpire.getInstance().onEnable();
 					
 					p.sendMessage(ChatColor.GOLD + "Config reloaded");
 					
@@ -239,7 +310,7 @@ public class EmpireCommand implements CommandExecutor{
 									
 									for (Territory territory : SQEmpire.territories) {
 										
-										if (territory.name.equalsIgnoreCase(region.getId())) {
+										if (("SQEmpire-" + territory.name).equalsIgnoreCase(region.getId())) {
 											
 											int capturePoints = 0;
 											
@@ -271,7 +342,7 @@ public class EmpireCommand implements CommandExecutor{
 							        		final int xMultiplier = capturePoint.x / capturePoint.x;
 							            	final int zMultiplier = capturePoint.z / capturePoint.z;
 							            	
-							            	ProtectedCuboidRegion pointRegion = (ProtectedCuboidRegion) SQEmpire.worldGuardPlugin.getRegionManager(Bukkit.getWorlds().get(0)).getRegion(capturePoint.name);
+							            	ProtectedCuboidRegion pointRegion = (ProtectedCuboidRegion) SQEmpire.worldGuardPlugin.getRegionManager(Bukkit.getWorlds().get(0)).getRegion("SQEmpire-" + capturePoint.name);
 							            	
 							                if (pointRegion != null) {
 							                	
@@ -283,17 +354,17 @@ public class EmpireCommand implements CommandExecutor{
 							                	if (!pointRegion.getPoints().equals(points)) {
 							                		
 							                		SQEmpire.worldGuardPlugin.getRegionManager(Bukkit.getWorlds().get(0)).removeRegion(capturePoint.name);
-							                		SQEmpire.worldGuardPlugin.getRegionManager(Bukkit.getWorlds().get(0)).addRegion(new ProtectedCuboidRegion(capturePoint.name, new BlockVector(capturePoint.x * 16, 0, capturePoint.z * 16), new BlockVector((capturePoint.x * 16) + (xMultiplier * 16), Bukkit.getWorlds().get(0).getMaxHeight(), (capturePoint.z * 16) + (zMultiplier * 16))));
+							                		SQEmpire.worldGuardPlugin.getRegionManager(Bukkit.getWorlds().get(0)).addRegion(new ProtectedCuboidRegion("SQEmpire-" + capturePoint.name, new BlockVector(capturePoint.x * 16, 0, capturePoint.z * 16), new BlockVector((capturePoint.x * 16) + (xMultiplier * 16), Bukkit.getWorlds().get(0).getMaxHeight(), (capturePoint.z * 16) + (zMultiplier * 16))));
 							                		
 							                	}
 							                	
 							                } else {
 							                	
-							                	SQEmpire.worldGuardPlugin.getRegionManager(Bukkit.getWorlds().get(0)).addRegion(new ProtectedCuboidRegion(capturePoint.name, new BlockVector(capturePoint.x * 16, 0, capturePoint.z * 16), new BlockVector((capturePoint.x * 16) + (xMultiplier * 16), Bukkit.getWorlds().get(0).getMaxHeight(), (capturePoint.z * 16) + (zMultiplier * 16))));
+							                	SQEmpire.worldGuardPlugin.getRegionManager(Bukkit.getWorlds().get(0)).addRegion(new ProtectedCuboidRegion("SQEmpire-" + capturePoint.name, new BlockVector(capturePoint.x * 16, 0, capturePoint.z * 16), new BlockVector((capturePoint.x * 16) + (xMultiplier * 16), Bukkit.getWorlds().get(0).getMaxHeight(), (capturePoint.z * 16) + (zMultiplier * 16))));
 							                	
 							                }
 							                
-							                pointRegion = (ProtectedCuboidRegion) SQEmpire.worldGuardPlugin.getRegionManager(Bukkit.getWorlds().get(0)).getRegion(capturePoint.name);
+							                pointRegion = (ProtectedCuboidRegion) SQEmpire.worldGuardPlugin.getRegionManager(Bukkit.getWorlds().get(0)).getRegion("SQEmpire-" + capturePoint.name);
 					                		
 							                pointRegion.setFlag(DefaultFlag.PVP, State.ALLOW);
 							                pointRegion.setFlag(DefaultFlag.GHAST_FIREBALL, State.DENY);
@@ -376,7 +447,7 @@ public class EmpireCommand implements CommandExecutor{
 									
 									for (Territory territory : SQEmpire.territories) {
 										
-										if (territory.name.equalsIgnoreCase(region.getId())) {
+										if (("SQEmpire-" + territory.name).equalsIgnoreCase(region.getId())) {
 											
 											for (int i = 0; i < territory.capturePoints.size(); i ++) {
 												
@@ -385,7 +456,7 @@ public class EmpireCommand implements CommandExecutor{
 								        		final int xMultiplier = capturePoint.x / capturePoint.x;
 								            	final int zMultiplier = capturePoint.z / capturePoint.z;
 												
-												p.sendMessage(ChatColor.GOLD + "" + (i + 1) + "-" + "x:" + capturePoint.x * 16 + (xMultiplier * 6) + ", y:" + capturePoint.y + ",z:" + capturePoint.z * 16 + (zMultiplier * 6));
+												p.sendMessage(ChatColor.GOLD + "" + (i + 1) + "-" + "x:" + (capturePoint.x * 16 + (xMultiplier * 6)) + ", y:" + capturePoint.y + ", z:" + (capturePoint.z * 16 + (zMultiplier * 6)));
 
 											}
 											
@@ -422,15 +493,15 @@ public class EmpireCommand implements CommandExecutor{
 									
 									for (Territory territory : SQEmpire.territories) {
 										
-										if (territory.name.equalsIgnoreCase(region.getId())) {
+										if (("SQEmpire-" + territory.name).equalsIgnoreCase(region.getId())) {
 											
 											for (int i = 0; i < territory.capturePoints.size(); i ++) {
 												
 												if ((i + 1) == Integer.parseInt(args[2])) {
 													
-													CapturePoint capturePoint = territory.capturePoints.get(i);
+													final CapturePoint capturePoint = territory.capturePoints.get(i);
 													
-													SQEmpire.worldGuardPlugin.getRegionManager(Bukkit.getWorlds().get(0)).removeRegion(capturePoint.name);
+													SQEmpire.worldGuardPlugin.getRegionManager(Bukkit.getWorlds().get(0)).removeRegion("SQEmpire-" + capturePoint.name);
 
 													SQEmpire.config.set(capturePoint.configPath, null);
 													SQEmpire.getInstance().saveConfig();
@@ -449,8 +520,23 @@ public class EmpireCommand implements CommandExecutor{
 													}
 													
 													territory.capturePoints.remove(capturePoint);
-													capturePoint = null;
 														
+									        		final int xMultiplier = capturePoint.x / capturePoint.x;
+									            	final int zMultiplier = capturePoint.z / capturePoint.z;
+													
+													Bukkit.getScheduler().scheduleSyncDelayedTask(SQEmpire.getInstance(), new Runnable() {
+									            		
+									            		public void run() {
+									            			
+									            			SQEmpire.spawnRectangle(capturePoint.x * 16 + (xMultiplier * 6), capturePoint.y - 2, capturePoint.z * 16 + (zMultiplier * 6), 4, 4, Material.AIR, 0);
+									                    	SQEmpire.spawnRectangle(capturePoint.x * 16 + (xMultiplier * 6), capturePoint.y - 1, capturePoint.z * 16 + (zMultiplier * 6), 4, 4, Material.AIR, 0); 
+									                    	SQEmpire.spawnRectangle(capturePoint.x * 16 + (xMultiplier * 6), capturePoint.y, capturePoint.z * 16 + (zMultiplier * 6), 4, 4, Material.AIR, 0); 
+									                    	SQEmpire.spawnRectangle(capturePoint.x * 16 + (xMultiplier * 6), capturePoint.y + 1, capturePoint.z * 16 + (zMultiplier * 6), 4, 4, Material.AIR, 0); 
+									                    	
+									            		}
+									            		
+									            	});
+													
 													p.sendMessage(ChatColor.GOLD + "The control point has been removed");
 													return;
 													
@@ -509,7 +595,7 @@ public class EmpireCommand implements CommandExecutor{
 									
 									for (Territory territory : SQEmpire.territories) {
 										
-										if (territory.name.equalsIgnoreCase(region.getId())) {
+										if (("SQEmpire-" + territory.name).equalsIgnoreCase(region.getId())) {
 											
 											if (!SQEmpire.territory1.containsKey(p.getName())) {
 												
@@ -693,7 +779,7 @@ public class EmpireCommand implements CommandExecutor{
 								
 								for (Territory territory : SQEmpire.territories) {
 									
-									if (territory.name.equalsIgnoreCase(region.getId())) {
+									if (("SQEmpire-" + territory.name).equalsIgnoreCase(region.getId())) {
 										
 										if (SQEmpire.AratorBeachead.equals(territory) || SQEmpire.YavariBeachead.equals(territory) || SQEmpire.RequiemBeachead.equals(territory)) {
 											
@@ -802,18 +888,23 @@ public class EmpireCommand implements CommandExecutor{
 	
 	private void cmdJoin(Player p, String[] args){
 		EmpirePlayer ep = EmpirePlayer.getOnlinePlayer(p);
-		if(ep.getEmpire() != Empire.NONE){
-			p.sendMessage("You are already in an Empire, you cannot join one.");
-			return;
+		
+		Calendar cal = Calendar.getInstance();
+		cal.add(Calendar.MONTH, -1);
+		
+		if (ep.getEmpire() != Empire.NONE && ep.lastChanged.after(cal.getTime())) {		
+			
+			p.sendMessage(ChatColor.RED + "You have changed empires in the last month");
+			
 		}
 		if(args.length < 2){
-			p.sendMessage("You must specify an empire to join, please choose Arator, Requiem, or Yavari.");
+			p.sendMessage(ChatColor.RED + "You must specify an empire to join, please choose Arator, Requiem, or Yavari.");
 		}
 		if(args.length == 2){
 			String empire = args[1];
 			Empire e = Empire.fromString(empire);
 			if(e == Empire.NONE){
-				p.sendMessage("No empire found with name " + empire + ", please choose Arator, Requiem, or Yavari.");
+				p.sendMessage(ChatColor.RED + "No empire found with name " + empire + ", please choose Arator, Requiem, or Yavari.");
 			}
 			int[] pop = EmpirePercentage.getEmpirePopulationDistribution();
 			System.out.println("Populations are " + pop[0] + "," + pop[1] + "," + pop[2]);
@@ -822,36 +913,60 @@ public class EmpireCommand implements CommandExecutor{
 			double theirPercentage = pop[theirEmpire-1] / total;
 			System.out.println("percentage for empire " + theirEmpire + " is " + theirPercentage);
 			if(theirPercentage > 0.36){
-				p.sendMessage("This empire cannot be joined at this time, it has more than 36% of the player population. Please pick again.");
+				p.sendMessage(ChatColor.RED + "This empire cannot be joined at this time, it has more than 36% of the player population. Please pick again.");
 				return;
 			}
 			if(theirPercentage > 0.35){
-				p.sendMessage("This empire currently has 35% of the playerbase and may soon not allow new members.");
+				p.sendMessage(ChatColor.GOLD + "This empire currently has 35% of the playerbase and may soon not allow new members.");
 				p.sendMessage(ChatColor.RED + "If you are joining with friends, it is possible that only some of you will get into this empire.");
-				p.sendMessage("To avoid being split up, we recommend that you join another empire.");
+				p.sendMessage(ChatColor.GOLD + "To avoid being split up, we recommend that you join another empire.");
+				p.sendMessage(ChatColor.RED + "This empire is overpopulated and as such you will recieve 25% less starting cash if you join it.");
 			} else if (theirPercentage > 0.345){
-				p.sendMessage("This empire is overpopulated and as such you will recieve 25% less starting cash if you join it.");
+				p.sendMessage(ChatColor.RED + "This empire is overpopulated and as such you will recieve 25% less starting cash if you join it.");
 			} else if (theirPercentage > 0.30){
-				p.sendMessage("This empire has normal population and so you will recieve normal starting cash if you join it.");
+				p.sendMessage(ChatColor.YELLOW + "This empire has normal population and so you will recieve normal starting cash if you join it.");
 			} else {
-				p.sendMessage("This empire is underpopulated and you will recieve 25% additional starting cash if you join it.");
+				p.sendMessage(ChatColor.GREEN + "This empire is underpopulated and you will recieve 25% additional starting cash if you join it.");
 			}
-			p.sendMessage("Are you sure you want to join " + e.getName() + "? Type / empire join " + e.getName() + " confirm to confirm.");
+			
+			if(ep.getEmpire() != Empire.NONE){
+				p.sendMessage(ChatColor.RED + "Since you are already in an empire you, will lose your inventory, be removed from your faction, and will lose all of your current money. You will not be able to change empires for a month if you change.");
+			}
+			
+			p.sendMessage(ChatColor.GOLD + "Are you sure you want to join " + e.getName() + "? Type / empire join " + e.getName() + " confirm to confirm.");
 		} else if(args.length == 3){
 			if(args[2].equalsIgnoreCase("confirm")){
 				String empire = args[1];
 				Empire e = Empire.fromString(empire);
 				if(e == Empire.NONE){
-					p.sendMessage("No empire found with name " + empire + ", please choose Arator, Requiem, or Yavari.");
+					p.sendMessage(ChatColor.RED + "No empire found with name " + empire + ", please choose Arator, Requiem, or Yavari.");
 				}
 				int[] pop = EmpirePercentage.getEmpirePopulationDistribution();
 				double total = pop[0] + pop[1] + pop[2];
 				int theirEmpire = e.getID();
 				double theirPercentage = pop[theirEmpire-1] / total;
 				if(theirPercentage > 0.36){
-					p.sendMessage("This empire cannot be joined at this time, it has more than 36% of the player population. Please pick again.");
+					p.sendMessage(ChatColor.RED + "This empire cannot be joined at this time, it has more than 36% of the player population. Please pick again.");
 					return;
 				} else {
+					
+					if (ep.getEmpire() != Empire.NONE) {
+						
+						Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "pp user " + p.getName() + " removegroup " + ep.getEmpire().getName() + "0");
+						Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "pp user " + p.getName() + " removegroup " + ep.getEmpire().getName() + "1");
+						Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "pp user " + p.getName() + " removegroup " + ep.getEmpire().getName() + "2");
+						Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "pp user " + p.getName() + " removegroup " + ep.getEmpire().getName() + "3");
+						Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "pp user " + p.getName() + " removegroup " + ep.getEmpire().getName() + "4");
+						Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "pp user " + p.getName() + " removegroup " + ep.getEmpire().getName() + "5");
+						
+						SQEmpire.economy.withdrawPlayer(p, SQEmpire.economy.getBalance(p));
+						BungeePlayerHandler.wipePlayerInventory(p);
+							
+						MPlayer.get(p).setFaction(FactionColl.get().getNone());
+						
+					}
+					
+					ep.lastChanged = Calendar.getInstance().getTime();
 					ep.setEmpire(e);
 					if(theirPercentage > 0.345)
 						SQEmpire.economy.depositPlayer(p, 7500);
@@ -860,7 +975,7 @@ public class EmpireCommand implements CommandExecutor{
 					} else {
 						SQEmpire.economy.depositPlayer(p, 12500);
 					}
-					p.sendMessage("You have succesfully joined empire " + e + "!");
+					p.sendMessage(ChatColor.GREEN + "You have succesfully joined empire " + e + "!");
 					if(e == Empire.ARATOR){
 						Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "pp user " + p.getName() + " addgroup Arator0");
 						BungeePlayerHandler.sendPlayer(p, "AratorSystem", "AratorSystem", 2598, 100, 1500);
@@ -880,7 +995,7 @@ public class EmpireCommand implements CommandExecutor{
 					Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "pp user " + p.getName() + " removegroup Guest");
 				}
 			} else {
-				p.sendMessage("Incorrect usage, type /empire join <name>");
+				p.sendMessage(ChatColor.RED + "Incorrect usage, type /empire join <name>");
 			}
 		}
 	}

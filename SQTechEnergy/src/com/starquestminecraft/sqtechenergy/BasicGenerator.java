@@ -16,6 +16,7 @@ import com.starquestminecraft.sqtechbase.objects.GUIBlock;
 import com.starquestminecraft.sqtechbase.objects.Machine;
 import com.starquestminecraft.sqtechbase.objects.MachineType;
 import com.starquestminecraft.sqtechbase.util.DirectionUtils;
+import com.starquestminecraft.sqtechbase.util.EnergyUtils;
 import com.starquestminecraft.sqtechbase.util.InventoryUtils;
 import com.starquestminecraft.sqtechenergy.gui.BasicGeneratorGUI;
 
@@ -27,6 +28,8 @@ public class BasicGenerator extends MachineType {
 		
 		super(10000);		
 		name = "Basic Generator";
+		
+		defaultExport = true;
 		
 	}
 	
@@ -73,8 +76,48 @@ public class BasicGenerator extends MachineType {
 	@Override
 	public int getSpaceLeft(Machine machine, ItemStack itemStack) {
 		
-		return 3456;
+		int fuels = 0;
 		
+		if (machine.data.containsKey("fuel")) {
+			
+			if (machine.data.get("fuel") instanceof HashMap<?,?>) {
+				
+				HashMap<Fuel, Integer> currentFuels = (HashMap<Fuel, Integer>) machine.data.get("fuel");
+				
+				fuels = currentFuels.size();
+				
+			}
+			
+		}
+		
+		if (getMaxEnergy() - machine.getEnergy() > 0 && fuels < 1) {
+			
+			boolean isFuel = false;
+			
+			for (Fuel fuel : SQTechEnergy.fuels) {
+				
+				if (fuel.generator.equals(name)) {
+					
+					if (itemStack.getTypeId() == fuel.id && itemStack.getDurability() == fuel.data) {
+						
+						isFuel = true;
+						
+					}
+					
+				}
+				
+			}
+			
+			if (isFuel) {
+				
+				return 1;
+				
+			}
+			
+		}
+		
+		return 0;
+
 	}
 	
 	@Override
@@ -86,7 +129,7 @@ public class BasicGenerator extends MachineType {
 				
 				if (fuel.generator.equals(machine.getMachineType().name)) {
 					
-					if (itemStack.getTypeId() == fuel.id) {
+					if (itemStack.getTypeId() == fuel.id && itemStack.getDurability() == fuel.data) {
 						
 						if (machine.data.containsKey("fuel")) {
 							
@@ -136,7 +179,7 @@ public class BasicGenerator extends MachineType {
 					
 					if (player.getOpenInventory().getTitle().equals(ChatColor.BLUE + "SQTech - Basic Generator")) {
 						
-						player.getOpenInventory().setItem(8, InventoryUtils.createSpecialItem(Material.REDSTONE, (short) 0, "Energy: " + machine.getEnergy(), new String[] {ChatColor.RED + "" + ChatColor.MAGIC + "Contraband"}));
+						player.getOpenInventory().setItem(8, InventoryUtils.createSpecialItem(Material.REDSTONE, (short) 0, "Energy", new String[] {EnergyUtils.formatEnergy(machine.getEnergy()) + "/" + EnergyUtils.formatEnergy(machine.getMachineType().getMaxEnergy()), ChatColor.RED + "" + ChatColor.MAGIC + "Contraband"}));
 						
 					}
 					

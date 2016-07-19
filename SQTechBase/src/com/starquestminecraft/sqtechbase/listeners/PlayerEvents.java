@@ -1,4 +1,4 @@
-package com.starquestminecraft.sqtechbase.events;
+package com.starquestminecraft.sqtechbase.listeners;
 
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
