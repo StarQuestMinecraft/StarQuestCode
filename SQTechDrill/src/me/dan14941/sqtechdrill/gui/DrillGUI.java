@@ -47,12 +47,6 @@ public class DrillGUI extends GUI
 
 		machine = ObjectUtils.getMachineFromMachineGUI(this); // gets the machine for this gui
 
-		/*for (Machine listMachine : SQTechBase.machines)
-		{
-			if (listMachine.getGUIBlock().id == id)
-				machine = listMachine;
-		}*/
-
 		if(machine == null)
 		{
 			owner.sendMessage(ChatColor.RED + "Something went wrong!");

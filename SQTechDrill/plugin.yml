@@ -1,5 +1,5 @@
 name: SQTechDrill
-version: 0.1.1
+version: 0.1.2
 description: Drill plugin for SQTechBase
 main: me.dan14941.sqtechdrill.SQTechDrill
-depend: [SQTechBase, mcMMO, Movecraft]
+depend: [SQTechBase]

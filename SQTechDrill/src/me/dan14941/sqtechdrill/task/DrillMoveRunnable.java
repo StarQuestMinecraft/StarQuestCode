@@ -186,9 +186,9 @@ public class DrillMoveRunnable extends BukkitRunnable
 		final List<Block> frontBlocksCheck = MovingDrill.getBlocksInFront(this.drill);
 		for(Block block : frontBlocksCheck)
 		{
-			if(block.isEmpty())
+			if(!block.isEmpty())
 			{
-				this.restart(drill, main.drill.getDrillSpeed(drill));
+				this.restart(drill, (main.drill.getDrillSpeed(drill))+1);
 				return;
 			}
 		}
