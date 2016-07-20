@@ -14,15 +14,20 @@ import com.starquestminecraft.sqtechbase.objects.GUIBlock;
 import com.starquestminecraft.sqtechbase.objects.Machine;
 import com.starquestminecraft.sqtechbase.util.InventoryUtils;
 import com.starquestminecraft.sqtechbase.util.ObjectUtils;
+import com.starquestminecraft.sqtechfarm.SQTechFarm;
+import com.starquestminecraft.sqtechfarm.harvester.Harvester;
+import com.starquestminecraft.sqtechfarm.harvester.Object.MovingHarvester;
 
 public class HarvesterGUI extends GUI
 {
 
 	private Machine machine;
+	private SQTechFarm plugin;
 	
-	public HarvesterGUI(Player player, int id)
+	public HarvesterGUI(Player player, int id, SQTechFarm plugin)
 	{
 		super(player, id);
+		this.plugin = plugin;
 	}
 
 	/**
@@ -31,15 +36,29 @@ public class HarvesterGUI extends GUI
 	@Override	
 	public void open()
 	{
-		Inventory gui = Bukkit.createInventory(owner, 18, ChatColor.BLUE + "Harvester");
+		Inventory gui = Bukkit.createInventory(owner, 9, ChatColor.BLUE + "Harvester");
 		
 		machine = ObjectUtils.getMachineFromMachineGUI(this);
 		
-		System.out.println(machine.getGUIBlock().id);
-		
-		gui.setItem(17, InventoryUtils.createSpecialItem(Material.WOOD_DOOR, (short) 0, ChatColor.GOLD + "Back", new String[] {ChatColor.RED + "" + ChatColor.MAGIC + "Contraband"}));	
+		gui.setItem(8, InventoryUtils.createSpecialItem(Material.WOOD_DOOR, (short) 0, ChatColor.GOLD + "Back", new String[] {ChatColor.RED + "" + ChatColor.MAGIC + "Contraband"}));	
+		gui.setItem(7, InventoryUtils.createSpecialItem(Material.REDSTONE, (short) 0, ChatColor.GREEN + "Energy: " + machine.getEnergy(), new String[] {ChatColor.RED + "" + ChatColor.MAGIC + "Contraband"}));	
+			
+		if(plugin.isActive(machine) == true)
+			gui.setItem(4, InventoryUtils.createSpecialItem(Material.REDSTONE_TORCH_ON, (short) 0, ChatColor.RED + "Stop", new String[] {ChatColor.RED + "" + ChatColor.MAGIC + "Contraband"}));	
+		else
+			gui.setItem(4, InventoryUtils.createSpecialItem(Material.REDSTONE_LAMP_OFF, (short) 0, ChatColor.RED + "Start", new String[] {ChatColor.RED + "" + ChatColor.MAGIC + "Contraband"}));	
 
+		
 		owner.openInventory(gui);
+		
+		machine.data.put("size", plugin.getHarvesterType().getHarvesterSize(machine.getGUIBlock().getLocation().getBlock(), Harvester.getHarvesterForward(machine)));
+		
+		if (SQTechBase.currentGui.containsKey(owner)) {
+			SQTechBase.currentGui.remove(owner);
+			SQTechBase.currentGui.put(owner,  this);
+		} else {
+			SQTechBase.currentGui.put(owner,  this);
+		}
 	}
 	
 	/**
@@ -56,9 +75,8 @@ public class HarvesterGUI extends GUI
 			
 			if(clickedItem == null)
 				return;
-			else if(event.getSlot() == 17) // door
+			else if(event.getSlot() == 8) // door
 			{
-				
 				GUIBlock guiBlock = null;
 
 				for (Machine machine : SQTechBase.machines)
@@ -66,8 +84,39 @@ public class HarvesterGUI extends GUI
 						guiBlock = machine.getGUIBlock();
 
 				guiBlock.getGUI(owner).open(); // Opens the GUIBlock's gui
-				return;
+				return;	
+			}
+			else if(event.getSlot() == 4) // start/stop button
+			{
+				boolean isActive;
 				
+				if(clickedItem.getType() == Material.REDSTONE_LAMP_OFF)
+					isActive = false;
+				else
+					isActive = true;
+				
+				if(isActive == false) // turn on
+				{
+					if(event.getWhoClicked().hasPermission("SQTechFarm.harvester.activate"))
+					{
+						MovingHarvester harvester = new MovingHarvester(plugin, ObjectUtils.getMachineFromMachineGUI(this), (Player) event.getWhoClicked());
+						harvester.startHarvester();
+						event.getWhoClicked().closeInventory();
+						return;
+					}
+					else
+					{
+						event.getWhoClicked().sendMessage(ChatColor.RED + "Sorry you don't have permission to activate this harvester!");
+						return;
+					}
+				}
+				else // turn off
+				{
+					//main.movingDrill.deactivateDrill(machine, (Player) event.getWhoClicked());
+					machine.data.put("isActive", false);
+					event.getWhoClicked().closeInventory();
+					return;
+				}
 			}
 		}
 	}

@@ -3,14 +3,19 @@ package com.starquestminecraft.sqtechfarm.harvester;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Chest;
 import org.bukkit.entity.Player;
+
+import com.starquestminecraft.sqtechbase.SQTechBase;
 import com.starquestminecraft.sqtechbase.gui.GUI;
 import com.starquestminecraft.sqtechbase.objects.GUIBlock;
+import com.starquestminecraft.sqtechbase.objects.Machine;
 import com.starquestminecraft.sqtechbase.objects.MachineType;
+import com.starquestminecraft.sqtechbase.util.InventoryUtils;
 import com.starquestminecraft.sqtechfarm.SQTechFarm;
 import com.starquestminecraft.sqtechfarm.harvester.GUI.HarvesterGUI;
 import com.starquestminecraft.sqtechfarm.util.DirectionUtils;
@@ -21,7 +26,7 @@ public class Harvester extends MachineType
 	private SQTechFarm plugin;
 	
 	public String name = "Harvester";
-	final private BlockFace[] around = {BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST};
+	final private static BlockFace[] around = {BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST};
 	private BlockFace forward;
 	
 	public Harvester(int maxEnergy, SQTechFarm plugin)
@@ -35,22 +40,25 @@ public class Harvester extends MachineType
 	 */
 	public boolean detectStructure(GUIBlock guiBlock)
 	{
-		
 		Block base = guiBlock.getLocation().getBlock();
 		
-		Block ironFarmHeadAnchorBlock;
+		Block ironFarmHeadAnchorBlock; // the iron block
 		Block chest;
 		Block dropper;
-		Block farmHarvesterHead;
-		List<Block> anchorSupports;
-		List<Block> farmHeadSupports;
+		Block farmHarvesterHead; // the stained glass pane
+		List<Block> anchorSupports; // the wood fence
+		List<Block> farmHeadSupports; // the iron bars
 		
-		chest = this.detectChest(base); // also sets forward direction
+		this.forward = Harvester.getHarvesterForward(base);
+		if(forward == null)
+			return false;
+		
+		chest = this.detectChest(base);
 		if(chest == null)
 			return false;
 		
-		dropper = this.detectDropper(base);
-		anchorSupports = this.detectAnchorSupports(base);
+		dropper = this.detectDropper(base, forward);
+		anchorSupports = this.detectAnchorSupports(base, forward);
 		if(anchorSupports.size() == 0)
 			return false;
 		
@@ -58,19 +66,22 @@ public class Harvester extends MachineType
 		if(ironFarmHeadAnchorBlock == null)
 			return false;
 		
-		farmHeadSupports = this.detectFarmHeadSupports(ironFarmHeadAnchorBlock);
+		farmHeadSupports = this.detectFarmHeadSupports(ironFarmHeadAnchorBlock, forward);
 		farmHarvesterHead = this.detectFarmHarvesterHead(farmHeadSupports);
 		
 		if(chest == null || dropper == null || ironFarmHeadAnchorBlock == null || farmHarvesterHead == null ||
 				anchorSupports.isEmpty() || farmHeadSupports.isEmpty())
 			return false;
-		else return true;
+		else
+		{
+			return true;
+		}
 		
 	}
 	
 	public GUI getGUI(Player player, int id)
 	{
-		return new HarvesterGUI(player, id);	
+		return new HarvesterGUI(player, id, this.plugin);	
 	}
 	
 	@Override
@@ -85,14 +96,13 @@ public class Harvester extends MachineType
 	 * @param guiBlock the GUI Block
 	 * @return the chest Block
 	 */
-	private Block detectChest(Block guiBlock)
+	public Block detectChest(Block guiBlock)
 	{
 		for(BlockFace face : around)
 		{
 			Block relativeBlock = guiBlock.getRelative(face);
 			if(relativeBlock.getState() instanceof Chest)
 			{
-				this.forward = DirectionUtils.getBlockFaceBack(face);
 				return relativeBlock;
 			}
 		}
@@ -106,12 +116,12 @@ public class Harvester extends MachineType
 	 * @param guiBlock the GUI Block
 	 * @return the chest Block
 	 */
-	private Block detectDropper(Block guiBlock)
+	public Block detectDropper(Block guiBlock, BlockFace forward)
 	{
-		if(this.forward == null)
+		if(forward == null)
 			return null;
 		
-		Block relativeBlock = guiBlock.getRelative(DirectionUtils.getBlockFaceRight(forward));
+		Block relativeBlock = guiBlock.getRelative(DirectionUtils.getRight(forward));
 		
 		if(relativeBlock.getType() == Material.DROPPER)
 			return relativeBlock;
@@ -124,7 +134,7 @@ public class Harvester extends MachineType
 	 * @param anchorSupports the anchor support Blocks
 	 * @return the farm head anchor Block
 	 */
-	private Block detectFarmHeadAnchorBlock(List<Block> anchorSupports, Block guiBlock)
+	public Block detectFarmHeadAnchorBlock(List<Block> anchorSupports, Block guiBlock)
 	{
 		if(guiBlock.getRelative(BlockFace.UP).getType() == Material.IRON_BLOCK)
 			return guiBlock.getRelative(BlockFace.UP);
@@ -143,13 +153,15 @@ public class Harvester extends MachineType
 	 * @param anchorBlock
 	 * @return
 	 */
-	private Block detectFarmHarvesterHead(List<Block> farmHeadSupports)
+	public Block detectFarmHarvesterHead(List<Block> farmHeadSupports)
 	{
+		Block result = null;
 		for(Block farmHeadSupport : farmHeadSupports)
 		{
-			if(farmHeadSupport.getRelative(BlockFace.DOWN).getType() == Material.THIN_GLASS)
+			result = farmHeadSupport.getRelative(BlockFace.UP);
+			if(result.getType() == Material.STAINED_GLASS_PANE || result.getType() == Material.END_ROD)
 			{
-				return farmHeadSupport.getRelative(BlockFace.DOWN);
+				return result;
 			}
 		}
 		
@@ -162,30 +174,9 @@ public class Harvester extends MachineType
 	 * @param guiBlock the GUI Block
 	 * @return the List of blocks detected
 	 */
-	private List<Block> detectAnchorSupports(Block guiBlock)
+	public List<Block> detectAnchorSupports(Block guiBlock, BlockFace forward)
 	{
 		List<Block> result = new ArrayList<Block>();
-		
-		/*new BukkitRunnable()
-		{
-			int length = 1;
-			@Override
-			public void run()
-			{
-				Block relative = guiBlock.getRelative(forward, length);
-				if(plugin.fenceTypes.contains(relative.getType())) // its a correct fence
-				{
-					length++;
-					result.add(guiBlock.getRelative(forward, length));
-				}
-				else // no fence was found or the line stopped
-				{
-					cancel();
-					return;
-				}
-			}
-			
-		}.runTaskTimer(plugin, 0, 0); */
 		
 		boolean running = true;
 		int length = 1;
@@ -195,8 +186,8 @@ public class Harvester extends MachineType
 			Block relative = guiBlock.getRelative(forward, length);
 			if(plugin.fenceTypes.contains(relative.getType())) // its a correct fence
 			{
-				length++;
 				result.add(guiBlock.getRelative(forward, length));
+				length++;
 			}
 			else // no fence was found or the line stopped
 			{
@@ -208,30 +199,27 @@ public class Harvester extends MachineType
 		return result;
 	}
 	
-	private List<Block> detectFarmHeadSupports(Block anchor)
+	/**
+	 * Gets the length of the fences on a Harvester.
+	 * @param guiBlock the GUI Block
+	 * @param forward the forward Direction of the machine
+	 * @return an int of the length of the Harvester
+	 */
+	public int getHarvesterSize(Block guiBlock, BlockFace forward)
+	{
+		return this.detectAnchorSupports(guiBlock, forward).size();
+	}
+	
+	/**
+	 * Gets a List of Blocks that are part of the farm head support structure.
+	 * @param anchor the iron anchor Block
+	 * @param forward the forward direction
+	 * @return a List of Blocks that are part of the farm head support structure
+	 */
+	public List<Block> detectFarmHeadSupports(Block anchor, BlockFace forward)
 	{
 		final List<Block> result = new ArrayList<>();
-		final BlockFace anchorSupportDirection = DirectionUtils.getBlockFaceLeft(forward);
-		/*new BukkitRunnable()
-		{
-			int length = 1;
-			@Override
-			public void run()
-			{
-				Block relative = anchor.getRelative(anchorSupportDirection, length);
-				if(relative.getType() == Material.IRON_FENCE) // its a correct block
-				{
-					length++;
-					result.add(relative);
-				}
-				else // no fence was found or the line stopped
-				{
-					cancel();
-					return;
-				}
-			}
-			
-		}.runTaskTimer(plugin, 0, 0);*/
+		final BlockFace anchorSupportDirection = DirectionUtils.getLeft(forward);
 		
 		boolean running = true;
 		int length = 1;
@@ -241,8 +229,8 @@ public class Harvester extends MachineType
 			Block relative = anchor.getRelative(anchorSupportDirection, length);
 			if(relative.getType() == Material.IRON_FENCE) // its a correct block
 			{
-				length++;
 				result.add(relative);
+				length++;
 			}
 			else // no fence was found or the line stopped
 			{
@@ -252,6 +240,89 @@ public class Harvester extends MachineType
 		}
 		
 		return result;
+	}
+	
+	/**
+	 * Gets the location of the harvesting row on the farm supports or null if something went wrong.
+	 * @param anchor the iron anchor Block for harvesters
+	 * @param forward the forward direction of a harvester
+	 * @return an Integer representing the location of the harvesting row location
+	 */
+	public Integer getHarvestingRowLocation(Block guiBlock, BlockFace forward)
+	{
+		List<Block> farmAnchorSupports = this.detectAnchorSupports(guiBlock, forward);
+		if(farmAnchorSupports.size() == 0)
+			return null;
+		
+		if(guiBlock.getRelative(BlockFace.UP).getType() == Material.IRON_BLOCK)
+		{
+			if(this.detectFarmHeadSupports(guiBlock.getRelative(BlockFace.UP), forward).size() > 0)
+			{
+				return 0;
+			}
+		}
+		
+		int count = 1;
+		
+		for(Block farmAnchorSupport : farmAnchorSupports)
+		{
+			if(farmAnchorSupport.getRelative(BlockFace.UP).getType() == Material.IRON_BLOCK)
+			{
+				if(this.detectFarmHeadSupports(farmAnchorSupport.getRelative(BlockFace.UP), forward).size() > 0)
+				{
+					return count;
+				}
+			}
+			count++;
+		}
+		
+		return null;
+	}
+	
+	@Override
+	public void updateEnergy(Machine machine)
+	{	
+		for (Player player : SQTechBase.currentGui.keySet())
+		{
+			if (SQTechBase.currentGui.get(player).id == machine.getGUIBlock().id)
+				if (player.getOpenInventory() != null)
+					if (player.getOpenInventory().getTitle().equals(ChatColor.BLUE + "Harvester"))
+						player.getOpenInventory().setItem(7, InventoryUtils.createSpecialItem(Material.REDSTONE, (short) 0, ChatColor.GREEN + "Energy: " + machine.getEnergy(), new String[] {ChatColor.RED + "" + ChatColor.MAGIC + "Contraband"}));	
+		}
+	}
+	
+	/**
+	 * Gets the forward BlockFace direction of a Harvester and return it or null if the forward direction could not be found
+	 * @param machine the Harvester
+	 * @return the forward BlockFace direction of a Harvester
+	 */
+	public static BlockFace getHarvesterForward(Machine machine)
+	{
+		for(BlockFace face : around)
+		{
+			Block relativeBlock = machine.getGUIBlock().getLocation().getBlock().getRelative(face);
+			if(relativeBlock.getState() instanceof Chest)
+				return DirectionUtils.getBlockFaceBack(face);
+		}
+		
+		return null;
+	}
+	
+	/**
+	 * Gets the forward BlockFace direction of a Harvester and return it or null if the forward direction could not be found
+	 * @param base the GuiBlock of a Harvester
+	 * @return the forward BlockFace direction of a Harvester
+	 */
+	public static BlockFace getHarvesterForward(Block base)
+	{
+		for(BlockFace face : around)
+		{
+			Block relativeBlock = base.getRelative(face);
+			if(relativeBlock.getState() instanceof Chest)
+				return DirectionUtils.getBlockFaceBack(face);
+		}
+		
+		return null;
 	}
 	
 }

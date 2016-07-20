@@ -1,2 +1,12 @@
 harvester:
   max energy: 10000
+  energy usage:
+    energy consumption:
+      row moved: 2
+      harvesting: 4
+      planting: 4
+      tilling: 2
+  size:
+    small: 5
+    medium: 10
+    large: 25

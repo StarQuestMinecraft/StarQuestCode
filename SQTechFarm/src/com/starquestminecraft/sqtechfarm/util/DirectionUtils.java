@@ -2,7 +2,7 @@ package com.starquestminecraft.sqtechfarm.util;
 
 import org.bukkit.block.BlockFace;
 
-public class DirectionUtils
+public class DirectionUtils extends com.starquestminecraft.sqtechbase.util.DirectionUtils
 {
 
 	/**
@@ -32,16 +32,6 @@ public class DirectionUtils
 			default:
 				return null;
 		}
-	}
-
-	public static BlockFace getBlockFaceRight(BlockFace forward)
-	{
-		return com.starquestminecraft.sqtechbase.util.DirectionUtils.getRight(forward);
-	}
-	
-	public static BlockFace getBlockFaceLeft(BlockFace forward)
-	{
-		return com.starquestminecraft.sqtechbase.util.DirectionUtils.getLeft(forward);
 	}
 
 }
