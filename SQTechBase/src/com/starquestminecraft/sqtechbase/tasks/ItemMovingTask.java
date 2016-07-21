@@ -8,6 +8,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
+import org.bukkit.block.Dispenser;
 import org.bukkit.block.Dropper;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -75,6 +76,110 @@ public class ItemMovingTask extends Thread {
 									
 									inventory = chest.getBlockInventory();
 									
+									for (Block possibleChest : BlockUtils.getAdjacentBlocks(block)) {
+										
+										Inventory secondInventory = null;
+										
+										if (possibleChest.getLocation().getBlockY() == block.getLocation().getBlockY()) {
+										
+											if (possibleChest.getType().equals(Material.CHEST)) {
+												
+												Chest secondChest = (Chest) possibleChest.getState();
+												
+												secondInventory = secondChest.getBlockInventory();
+												
+											}
+										
+										}
+										
+										if (secondInventory != null) {
+											
+											for (ItemStack itemStack : secondInventory.getContents()) {
+												
+												if (itemStack != null) {
+													
+													boolean contains = false;
+													
+													for (ItemStack item : items) {
+														
+														if (item.getType().equals(itemStack.getType()) && item.getDurability() == itemStack.getDurability()) {
+															
+															contains = true;
+															
+														}
+														
+													}
+													
+													if (!contains) {
+														
+														items.add(InventoryUtils.createSpecialItem(itemStack.getType(), itemStack.getDurability(), "", new String[] {ChatColor.RED + "" + ChatColor.MAGIC + "Contraband"}));
+														
+													}
+													
+												}
+												
+											}
+											
+										}
+										
+									}
+									
+								}
+								
+								if (block.getType().equals(Material.TRAPPED_CHEST)) {
+									
+									Chest chest = (Chest) block.getState();
+									
+									inventory = chest.getBlockInventory();
+									
+									for (Block possibleChest : BlockUtils.getAdjacentBlocks(block)) {
+										
+										Inventory secondInventory = null;
+										
+										if (possibleChest.getLocation().getBlockY() == block.getLocation().getBlockY()) {
+										
+											if (possibleChest.getType().equals(Material.TRAPPED_CHEST)) {
+												
+												Chest secondChest = (Chest) possibleChest.getState();
+												
+												secondInventory = secondChest.getBlockInventory();
+												
+											}
+										
+										}
+										
+										if (secondInventory != null) {
+											
+											for (ItemStack itemStack : secondInventory.getContents()) {
+												
+												if (itemStack != null) {
+													
+													boolean contains = false;
+													
+													for (ItemStack item : items) {
+														
+														if (item.getType().equals(itemStack.getType()) && item.getDurability() == itemStack.getDurability()) {
+															
+															contains = true;
+															
+														}
+														
+													}
+													
+													if (!contains) {
+														
+														items.add(InventoryUtils.createSpecialItem(itemStack.getType(), itemStack.getDurability(), "", new String[] {ChatColor.RED + "" + ChatColor.MAGIC + "Contraband"}));
+														
+													}
+													
+												}
+												
+											}
+											
+										}
+										
+									}
+									
 								}
 								
 								if (block.getType().equals(Material.DROPPER)) {
@@ -82,6 +187,14 @@ public class ItemMovingTask extends Thread {
 									Dropper dropper = (Dropper) block.getState();
 									
 									inventory = dropper.getInventory();
+									
+								}
+								
+								if (block.getType().equals(Material.DISPENSER)) {
+									
+									Dispenser dispenser = (Dispenser) block.getState();
+									
+									inventory = dispenser.getInventory();
 									
 								}
 								
@@ -122,11 +235,16 @@ public class ItemMovingTask extends Thread {
 								if (exports.containsKey(item)) {
 									
 									List<GUIBlock> guiBlocks = exports.get(item);
-									guiBlocks.add(guiBlock);
 									
-									exports.remove(item);
-									exports.put(item, guiBlocks);
-									
+									if (!guiBlocks.contains(guiBlock)) {
+										
+										guiBlocks.add(guiBlock);
+										
+										exports.remove(item);
+										exports.put(item, guiBlocks);
+										
+									}
+
 								} else {
 									
 									List<GUIBlock> guiBlocks = new ArrayList<GUIBlock>();
@@ -175,7 +293,7 @@ public class ItemMovingTask extends Thread {
 								List<Machine> machines = new ArrayList<Machine>();
 								List<ItemStack> items = new ArrayList<ItemStack>();
 								
-								for (GUIBlock guiBlock :  imports.get(importItem)) {
+								for (GUIBlock guiBlock : imports.get(importItem)) {
 									
 									for (Machine machine : SQTechBase.machines) {
 										
@@ -198,12 +316,53 @@ public class ItemMovingTask extends Thread {
 									for (Block block : BlockUtils.getAdjacentBlocks(guiBlock.getLocation().getBlock())) {
 										
 										Inventory inventory = null;
+										Inventory secondInventory = null;
 										
 										if (block.getType().equals(Material.CHEST)) {
 											
 											Chest chest = (Chest) block.getState();
 											
 											inventory = chest.getBlockInventory();
+											
+											for (Block possibleChest : BlockUtils.getAdjacentBlocks(block)) {
+												
+												if (possibleChest.getLocation().getBlockY() == block.getLocation().getBlockY()) {
+													
+													if (possibleChest.getType().equals(Material.CHEST)) {
+														
+														Chest secondChest = (Chest) possibleChest.getState();
+														
+														secondInventory = secondChest.getBlockInventory();
+														
+													}
+													
+												}
+
+											}
+											
+										}
+										
+										if (block.getType().equals(Material.TRAPPED_CHEST)) {
+											
+											Chest chest = (Chest) block.getState();
+											
+											inventory = chest.getBlockInventory();
+											
+											for (Block possibleChest : BlockUtils.getAdjacentBlocks(block)) {
+												
+												if (possibleChest.getLocation().getBlockY() == block.getLocation().getBlockY()) {
+													
+													if (possibleChest.getType().equals(Material.TRAPPED_CHEST)) {
+														
+														Chest secondChest = (Chest) possibleChest.getState();
+														
+														secondInventory = secondChest.getBlockInventory();
+														
+													}
+													
+												}
+
+											}
 											
 										}
 										
@@ -215,27 +374,81 @@ public class ItemMovingTask extends Thread {
 											
 										}
 										
+										if (block.getType().equals(Material.DISPENSER)) {
+											
+											Dispenser dispenser = (Dispenser) block.getState();
+											
+											inventory = dispenser.getInventory();
+											
+										}
+										
 										if (inventory != null) {
 											
-											for (ItemStack itemStack : inventory.getContents()) {
-												
-												if (itemStack == null) {
+											if (!inventories.contains(inventory)) {
+											
+												for (ItemStack itemStack : inventory.getContents()) {
 													
-													spaceLeft = spaceLeft + 64;
-													
-													if (!inventories.contains(inventory)) {
+													if (itemStack == null) {
 														
-														inventories.add(inventory);
+														spaceLeft = spaceLeft + 64;
+
+														if (!inventories.contains(inventory)) {
 														
+															inventories.add(inventory);
+															
+														}
+														
+													} else if (itemStack.getType().equals(export.getType()) && itemStack.getDurability() == export.getDurability()) {
+														
+														spaceLeft = spaceLeft + (itemStack.getMaxStackSize() - itemStack.getAmount());
+															
+														if (itemStack.getMaxStackSize() != itemStack.getAmount()) {
+															
+															if (!inventories.contains(inventory)) {
+																
+																inventories.add(inventory);
+																
+															}
+															
+														}
+
 													}
 													
-												} else if (itemStack.getType().equals(export.getType()) && itemStack.getDurability() == export.getDurability()) {
+												}
+												
+												if (!inventories.contains(inventory)) {
 													
-													spaceLeft = spaceLeft + (itemStack.getMaxStackSize() - itemStack.getAmount());
-													
-													if (!inventories.contains(inventory)) {
+													if (secondInventory != null) {
 														
-														inventories.add(inventory);
+														if (!inventories.contains(secondInventory)) {
+														
+															for (ItemStack itemStack : secondInventory.getContents()) {
+																
+																if (itemStack == null) {
+																	
+																	spaceLeft = spaceLeft + 64;
+																	
+																	if (!inventories.contains(secondInventory)) {
+																		
+																		inventories.add(secondInventory);
+																		
+																	}
+																	
+																} else if (itemStack.getType().equals(export.getType()) && itemStack.getDurability() == export.getDurability()) {
+																	
+																	spaceLeft = spaceLeft + (itemStack.getMaxStackSize() - itemStack.getAmount());
+																	
+																	if (!inventories.contains(secondInventory)) {
+																		
+																		inventories.add(secondInventory);
+																		
+																	}
+																	
+																}
+																
+															}
+															
+														}
 														
 													}
 													
@@ -254,12 +467,53 @@ public class ItemMovingTask extends Thread {
 									for (Block block : BlockUtils.getAdjacentBlocks(guiBlock.getLocation().getBlock())) {
 										
 										Inventory inventory = null;
+										Inventory secondInventory = null;
 										
 										if (block.getType().equals(Material.CHEST)) {
 											
 											Chest chest = (Chest) block.getState();
 											
 											inventory = chest.getBlockInventory();
+											
+											for (Block possibleChest : BlockUtils.getAdjacentBlocks(block)) {
+												
+												if (possibleChest.getLocation().getBlockY() == block.getLocation().getBlockY()) {
+												
+													if (possibleChest.getType().equals(Material.CHEST)) {
+														
+														Chest secondChest = (Chest) possibleChest.getState();
+														
+														secondInventory = secondChest.getBlockInventory();
+														
+													}
+													
+												}
+
+											}
+											
+										}
+										
+										if (block.getType().equals(Material.TRAPPED_CHEST)) {
+											
+											Chest chest = (Chest) block.getState();
+											
+											inventory = chest.getBlockInventory();
+											
+											for (Block possibleChest : BlockUtils.getAdjacentBlocks(block)) {
+												
+												if (possibleChest.getLocation().getBlockY() == block.getLocation().getBlockY()) {
+												
+													if (possibleChest.getType().equals(Material.TRAPPED_CHEST)) {
+														
+														Chest secondChest = (Chest) possibleChest.getState();
+														
+														secondInventory = secondChest.getBlockInventory();
+														
+													}
+													
+												}
+
+											}
 											
 										}
 										
@@ -271,11 +525,19 @@ public class ItemMovingTask extends Thread {
 											
 										}
 										
+										if (block.getType().equals(Material.DISPENSER)) {
+											
+											Dispenser dispenser = (Dispenser) block.getState();
+											
+											inventory = dispenser.getInventory();
+											
+										}
+										
+										int itemsLeft = 16;
+										
 										if (inventory != null) {
 											
 											ItemStack[] contents = inventory.getContents();
-											
-											int itemsLeft = 16;
 											
 											for (int i = 0; i < contents.length; i ++) {
 												
@@ -390,6 +652,127 @@ public class ItemMovingTask extends Thread {
 											
 										}
 										
+										if (itemsLeft > 0) {
+											
+											if (secondInventory != null) {
+												
+												ItemStack[] contents = secondInventory.getContents();
+
+												for (int i = 0; i < contents.length; i ++) {
+													
+													if (itemsLeft > 0) {
+														
+														ItemStack itemStack = secondInventory.getContents()[i];
+														
+														if (itemStack != null) {
+															
+															if (itemStack.getType().equals(export.getType()) && itemStack.getDurability() == export.getDurability()) {
+																
+																if (spaceLeft >= itemsLeft) {
+																	
+																	if (itemStack.getAmount() >= itemsLeft) {
+																		
+																		spaceLeft = spaceLeft - itemsLeft;
+																		
+																		int amount = itemStack.getAmount() - itemsLeft;
+																		
+																		itemStack.setAmount(1);
+																		
+																		for (int j = 0; j < itemsLeft; j ++) {
+																			
+																			items.add(itemStack.clone());
+																			
+																		}
+																		
+																		itemStack.setAmount(amount);
+																		
+																		if (amount == 0) {
+																			
+																			itemStack.setType(Material.AIR);
+																			
+																		}
+																		
+																		itemsLeft = 0;
+																		
+																	} else {
+																		
+																		spaceLeft = spaceLeft - itemStack.getAmount();
+																		itemsLeft = itemsLeft - itemStack.getAmount();
+																		
+																		int amount = itemStack.getAmount();
+																		
+																		itemStack.setAmount(1);
+																		
+																		for (int j = 0; j < amount; j ++) {
+																			
+																			items.add(itemStack.clone());
+																			
+																		}
+																			
+																		itemStack.setType(Material.AIR);
+																		
+																	}
+																	
+																} else {
+																	
+																	if (itemStack.getAmount() >= spaceLeft) {
+																		
+																		int amount = itemStack.getAmount() - spaceLeft;
+																		
+																		itemStack.setAmount(1);
+																		
+																		for (int j = 0; j < spaceLeft; j ++) {
+																			
+																			items.add(itemStack.clone());
+																			
+																		}
+
+																		itemStack.setAmount(amount);
+																		
+																		if (amount == 0) {
+																			
+																			itemStack.setType(Material.AIR);
+																			
+																		}
+																		
+																		spaceLeft = 0;
+																		itemsLeft = 0;
+																		
+																	} else {
+
+																		itemStack.setAmount(1);
+																		
+																		for (int j = 0; j < spaceLeft; j ++) {
+																			
+																			items.add(itemStack.clone());
+																			
+																		}
+																		
+																		itemStack.setType(Material.AIR);
+																		
+																		spaceLeft = spaceLeft - itemStack.getAmount();
+																		itemsLeft = itemsLeft - itemStack.getAmount();
+																		
+																	}
+																	
+																}
+																
+															}
+															
+														}
+														
+														contents[i] = itemStack;
+														
+													}
+
+												}
+												
+												secondInventory.setContents(contents);
+												
+											}
+											
+										}
+
 									}
 									
 								}

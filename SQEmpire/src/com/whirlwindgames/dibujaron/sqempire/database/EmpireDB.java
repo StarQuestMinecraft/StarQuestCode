@@ -25,6 +25,8 @@ public class EmpireDB {
 				+ "planet INT(11),cx INT(11),cz INT(11),empire INT(11), PRIMARY KEY(id))");
 		command("CREATE TABLE IF NOT EXISTS minecraft.empire_faction(factionID VARCHAR(36),"
 				+ "empire INT(11), PRIMARY KEY(factionID))");
+		command("CREATE TABLE IF NOT EXISTS minecraft.empire_territories(planet VARCHAR(32),"
+				+ "empire0 INT(11), empire1 INT(11), empire2 INT(11), empire3 INT(11), PRIMARY KEY(planet))");
 	}
 	
 	public static ResultSet requestData(String query){

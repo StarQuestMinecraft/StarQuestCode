@@ -114,12 +114,7 @@ public class GUIBlock {
 		new Network(oldLocation.getBlock().getRelative(0, 0, 1), true);
 		new Network(oldLocation.getBlock().getRelative(0, 0, -1), true);
 		
-		new Network(location.getBlock().getRelative(1, 0, 0), true);
-		new Network(location.getBlock().getRelative(-1, 0, 0), true);
-		new Network(location.getBlock().getRelative(0, 1, 0), true);
-		new Network(location.getBlock().getRelative(0, -1, 0), true);
-		new Network(location.getBlock().getRelative(0, 0, 1), true);
-		new Network(location.getBlock().getRelative(0, 0, -1), true);
+		new Network(location.getBlock(), true);
 		
 		Block oldBlock = oldLocation.getBlock();
 		

@@ -247,26 +247,42 @@ public class PlayerHandler implements Listener{
 				
 			}
 			
-			if (event.getSkill().equals(SkillType.ALCHEMY) || event.getSkill().equals(SkillType.ARCHERY)) {
+			Empire empire = EmpirePlayer.getOnlinePlayer(event.getPlayer()).getEmpire();
+			
+			for (String planet : SQEmpire.dominantEmpires.keySet()) {
 				
-				Empire empire = EmpirePlayer.getOnlinePlayer(event.getPlayer()).getEmpire();
-				
-				if (empire.equals(SQEmpire.dominantEmpire)) {
+				if (SQEmpire.dominantEmpires.get(planet) == empire) {
 					
-					multiplier = multiplier + .5f;
+					for (SkillType skill : SQEmpire.mcmmoBoosters.get(planet)) {
+						
+						if (event.getSkill().equals(skill)) {
+
+							multiplier = multiplier + .5f;
+
+						}
+						
+					}
 					
 				}
 				
-				if (SQEmpire.isCorePlanet) {
+			}
+			
+			if (SQEmpire.mcmmoBoosters.containsKey(Bukkit.getWorlds().get(0).getName())) {
+				
+				for (SkillType skill : SQEmpire.mcmmoBoosters.get(Bukkit.getWorlds().get(0).getName())) {
 					
-					for (Territory territory : SQEmpire.territories) {
-						
-						if (territory.owner == empire) {
+					if (event.getSkill().equals(skill)) {
+
+						for (Territory territory : SQEmpire.territories) {
 							
-							multiplier = multiplier + .05f;
+							if (territory.owner == empire) {
+								
+								multiplier = multiplier + .05f;
+								
+							}
 							
 						}
-						
+
 					}
 					
 				}

@@ -19,6 +19,7 @@ import org.bukkit.scheduler.BukkitScheduler;
 import org.dynmap.markers.Marker;
 import org.dynmap.markers.PolyLineMarker;
 
+import com.gmail.nossr50.datatypes.skills.SkillType;
 import com.massivecraft.factions.entity.FactionColl;
 import com.massivecraft.factions.entity.MPlayer;
 import com.sk89q.worldedit.BlockVector;
@@ -100,10 +101,6 @@ public class EmpireCommand implements CommandExecutor{
 				
 			}
 
-		} else if (cmd.getName().equalsIgnoreCase("setdominantempire") &&  sender instanceof ConsoleCommandSender) {
-			
-			SQEmpire.dominantEmpire = Empire.fromString(args[0]);
-			
 		} else {
 			
 			if(!(sender instanceof Player)){
@@ -130,13 +127,8 @@ public class EmpireCommand implements CommandExecutor{
 			
 			p.sendMessage(ChatColor.GOLD + "Your empire is " + ep.getEmpire().getName() + ".");
 			
-			if (SQEmpire.dominantEmpire != Empire.NONE) {
-				
-				p.sendMessage(ChatColor.GOLD + SQEmpire.dominantEmpire.getName() + " currently has a mcmmo boost");
-				
-			}
-			
 			p.sendMessage(ChatColor.GOLD + "/empire help - Displays this");
+			p.sendMessage(ChatColor.GOLD + "/empire stats <empire> - Displays the stats of an empire");
 			p.sendMessage(ChatColor.GOLD + "/empire join <empire> - Join an empire");
 			
 			if (p.hasPermission("SQEmpire.manageControlPoints")) {
@@ -203,43 +195,99 @@ public class EmpireCommand implements CommandExecutor{
 				
 				p.sendMessage(ChatColor.GOLD + "---------------");
 				
-			} else if (args[0].equalsIgnoreCase("changeregions")) {
+			} else if (args[0].equalsIgnoreCase("stats")) {
 				
-				if (p.getName().equals("Ginger_Walnut")) {
+				if (args.length == 1) {
 					
-			        for (final Territory territory : SQEmpire.territories) {
-			        	
-			            ProtectedPolygonalRegion region = (ProtectedPolygonalRegion) SQEmpire.worldGuardPlugin.getRegionManager(Bukkit.getWorlds().get(0)).getRegion(territory.name);
-			        	
-			            if (region != null) {
-			            	
-			            	SQEmpire.worldGuardPlugin.getRegionManager(Bukkit.getWorlds().get(0)).removeRegion(territory.name);
-			            	SQEmpire.worldGuardPlugin.getRegionManager(Bukkit.getWorlds().get(0)).addRegion(new ProtectedPolygonalRegion("SQEmpire-" + territory.name, territory.points, 0, Bukkit.getWorlds().get(0).getMaxHeight()));
-			            	
-			            }
-			            
-			            for (CapturePoint capturePoint : territory.capturePoints) {
-			            	
-			            	ProtectedCuboidRegion pointRegion = (ProtectedCuboidRegion) SQEmpire.worldGuardPlugin.getRegionManager(Bukkit.getWorlds().get(0)).getRegion(capturePoint.name);
-			            	
-			                if (pointRegion != null) {
+					EmpirePlayer ep = EmpirePlayer.getOnlinePlayer(p);
+					Empire empire = ep.getEmpire();
+					
+					if (empire != Empire.NONE) {
+						
+						p.sendMessage(empire.light + "Empire: " + empire.dark + empire.name);
+						p.sendMessage(empire.light + "Current Boosters:");
+						
+						for (String planet : SQEmpire.dominantEmpires.keySet()) {
+							
+							if (SQEmpire.dominantEmpires.get(planet).equals(empire)) {
+								
+								for (SkillType skill : SQEmpire.mcmmoBoosters.get(planet)) {
+									
+									p.sendMessage(empire.dark + " - " + skill.getName());
+									
+								}
+								
+							}
+							
+						}
+						
+						p.sendMessage(empire.light + "Owns Planets:");
+						
+						for (String planet : SQEmpire.dominantEmpires.keySet()) {
+							
+							if (SQEmpire.dominantEmpires.get(planet).equals(empire)) {
+								
+								p.sendMessage(empire.dark + " - " + planet);
+								
+							}
+							
+						}
+						
+						p.sendMessage(ChatColor.GOLD + "---------------");
+						
+					} else {
+						
+						p.sendMessage(ChatColor.RED + "You are not in an empire");
+						
+					}
 
-			                	int xMultiplier = capturePoint.x / capturePoint.x;
-			                	int zMultiplier = capturePoint.z / capturePoint.z;
-			                	
-			                	SQEmpire.worldGuardPlugin.getRegionManager(Bukkit.getWorlds().get(0)).removeRegion(capturePoint.name);
-			                	SQEmpire.worldGuardPlugin.getRegionManager(Bukkit.getWorlds().get(0)).addRegion(new ProtectedCuboidRegion("SQEmpire-" + capturePoint.name, new BlockVector(capturePoint.x * 16, 0, capturePoint.z * 16), new BlockVector((capturePoint.x * 16) + (xMultiplier * 16), Bukkit.getWorlds().get(0).getMaxHeight(), (capturePoint.z * 16) + (zMultiplier * 16))));
-			                	
-			                }
-			            	
-			            }
-			            
-			        }
+				} else {
+					
+					Empire empire = Empire.fromString(args[1]);
+					
+					if (empire != Empire.NONE) {
+						
+						p.sendMessage(empire.light + "Empire: " + empire.dark + empire.name);
+						p.sendMessage(empire.light + "Current Boosters:");
+						
+						for (String planet : SQEmpire.dominantEmpires.keySet()) {
+							
+							if (SQEmpire.dominantEmpires.get(planet).equals(empire)) {
+								
+								for (SkillType skill : SQEmpire.mcmmoBoosters.get(planet)) {
+									
+									p.sendMessage(empire.dark + " - " + skill.getName());
+									
+								}
+								
+							}
+							
+						}
+						
+						p.sendMessage(empire.light + "Owns Planets:");
+						
+						for (String planet : SQEmpire.dominantEmpires.keySet()) {
+							
+							if (SQEmpire.dominantEmpires.get(planet).equals(empire)) {
+								
+								p.sendMessage(empire.dark + " - " + planet);
+								
+							}
+							
+						}
+						
+						p.sendMessage(ChatColor.GOLD + "---------------");
+						
+					} else {
+						
+						p.sendMessage(ChatColor.RED + "That is not an empire");
+						
+					}
 					
 				}
 				
 			} else if (args[0].equalsIgnoreCase("join")) {
-				
+			
 				cmdJoin(p, args);
 			
 			} else if (args[0].equalsIgnoreCase("check")) {

@@ -3,12 +3,15 @@ package com.starquestminecraft.sqtechbase.database.objects;
 import java.io.ByteArrayOutputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 
 import com.starquestminecraft.sqtechbase.SQTechBase;
+import com.starquestminecraft.sqtechbase.objects.Fluid;
 import com.starquestminecraft.sqtechbase.objects.GUIBlock;
 import com.starquestminecraft.sqtechbase.objects.Machine;
 import com.starquestminecraft.sqtechbase.objects.MachineType;
@@ -32,6 +35,9 @@ public class SerializableMachine implements Serializable {
 	HashMap<String, Object> data = new HashMap<String, Object>();
 	
 	boolean enabled;
+	
+	List<Integer> liquidExports = new ArrayList<Integer>();
+	List<Integer> liquidImports = new ArrayList<Integer>();
 	
 	public SerializableMachine(Machine machine) {
 		
@@ -64,6 +70,20 @@ public class SerializableMachine implements Serializable {
 		}
 		
 		enabled = machine.enabled;
+		
+		for (Fluid fluid : machine.liquidExports) {
+			
+			System.out.print(fluid.id);
+			
+			liquidExports.add(fluid.id);
+			
+		}
+		
+		for (Fluid fluid : machine.liquidImports) {
+			
+			liquidImports.add(fluid.id);
+			
+		}
 		
 	}
 	
@@ -108,6 +128,40 @@ public class SerializableMachine implements Serializable {
 							
 							machine.enabled = enabled;
 							
+							if (liquidExports != null) {
+								
+								for (Integer id : liquidExports) {
+									
+									for (Fluid fluid : SQTechBase.fluids) {
+										
+										if (fluid.id == id) {
+											
+											System.out.print(id);
+											
+											machine.liquidExports.add(fluid);
+											
+										}
+										
+									}
+									
+								}
+								
+								for (Integer id : liquidImports) {
+									
+									for (Fluid fluid : SQTechBase.fluids) {
+										
+										if (fluid.id == id) {
+											
+											machine.liquidImports.add(fluid);
+											
+										}
+										
+									}
+									
+								}
+								
+							}
+
 							return machine;
 							
 						}

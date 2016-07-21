@@ -5,7 +5,6 @@ import java.util.List;
 
 import com.starquestminecraft.sqtechbase.SQTechBase;
 import com.starquestminecraft.sqtechbase.gui.GUI;
-import com.starquestminecraft.sqtechbase.gui.guiblock.GUIBlockGUI;
 import com.starquestminecraft.sqtechbase.objects.GUIBlock;
 import com.starquestminecraft.sqtechbase.objects.Machine;
 import com.starquestminecraft.sqtechbase.objects.Network;

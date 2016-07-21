@@ -12,8 +12,10 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.Sheep;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerShearEntityEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
@@ -29,6 +31,47 @@ import com.ginger_walnut.sqpowertools.utils.EffectUtils;
 import io.netty.util.internal.ThreadLocalRandom;
 
 public class ToolUseEvents implements Listener {
+	
+	@EventHandler
+	public static void onPlayerInteract(PlayerInteractEvent event) {
+			
+		if (event.getPlayer().getInventory().getItemInMainHand() != null) {
+				
+			ItemStack handItem = event.getPlayer().getInventory().getItemInMainHand();
+				
+			if (handItem.hasItemMeta()) {
+					
+				if (handItem.getItemMeta().hasLore()) {
+						
+					if (handItem.getItemMeta().getLore().size() >= 2) {
+							
+						if (handItem.getItemMeta().getLore().get(0).equals("Power Tool")) {
+								
+							for (PowerToolType type : SQPowerTools.powerTools) {
+									
+								if (type.name.equals(handItem.getItemMeta().getLore().get(1))) {
+										
+									PowerTool powerToolObject = new PowerTool(type);
+
+									powerToolObject.setDisplayName(handItem.getItemMeta().getDisplayName());
+									handItem = powerToolObject.getItem();
+									event.getPlayer().getInventory().setItemInMainHand(handItem);
+									
+								}
+									
+							}
+								
+						}
+							
+					}
+
+				}
+					
+			}
+			
+		}
+		
+	}
 	
 	@EventHandler
 	public static void onPlayerShearEntity(PlayerShearEntityEvent event) {

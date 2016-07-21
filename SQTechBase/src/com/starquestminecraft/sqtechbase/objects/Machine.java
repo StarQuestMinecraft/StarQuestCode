@@ -24,6 +24,11 @@ public class Machine {
 	
 	public boolean enabled = true;
 	
+	public List<Fluid> liquidExports = new ArrayList<Fluid>();
+	public List<Fluid> liquidImports = new ArrayList<Fluid>();
+	
+	private HashMap<Fluid, Integer> liquid = new HashMap<Fluid, Integer>();
+	
 	public Machine(int energy, GUIBlock guiBlock, MachineType machineType) {
 		
 		this.energy = energy;
@@ -58,6 +63,12 @@ public class Machine {
 		
 		SQTechBase.machines.removeAll(removeMachines);
 		
+		for (Fluid fluid : machineType.maxLiquid.keySet()) {
+			
+			liquid.put(fluid, 0);
+			
+		}
+ 		
 	}
 	
 	public GUIBlock getGUIBlock() {
@@ -124,6 +135,30 @@ public class Machine {
 		SQTechBase.machines.remove(this);
 		
 		return false;
+		
+	}
+
+	public int getLiquid(Fluid fluid) {
+		
+		if (liquid.containsKey(fluid)) {
+			
+			return liquid.get(fluid);
+			
+		}
+		
+		return 0;
+		
+	}
+	
+	public void setLiquid(Fluid fluid, int amount) {
+		
+		if (liquid.containsKey(fluid)) {
+			
+			liquid.replace(fluid, amount);
+			
+			machineType.updateLiquid(this);
+			
+		}
 		
 	}
 	

@@ -1,5 +1,7 @@
 package com.starquestminecraft.sqtechbase.objects;
 
+import java.util.HashMap;
+
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -14,6 +16,8 @@ public class MachineType {
 	
 	public boolean defaultExport = false;
 	public boolean defaultImport = false;
+	
+	public HashMap<Fluid, Integer> maxLiquid = new HashMap<Fluid, Integer>();
 	
 	public MachineType(int maxEnergy) {
 		
@@ -45,6 +49,18 @@ public class MachineType {
 		
 	}
 	
+	public int getMaxLiquid(Fluid fluid) {
+		
+		if (maxLiquid.containsKey(fluid)) {
+			
+			return maxLiquid.get(fluid);
+			
+		}
+		
+		return 0;
+		
+	}
+	
 	public int getSpaceLeft(Machine machine, ItemStack itemStack) {
 		
 		return 0;
@@ -56,6 +72,10 @@ public class MachineType {
 	}
 	
 	public void updateEnergy(Machine machine) {
+		
+	}
+	
+	public void updateLiquid(Machine machine) {
 		
 	}
 	

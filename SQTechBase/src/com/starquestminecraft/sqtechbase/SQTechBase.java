@@ -16,25 +16,18 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scheduler.BukkitScheduler;
 
 import com.starquestminecraft.sqtechbase.database.DatabaseInterface;
 import com.starquestminecraft.sqtechbase.database.SQLDatabase;
-import com.starquestminecraft.sqtechbase.events.MachinesLoadedEvent;
 import com.starquestminecraft.sqtechbase.gui.GUI;
 import com.starquestminecraft.sqtechbase.gui.options.OptionGUI;
 import com.starquestminecraft.sqtechbase.listeners.GUIBlockEvents;
 import com.starquestminecraft.sqtechbase.listeners.MovecraftEvents;
-import com.starquestminecraft.sqtechbase.listeners.PlayerEvents;
 import com.starquestminecraft.sqtechbase.objects.Fluid;
 import com.starquestminecraft.sqtechbase.objects.Machine;
 import com.starquestminecraft.sqtechbase.objects.MachineType;
 import com.starquestminecraft.sqtechbase.objects.Network;
 import com.starquestminecraft.sqtechbase.objects.PlayerOptions;
-import com.starquestminecraft.sqtechbase.tasks.DatabaseTask;
-import com.starquestminecraft.sqtechbase.tasks.EnergyTask;
-import com.starquestminecraft.sqtechbase.tasks.ItemMovingTask;
-import com.starquestminecraft.sqtechbase.tasks.StructureTask;
 
 public class SQTechBase extends JavaPlugin {
 	
@@ -106,22 +99,22 @@ public class SQTechBase extends JavaPlugin {
 			
 		}
 
-		new SQLDatabase();
-		
-		this.getServer().getPluginManager().registerEvents(new PlayerEvents(), this);
-
-		DatabaseInterface.readObjects();
-				
-		(new DatabaseTask()).run();
-		(new ItemMovingTask()).run();
-		(new StructureTask()).run();
-		(new EnergyTask()).run();				
-				
-		Bukkit.getServer().getPluginManager().callEvent(new MachinesLoadedEvent());
-
-		
 		fluids.add(new Fluid(0, Material.WATER_BUCKET, 0, "Water"));
-		fluids.add(new Fluid(0, Material.LAVA_BUCKET, 0, "Lava"));
+		fluids.add(new Fluid(1, Material.LAVA_BUCKET, 0, "Lava"));
+		
+		Bukkit.getScheduler().scheduleAsyncDelayedTask(this, new Runnable() {
+			
+			public void run() {
+				
+				new SQLDatabase();
+				
+				DatabaseInterface.readObjects();
+						
+
+				
+			}
+			
+		});
 		
 	}
 	

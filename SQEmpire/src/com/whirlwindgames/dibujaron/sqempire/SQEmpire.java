@@ -13,6 +13,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.plugin.PluginManager;
@@ -25,6 +26,7 @@ import org.dynmap.markers.MarkerAPI;
 import org.dynmap.markers.MarkerSet;
 import org.dynmap.markers.PolyLineMarker;
 
+import com.gmail.nossr50.datatypes.skills.SkillType;
 import com.massivecraft.factions.entity.BoardColl;
 import com.massivecraft.factions.entity.Faction;
 import com.massivecraft.factions.entity.FactionColl;
@@ -40,6 +42,9 @@ import com.sk89q.worldguard.protection.flags.StateFlag.State;
 import com.sk89q.worldguard.protection.regions.ProtectedCuboidRegion;
 import com.sk89q.worldguard.protection.regions.ProtectedPolygonalRegion;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import com.whirlwindgames.dibujaron.sqempire.database.EmpireDB;
+import com.whirlwindgames.dibujaron.sqempire.util.AsyncUtil;
+import com.whirlwindgames.dibujaron.sqempire.util.SuperPS;
 
 public class SQEmpire extends JavaPlugin{
 	
@@ -65,12 +70,13 @@ public class SQEmpire extends JavaPlugin{
 	public static HashMap<String, Territory> territory1 = new HashMap<String, Territory>(); 
 	public static HashMap<String, Integer> territoryX = new HashMap<String, Integer>(); 
 	public static HashMap<String, Integer> territoryZ = new HashMap<String, Integer>(); 
-	
-	public static Empire dominantEmpire = Empire.NONE;
-	
+
 	public static boolean isCorePlanet = false;
 
 	private static boolean first = true;
+	
+	public static HashMap<String, List<SkillType>> mcmmoBoosters = new HashMap<String, List<SkillType>>();
+	public static HashMap<String, Empire> dominantEmpires = new HashMap<String, Empire>();
 	
 	@Override
 	public void onEnable(){
@@ -119,7 +125,31 @@ public class SQEmpire extends JavaPlugin{
 			}
 			
 		}
-        
+		
+		if (new File(this.getDataFolder().getAbsolutePath() + "/mcmmo.yml").exists()) {
+			
+			FileConfiguration config = YamlConfiguration.loadConfiguration(new File(this.getDataFolder().getAbsolutePath() + "/mcmmo.yml"));
+			
+			if (config.getConfigurationSection("mcmmo") != null) {
+				
+				for (String planet : config.getConfigurationSection("mcmmo").getKeys(false)) {
+					
+					List<SkillType> skills = new ArrayList<SkillType>();
+					
+					for (String skill : config.getStringList("mcmmo." + planet)) {
+						
+						skills.add(SkillType.getSkill(skill));
+						
+					}
+					
+					mcmmoBoosters.put(planet, skills);
+					
+				}
+				
+			}
+			
+		}
+		
         if (config.getConfigurationSection("regions") != null) {
         	
         	for (String region : config.getConfigurationSection("regions").getKeys(false)) {
@@ -199,7 +229,7 @@ public class SQEmpire extends JavaPlugin{
         	
         }
         
-        if (territories.size() == 0) {
+        if (territories.size() > 0) {
         	
         	isCorePlanet = true;
         	
@@ -460,52 +490,46 @@ public class SQEmpire extends JavaPlugin{
         empires.add(Empire.ARATOR);
         empires.add(Empire.YAVARI);
         empires.add(Empire.REQUIEM);
-        
-        if (territories.size() > 0) {
+    
+        if (isCorePlanet) {
         	
-            for (final Empire empire : empires) {
-            	
-    			int needed = (int) ((double) territories.size() * .6);
-    			int have = 0;
-    			
-    			for (int i = 0; i < territories.size(); i ++) {
-    				
-    				if (empire.equals(territories.get(i).owner)) {
-    					
-    					have ++;
-    					
-    				}
-    				
-    			}
-    			
-    			if (have >= needed) {
+        	AsyncUtil.runAsync(new Runnable() {
+        		
+        		public void run () {
+        			
+        			int[] count = new int[]{0, 0, 0, 0};
+        			
+        			for (Territory territory : territories) {
+        				
+        				count[territory.owner.id] = count[territory.owner.id] + 1;
+        				
+        			}
+        			
+        			SuperPS ps = new SuperPS(EmpireDB.prepareStatement("INSERT INTO minecraft.empire_territories(planet, empire0, empire1, empire2, empire3) VALUES (?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE empire0 = VALUES (empire0), empire1 = VALUES (empire1), empire2 = VALUES (empire2), empire3 = VALUES (empire3)"),5);
 
-    				Bukkit.getScheduler().scheduleSyncDelayedTask(this, new Runnable() {
-    					
-    					public void run() {
-    						
-    	    				Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "ee setdominantempire " + empire.getName());
-    	    				
-    	    				dominantEmpire = empire;
-    						
-    					}
-    					
-    				}, 3);
-    				
-    			}
-            	
-            }
+        			ps.setString(1, Bukkit.getWorlds().get(0).getName());
+        			ps.setInt(2, count[0]);
+        			ps.setInt(3, count[1]);
+        			ps.setInt(4, count[2]);
+        			ps.setInt(5, count[3]);
+        			
+        			ps.executeAndClose();
+        			
+        		}
+        		
+        	});
         	
         }
-
+        
         if (first) {
         	
             (new CaptureTask()).run();
+            (new DatabaseTask()).run();
         	
         }
-    
-        first = false;
         
+        first = false;
+
 	}	
 	
 	@Override

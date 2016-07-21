@@ -31,6 +31,7 @@ public class SerializableGUIBlock implements Serializable{
 	
 	boolean exportAll;
 	
+	@SuppressWarnings("deprecation")
 	public SerializableGUIBlock (GUIBlock guiBlock) {
 		
 		x = guiBlock.getLocation().getBlockX();
@@ -56,6 +57,7 @@ public class SerializableGUIBlock implements Serializable{
 		
 	}	
 	
+	@SuppressWarnings("deprecation")
 	public GUIBlock getGUIBlock() {
 
 		if (Bukkit.getWorld(world) != null) {

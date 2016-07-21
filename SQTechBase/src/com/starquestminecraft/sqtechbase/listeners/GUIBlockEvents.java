@@ -64,12 +64,7 @@ public class GUIBlockEvents implements Listener {
 						
 					} else {
 						
-						new Network(block.getRelative(1, 0, 0), true);
-						new Network(block.getRelative(-1, 0, 0), true);
-						new Network(block.getRelative(0, 1, 0), true);
-						new Network(block.getRelative(0, -1, 0), true);
-						new Network(block.getRelative(0, 0, 1), true);
-						new Network(block.getRelative(0, 0, -1), true);
+						new Network(block, true);
 						
 						new Network(origBlock.getRelative(1, 0, 0), true);
 						new Network(origBlock.getRelative(-1, 0, 0), true);
@@ -121,12 +116,7 @@ public class GUIBlockEvents implements Listener {
 						
 					} else {
 						
-						new Network(block.getRelative(1, 0, 0), true);
-						new Network(block.getRelative(-1, 0, 0), true);
-						new Network(block.getRelative(0, 1, 0), true);
-						new Network(block.getRelative(0, -1, 0), true);
-						new Network(block.getRelative(0, 0, 1), true);
-						new Network(block.getRelative(0, 0, -1), true);
+						new Network(block, true);
 						
 						new Network(origBlock.getRelative(1, 0, 0), true);
 						new Network(origBlock.getRelative(-1, 0, 0), true);
