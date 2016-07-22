@@ -24,6 +24,7 @@ public class BlockTranslation
 	ItemStack furnaceFuel;
 	ItemStack furnaceBurnMaterial;
 	ItemStack furnaceResult;
+	short furnaceBurnTime;
 	
 	final List<BlockData> blocksData;
 	
@@ -52,6 +53,7 @@ public class BlockTranslation
 				this.furnaceFuel = ((Furnace) b.getState()).getInventory().getFuel();
 				this.furnaceBurnMaterial = ((Furnace) b.getState()).getInventory().getSmelting();
 				this.furnaceResult = ((Furnace) b.getState()).getInventory().getResult();
+				this.furnaceBurnTime = ((Furnace) b.getState()).getBurnTime();
 				((Furnace) b.getState()).getInventory().clear();
 			}
 		}
@@ -97,6 +99,7 @@ public class BlockTranslation
 				furnaceInv.setFuel(this.furnaceFuel);
 				furnaceInv.setResult(this.furnaceResult);
 				furnaceInv.setSmelting(this.furnaceBurnMaterial);
+				((Furnace) newloc.getBlock().getState()).setBurnTime(this.furnaceBurnTime);
 			}
 		}
 	}

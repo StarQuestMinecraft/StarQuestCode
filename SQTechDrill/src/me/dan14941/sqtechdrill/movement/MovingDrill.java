@@ -13,6 +13,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.scheduler.BukkitTask;
 
+import com.starquestminecraft.sqtechbase.SQTechBase;
 import com.starquestminecraft.sqtechbase.objects.Machine;
 
 import me.dan14941.sqtechdrill.Drill;
@@ -71,7 +72,7 @@ public class MovingDrill implements Listener
 	private void startDrillMovementRuning(final Machine drill, final Player player)
 	{
         final BlockFace forward = Drill.getDrillForward(drill.getGUIBlock().getLocation().getBlock());
-        this.run = new DrillMoveRunnable(drill, forward, this, player).runTask(this.main);
+        this.run = new DrillMoveRunnable(drill, forward, this, player, main).runTask(this.main);
     }
 	
 	public void restartDrillMove(final int delay, final Machine drill, final Player player)
@@ -87,7 +88,7 @@ public class MovingDrill implements Listener
 		}
         final BlockFace forward = Drill.getDrillForward(drill.getGUIBlock().getLocation().getBlock());
         this.run.cancel();
-        this.run = new DrillMoveRunnable(drill, forward, this, player).runTaskLater(this.main, (long)delay);
+        this.run = new DrillMoveRunnable(drill, forward, this, player, main).runTaskLater(this.main, (long)delay);
     }
 
 	/**

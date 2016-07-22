@@ -207,7 +207,6 @@ public class EnergyTask extends Thread {
 							}
 
 							smallestExport.setEnergy(smallestExport.getEnergy() - (energy * justImportMap.size()));
-							smallestExport.getMachineType().updateEnergy(smallestExport);
 							
 							int energyLeft = energyLeftMap.get(smallestExport);
 							
@@ -226,7 +225,6 @@ public class EnergyTask extends Thread {
 							for (Machine importMachine : justImportMap.keySet()) {
 								
 								importMachine.setEnergy(importMachine.getEnergy() + energy);
-								importMachine.getMachineType().updateEnergy(importMachine);
 								
 								if (importMachine.getEnergy() == importMachine.getMachineType().getMaxEnergy()) {
 									
@@ -257,7 +255,6 @@ public class EnergyTask extends Thread {
 							}
 
 							smallestExport.setEnergy(smallestExport.getEnergy() - (energy * justImportMap.size()));
-							smallestExport.getMachineType().updateEnergy(smallestExport);
 							
 							int energyLeft = energyLeftMap.get(smallestExport);
 							
@@ -274,7 +271,6 @@ public class EnergyTask extends Thread {
 							for (Machine importMachine : justImportMap.keySet()) {
 								
 								importMachine.setEnergy(importMachine.getEnergy() + energy);
-								importMachine.getMachineType().updateEnergy(importMachine);
 								
 								if (importMachine.getEnergy() == importMachine.getMachineType().getMaxEnergy()) {
 									
@@ -384,7 +380,6 @@ public class EnergyTask extends Thread {
 								}
 
 								smallestExport.setEnergy(smallestExport.getEnergy() - (energy * bothMachines.size()));	
-								smallestExport.getMachineType().updateEnergy(smallestExport);
 								
 								int energyLeft = energyLeftMap.get(smallestExport);
 								
@@ -401,7 +396,6 @@ public class EnergyTask extends Thread {
 								for (Machine importMachine : bothMachines.keySet()) {
 										
 									importMachine.setEnergy(importMachine.getEnergy() + energy);
-									importMachine.getMachineType().updateEnergy(importMachine);
 										
 									if (importMachine.getEnergy() == importMachine.getMachineType().getMaxEnergy()) {
 											
@@ -426,7 +420,6 @@ public class EnergyTask extends Thread {
 								}
 
 								smallestExport.setEnergy(smallestExport.getEnergy() - (energy * bothMachines.size()));
-								smallestExport.getMachineType().updateEnergy(smallestExport);
 								
 								int energyLeft = energyLeftMap.get(smallestExport);
 								
@@ -443,7 +436,6 @@ public class EnergyTask extends Thread {
 								for (Machine importMachine : bothMachines.keySet()) {
 									
 									importMachine.setEnergy(importMachine.getEnergy() + energy);
-									importMachine.getMachineType().updateEnergy(importMachine);
 									
 									if (importMachine.getEnergy() == importMachine.getMachineType().getMaxEnergy()) {
 										

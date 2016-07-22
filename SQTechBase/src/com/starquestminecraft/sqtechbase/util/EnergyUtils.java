@@ -3,8 +3,7 @@ package com.starquestminecraft.sqtechbase.util;
 import java.util.List;
 
 import org.bukkit.inventory.ItemStack;
-
-import com.starquestminecraft.sqtechbase.SQTechBase;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import net.md_5.bungee.api.ChatColor;
 
@@ -92,31 +91,78 @@ public class EnergyUtils {
 		
 	}
 	
-	public boolean isEnergyItem(ItemStack item) {
+	public static int getMaxEnergy(ItemStack energyItem) {
 		
-		if (item.hasItemMeta()) {
+		List<String> lore = energyItem.getItemMeta().getLore();
+		
+		for (String line : lore) {
 			
-			if (item.getItemMeta().hasLore()) {
+			if (line.startsWith(ChatColor.RED + "Energy:")) {
 				
-				for (String lore : item.getItemMeta().getLore()) {
-					
-					for (String name : SQTechBase.energyItemNames) {
+				char[] lineAsCharArray = line.toCharArray();
+				
+				String energy = "";
+				
+				boolean after = false;
+				
+				for (int i = 0; i < lineAsCharArray.length; i ++) {
+
+					if (i > 9) {
 						
-						if (lore.equals(name)) {
+						if (lineAsCharArray[i] == '/') {
 							
-							return true;
+							after = true;
 							
+						} else {
+							
+							if (after) {
+								
+								energy = energy + lineAsCharArray[i];								
+							
+							}
+
 						}
 						
 					}
 					
 				}
 				
+				return (int) unformatEnergy(energy);
+				
 			}
 			
 		}
 		
-		return false;
+		return 0;
+		
+	}
+	
+	public static ItemStack setEnergy(ItemStack energyItem, int energy) {
+		
+		int maxEnergy = getMaxEnergy(energyItem);
+		
+		List<String> lore = energyItem.getItemMeta().getLore();
+		
+		int energyPosition = 0;
+		
+		for (int i = 0; i < lore.size(); i ++) {
+			
+			if (lore.get(i).startsWith(ChatColor.RED + "Energy:")) {
+				
+				energyPosition = i;
+				
+			}
+			
+		}
+		
+		lore.set(energyPosition, ChatColor.RED + "Energy: " + formatEnergy(energy) + "/" + formatEnergy(maxEnergy));
+		
+		ItemMeta itemMeta = energyItem.getItemMeta();
+		itemMeta.setLore(lore);
+		
+		energyItem.setItemMeta(itemMeta);
+		
+		return energyItem;
 		
 	}
 	

@@ -25,7 +25,7 @@ public class SQTechDrill extends JavaPlugin
 	{
 		plugin = this;
 		
-		this.drill = new Drill(10000, this);
+		this.drill = new Drill(this.getDrillMaxEnergyFromConfig(), this);
 		SQTechBase.addMachineType(drill);
 		this.movingDrill = new MovingDrill(this);
 		this.eventSim = new EventSimulator();
@@ -76,14 +76,24 @@ public class SQTechDrill extends JavaPlugin
 		return plugin;
 	}
 	
-	public int getDefaultDrillSpeed()
+	public int getNormalDrillSpeed() //iron block
 	{
-		return this.getConfig().getInt("default speed");
+		return this.getConfig().getInt("normal speed");
+	}
+	
+	public int getFastDrillSpeed()
+	{
+		return this.getConfig().getInt("fast speed");
 	}
 	
 	public int getEnergyPerBlockMined()
 	{
 		return this.getConfig().getInt("energy consumption per block");
+	}
+	
+	public int getDrillMaxEnergyFromConfig()
+	{
+		return this.getConfig().getInt("max energy");
 	}
 	
 	public void registerMachineBurningFuel(Machine machine, BukkitTask task)
@@ -99,16 +109,6 @@ public class SQTechDrill extends JavaPlugin
 	public void unregisterMachineFromBurningFuel(Machine machine)
 	{
 		this.machinesBurningFuel.remove(machine);
-	}
-	
-	public int getCoalFuelPerTick()
-	{
-		return this.getConfig().getInt("fuel.coal.energy per tick");
-	}
-	
-	public int getCoalBurnTime()
-	{
-		return this.getConfig().getInt("fuel.coal.burn time");
 	}
 	
 }

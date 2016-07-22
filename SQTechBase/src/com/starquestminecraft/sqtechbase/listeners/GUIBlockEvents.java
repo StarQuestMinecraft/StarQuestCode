@@ -1,4 +1,4 @@
-package com.starquestminecraft.sqtechbase.events;
+package com.starquestminecraft.sqtechbase.listeners;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,6 +24,8 @@ import com.starquestminecraft.sqtechbase.objects.GUIBlock;
 import com.starquestminecraft.sqtechbase.objects.Machine;
 import com.starquestminecraft.sqtechbase.objects.MachineType;
 import com.starquestminecraft.sqtechbase.objects.Network;
+import com.starquestminecraft.sqtechbase.util.InventoryUtils;
+import com.starquestminecraft.sqtechbase.util.ObjectUtils;
 
 import net.md_5.bungee.api.ChatColor;
 
@@ -62,19 +64,14 @@ public class GUIBlockEvents implements Listener {
 						
 					} else {
 						
-						new Network(block.getRelative(1, 0, 0));
-						new Network(block.getRelative(-1, 0, 0));
-						new Network(block.getRelative(0, 1, 0));
-						new Network(block.getRelative(0, -1, 0));
-						new Network(block.getRelative(0, 0, 1));
-						new Network(block.getRelative(0, 0, -1));
+						new Network(block, true);
 						
-						new Network(origBlock.getRelative(1, 0, 0));
-						new Network(origBlock.getRelative(-1, 0, 0));
-						new Network(origBlock.getRelative(0, 1, 0));
-						new Network(origBlock.getRelative(0, -1, 0));
-						new Network(origBlock.getRelative(0, 0, 1));
-						new Network(origBlock.getRelative(0, 0, -1));
+						new Network(origBlock.getRelative(1, 0, 0), true);
+						new Network(origBlock.getRelative(-1, 0, 0), true);
+						new Network(origBlock.getRelative(0, 1, 0), true);
+						new Network(origBlock.getRelative(0, -1, 0), true);
+						new Network(origBlock.getRelative(0, 0, 1), true);
+						new Network(origBlock.getRelative(0, 0, -1), true);
 						
 					}
 
@@ -119,19 +116,14 @@ public class GUIBlockEvents implements Listener {
 						
 					} else {
 						
-						new Network(block.getRelative(1, 0, 0));
-						new Network(block.getRelative(-1, 0, 0));
-						new Network(block.getRelative(0, 1, 0));
-						new Network(block.getRelative(0, -1, 0));
-						new Network(block.getRelative(0, 0, 1));
-						new Network(block.getRelative(0, 0, -1));
+						new Network(block, true);
 						
-						new Network(origBlock.getRelative(1, 0, 0));
-						new Network(origBlock.getRelative(-1, 0, 0));
-						new Network(origBlock.getRelative(0, 1, 0));
-						new Network(origBlock.getRelative(0, -1, 0));
-						new Network(origBlock.getRelative(0, 0, 1));
-						new Network(origBlock.getRelative(0, 0, -1));
+						new Network(origBlock.getRelative(1, 0, 0), true);
+						new Network(origBlock.getRelative(-1, 0, 0), true);
+						new Network(origBlock.getRelative(0, 1, 0), true);
+						new Network(origBlock.getRelative(0, -1, 0), true);
+						new Network(origBlock.getRelative(0, 0, 1), true);
+						new Network(origBlock.getRelative(0, 0, -1), true);
 						
 					}
 						
@@ -150,9 +142,9 @@ public class GUIBlockEvents implements Listener {
 		
 			Material type = event.getBlock().getType();
 			
-			if (type.equals(Material.LAPIS_BLOCK) || type.equals(Material.STAINED_GLASS) || type.equals(Material.GLASS)) {
+			if (type.equals(Material.LAPIS_BLOCK) || type.equals(Material.STAINED_GLASS) || type.equals(Material.GLASS) || type.equals(Material.END_ROD)) {
 				
-				new Network(event.getBlock());
+				new Network(event.getBlock(), true);
 				
 			}
 			
@@ -193,7 +185,7 @@ public class GUIBlockEvents implements Listener {
 				
 			}
 			
-			if (type.equals(Material.LAPIS_BLOCK) || type.equals(Material.STAINED_GLASS) || type.equals(Material.GLASS)) {
+			if (type.equals(Material.LAPIS_BLOCK) || type.equals(Material.STAINED_GLASS) || type.equals(Material.GLASS) || type.equals(Material.END_ROD)) {
 
 				BukkitScheduler bukkitScheduler = Bukkit.getScheduler();
 				
@@ -201,12 +193,12 @@ public class GUIBlockEvents implements Listener {
 					
 					public void run() {
 						
-						new Network(event.getBlock().getRelative(1, 0, 0));
-						new Network(event.getBlock().getRelative(-1, 0, 0));
-						new Network(event.getBlock().getRelative(0, 1, 0));
-						new Network(event.getBlock().getRelative(0, -1, 0));
-						new Network(event.getBlock().getRelative(0, 0, 1));
-						new Network(event.getBlock().getRelative(0, 0, -1));
+						new Network(event.getBlock().getRelative(1, 0, 0), true);
+						new Network(event.getBlock().getRelative(-1, 0, 0), true);
+						new Network(event.getBlock().getRelative(0, 1, 0), true);
+						new Network(event.getBlock().getRelative(0, -1, 0), true);
+						new Network(event.getBlock().getRelative(0, 0, 1), true);
+						new Network(event.getBlock().getRelative(0, 0, -1), true);
 						
 					}
 					
@@ -240,7 +232,7 @@ public class GUIBlockEvents implements Listener {
 								
 								for (Machine machine : SQTechBase.machines) {
 									
-									if (machine.getGUIBlock().equals(network.getGUIBlocks().get(i))) {
+									if (machine.getGUIBlock().getLocation().equals(network.getGUIBlocks().get(i).getLocation())) {
 										
 										if (machine.detectStructure()) {
 											
@@ -346,6 +338,32 @@ public class GUIBlockEvents implements Listener {
 				if (normalItem) {
 					
 					event.getPlayer().getWorld().dropItem(event.getPlayer().getLocation(), itemStack);
+					
+					if (event.getInventory().getTitle().equals(ChatColor.BLUE + "SQTech - Imports")) {
+						
+						GUIBlock guiBlock = ObjectUtils.getGUIBlockFromGUI(SQTechBase.currentGui.get(event.getPlayer()));
+						
+						ItemStack newItemStack = InventoryUtils.createSpecialItem(itemStack.getType(), itemStack.getDurability(), "", new String[] {ChatColor.RED + "" + ChatColor.MAGIC + "Contraband"});
+						
+						if (!guiBlock.getImports().contains(newItemStack)) {
+							
+							guiBlock.addImport(newItemStack);
+							
+						}
+						
+					} else if (event.getInventory().getTitle().equals(ChatColor.BLUE + "SQTech - Exports")) {
+						
+						GUIBlock guiBlock = ObjectUtils.getGUIBlockFromGUI(SQTechBase.currentGui.get(event.getPlayer()));
+						
+						ItemStack newItemStack = InventoryUtils.createSpecialItem(itemStack.getType(), itemStack.getDurability(), "", new String[] {ChatColor.RED + "" + ChatColor.MAGIC + "Contraband"});
+						
+						if (!guiBlock.getExports().contains(newItemStack)) {
+							
+							guiBlock.addExport(newItemStack);
+							
+						}
+						
+					}
 					
 				}
 				

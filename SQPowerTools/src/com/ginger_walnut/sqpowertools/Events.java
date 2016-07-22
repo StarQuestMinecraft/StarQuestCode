@@ -31,7 +31,6 @@ import com.ginger_walnut.sqpowertools.objects.BlasterStats;
 import com.ginger_walnut.sqpowertools.objects.Modifier;
 import com.ginger_walnut.sqpowertools.objects.PowerTool;
 import com.ginger_walnut.sqpowertools.objects.PowerToolType;
-import com.ginger_walnut.sqpowertools.tasks.ChargerTask;
 import com.ginger_walnut.sqpowertools.utils.EffectUtils;
 
 public class Events implements Listener {	
@@ -104,92 +103,6 @@ public class Events implements Listener {
 		}
 		
 		if (clicked != null) {
-			
-			if (inventory.getLocation() != null) {
-				
-				if (isCharger(player.getWorld().getBlockAt(inventory.getLocation()))) {
-					
-					if (event.getSlot() == 1) {
-						
-						if (type == 2) {
-							
-							if (inventory.getItem(event.getSlot()) == null) {
-								
-								if (event.getAction().equals(InventoryAction.PLACE_ONE)) {
-									
-									int amount = event.getCursor().getAmount();
-									
-									if (amount == 1) {
-										
-										event.setCursor(new ItemStack(Material.AIR));
-										ChargerTask.setChargerFuel(inventory, clicked);								
-										
-									} else {
-										
-										ItemStack newCursor = event.getCursor().clone();
-										newCursor.setAmount(amount - 1);
-										
-										ItemStack newClicked = event.getCursor().clone();
-										newClicked.setAmount(1);
-										
-										event.setCursor(new ItemStack(Material.AIR));
-										event.setCursor(newCursor);
-										
-										ChargerTask.setChargerFuel(inventory, newClicked);
-										
-									}
-									
-								} else {
-									
-									event.setCursor(new ItemStack(Material.AIR));
-									ChargerTask.setChargerFuel(inventory, clicked);
-									
-								}
-								
-							} else {
-								
-								if (event.getAction().equals(InventoryAction.PLACE_ONE)) {
-									
-									if (clicked.getAmount() < clicked.getMaxStackSize()) {
-										
-										int amount = event.getCursor().getAmount();
-										
-										if (amount == 1) {
-											
-											ItemStack newClicked = event.getCursor().clone();
-											newClicked.setAmount(clicked.getAmount() + 1);
-											
-											event.setCursor(new ItemStack(Material.AIR));
-											ChargerTask.setChargerFuel(inventory, newClicked);								
-											
-										} else {
-											
-											ItemStack newCursor = event.getCursor().clone();
-											newCursor.setAmount(amount - 1);
-											
-											ItemStack newClicked = event.getCursor().clone();
-											newClicked.setAmount(clicked.getAmount() + 1);
-											
-											event.setCursor(new ItemStack(Material.AIR));
-											event.setCursor(newCursor);
-											
-											ChargerTask.setChargerFuel(inventory, newClicked);
-											
-										}
-										
-									}
-									
-								}
-								
-							}
-							
-						}
-						
-					}
-					
-				}
-				
-			}
 			
 			if (inventory.getTitle().equals("Power Tool Recipes") || inventory.getTitle().equals("Power Tool Recipe") || inventory.getTitle().equals("Charger Fuel") || inventory.getTitle().equals("Power Tool Mods") || inventory.getTitle().equals("Power Tool Mod") || inventory.getTitle().equals("Power Tool Addmods") || inventory.getTitle().equals("Power Tools")) {
 				
@@ -993,9 +906,7 @@ public class Events implements Listener {
 								
 							} 
 							
-						} else if (isCharger(player.getWorld().getBlockAt(inventory.getLocation()))) {
-							
-							
+						} else if (event.getInventory().getType().equals(InventoryType.FURNACE)) {
 							
 						} else if (event.getSlotType().equals(SlotType.CONTAINER) || event.getSlotType().equals(SlotType.RESULT) || event.getSlotType().equals(SlotType.QUICKBAR) || event.getSlotType().equals(SlotType.ARMOR) || event.getSlotType().equals(SlotType.OUTSIDE)) {
 								
@@ -1503,59 +1414,7 @@ public class Events implements Listener {
 				
 				Sign sign = (Sign) event.getClickedBlock().getState();
 				
-				if (sign.getLine(0).equalsIgnoreCase("[charger]")) {
-					
-					if (getAttachedBlock(sign).getType().equals(Material.FURNACE) || getAttachedBlock(sign).getType().equals(Material.BURNING_FURNACE)) {
-						
-						sign.setLine(0, ChatColor.BLUE + "Charger");
-						sign.setLine(1, ChatColor.RED + "[Disabled]");
-						sign.update();
-						
-					} else {
-						
-						player.sendMessage(ChatColor.RED + "The charger sign must be placed on a furnace");
-						
-					}
-					
-				} else if (sign.getLine(0).equals(ChatColor.BLUE + "Charger")) {
-					
-					if (sign.getLine(1).equals(ChatColor.RED + "[Disabled]")) {
-						
-						if (getAttachedBlock(sign).getType().equals(Material.FURNACE) || getAttachedBlock(sign).getType().equals(Material.BURNING_FURNACE)) {
-							
-							sign.setLine(1, ChatColor.GREEN + "[Enabled]");
-							sign.update();
-							
-							SQPowerTools.chargerLocations.add(getAttachedBlock(sign).getLocation());
-							
-						} else {
-							
-							player.sendMessage(ChatColor.RED + "The charger sign must be placed on a furnace");
-							
-						}
-						
-					} else if (sign.getLine(1).equals(ChatColor.GREEN + "[Enabled]")) {
-						
-						if (getAttachedBlock(sign).getType().equals(Material.FURNACE) || getAttachedBlock(sign).getType().equals(Material.BURNING_FURNACE)) {
-							
-							sign.setLine(1, ChatColor.RED + "[Disabled]");
-							sign.update();
-							
-							if (SQPowerTools.chargerLocations.contains(getAttachedBlock(sign).getLocation())) {
-								
-								SQPowerTools.chargerLocations.remove(getAttachedBlock(sign).getLocation());
-								
-							}
-							
-						} else {
-							
-							player.sendMessage(ChatColor.RED + "The charger sign must be placed on a furnace");
-							
-						}
-						
-					}
-					
-				} else if (sign.getLine(0).equalsIgnoreCase("[modifier]")) {
+				if (sign.getLine(0).equalsIgnoreCase("[modifier]")) {
 					
 					if (getAttachedBlock(sign).getType().equals(Material.IRON_BLOCK)) {
 						
@@ -1746,64 +1605,6 @@ public class Events implements Listener {
 		BlockFace face = ((Attachable) materialData).getAttachedFace();
 		
 		return sign.getBlock().getRelative(face);
-		
-	}
-	
-	public static boolean isCharger(Block block) {
-		
-		if (block.getType().equals(Material.FURNACE) || block.getType().equals(Material.BURNING_FURNACE)) {
-			
-			if (block.getRelative(BlockFace.EAST).getType().equals(Material.WALL_SIGN)) {
-				
-				Sign sign = (Sign) block.getRelative(BlockFace.EAST).getState();
-				
-				if (sign.getLine(0).equals(ChatColor.BLUE + "Charger")) {
-					
-					return true;
-					
-				}
-				
-			}
-			
-			if (block.getRelative(BlockFace.WEST).getType().equals(Material.WALL_SIGN)) {
-				
-				Sign sign = (Sign) block.getRelative(BlockFace.WEST).getState();
-				
-				if (sign.getLine(0).equals(ChatColor.BLUE + "Charger")) {
-					
-					return true;
-					
-				}
-				
-			}
-			
-			if (block.getRelative(BlockFace.NORTH).getType().equals(Material.WALL_SIGN)) {
-				
-				Sign sign = (Sign) block.getRelative(BlockFace.NORTH).getState();
-				
-				if (sign.getLine(0).equals(ChatColor.BLUE + "Charger")) {
-					
-					return true;
-					
-				}
-				
-			}
-			
-			if (block.getRelative(BlockFace.SOUTH).getType().equals(Material.WALL_SIGN)) {
-				
-				Sign sign = (Sign) block.getRelative(BlockFace.SOUTH).getState();
-				
-				if (sign.getLine(0).equals(ChatColor.BLUE + "Charger")) {
-					
-					return true;
-					
-				}
-				
-			}
-			
-		}
-		
-		return false;
 		
 	}
 	

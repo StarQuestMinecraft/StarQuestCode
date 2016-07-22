@@ -1,7 +1,5 @@
 package com.starquestminecraft.sqtechenergy.gui;
 
-import java.util.HashMap;
-
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -14,10 +12,9 @@ import com.starquestminecraft.sqtechbase.SQTechBase;
 import com.starquestminecraft.sqtechbase.gui.GUI;
 import com.starquestminecraft.sqtechbase.objects.GUIBlock;
 import com.starquestminecraft.sqtechbase.objects.Machine;
+import com.starquestminecraft.sqtechbase.util.EnergyUtils;
 import com.starquestminecraft.sqtechbase.util.InventoryUtils;
 import com.starquestminecraft.sqtechbase.util.ObjectUtils;
-import com.starquestminecraft.sqtechenergy.Fuel;
-import com.starquestminecraft.sqtechenergy.SQTechEnergy;
 
 import net.md_5.bungee.api.ChatColor;
 
@@ -36,7 +33,7 @@ public class BasicGeneratorGUI extends GUI{
 
 		Machine machine = ObjectUtils.getMachineFromMachineGUI(this);
 				
-		gui.setItem(8, InventoryUtils.createSpecialItem(Material.REDSTONE, (short) 0, "Energy: " + machine.getEnergy(), new String[] {ChatColor.RED + "" + ChatColor.MAGIC + "Contraband"}));
+		gui.setItem(8, InventoryUtils.createSpecialItem(Material.REDSTONE, (short) 0, "Energy", new String[] {EnergyUtils.formatEnergy(machine.getEnergy()) + "/" + EnergyUtils.formatEnergy(machine.getMachineType().getMaxEnergy()), ChatColor.RED + "" + ChatColor.MAGIC + "Contraband"}));
 		gui.setItem(26, InventoryUtils.createSpecialItem(Material.WOOD_DOOR, (short) 0, "Back", new String[] {ChatColor.RED + "" + ChatColor.MAGIC + "Contraband"}));
 		
 		gui.setItem(0, InventoryUtils.createSpecialItem(Material.IRON_FENCE, (short) 0, " ", new String[] {ChatColor.RED + "" + ChatColor.MAGIC + "Contraband"}));
@@ -117,63 +114,6 @@ public class BasicGeneratorGUI extends GUI{
 						
 						event.setCancelled(false);
 						
-						final Machine machine = ObjectUtils.getMachineFromMachineGUI(this);
-						
-						Bukkit.getScheduler().scheduleSyncDelayedTask(SQTechEnergy.getPluginMain(), new Runnable() {
-							
-							public void run() {
-								
-								if (!event.getClickedInventory().getItem(event.getSlot()).getType().equals(Material.AIR)) {
-
-									for (Fuel fuel : SQTechEnergy.fuels) {
-										
-										if (fuel.generator.equals(machine.getMachineType().name)) {
-											
-											if (event.getClickedInventory().getItem(event.getSlot()).getTypeId() == fuel.id) {
-												
-												if (machine.data.containsKey("fuel")) {
-													
-													if (machine.data.get("fuel") instanceof HashMap<?,?>) {
-														
-														HashMap<Fuel, Integer> currentFuels = (HashMap<Fuel, Integer>) machine.data.get("fuel");
-														
-														if (currentFuels.containsKey(fuel)) {
-															
-															currentFuels.replace(fuel, currentFuels.get(fuel) + (event.getClickedInventory().getItem(event.getSlot()).getAmount() * fuel.burnTime));
-															
-														} else {
-															
-															currentFuels.put(fuel, event.getClickedInventory().getItem(event.getSlot()).getAmount() * fuel.burnTime);
-															
-														}
-														
-														event.getClickedInventory().setItem(event.getSlot(), new ItemStack(Material.AIR));
-														
-													}
-													
-												} else {
-													
-													machine.data.put("fuel", new HashMap<Fuel, Integer>());
-													
-													HashMap<Fuel, Integer> currentFuels = (HashMap<Fuel, Integer>) machine.data.get("fuel");
-													currentFuels.put(fuel, event.getClickedInventory().getItem(event.getSlot()).getAmount() * fuel.burnTime);
-													
-													event.getClickedInventory().setItem(event.getSlot(), new ItemStack(Material.AIR));
-													
-												}
-												
-											}
-											
-										}
-										
-									}
-									
-								}
-								
-							}
-							
-						});
-		
 					}
 					
 				}

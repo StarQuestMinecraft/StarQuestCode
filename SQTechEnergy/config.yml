@@ -4,3 +4,5 @@ basic generator:
       id: 263
       energy per tick: 5
       burn time: 300
+charger:
+  rate: 250

@@ -28,6 +28,7 @@ import me.dan14941.sqtechdrill.gui.DrillGUI;
 
 public class Drill extends MachineType
 {	
+	
 	String name = "Drill";
 	BlockFace forward;
 
@@ -323,6 +324,21 @@ public class Drill extends MachineType
 			return null;
 
 		return forward;
+	}
+	
+	public int getDrillSpeed(Machine drill)
+	{
+		List<Object> head = this.detectDrillHead(drill.getGUIBlock().getLocation());
+		if(head.get(0) != null && head.get(0) == Material.IRON_BLOCK)
+		{
+			return main.getNormalDrillSpeed();
+		}
+		else if(head.get(0) != null && head.get(0) == Material.DIAMOND_BLOCK)
+		{
+			return main.getFastDrillSpeed();
+		}
+		else
+			return 0;
 	}
 
 }

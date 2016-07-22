@@ -26,8 +26,11 @@ public class DrillMoveRunnable extends BukkitRunnable
 	private BlockFace forward;
 	private MovingDrill md;
 	private Player player;
+	private SQTechDrill main;
 
-	public DrillMoveRunnable(final Machine drill, final BlockFace forward, final MovingDrill md, final Player player) {
+	public DrillMoveRunnable(final Machine drill, final BlockFace forward, final MovingDrill md, final Player player, final SQTechDrill main)
+	{
+		this.main = main;
 		this.drill = drill;
 		this.md = md;
 		this.forward = forward;
@@ -63,7 +66,7 @@ public class DrillMoveRunnable extends BukkitRunnable
 		if (air == frontBlocks.size() && !liquidPresent) // checks if all block in front of the drill are air
 		{
 			MovingDrill.moveDrill(this.forward, this.drill); // move the drill one block forward
-			restart(drill, SQTechDrill.getMain().getDefaultDrillSpeed()); // restart the drill with a delay
+			restart(drill, main.drill.getDrillSpeed(drill)); // restart the drill with a delay
 		}
 		else if(liquidPresent) // or if there is a liquid in front of the drill
 		{
@@ -140,7 +143,7 @@ public class DrillMoveRunnable extends BukkitRunnable
 				}
 			};
 			
-			blockBreak.runTaskTimer(SQTechDrill.getMain(), 0, SQTechDrill.getMain().getDefaultDrillSpeed());
+			blockBreak.runTaskTimer(SQTechDrill.getMain(), 0, main.drill.getDrillSpeed(drill));
 		}
 	}
 	
@@ -189,9 +192,9 @@ public class DrillMoveRunnable extends BukkitRunnable
 		final List<Block> frontBlocksCheck = MovingDrill.getBlocksInFront(this.drill);
 		for(Block block : frontBlocksCheck)
 		{
-			if(block.isEmpty())
+			if(!block.isEmpty())
 			{
-				this.restart(drill, SQTechDrill.getMain().getDefaultDrillSpeed());
+				this.restart(drill, (main.drill.getDrillSpeed(drill))+1);
 				return;
 			}
 		}

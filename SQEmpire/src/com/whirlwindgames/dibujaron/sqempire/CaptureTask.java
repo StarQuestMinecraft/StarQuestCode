@@ -2,21 +2,22 @@ package com.whirlwindgames.dibujaron.sqempire;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.dynmap.markers.AreaMarker;
 import org.dynmap.markers.Marker;
 
 import com.sk89q.worldguard.domains.DefaultDomain;
 import com.sk89q.worldguard.protection.regions.ProtectedPolygonalRegion;
+import com.whirlwindgames.dibujaron.sqempire.database.EmpireDB;
 import com.whirlwindgames.dibujaron.sqempire.database.object.EmpirePlayer;
+import com.whirlwindgames.dibujaron.sqempire.util.AsyncUtil;
+import com.whirlwindgames.dibujaron.sqempire.util.SuperPS;
 
 public class CaptureTask extends Thread {
 	
@@ -80,7 +81,7 @@ public class CaptureTask extends Thread {
 								
 							}
 							
-							if (point.timeLeft == 0) {
+							if (point.timeLeft <= 0) {
 								
 								List<EmpirePlayer> players = new ArrayList<EmpirePlayer>();
 								players.addAll(point.health.keySet());
@@ -187,7 +188,7 @@ public class CaptureTask extends Thread {
 										
 							            if (!(SQEmpire.AratorBeachead.equals(empireTerritory) || SQEmpire.YavariBeachead.equals(empireTerritory) || SQEmpire.RequiemBeachead.equals(empireTerritory))) {
 							            	
-							                ProtectedPolygonalRegion region = (ProtectedPolygonalRegion) SQEmpire.worldGuardPlugin.getRegionManager(Bukkit.getWorlds().get(0)).getRegion(empireTerritory.name);
+							                ProtectedPolygonalRegion region = (ProtectedPolygonalRegion) SQEmpire.worldGuardPlugin.getRegionManager(Bukkit.getWorlds().get(0)).getRegion("SQEmpire-" + empireTerritory.name);
 							                
 							        		DefaultDomain domain = new DefaultDomain();
 							        		
@@ -263,51 +264,37 @@ public class CaptureTask extends Thread {
 										
 									}
 									
-									List<Empire> empires = new ArrayList<Empire>();
-								    empires.add(Empire.ARATOR);
-								    empires.add(Empire.YAVARI);
-								    empires.add(Empire.REQUIEM);
-								    empires.add(Empire.NONE);
-								        
-								    if (SQEmpire.territories.size() > 0) {
-								        	
-								    	for (Empire empire : empires) {
-								           	
-								    		int needed = (int) (SQEmpire.territories.size() * .6);
-								    		int have = 0;
-								    			
-								    			for (int i = 0; i < SQEmpire.territories.size(); i ++) {
-								    				
-								    				if (empire.equals(SQEmpire.territories.get(i).owner)) {
-								    					
-								    					have ++;
-								    					
-								    				}
-								    				
-								    			}
-								    			
-								    			if (have >= needed) {
-								    				
-								    				if (SQEmpire.dominantEmpire != empire) {
-								    					
-									    				Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "eb janesudo " + empire.getName() + " has 60% or more of the territories on Xira");
-									    				Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "ee setdominantempire " + empire.getName());
-									    				
-									    				SQEmpire.dominantEmpire = empire;
-								    					
-								    				}
-
-								    			}
-								            	
-								            }
-								        	
-								        }
-
 								}
 
 								SQEmpire.getInstance().saveConfig();
 								
 								point.health.clear();
+								
+								AsyncUtil.runAsync(new Runnable() {
+					        		
+					        		public void run () {
+					        			
+					        			int[] count = new int[]{0, 0, 0, 0};
+					        			
+					        			for (Territory territory : SQEmpire.territories) {
+					        				
+					        				count[territory.owner.id] = count[territory.owner.id] ++;
+					        				
+					        			}
+					        			
+					        			SuperPS ps = new SuperPS(EmpireDB.prepareStatement("INSERT INTO minecraft.empire_territories(planet, empire0, empire1, empire2, empire3) VALUES (?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE empire0 = VALUES (empire0), empire1 = VALUES (empire1), empire2 = VALUES (empire2), empire3 = VALUES (empire3)"),5);
+
+					        			ps.setString(1, Bukkit.getServerName());
+					        			ps.setInt(1, count[0]);
+					        			ps.setInt(1, count[1]);
+					        			ps.setInt(1, count[2]);
+					        			ps.setInt(1, count[3]);
+					        			
+					        			ps.executeAndClose();
+					        			
+					        		}
+					        		
+					        	});
 								
 							}
 							

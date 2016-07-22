@@ -1,6 +1,6 @@
 name: SQRanks4
 main: com.starquestminecraft.SQRanks4.SQRanks4
-version: 1.0
+version: 1.1.1
 depend: 
   - Vault
 commands:
@@ -9,3 +9,8 @@ commands:
      usage: /rankup
      permission: SQRanks4.buyrank
      permission-message: You don't have permission to use this command.
+  ranklist:
+    description: Get a list of all ranks and their requirements.
+    usage: /ranklist
+    permission: SQRanks4.buyrank
+    permission-message: You don't have permission to use this command.

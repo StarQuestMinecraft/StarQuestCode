@@ -21,11 +21,18 @@ public class GUIBlock {
 	
 	public int id = -1;
 	
-	public GUIBlock(Location location) {
+	public boolean exportAll = false;
+	
+	public GUIBlock(Location location, boolean detectMachine) {
 		
 		this.location = location;
 		
 		boolean isMachine = false;
+		
+		SQTechBase.highestId ++;
+		
+		
+		id = SQTechBase.highestId;
 		
 		for (Machine machine : SQTechBase.machines) {
 			
@@ -40,20 +47,24 @@ public class GUIBlock {
 		
 		if (!isMachine) {
 			
-			for (MachineType machineType : SQTechBase.machineTypes) {
+			if (detectMachine) {
 				
-				if (machineType.autodetect) {
+				for (MachineType machineType : SQTechBase.machineTypes) {
 					
-					if (machineType.detectStructure(this)) {
+					if (machineType.autodetect) {
 						
-						Machine machine = new Machine(0, this, machineType);
-						
-						SQTechBase.machines.add(machine);
+						if (machineType.detectStructure(this)) {
+							
+							Machine machine = new Machine(0, this, machineType);
+							
+							SQTechBase.machines.add(machine);
+							
+						}
 						
 					}
-					
+										
 				}
-									
+				
 			}
 			
 		} else {
@@ -69,26 +80,6 @@ public class GUIBlock {
 			}
 			
 		}
-		
-		int highestID = -1;
-		
-		for (Network network : SQTechBase.networks) {
-			
-			for (GUIBlock guiBlock : network.GUIBlocks) {
-				
-				if (guiBlock.id > highestID) {
-					
-					highestID = guiBlock.id;
-					
-				}
-				
-			}
-			
-		}
-		
-		id = highestID + 1;
-		
-		location.getBlock().setMetadata("guiblock", new FixedMetadataValue(SQTechBase.getPluginMain(), id));
 		
 	}
 	
@@ -116,19 +107,14 @@ public class GUIBlock {
 		
 		this.location = location;
 		
-		new Network(oldLocation.getBlock().getRelative(1, 0, 0));
-		new Network(oldLocation.getBlock().getRelative(-1, 0, 0));
-		new Network(oldLocation.getBlock().getRelative(0, 1, 0));
-		new Network(oldLocation.getBlock().getRelative(0, -1, 0));
-		new Network(oldLocation.getBlock().getRelative(0, 0, 1));
-		new Network(oldLocation.getBlock().getRelative(0, 0, -1));
+		new Network(oldLocation.getBlock().getRelative(1, 0, 0), true);
+		new Network(oldLocation.getBlock().getRelative(-1, 0, 0), true);
+		new Network(oldLocation.getBlock().getRelative(0, 1, 0), true);
+		new Network(oldLocation.getBlock().getRelative(0, -1, 0), true);
+		new Network(oldLocation.getBlock().getRelative(0, 0, 1), true);
+		new Network(oldLocation.getBlock().getRelative(0, 0, -1), true);
 		
-		new Network(location.getBlock().getRelative(1, 0, 0));
-		new Network(location.getBlock().getRelative(-1, 0, 0));
-		new Network(location.getBlock().getRelative(0, 1, 0));
-		new Network(location.getBlock().getRelative(0, -1, 0));
-		new Network(location.getBlock().getRelative(0, 0, 1));
-		new Network(location.getBlock().getRelative(0, 0, -1));
+		new Network(location.getBlock(), true);
 		
 		Block oldBlock = oldLocation.getBlock();
 		

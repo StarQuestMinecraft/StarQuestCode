@@ -19,7 +19,7 @@ public class DatabaseTask extends Thread{
 			
 			@Override
 			public void run() {
-				
+
 				System.out.print("SQTechBase: Saved to database");
 				
 				try {
