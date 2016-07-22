@@ -1,0 +1,5 @@
+name: SQAutomators
+version: 1.0
+description: SQTech addon; adds automated item processors
+main: com.starquestminecraft.automators.SQAutomators
+depend: [SQTechBase]

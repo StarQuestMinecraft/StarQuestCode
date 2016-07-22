@@ -1,8 +1,11 @@
 package me.dan14941.sqtechdrill.task;
 
+<<<<<<< HEAD
 import com.starquestminecraft.sqtechbase.*;
 import com.starquestminecraft.sqtechbase.objects.Machine;
 
+=======
+>>>>>>> origin/master
 import me.dan14941.sqtechdrill.Drill;
 import me.dan14941.sqtechdrill.SQTechDrill;
 import me.dan14941.sqtechdrill.movement.MovingDrill;
@@ -12,6 +15,8 @@ import org.bukkit.block.*;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
+
+import com.starquestminecraft.sqtechbase.objects.Machine;
 
 import java.util.*;
 
