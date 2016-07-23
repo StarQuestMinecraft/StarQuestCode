@@ -1,21 +1,25 @@
-package com.ginger_walnut.sqsmoothcraft.ship;
+package com.ginger_walnut.sqsmoothcraft.objects;
 
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.craftbukkit.v1_10_R1.CraftWorld;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.EntityType;
+import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.EulerAngle;
 
 import com.ginger_walnut.sqsmoothcraft.SQSmoothCraft;
+import com.ginger_walnut.sqsmoothcraft.entites.MainArmorStand;
+import com.ginger_walnut.sqsmoothcraft.enums.BlockType;
 
 public class ShipBlock {
 
-	ArmorStand stand =  null;
-	ShipBlock mainBlock = null;
-	ShipLocation loc = null;
-	World world = null;
-	Ship ship = null;
+	public ArmorStand stand =  null;
+	public ShipBlock mainBlock = null;
+	public ShipLocation loc = null;
+	public World world = null;
+	public Ship ship = null;
 	
 	public boolean invincible = false;
 	
@@ -63,11 +67,17 @@ public class ShipBlock {
 			location.setYaw(0);
 			location.setPitch(0);
 			
-			stand = (ArmorStand) location.getWorld().spawnEntity(location, EntityType.ARMOR_STAND);
+			net.minecraft.server.v1_10_R1.World mcWorld = ((CraftWorld)location.getWorld()).getHandle();
+			MainArmorStand stand = new MainArmorStand(mcWorld);
+			stand.setLocation(location.getX(), location.getY(), location.getZ(), 0.0f, 0.0f);
+					
+			mcWorld.addEntity(stand, SpawnReason.CUSTOM);
 			
-			stand.setHelmet(block);
-			stand.setVisible(false);
-			stand.setBasePlate(false);
+			this.stand = (ArmorStand) stand.getBukkitEntity();
+			
+			this.stand.setHelmet(block);
+			this.stand.setVisible(false);
+			this.stand.setBasePlate(false);
 
 		} else {
 			

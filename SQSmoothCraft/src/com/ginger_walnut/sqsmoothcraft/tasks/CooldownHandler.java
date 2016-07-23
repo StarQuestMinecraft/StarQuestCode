@@ -1,4 +1,4 @@
-package com.ginger_walnut.sqsmoothcraft.ship;
+package com.ginger_walnut.sqsmoothcraft.tasks;
 
 import org.bukkit.entity.Player;
 import org.bukkit.metadata.FixedMetadataValue;

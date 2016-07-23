@@ -67,12 +67,12 @@ public class DatabaseInterface {
 	
 	public static void readObjects() {
 
+		final List<GUIBlock> guiBlocks = new ArrayList<GUIBlock>();
+		
 		try {
 			
 			ResultSet rs = SQLDatabase.readGUIBlocks(SQLDatabase.con.getConnection(), SQTechBase.config.getString("server name"));
-			
-			final List<GUIBlock> guiBlocks = new ArrayList<GUIBlock>();
-			
+
 			while (rs.next()) {
 				
 				try {
@@ -97,24 +97,28 @@ public class DatabaseInterface {
 			SQLDatabase.clearGUIBlocks(SQLDatabase.con.getConnection(), SQTechBase.config.getString("server name"));
 			
 			rs.close();
-			
-			Bukkit.getScheduler().scheduleSyncDelayedTask(SQTechBase.getPluginMain(), new Runnable() {
-				
-				public void run () {
-					
-					for (GUIBlock guiBlock : guiBlocks) {
-						
-						if (guiBlock != null) {
 
-							Network network = new Network(guiBlock.getLocation().getBlock(), false);
+		} catch (Exception e) {
+
+			e.printStackTrace();
+			
+		}
+		
+		Bukkit.getScheduler().scheduleSyncDelayedTask(SQTechBase.getPluginMain(), new Runnable() {
+			
+			public void run () {
+				
+				for (GUIBlock guiBlock : guiBlocks) {
+					
+					if (guiBlock != null) {
+
+						Network network = new Network(guiBlock.getLocation().getBlock(), false);
+						
+						for (int i = 0; i < network.getGUIBlocks().size(); i ++) {
 							
-							for (int i = 0; i < network.getGUIBlocks().size(); i ++) {
+							if (guiBlock.getLocation().equals(network.getGUIBlocks().get(i).getLocation())) {
 								
-								if (guiBlock.getLocation().equals(network.getGUIBlocks().get(i).getLocation())) {
-									
-									network.getGUIBlocks().set(i, guiBlock);
-									
-								}
+								network.getGUIBlocks().set(i, guiBlock);
 								
 							}
 							
@@ -122,72 +126,68 @@ public class DatabaseInterface {
 						
 					}
 					
-					Bukkit.getScheduler().runTaskAsynchronously(SQTechBase.getPluginMain(), new Runnable() {
-						
-						public void run() {
-							
-							try {
-								
-								ResultSet rs2 = SQLDatabase.readMachines(SQLDatabase.con.getConnection(), SQTechBase.config.getString("server name"));
-								
-								while (rs2.next()) {
-									
-									try {
-										
-										byte[] bytes = (byte[]) rs2.getObject("object");
-										
-										ByteArrayInputStream baip = new ByteArrayInputStream(bytes);
-										ObjectInputStream ois = new ObjectInputStream(baip);
-										
-										Machine machine = ((SerializableMachine) ois.readObject()).getMachine();
-										
-										if (machine != null)  {
-											
-											SQTechBase.machines.add(machine);
-											
-										}
-										
-									} catch (Exception e) {
-										
-										e.printStackTrace();
-										
-									}
-
-								}
-								
-								SQLDatabase.clearMachines(SQLDatabase.con.getConnection(), SQTechBase.config.getString("server name"));
-								
-								rs2.close();
-								
-								(new DatabaseTask()).run();
-								(new ItemMovingTask()).run();
-								(new StructureTask()).run();
-								(new EnergyTask()).run();		
-								(new LiquidTask()).run();
-								
-								SQTechBase.getPluginMain().getServer().getPluginManager().registerEvents(new PlayerEvents(), SQTechBase.getPluginMain());
-								
-								Bukkit.getServer().getPluginManager().callEvent(new MachinesLoadedEvent());
-								
-							} catch (Exception e) {
-								
-								e.printStackTrace();
-								
-							}
-
-						}
-						
-					});
-					
 				}
 				
-			});
+				Bukkit.getScheduler().runTaskAsynchronously(SQTechBase.getPluginMain(), new Runnable() {
+					
+					public void run() {
+						
+						try {
+							
+							ResultSet rs2 = SQLDatabase.readMachines(SQLDatabase.con.getConnection(), SQTechBase.config.getString("server name"));
+							
+							while (rs2.next()) {
+								
+								try {
+									
+									byte[] bytes = (byte[]) rs2.getObject("object");
+									
+									ByteArrayInputStream baip = new ByteArrayInputStream(bytes);
+									ObjectInputStream ois = new ObjectInputStream(baip);
+									
+									Machine machine = ((SerializableMachine) ois.readObject()).getMachine();
+									
+									if (machine != null)  {
+										
+										SQTechBase.machines.add(machine);
+										
+									}
+									
+								} catch (Exception e) {
+									
+									e.printStackTrace();
+									
+								}
 
-		} catch (Exception e) {
+							}
+							
+							SQLDatabase.clearMachines(SQLDatabase.con.getConnection(), SQTechBase.config.getString("server name"));
+							
+							rs2.close();
 
-			e.printStackTrace();
+						} catch (Exception e) {
+							
+							e.printStackTrace();
+							
+						}
+						
+						(new DatabaseTask()).run();
+						(new ItemMovingTask()).run();
+						(new StructureTask()).run();
+						(new EnergyTask()).run();		
+						(new LiquidTask()).run();
+						
+						SQTechBase.getPluginMain().getServer().getPluginManager().registerEvents(new PlayerEvents(), SQTechBase.getPluginMain());
+						
+						Bukkit.getServer().getPluginManager().callEvent(new MachinesLoadedEvent());
+
+					}
+					
+				});
+				
+			}
 			
-		}
+		});
 		
 	}
 	

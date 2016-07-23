@@ -1,6 +1,7 @@
 package com.whirlwindgames.dibujaron.sqempire.database.object;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -156,6 +157,11 @@ public class EmpirePlayer {
 	private void fillDefaultData(){
 		empire = 0;
 		lastSeen = System.currentTimeMillis();
+		
+		Calendar cal = Calendar.getInstance();
+		cal.add(Calendar.MONTH, -2);
+		
+		lastChanged = cal.getTime();
 	}
 	
 	public void publishData(){

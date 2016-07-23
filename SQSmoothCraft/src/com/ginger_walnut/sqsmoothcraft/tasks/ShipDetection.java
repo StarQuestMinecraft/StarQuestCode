@@ -1,4 +1,4 @@
-package com.ginger_walnut.sqsmoothcraft.ship;
+package com.ginger_walnut.sqsmoothcraft.tasks;
 
 import java.util.List;
 import java.util.ArrayList;
@@ -7,7 +7,6 @@ import net.md_5.bungee.api.ChatColor;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.Dropper;
 import org.bukkit.entity.Player;
@@ -15,6 +14,10 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 import com.ginger_walnut.sqsmoothcraft.SQSmoothCraft;
+import com.ginger_walnut.sqsmoothcraft.enums.BlockType;
+import com.ginger_walnut.sqsmoothcraft.objects.Ship;
+import com.ginger_walnut.sqsmoothcraft.objects.ShipBlock;
+import com.ginger_walnut.sqsmoothcraft.objects.ShipLocation;
 
 public class ShipDetection {
 
@@ -262,106 +265,38 @@ public class ShipDetection {
 	
 	private static void detectSideBlocks(Block block) {
 		
-		World world = block.getWorld();
+		List<Block> blocks = new ArrayList<Block>();
 		
-		Location location = block.getLocation();
+		blocks.add(block.getRelative(1, 0, 0));
+		blocks.add(block.getRelative(-1, 0, 0));
+		blocks.add(block.getRelative(0, 1, 0));
+		blocks.add(block.getRelative(0, -1, 0));
+		blocks.add(block.getRelative(0, 0, 1));
+		blocks.add(block.getRelative(0, 0, -1));
+		blocks.add(block.getRelative(1, 1, 0));
+		blocks.add(block.getRelative(1, -1, 0));
+		blocks.add(block.getRelative(1, 0, 1));
+		blocks.add(block.getRelative(1, 0, -1));
+		blocks.add(block.getRelative(-1, 1, 0));
+		blocks.add(block.getRelative(-1, -1, 0));
+		blocks.add(block.getRelative(-1, 0, 1));
+		blocks.add(block.getRelative(-1, 0, -1));
+		blocks.add(block.getRelative(0, 1, 1));
+		blocks.add(block.getRelative(0, 1, -1));
+		blocks.add(block.getRelative(0, -1, 1));
+		blocks.add(block.getRelative(0, -1, -1));
 		
-		location.add(1, 0, 0);
-		
-		Block sideBlock = world.getBlockAt(location);
-		
-		if (!attemptedBlocks.contains(sideBlock)) {
+		for (Block sideBlock : blocks) {
 			
-			if (SQSmoothCraft.shipBlockTypes.contains(sideBlock.getType())) {
+			if (!attemptedBlocks.contains(sideBlock)) {
 				
-				detectedBlocks.add(sideBlock);		
-				attemptableBlocksFrom.add(sideBlock);
-				attemptedBlocks.add(sideBlock);
-				
-			}
-			
-		}
-		
-		location = block.getLocation();
-		location.add(-1, 0, 0);
-		
-		sideBlock = world.getBlockAt(location);
-		
-		if (!attemptedBlocks.contains(sideBlock)) {
-			
-			if (SQSmoothCraft.shipBlockTypes.contains(sideBlock.getType())) {
-				
-				detectedBlocks.add(sideBlock);		
-				attemptableBlocksFrom.add(sideBlock);
-				attemptedBlocks.add(sideBlock);
-				
-			}
-			
-		}
-		
-		location = block.getLocation();
-		location.add(0, 1, 0);
-		
-		sideBlock = world.getBlockAt(location);
-		
-		if (!attemptedBlocks.contains(sideBlock)) {
-			
-			if (SQSmoothCraft.shipBlockTypes.contains(sideBlock.getType())) {
-				
-				detectedBlocks.add(sideBlock);		
-				attemptableBlocksFrom.add(sideBlock);
-				attemptedBlocks.add(sideBlock);
-				
-			}
-			
-		}
-		
-		location = block.getLocation();
-		location.add(0, -1, 0);
-		
-		sideBlock = world.getBlockAt(location);
-		
-		if (!attemptedBlocks.contains(sideBlock)) {
-			
-			if (SQSmoothCraft.shipBlockTypes.contains(sideBlock.getType())) {
-				
-				detectedBlocks.add(sideBlock);		
-				attemptableBlocksFrom.add(sideBlock);
-				attemptedBlocks.add(sideBlock);
-				
-			}
-			
-		}
-		
-		location = block.getLocation();
-		location.add(0, 0, 1);
-
-		sideBlock = world.getBlockAt(location);
-		
-		if (!attemptedBlocks.contains(sideBlock)) {
-			
-			if (SQSmoothCraft.shipBlockTypes.contains(sideBlock.getType())) {
-				
-				detectedBlocks.add(sideBlock);		
-				attemptableBlocksFrom.add(sideBlock);
-				attemptedBlocks.add(sideBlock);
-				
-			}
-			
-		}
-		
-		location = block.getLocation();
-		location.add(0, 0, -1);
-		
-		sideBlock = world.getBlockAt(location);
-		
-		if (!attemptedBlocks.contains(sideBlock)) {
-			
-			if (SQSmoothCraft.shipBlockTypes.contains(sideBlock.getType())) {
-				
-				detectedBlocks.add(sideBlock);		
-				attemptableBlocksFrom.add(sideBlock);
-				attemptedBlocks.add(sideBlock);
+				if (SQSmoothCraft.shipBlockTypes.contains(sideBlock.getType())) {
+					
+					detectedBlocks.add(sideBlock);		
+					attemptableBlocksFrom.add(sideBlock);
+					attemptedBlocks.add(sideBlock);
+					
+				}
 				
 			}
 			

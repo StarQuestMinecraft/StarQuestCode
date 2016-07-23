@@ -1,4 +1,4 @@
-package com.ginger_walnut.sqsmoothcraft.ship;
+package com.ginger_walnut.sqsmoothcraft.tasks;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,6 +14,9 @@ import us.higashiyama.george.SQSpace.SQSpace;
 
 import com.dibujaron.cardboardbox.Knapsack;
 import com.ginger_walnut.sqsmoothcraft.SQSmoothCraft;
+import com.ginger_walnut.sqsmoothcraft.objects.Ship;
+import com.ginger_walnut.sqsmoothcraft.objects.ShipBlock;
+import com.ginger_walnut.sqsmoothcraft.utils.ShipUtils;
 
 public class ShipCreator extends Thread{
 	

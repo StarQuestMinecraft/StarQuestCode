@@ -105,13 +105,13 @@ public class GUIBlockGUI extends GUI {
 					gui.setItem(10, InventoryUtils.createSpecialItem(Material.STAINED_GLASS, (short) 14, "Imports Energy: False", new String[] {ChatColor.RED + "" + ChatColor.MAGIC + "Contraband"}));
 					
 				}
+
+			}
+			
+			if (machine.maxLiquid.size() > 0) { 
 				
-				if (machine.getMachineType().maxLiquid.size() > 0) { 
-					
-					gui.setItem(18, InventoryUtils.createSpecialItem(Material.BUCKET, (short) 0, "Liquid Exports", new String[] {ChatColor.RED + "" + ChatColor.MAGIC + "Contraband"}));
-					gui.setItem(19, InventoryUtils.createSpecialItem(Material.WATER_BUCKET, (short) 0, "Liquid Imports", new String[] {ChatColor.RED + "" + ChatColor.MAGIC + "Contraband"}));
-					
-				}
+				gui.setItem(18, InventoryUtils.createSpecialItem(Material.BUCKET, (short) 0, "Liquid Exports", new String[] {ChatColor.RED + "" + ChatColor.MAGIC + "Contraband"}));
+				gui.setItem(19, InventoryUtils.createSpecialItem(Material.WATER_BUCKET, (short) 0, "Liquid Imports", new String[] {ChatColor.RED + "" + ChatColor.MAGIC + "Contraband"}));
 				
 			}
 	
@@ -224,7 +224,7 @@ public class GUIBlockGUI extends GUI {
 					
 					Machine machine = ObjectUtils.getMachineFromGUIBlock(ObjectUtils.getGUIBlockFromGUI(this));
 					
-					if (machine.getMachineType().maxLiquid.size() > 0) { 
+					if (machine.maxLiquid.size() > 0) { 
 					
 						new LiquidExportGUI(owner, id).open();
 						
@@ -234,7 +234,7 @@ public class GUIBlockGUI extends GUI {
 					
 					Machine machine = ObjectUtils.getMachineFromGUIBlock(ObjectUtils.getGUIBlockFromGUI(this));
 					
-					if (machine.getMachineType().maxLiquid.size() > 0) { 
+					if (machine.maxLiquid.size() > 0) { 
 					
 						new LiquidImportGUI(owner, id).open();
 						

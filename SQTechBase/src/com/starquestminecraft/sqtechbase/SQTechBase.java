@@ -106,12 +106,18 @@ public class SQTechBase extends JavaPlugin {
 			
 			public void run() {
 				
-				new SQLDatabase();
-				
+				try {
+					
+					new SQLDatabase();
+					
+				} catch (Exception e) {
+					
+					e.printStackTrace();
+					
+				}
+
 				DatabaseInterface.readObjects();
 						
-
-				
 			}
 			
 		});

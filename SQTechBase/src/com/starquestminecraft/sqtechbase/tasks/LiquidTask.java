@@ -76,9 +76,9 @@ public class LiquidTask extends Thread {
 								
 								if (importMachine == exportMachine) {
 									
-									if (importMachine.getMachineType().getMaxLiquid(fluid) != importMachine.getLiquid(fluid)) {
+									if (importMachine.getMaxLiquid(fluid) != importMachine.getLiquid(fluid)) {
 										
-										bothMachines.put(importMachine, importMachine.getMachineType().getMaxLiquid(fluid) - importMachine.getLiquid(fluid));
+										bothMachines.put(importMachine, importMachine.getMaxLiquid(fluid) - importMachine.getLiquid(fluid));
 										
 									}
 									
@@ -94,9 +94,9 @@ public class LiquidTask extends Thread {
 							
 							if (!bothMachines.containsKey(importMachine)) {
 								
-								if (importMachine.getMachineType().getMaxLiquid(fluid) != importMachine.getLiquid(fluid)) {
+								if (importMachine.getMaxLiquid(fluid) != importMachine.getLiquid(fluid)) {
 									
-									justImportMap.put(importMachine, importMachine.getMachineType().getMaxLiquid(fluid) - importMachine.getLiquid(fluid));
+									justImportMap.put(importMachine, importMachine.getMaxLiquid(fluid) - importMachine.getLiquid(fluid));
 									
 								}
 								
@@ -104,17 +104,17 @@ public class LiquidTask extends Thread {
 							
 						}
 						
-						HashMap<Machine, Integer> energyLeftMap = new HashMap<Machine, Integer>();
+						HashMap<Machine, Integer> liquidLeftMap = new HashMap<Machine, Integer>();
 						
 						for (Machine exportMachine : exportMachines) {
 							
 							if (exportMachine.getLiquid(fluid) >= 2500) {
 							
-								energyLeftMap.put(exportMachine, 2500);
+								liquidLeftMap.put(exportMachine, 2500);
 							
 							} else if (exportMachine.getLiquid(fluid) != 0) {
 								
-								energyLeftMap.put(exportMachine, exportMachine.getLiquid(fluid));
+								liquidLeftMap.put(exportMachine, exportMachine.getLiquid(fluid));
 								
 							}
 							
@@ -122,7 +122,7 @@ public class LiquidTask extends Thread {
 						
 						int i = 0;
 						
-						while (justImportMap.size() > 0 && energyLeftMap.size() > 0 && i < 5000) {
+						while (justImportMap.size() > 0 && liquidLeftMap.size() > 0 && i < 5000) {
 							
 							i ++;
 							
@@ -131,7 +131,7 @@ public class LiquidTask extends Thread {
 							
 							Machine smallestExport = null;
 							
-							for (Machine exportMachine : energyLeftMap.keySet()) {
+							for (Machine exportMachine : liquidLeftMap.keySet()) {
 								
 								if (exportMachine.getLiquid(fluid) == 0) {
 									
@@ -161,9 +161,9 @@ public class LiquidTask extends Thread {
 							
 							for (Machine importMachine : justImportMap.keySet()) {
 								
-								int energyLeft = importMachine.getMachineType().getMaxLiquid(fluid) - importMachine.getLiquid(fluid);
+								int liquidLeft = importMachine.getMaxLiquid(fluid) - importMachine.getLiquid(fluid);
 								
-								if (energyLeft == 0) {
+								if (liquidLeft == 0) {
 									
 									importRemoves.add(importMachine);
 									
@@ -175,7 +175,7 @@ public class LiquidTask extends Thread {
 										
 									} else {
 										
-										if (energyLeft < smallestImport.getLiquid(fluid)) {
+										if (liquidLeft < smallestImport.getLiquid(fluid)) {
 											
 											smallestImport = importMachine;
 											
@@ -195,31 +195,31 @@ public class LiquidTask extends Thread {
 
 							for (Machine remove : exportRemoves) {
 								
-								energyLeftMap.remove(remove);
+								liquidLeftMap.remove(remove);
 								
 							}
 
 							if (smallestExport.getLiquid(fluid) / justImportMap.size() > justImportMap.get(smallestImport)) {
 								
-								int energy = justImportMap.get(smallestImport);
+								int liquid = justImportMap.get(smallestImport);
 								
-								if (energy > energyLeftMap.get(smallestExport) / justImportMap.size()) {
+								if (liquid > liquidLeftMap.get(smallestExport) / justImportMap.size()) {
 									
-									energy = energyLeftMap.get(smallestExport) / justImportMap.size();
+									liquid = liquidLeftMap.get(smallestExport) / justImportMap.size();
 									
 								}
 
-								smallestExport.setLiquid(fluid, smallestExport.getLiquid(fluid) - (energy * justImportMap.size()));
+								smallestExport.setLiquid(fluid, smallestExport.getLiquid(fluid) - (liquid * justImportMap.size()));
 								
-								int energyLeft = energyLeftMap.get(smallestExport);
+								int liquidLeft = liquidLeftMap.get(smallestExport);
 								
-								energyLeft = energyLeft - (energy * justImportMap.size());
+								liquidLeft = liquidLeft - (liquid * justImportMap.size());
 								
-								energyLeftMap.remove(smallestExport);
+								liquidLeftMap.remove(smallestExport);
 								
-								if (energyLeft > 0) {
+								if (liquidLeft > 0) {
 									
-									energyLeftMap.put(smallestExport, energyLeft);
+									liquidLeftMap.put(smallestExport, liquidLeft);
 									
 								}
 								
@@ -227,15 +227,15 @@ public class LiquidTask extends Thread {
 								
 								for (Machine importMachine : justImportMap.keySet()) {
 									
-									importMachine.setLiquid(fluid, importMachine.getLiquid(fluid) + energy);
+									importMachine.setLiquid(fluid, importMachine.getLiquid(fluid) + liquid);
 									
-									if (importMachine.getLiquid(fluid) == importMachine.getMachineType().getMaxLiquid(fluid)) {
+									if (importMachine.getLiquid(fluid) == importMachine.getMaxLiquid(fluid)) {
 										
 										justImportRemoves.add(importMachine);
 										
 									} else {
 										
-										justImportMap.replace(importMachine, importMachine.getMachineType().getMaxLiquid(fluid) - importMachine.getLiquid(fluid));
+										justImportMap.replace(importMachine, importMachine.getMaxLiquid(fluid) - importMachine.getLiquid(fluid));
 										
 									}
 									
@@ -249,39 +249,39 @@ public class LiquidTask extends Thread {
 								
 							} else {
 								
-								int energy = smallestExport.getLiquid(fluid) / justImportMap.size();
+								int liquid = smallestExport.getLiquid(fluid) / justImportMap.size();
 								
-								if (energy > energyLeftMap.get(smallestExport) / justImportMap.size()) {
+								if (liquid > liquidLeftMap.get(smallestExport) / justImportMap.size()) {
 									
-									energy = energyLeftMap.get(smallestExport) / justImportMap.size();
+									liquid = liquidLeftMap.get(smallestExport) / justImportMap.size();
 									
 								}
 
-								smallestExport.setLiquid(fluid, smallestExport.getLiquid(fluid) - (energy * justImportMap.size()));
+								smallestExport.setLiquid(fluid, smallestExport.getLiquid(fluid) - (liquid * justImportMap.size()));
 								
-								int energyLeft = energyLeftMap.get(smallestExport);
+								int liquidLeft = liquidLeftMap.get(smallestExport);
 								
-								energyLeft = energyLeft - (energy * justImportMap.size());
+								liquidLeft = liquidLeft - (liquid * justImportMap.size());
 								
-								energyLeftMap.remove(smallestExport);
+								liquidLeftMap.remove(smallestExport);
 								
-								if (energyLeft > 0) {
+								if (liquidLeft > 0) {
 									
-									energyLeftMap.put(smallestExport, energyLeft);
+									liquidLeftMap.put(smallestExport, liquidLeft);
 									
 								}
 								
 								for (Machine importMachine : justImportMap.keySet()) {
 									
-									importMachine.setLiquid(fluid, importMachine.getLiquid(fluid) + energy);
+									importMachine.setLiquid(fluid, importMachine.getLiquid(fluid) + liquid);
 									
-									if (importMachine.getLiquid(fluid) == importMachine.getMachineType().getMaxLiquid(fluid)) {
+									if (importMachine.getLiquid(fluid) == importMachine.getMaxLiquid(fluid)) {
 										
 										justImportMap.remove(importMachine);
 										
 									} else {
 										
-										justImportMap.replace(importMachine, importMachine.getMachineType().getMaxLiquid(fluid) - importMachine.getLiquid(fluid));
+										justImportMap.replace(importMachine, importMachine.getMaxLiquid(fluid) - importMachine.getLiquid(fluid));
 										
 									}
 									
@@ -291,11 +291,11 @@ public class LiquidTask extends Thread {
 							
 						}
 						
-						if (justImportMap.size() == 0 && energyLeftMap.size() > 0) {
+						if (justImportMap.size() == 0 && liquidLeftMap.size() > 0) {
 							
 							i = 0;
 							
-							while (bothMachines.size() > 0 && energyLeftMap.size() > 0 && i < 5000) {
+							while (bothMachines.size() > 0 && liquidLeftMap.size() > 0 && i < 5000) {
 								
 								i ++;
 								
@@ -304,7 +304,7 @@ public class LiquidTask extends Thread {
 								
 								Machine smallestExport = null;
 								
-								for (Machine exportMachine : energyLeftMap.keySet()) {
+								for (Machine exportMachine : liquidLeftMap.keySet()) {
 									
 									if (exportMachine.getLiquid(fluid) == 0) {
 										
@@ -334,9 +334,9 @@ public class LiquidTask extends Thread {
 								
 								for (Machine importMachine : bothMachines.keySet()) {
 									
-									int energyLeft = importMachine.getMachineType().getMaxLiquid(fluid) - importMachine.getLiquid(fluid);
+									int liquidLeft = importMachine.getMaxLiquid(fluid) - importMachine.getLiquid(fluid);
 									
-									if (energyLeft == 0) {
+									if (liquidLeft == 0) {
 										
 										importRemoves.add(importMachine);
 										
@@ -348,7 +348,7 @@ public class LiquidTask extends Thread {
 											
 										} else {
 											
-											if (energyLeft < smallestImport.getLiquid(fluid)) {
+											if (liquidLeft < smallestImport.getLiquid(fluid)) {
 												
 												smallestImport = importMachine;
 												
@@ -368,45 +368,45 @@ public class LiquidTask extends Thread {
 
 								for (Machine remove : exportRemoves) {
 									
-									energyLeftMap.remove(remove);
+									liquidLeftMap.remove(remove);
 									
 								}
 								
 								if (smallestExport.getLiquid(fluid) / bothMachines.size() > bothMachines.get(smallestImport)) {
 									
-									int energy = bothMachines.get(smallestImport);
+									int liquid = bothMachines.get(smallestImport);
 									
-									if (energy > energyLeftMap.get(smallestExport) / bothMachines.size()) {
+									if (liquid > liquidLeftMap.get(smallestExport) / bothMachines.size()) {
 										
-										energy = energyLeftMap.get(smallestExport) / bothMachines.size();
+										liquid = liquidLeftMap.get(smallestExport) / bothMachines.size();
 										
 									}
 
-									smallestExport.setLiquid(fluid, smallestExport.getLiquid(fluid) - (energy * bothMachines.size()));	
+									smallestExport.setLiquid(fluid, smallestExport.getLiquid(fluid) - (liquid * bothMachines.size()));	
 									
-									int energyLeft = energyLeftMap.get(smallestExport);
+									int liquidLeft = liquidLeftMap.get(smallestExport);
 									
-									energyLeft = energyLeft - (energy * bothMachines.size());
+									liquidLeft = liquidLeft - (liquid * bothMachines.size());
 									
-									energyLeftMap.remove(smallestExport);
+									liquidLeftMap.remove(smallestExport);
 									
-									if (energyLeft > 0) {
+									if (liquidLeft > 0) {
 										
-										energyLeftMap.put(smallestExport, energyLeft);
+										liquidLeftMap.put(smallestExport, liquidLeft);
 										
 									}
 									
 									for (Machine importMachine : bothMachines.keySet()) {
 											
-										importMachine.setLiquid(fluid, importMachine.getLiquid(fluid) + energy);
+										importMachine.setLiquid(fluid, importMachine.getLiquid(fluid) + liquid);
 											
-										if (importMachine.getLiquid(fluid) == importMachine.getMachineType().getMaxLiquid(fluid)) {
+										if (importMachine.getLiquid(fluid) == importMachine.getMaxLiquid(fluid)) {
 												
 											bothMachines.remove(importMachine);
 												
 										} else {
 												
-											bothMachines.replace(importMachine, importMachine.getMachineType().getMaxLiquid(fluid) - importMachine.getLiquid(fluid));
+											bothMachines.replace(importMachine, importMachine.getMaxLiquid(fluid) - importMachine.getLiquid(fluid));
 												
 										}
 										
@@ -414,39 +414,39 @@ public class LiquidTask extends Thread {
 									
 								} else {
 									
-									int energy = smallestExport.getLiquid(fluid) / bothMachines.size();
+									int liquid = smallestExport.getLiquid(fluid) / bothMachines.size();
 									
-									if (energy > energyLeftMap.get(smallestExport) / bothMachines.size()) {
+									if (liquid > liquidLeftMap.get(smallestExport) / bothMachines.size()) {
 										
-										energy = energyLeftMap.get(smallestExport) / bothMachines.size();
+										liquid = liquidLeftMap.get(smallestExport) / bothMachines.size();
 										
 									}
 
-									smallestExport.setLiquid(fluid, smallestExport.getLiquid(fluid) - (energy * bothMachines.size()));
+									smallestExport.setLiquid(fluid, smallestExport.getLiquid(fluid) - (liquid * bothMachines.size()));
 									
-									int energyLeft = energyLeftMap.get(smallestExport);
+									int liquidLeft = liquidLeftMap.get(smallestExport);
 									
-									energyLeft = energyLeft - (energy * bothMachines.size());
+									liquidLeft = liquidLeft - (liquid * bothMachines.size());
 									
-									energyLeftMap.remove(smallestExport);
+									liquidLeftMap.remove(smallestExport);
 									
-									if (energyLeft > 0) {
+									if (liquidLeft > 0) {
 										
-										energyLeftMap.put(smallestExport, energyLeft);
+										liquidLeftMap.put(smallestExport, liquidLeft);
 										
 									}
 									
 									for (Machine importMachine : bothMachines.keySet()) {
 										
-										importMachine.setLiquid(fluid, importMachine.getLiquid(fluid) + energy);
+										importMachine.setLiquid(fluid, importMachine.getLiquid(fluid) + liquid);
 										
-										if (importMachine.getLiquid(fluid) == importMachine.getMachineType().getMaxLiquid(fluid)) {
+										if (importMachine.getLiquid(fluid) == importMachine.getMaxLiquid(fluid)) {
 											
 											bothMachines.remove(importMachine);
 											
 										} else {
 											
-											bothMachines.replace(importMachine, importMachine.getMachineType().getMaxLiquid(fluid) - importMachine.getLiquid(fluid));
+											bothMachines.replace(importMachine, importMachine.getMaxLiquid(fluid) - importMachine.getLiquid(fluid));
 											
 										}
 										

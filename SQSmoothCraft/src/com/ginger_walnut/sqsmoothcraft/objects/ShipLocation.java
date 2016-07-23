@@ -1,4 +1,4 @@
-package com.ginger_walnut.sqsmoothcraft.ship;
+package com.ginger_walnut.sqsmoothcraft.objects;
 
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -6,11 +6,11 @@ import org.bukkit.World;
 
 public class ShipLocation {
 
-	double x = 0;
-	double y = 0;
-	double z = 0;
+	public double x = 0;
+	public double y = 0;
+	public double z = 0;
 	
-	ShipBlock mainShipBlock = null;
+	public ShipBlock mainShipBlock = null;
 	
 	public ShipLocation (int gridX, int gridY, int gridZ, ShipBlock mainBlock) {
 		

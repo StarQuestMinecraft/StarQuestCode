@@ -1,22 +1,24 @@
-package com.ginger_walnut.sqsmoothcraft.ship;
+package com.ginger_walnut.sqsmoothcraft.objects;
+
+import com.ginger_walnut.sqsmoothcraft.utils.ShipUtils;
 
 public class ShipDirection {
 
-	double yaw = 0;
+	public double yaw = 0;
 	
-	double yawCos = 0;
-	double yawSin = 0;
+	public double yawCos = 0;
+	public double yawSin = 0;
 	
-	double adjustedYawCos = 0;
-	double adjustedYawSin = 0;
+	public double adjustedYawCos = 0;
+	public double adjustedYawSin = 0;
 	
-	double pitch = 0;
+	public double pitch = 0;
 	
-	double pitchCos = 0;
-	double pitchSin = 0;
+	public double pitchCos = 0;
+	public double pitchSin = 0;
 	
-	double adjustedPitchCos = 0;
-	double adjustedPitchSin = 0;
+	public double adjustedPitchCos = 0;
+	public double adjustedPitchSin = 0;
 	
 	public ShipDirection(double firstYaw, double firstPitch) {
 		
