@@ -1,11 +1,13 @@
 package com.starquestminecraft.sqtowerdefence;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -25,26 +27,33 @@ import org.bukkit.potion.PotionType;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.Vector;
 
+import com.starquestminecraft.sqtechbase.SQTechBase;
+import com.starquestminecraft.sqtechbase.objects.GUIBlock;
+import com.starquestminecraft.sqtechbase.objects.Machine;
+import com.starquestminecraft.sqtechbase.objects.Network;
+import com.starquestminecraft.sqtechbase.util.ObjectUtils;
 import com.whirlwindgames.dibujaron.sqempire.Empire;
 import com.whirlwindgames.dibujaron.sqempire.database.object.EmpirePlayer;
 
 import net.milkbowl.vault.economy.Economy;
 
 
-public class Turret{
+public class Turret implements Serializable {
 	
-	ArrayList<Upgrade> upgrades = new ArrayList<Upgrade>();
-	ArrayList<Upgrade> possibleUpgrades = new ArrayList<Upgrade>();
-	ArrayList<Upgrade> conflictingUpgrades = new ArrayList<Upgrade>();
-	ArrayList<PotionType> unlockedPotionTypes = new ArrayList<PotionType>();
-	TowerMachine parentMachine;
+	private static final long serialVersionUID = -1752155270951436968L;
+	List<Upgrade> upgrades = new ArrayList<Upgrade>();
+	List<Upgrade> possibleUpgrades = new ArrayList<Upgrade>();
+	List<Upgrade> conflictingUpgrades = new ArrayList<Upgrade>();
+	List<PotionType> unlockedPotionTypes = new ArrayList<PotionType>();
+	Double guiX = 0.0;
+	Double guiY = 0.0;
+	Double guiZ = 0.0;
+	Integer parentID = 0;
 	TurretType type = TurretType.BASE;
-	Empire turretEmpire = Empire.NONE;
-	Player owner;
-	Player targetPlayer;
-	Location actionPoint;
-	Location inventoryLocation;
-	World world;
+	String turretEmpire = "NONE";
+	String owner;
+	String targetedPlayer;
+	String worldName;
 	Integer speed = 0;
 	Double damage = 0.0;
 	Double accuracy = 0.0;
@@ -53,10 +62,10 @@ public class Turret{
 	Integer ammo = 0;
 	Integer runs = 0;
 	String name = "Base Turret";
-	Material blockOneType;
-	Material blockTwoType;
-	Material blockThreeType;
-	Material blockFourType;
+	Integer blockOneType;
+	Integer blockTwoType;
+	Integer blockThreeType;
+	Integer blockFourType;
 	
 	boolean hasConflicts = false;
 	boolean friendlyFire = false;
@@ -95,7 +104,7 @@ public class Turret{
 		return accuracy;
 	}
 	
-	public ArrayList<Upgrade> getUpgrades() {
+	public List<Upgrade> getUpgrades() {
 		return upgrades;
 	}
 	
@@ -104,13 +113,81 @@ public class Turret{
 	}
 	
 	public Turret createNewTurret() {
-		Turret turret = new Turret(type, possibleUpgrades, conflictingUpgrades, speed, damage, accuracy, cost, range, name);
+		ArrayList<Upgrade> newPossibleUpgrades = new ArrayList<Upgrade>();
+		ArrayList<Upgrade> newConflictingUpgrades = new ArrayList<Upgrade>();
+		
+		if(!possibleUpgrades.isEmpty()) {
+			for(int i=0; i<possibleUpgrades.size(); i++) {
+				Upgrade u = possibleUpgrades.get(i).createNewUpgrade();
+				newPossibleUpgrades.add(u);
+			}
+		}
+		
+		if(!conflictingUpgrades.isEmpty()) {
+			for(int i=0; i<conflictingUpgrades.size(); i++) {
+				Upgrade u = conflictingUpgrades.get(i).createNewUpgrade();
+				newConflictingUpgrades.add(u);
+			}
+		}
+		
+		
+		
+		Turret turret = new Turret(type, newPossibleUpgrades, newConflictingUpgrades, speed, damage, accuracy, cost, range, name);
 		return turret;
 	}
 	
 	public void runTurret() {
 		
 		SQTowerDefence plugin = com.starquestminecraft.sqtowerdefence.SQTowerDefence.sqtdInstance;
+		
+		Machine parentMachine = null;
+		
+		World world = Bukkit.getWorld(worldName);
+		
+		Location guiBlockLocation = new Location(world, guiX, guiY, guiZ);
+		
+		if(runs >= 5) {
+			runs = 0;
+		}
+		
+		for(Machine machine : SQTechBase.machines) {
+			
+			if(machine.getGUIBlock().getLocation().equals(guiBlockLocation)) {
+				
+				parentID = machine.getGUIBlock().id;
+				parentMachine = machine;
+				
+			}
+			
+		}
+		
+		if(parentMachine == null) {
+			
+			for(Machine machine : SQTechBase.machines) {
+				
+				if(machine.getGUIBlock().id == parentID) {
+					
+					parentMachine = machine;
+					
+				}
+				
+			}
+			
+		}
+		
+		if(!parentMachine.check()) {
+			
+			return;
+			
+		}
+		
+		Location actionPoint = parentMachine.getGUIBlock().getLocation().clone();
+		actionPoint.add(0.0, 4.0, 0.0);
+		Player targetPlayer = null;
+
+		if(targetedPlayer != null) {
+			targetPlayer = Bukkit.getPlayer(targetedPlayer);
+		}
 		
 		if(parentMachine.getEnergy() < 10) {
 			BukkitTask task = new SQTDTask(plugin, this).runTaskLater(plugin, 40);
@@ -127,41 +204,53 @@ public class Turret{
 		runLocation.add(0.5, 0.5, 0.5);
 		
 		if(runs == 0) {
+
 			if(!Bukkit.getServer().getOnlinePlayers().isEmpty()) {
 				
 				for(Player p : Bukkit.getServer().getOnlinePlayers()) {
+					
+				if(EmpirePlayer.getOnlinePlayer(p) != null) {
+					
 					EmpirePlayer ep = EmpirePlayer.getOnlinePlayer(p);
 					
-					if(!friendlyFire) {	
-						if(ep.getEmpire() != turretEmpire) {
+					
+					if(!friendlyFire) {
+
+						if(ep.getEmpire() != Empire.fromString(turretEmpire)) {
 							if(targetPlayer != null) {
 								
-									if(p.getLocation().distance(runLocation) < targetPlayer.getLocation().distance(runLocation)) {	
+									if(p.getLocation().distance(runLocation) < targetPlayer.getLocation().distance(runLocation)) {
+										targetedPlayer = p.getDisplayName();
 										targetPlayer = p;
 									}
 									
 							}
 							else {
+								targetedPlayer = p.getDisplayName();
 								targetPlayer = p;
 							}
 						}
 					}
 					else {
-						
-						if(ep.getEmpire() == turretEmpire) {
+
+						if(ep.getEmpire() == Empire.fromString(turretEmpire)) {
 							if(targetPlayer != null) {
 								
-									if(p.getLocation().distance(runLocation) < targetPlayer.getLocation().distance(runLocation)) {	
+									if(p.getLocation().distance(runLocation) < targetPlayer.getLocation().distance(runLocation)) {
+										targetedPlayer = p.getDisplayName();
 										targetPlayer = p;
 									}
 									
 							}
 							else {
+								targetedPlayer = p.getDisplayName();
 								targetPlayer = p;
 							}
 						}
 						
 					}
+				
+				}
 				}
 				
 			}
@@ -184,7 +273,7 @@ public class Turret{
 		Double xDist = target.getX() - runLocation.getX();
 		Double yDist = target.getY() - runLocation.getY();
 		Double hyp = target.distance(runLocation);
-		
+
 		if(hyp > range) {
 			BukkitTask task = new SQTDTask(plugin, this).runTaskLater(plugin, 20);
 			return;
@@ -227,6 +316,9 @@ public class Turret{
 							thrownPotion.setVelocity(vector);
 							thrownPotion.setGravity(false);
 							thrownPotion.setCustomName("SQTDProjectile");
+							OfflinePlayer ofp = Bukkit.getOfflinePlayer(owner);
+							Player p = ofp.getPlayer();
+							thrownPotion.setShooter(p);
 							inv.clear(i);
 							i = 9001;
 							
@@ -249,6 +341,9 @@ public class Turret{
 							thrownPotion.setVelocity(vector);
 							thrownPotion.setGravity(false);
 							thrownPotion.setCustomName("SQTDProjectile");
+							OfflinePlayer ofp = Bukkit.getOfflinePlayer(owner);
+							Player p = ofp.getPlayer();
+							thrownPotion.setShooter(p);
 							inv.clear(i);
 							i = 9001;
 							
@@ -306,43 +401,35 @@ public class Turret{
 				}
 			}
 		}
-		
+
 		parentMachine.setEnergy(parentMachine.getEnergy() - 10);
-		
-		if(runs == 5) {
-			runs = 0;
-		}
-		
+
 		BukkitTask task = new SQTDTask(plugin, this).runTaskLater(plugin, Integer.toUnsignedLong(speed));
 	}
 	
 	public void setTurretBlock(Block block, Integer blockNumber) {
 		switch (blockNumber) {
 			case 1:
-				blockOneType = block.getType();
+				blockOneType = block.getTypeId();
 				break;
 			case 2:
-				blockTwoType = block.getType();
+				blockTwoType = block.getTypeId();
 				break;
 			case 3:
-				blockThreeType = block.getType();
+				blockThreeType = block.getTypeId();
 				break;
 			case 4:
-				blockFourType = block.getType();
+				blockFourType = block.getTypeId();
 				break;
 		}
 	}
 	
-	public void setWorld(World newWorld) {
-		world = newWorld;
+	public void setWorld(String newWorld) {
+		worldName = newWorld;
 	}
 	
 	public void addPotionType(PotionType potionType) {
 		unlockedPotionTypes.add(potionType);
-	}
-	
-	public void setActionPoint(Location location) {
-		actionPoint = location;
 	}
 
 	public void changeTurretType(Turret turret) {
@@ -377,6 +464,38 @@ public class Turret{
 			default:
 				break;
 		}
+		
+		Machine parentMachine = null;
+		
+		World world = Bukkit.getWorld(worldName);
+		
+		Location guiBlockLocation = new Location(world, guiX, guiY, guiZ);
+		
+		for(Network n : SQTechBase.networks) {
+			
+			for(GUIBlock g : n.getGUIBlocks()) {
+				
+				if(g.getLocation().equals(guiBlockLocation)) {
+					
+					for(Machine machine : ObjectUtils.getAllMachinesOfType("Tower")) {
+						
+						if(machine.getGUIBlock().equals(g)) {
+							
+							parentMachine = machine;
+							
+						}
+						
+					}
+					
+				}
+				
+			}
+			
+		}
+		
+		Location actionPoint = parentMachine.getGUIBlock().getLocation();
+		actionPoint.add(0.0, 4.0, 0.0);
+		
 		actionPoint.getBlock().setType(material);
 	}
 
@@ -420,10 +539,6 @@ public class Turret{
 		upgrades = upgradeList;
 	}
 	
-	public void setParentMachine(TowerMachine towerMachine) {
-		parentMachine = towerMachine;
-	}
-	
 	public boolean buyNewUpgrade(Player player, Upgrade upgrade) {
 		
 		if(upgrade.getUpgradeType().equals(UpgradeType.TOWER)) {
@@ -438,7 +553,7 @@ public class Turret{
 				
 				if(t.getName().equals(towerName)) {
 					
-					ArrayList<Upgrade> upgradeList = this.getUpgrades();
+					List<Upgrade> upgradeList = this.getUpgrades();
 					
 					for(int x=0; x<upgradeList.size(); x++) {
 						Upgrade u = upgradeList.get(x);
@@ -560,15 +675,32 @@ public class Turret{
 	
 	public boolean checkTurret() {
 		
+		Machine parentMachine = null;
+		
+		World world = Bukkit.getWorld(worldName);
+		
+		Location guiBlockLocation = new Location(world, guiX, guiY, guiZ);
+					
+			for(Machine machine : SQTechBase.machines) {
+						
+				if(machine.getGUIBlock().getLocation().equals(guiBlockLocation)) {
+					
+					parentMachine = machine;
+					
+				}
+				
+			}
+
+		
 		Block blockOne = parentMachine.getGUIBlock().getLocation().getBlock().getRelative(BlockFace.UP);
 		Block blockTwo = blockOne.getRelative(BlockFace.UP);
 		Block blockThree = blockTwo.getRelative(BlockFace.UP);
 		Block blockFour = blockThree.getRelative(BlockFace.UP);
 
-		if(blockOne.getType() == blockOneType) {
-			if(blockTwo.getType() == blockTwoType) {
-				if(blockThree.getType() == blockThreeType) {
-					if(blockFour.getType() == blockFourType) {
+		if(blockOne.getTypeId() == blockOneType) {
+			if(blockTwo.getTypeId() == blockTwoType) {
+				if(blockThree.getTypeId() == blockThreeType) {
+					if(blockFour.getTypeId() == blockFourType) {
 						return true;
 					}
 				}
@@ -576,6 +708,21 @@ public class Turret{
 		}
 		
 		return false;
+	}
+	
+	public void toggleFriendlyFire() {
+				
+		if(friendlyFire) {
+			
+			friendlyFire = false;
+			
+		}
+		else {
+
+			friendlyFire = true;
+			
+		}
+		
 	}
 	
 }

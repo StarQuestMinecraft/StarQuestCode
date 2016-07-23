@@ -1,9 +1,12 @@
 package com.starquestminecraft.sqtowerdefence;
 
+import java.io.Serializable;
+
 import org.bukkit.Bukkit;
 
-public class Upgrade {
+public class Upgrade implements Serializable {
 	
+	private static final long serialVersionUID = 852392945351678284L;
 	UpgradeType type;
 	String customName = "";
 	Integer level = 0;
@@ -20,6 +23,16 @@ public class Upgrade {
 		boost = upgradeBoost;
 		multiplier = costMultiplier;
 		maxLevel = maximumLevel;
+	}
+	
+	public Upgrade createNewUpgrade() {
+		
+		Upgrade upgrade = new Upgrade(type, baseCost, multiplier, boost, maxLevel);
+		upgrade.setLevel(level);
+		upgrade.cost = cost;
+		upgrade.setCustomName(customName);
+		return upgrade;
+		
 	}
 	
 	public UpgradeType getUpgradeType() {

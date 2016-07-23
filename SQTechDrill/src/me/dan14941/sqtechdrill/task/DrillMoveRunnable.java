@@ -1,5 +1,11 @@
 package me.dan14941.sqtechdrill.task;
 
+<<<<<<< HEAD
+import com.starquestminecraft.sqtechbase.*;
+import com.starquestminecraft.sqtechbase.objects.Machine;
+
+=======
+>>>>>>> origin/master
 import me.dan14941.sqtechdrill.Drill;
 import me.dan14941.sqtechdrill.SQTechDrill;
 import me.dan14941.sqtechdrill.movement.MovingDrill;
@@ -55,7 +61,7 @@ public class DrillMoveRunnable extends BukkitRunnable
 		
 		//System.out.println(" " + air  + liquidPresent);
 		
-		int energyPerBlock = SQTechDrill.getMain().getEnergyPerBlockMined();
+		final int energyPerBlock = SQTechDrill.getMain().getEnergyPerBlockMined();
 		
 		if (air == frontBlocks.size() && !liquidPresent) // checks if all block in front of the drill are air
 		{
@@ -69,7 +75,7 @@ public class DrillMoveRunnable extends BukkitRunnable
 		}
 		else if(!liquidPresent) // or if liquid is not present and not all block in front are air
 		{
-			List<Block> blocksToRemove = new ArrayList<Block>(); // List to store blocks to set to air
+			final List<Block> blocksToRemove = new ArrayList<Block>(); // List to store blocks to set to air
 			
 			for(Block frontBlock : frontBlocks) // Enumerate through the front block
 				if(!frontBlock.isEmpty() && !frontBlock.isLiquid()) // Make sure its not air and not liquid

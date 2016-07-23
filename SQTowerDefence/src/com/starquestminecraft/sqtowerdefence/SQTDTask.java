@@ -2,6 +2,8 @@ package com.starquestminecraft.sqtowerdefence;
 
 import java.util.List;
 
+import org.bukkit.Bukkit;
+import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -21,7 +23,8 @@ public class SQTDTask extends BukkitRunnable {
 	public void run() {
 		
 		if(turret.getName().equals("EntityCheck")) {
-			List<Entity> entities = turret.world.getEntities();
+			World world = Bukkit.getWorld(turret.worldName);
+			List<Entity> entities = world.getEntities();
 			
 			if(!entities.isEmpty())	{
 				

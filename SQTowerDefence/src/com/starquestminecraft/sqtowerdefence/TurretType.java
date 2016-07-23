@@ -1,6 +1,8 @@
 package com.starquestminecraft.sqtowerdefence;
 
-public enum TurretType {
+import java.io.Serializable;
+
+public enum TurretType implements Serializable{
 	BASE, ARROW, CANNON, ANTIAIR, FLAK, CHEMICAL, GAS, SPAWNER, GENERATOR, WALL, TRENCH, LANDMINE;
 	
 	public TurretType getTurretType(String string) {
