@@ -5,7 +5,9 @@ import com.starquestminecraft.sqtechbase.objects.Machine;
 import com.starquestminecraft.sqtechbase.objects.MachineType;
 
 public class TowerMachine extends Machine {
-		
+	
+	Turret turret;
+	
 	public TowerMachine(int energy, GUIBlock guiBlock, MachineType machineType) {
 		super(energy, guiBlock, machineType);
 		if(!data.containsKey("turret")) {

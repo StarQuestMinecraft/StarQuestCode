@@ -7,6 +7,7 @@ import java.util.List;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -39,14 +40,15 @@ import net.milkbowl.vault.economy.Economy;
 
 public class Turret implements Serializable {
 	
-	private static final long serialVersionUID = 323176463162027214L;
-	ArrayList<Upgrade> upgrades = new ArrayList<Upgrade>();
-	ArrayList<Upgrade> possibleUpgrades = new ArrayList<Upgrade>();
-	ArrayList<Upgrade> conflictingUpgrades = new ArrayList<Upgrade>();
-	ArrayList<PotionType> unlockedPotionTypes = new ArrayList<PotionType>();
+	private static final long serialVersionUID = -1752155270951436968L;
+	List<Upgrade> upgrades = new ArrayList<Upgrade>();
+	List<Upgrade> possibleUpgrades = new ArrayList<Upgrade>();
+	List<Upgrade> conflictingUpgrades = new ArrayList<Upgrade>();
+	List<PotionType> unlockedPotionTypes = new ArrayList<PotionType>();
 	Double guiX = 0.0;
 	Double guiY = 0.0;
 	Double guiZ = 0.0;
+	Integer parentID = 0;
 	TurretType type = TurretType.BASE;
 	String turretEmpire = "NONE";
 	String owner;
@@ -60,10 +62,10 @@ public class Turret implements Serializable {
 	Integer ammo = 0;
 	Integer runs = 0;
 	String name = "Base Turret";
-	Material blockOneType;
-	Material blockTwoType;
-	Material blockThreeType;
-	Material blockFourType;
+	Integer blockOneType;
+	Integer blockTwoType;
+	Integer blockThreeType;
+	Integer blockFourType;
 	
 	boolean hasConflicts = false;
 	boolean friendlyFire = false;
@@ -102,7 +104,7 @@ public class Turret implements Serializable {
 		return accuracy;
 	}
 	
-	public ArrayList<Upgrade> getUpgrades() {
+	public List<Upgrade> getUpgrades() {
 		return upgrades;
 	}
 	
@@ -144,21 +146,28 @@ public class Turret implements Serializable {
 		
 		Location guiBlockLocation = new Location(world, guiX, guiY, guiZ);
 		
-		for(Network n : SQTechBase.networks) {
-			Bukkit.broadcastMessage("1");
-			for(GUIBlock g : n.getGUIBlocks()) {
-				Bukkit.broadcastMessage("2");
-				if(g.getLocation().equals(guiBlockLocation)) {
-					Bukkit.broadcastMessage("3");
-					for(Machine machine : ObjectUtils.getAllMachinesOfType("Tower")) {
-						Bukkit.broadcastMessage("4");
-						if(machine.getGUIBlock().equals(g)) {
-							Bukkit.broadcastMessage("5");
-							parentMachine = machine;
-							
-						}
-						
-					}
+		if(runs >= 5) {
+			runs = 0;
+		}
+		
+		for(Machine machine : SQTechBase.machines) {
+			
+			if(machine.getGUIBlock().getLocation().equals(guiBlockLocation)) {
+				
+				parentID = machine.getGUIBlock().id;
+				parentMachine = machine;
+				
+			}
+			
+		}
+		
+		if(parentMachine == null) {
+			
+			for(Machine machine : SQTechBase.machines) {
+				
+				if(machine.getGUIBlock().id == parentID) {
+					
+					parentMachine = machine;
 					
 				}
 				
@@ -166,17 +175,16 @@ public class Turret implements Serializable {
 			
 		}
 		
-		if(parentMachine != null) {
-			Bukkit.broadcastMessage(parentMachine.toString());
-		}
-		else {
-			Bukkit.broadcastMessage(":I");
+		if(!parentMachine.check()) {
+			
+			return;
+			
 		}
 		
-		Location actionPoint = parentMachine.getGUIBlock().getLocation();
+		Location actionPoint = parentMachine.getGUIBlock().getLocation().clone();
 		actionPoint.add(0.0, 4.0, 0.0);
 		Player targetPlayer = null;
-		
+
 		if(targetedPlayer != null) {
 			targetPlayer = Bukkit.getPlayer(targetedPlayer);
 		}
@@ -196,16 +204,22 @@ public class Turret implements Serializable {
 		runLocation.add(0.5, 0.5, 0.5);
 		
 		if(runs == 0) {
+
 			if(!Bukkit.getServer().getOnlinePlayers().isEmpty()) {
 				
 				for(Player p : Bukkit.getServer().getOnlinePlayers()) {
+					
+				if(EmpirePlayer.getOnlinePlayer(p) != null) {
+					
 					EmpirePlayer ep = EmpirePlayer.getOnlinePlayer(p);
 					
-					if(!friendlyFire) {	
+					
+					if(!friendlyFire) {
+
 						if(ep.getEmpire() != Empire.fromString(turretEmpire)) {
 							if(targetPlayer != null) {
 								
-									if(p.getLocation().distance(runLocation) < targetPlayer.getLocation().distance(runLocation)) {	
+									if(p.getLocation().distance(runLocation) < targetPlayer.getLocation().distance(runLocation)) {
 										targetedPlayer = p.getDisplayName();
 										targetPlayer = p;
 									}
@@ -218,21 +232,25 @@ public class Turret implements Serializable {
 						}
 					}
 					else {
-						
+
 						if(ep.getEmpire() == Empire.fromString(turretEmpire)) {
 							if(targetPlayer != null) {
 								
-									if(p.getLocation().distance(runLocation) < targetPlayer.getLocation().distance(runLocation)) {	
+									if(p.getLocation().distance(runLocation) < targetPlayer.getLocation().distance(runLocation)) {
+										targetedPlayer = p.getDisplayName();
 										targetPlayer = p;
 									}
 									
 							}
 							else {
+								targetedPlayer = p.getDisplayName();
 								targetPlayer = p;
 							}
 						}
 						
 					}
+				
+				}
 				}
 				
 			}
@@ -255,7 +273,7 @@ public class Turret implements Serializable {
 		Double xDist = target.getX() - runLocation.getX();
 		Double yDist = target.getY() - runLocation.getY();
 		Double hyp = target.distance(runLocation);
-		
+
 		if(hyp > range) {
 			BukkitTask task = new SQTDTask(plugin, this).runTaskLater(plugin, 20);
 			return;
@@ -298,6 +316,9 @@ public class Turret implements Serializable {
 							thrownPotion.setVelocity(vector);
 							thrownPotion.setGravity(false);
 							thrownPotion.setCustomName("SQTDProjectile");
+							OfflinePlayer ofp = Bukkit.getOfflinePlayer(owner);
+							Player p = ofp.getPlayer();
+							thrownPotion.setShooter(p);
 							inv.clear(i);
 							i = 9001;
 							
@@ -320,6 +341,9 @@ public class Turret implements Serializable {
 							thrownPotion.setVelocity(vector);
 							thrownPotion.setGravity(false);
 							thrownPotion.setCustomName("SQTDProjectile");
+							OfflinePlayer ofp = Bukkit.getOfflinePlayer(owner);
+							Player p = ofp.getPlayer();
+							thrownPotion.setShooter(p);
 							inv.clear(i);
 							i = 9001;
 							
@@ -377,29 +401,25 @@ public class Turret implements Serializable {
 				}
 			}
 		}
-		
+
 		parentMachine.setEnergy(parentMachine.getEnergy() - 10);
-		
-		if(runs == 5) {
-			runs = 0;
-		}
-		
+
 		BukkitTask task = new SQTDTask(plugin, this).runTaskLater(plugin, Integer.toUnsignedLong(speed));
 	}
 	
 	public void setTurretBlock(Block block, Integer blockNumber) {
 		switch (blockNumber) {
 			case 1:
-				blockOneType = block.getType();
+				blockOneType = block.getTypeId();
 				break;
 			case 2:
-				blockTwoType = block.getType();
+				blockTwoType = block.getTypeId();
 				break;
 			case 3:
-				blockThreeType = block.getType();
+				blockThreeType = block.getTypeId();
 				break;
 			case 4:
-				blockFourType = block.getType();
+				blockFourType = block.getTypeId();
 				break;
 		}
 	}
@@ -533,7 +553,7 @@ public class Turret implements Serializable {
 				
 				if(t.getName().equals(towerName)) {
 					
-					ArrayList<Upgrade> upgradeList = this.getUpgrades();
+					List<Upgrade> upgradeList = this.getUpgrades();
 					
 					for(int x=0; x<upgradeList.size(); x++) {
 						Upgrade u = upgradeList.get(x);
@@ -660,38 +680,27 @@ public class Turret implements Serializable {
 		World world = Bukkit.getWorld(worldName);
 		
 		Location guiBlockLocation = new Location(world, guiX, guiY, guiZ);
-		
-		for(Network n : SQTechBase.networks) {
-			
-			for(GUIBlock g : n.getGUIBlocks()) {
-				
-				if(g.getLocation().equals(guiBlockLocation)) {
 					
-					for(Machine machine : ObjectUtils.getAllMachinesOfType("Tower")) {
+			for(Machine machine : SQTechBase.machines) {
 						
-						if(machine.getGUIBlock().equals(g)) {
-							
-							parentMachine = machine;
-							
-						}
-						
-					}
+				if(machine.getGUIBlock().getLocation().equals(guiBlockLocation)) {
+					
+					parentMachine = machine;
 					
 				}
 				
 			}
-			
-		}
+
 		
 		Block blockOne = parentMachine.getGUIBlock().getLocation().getBlock().getRelative(BlockFace.UP);
 		Block blockTwo = blockOne.getRelative(BlockFace.UP);
 		Block blockThree = blockTwo.getRelative(BlockFace.UP);
 		Block blockFour = blockThree.getRelative(BlockFace.UP);
 
-		if(blockOne.getType() == blockOneType) {
-			if(blockTwo.getType() == blockTwoType) {
-				if(blockThree.getType() == blockThreeType) {
-					if(blockFour.getType() == blockFourType) {
+		if(blockOne.getTypeId() == blockOneType) {
+			if(blockTwo.getTypeId() == blockTwoType) {
+				if(blockThree.getTypeId() == blockThreeType) {
+					if(blockFour.getTypeId() == blockFourType) {
 						return true;
 					}
 				}
@@ -699,6 +708,21 @@ public class Turret implements Serializable {
 		}
 		
 		return false;
+	}
+	
+	public void toggleFriendlyFire() {
+				
+		if(friendlyFire) {
+			
+			friendlyFire = false;
+			
+		}
+		else {
+
+			friendlyFire = true;
+			
+		}
+		
 	}
 	
 }

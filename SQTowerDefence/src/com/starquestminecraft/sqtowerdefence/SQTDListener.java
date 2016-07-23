@@ -12,6 +12,11 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryPickupItemEvent;
 
+import com.starquestminecraft.sqtechbase.SQTechBase;
+import com.starquestminecraft.sqtechbase.events.MachinesLoadedEvent;
+import com.starquestminecraft.sqtechbase.listeners.MovecraftEvents;
+import com.starquestminecraft.sqtechbase.objects.Machine;
+
 import net.md_5.bungee.api.ChatColor;
 
 public class SQTDListener implements Listener {
@@ -45,14 +50,43 @@ public class SQTDListener implements Listener {
 		
 		if(arrow.getType().equals(EntityType.ARROW)) {
 			
-			if(arrow.getCustomName().equals("SQTDProjectile")) {
+			if(arrow.getCustomName() != null) {	
+				if(arrow.getCustomName().equals("SQTDProjectile")) {
+					
+					e.setDamage(arrow.getMetadata("damage").get(0).asDouble());
+					e.getDamager().remove();
 				
-				e.setDamage(arrow.getMetadata("damage").get(0).asDouble());
-				
+				}
 			}
 			
 		}
 		
 	}
+	
+	@EventHandler
+	public void onMachinesLoaded(MachinesLoadedEvent e) {
+		
+		for(Machine m : SQTechBase.machines) {
+			
+			if(m.data.containsKey("turretData")) {
+				
+				if(m.check()) {
+					
+					TowerMachine towerMachine = new TowerMachine(m.getEnergy(), m.getGUIBlock(), m.getMachineType());
+					towerMachine.enabled = m.enabled;
+					towerMachine.exportsEnergy = m.exportsEnergy;
+					towerMachine.importsEnergy = m.importsEnergy;
+					SQTechBase.machines.remove(m);
+					SQTechBase.machines.add(towerMachine);
+					Turret turret = towerMachine.turret;
+					turret.runTurret();
+					
+				}
+			}
+			
+		}
+		
+	}
+	
 	
 }

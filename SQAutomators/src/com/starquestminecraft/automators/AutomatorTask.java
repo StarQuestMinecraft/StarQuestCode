@@ -189,8 +189,11 @@ public class AutomatorTask extends BukkitRunnable {
 					}
 					if(level == 3) {
 						craftRecipe(automator, inputInventories, outputInventories, totalInventory, ingredientItems, recipe);
+						craftRecipe(automator, inputInventories, outputInventories, totalInventory, ingredientItems, recipe);
 					}
 					if(level == 4) {
+						craftRecipe(automator, inputInventories, outputInventories, totalInventory, ingredientItems, recipe);
+						craftRecipe(automator, inputInventories, outputInventories, totalInventory, ingredientItems, recipe);
 						craftRecipe(automator, inputInventories, outputInventories, totalInventory, ingredientItems, recipe);
 					}
 										

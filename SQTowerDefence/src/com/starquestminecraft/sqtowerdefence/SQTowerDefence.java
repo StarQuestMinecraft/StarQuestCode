@@ -92,6 +92,9 @@ public class SQTowerDefence extends JavaPlugin {
 		SQTechBase.addMachineType(tower);
 		
 		new SQTDListener(this);
+		
+		
+		
 	}
 	
 	@Override
