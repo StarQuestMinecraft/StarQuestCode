@@ -5,19 +5,12 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.bukkit.Bukkit;
-import org.bukkit.Effect;
 import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Particle;
-import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.util.Vector;
 
 import com.martinjonsson01.sqbeamtransporter.SQBeamTransporter;
-import com.martinjonsson01.sqbeamtransporter.objects.Beam;
 import com.martinjonsson01.sqbeamtransporter.objects.BeamTransporter;
 
 
@@ -82,7 +75,7 @@ public class BeamTask extends Thread{
 
 
 
-		}, 0, 1);
+		}, 0, 0);
 
 	}
 

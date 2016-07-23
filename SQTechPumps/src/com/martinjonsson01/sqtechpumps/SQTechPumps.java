@@ -2,25 +2,38 @@ package com.martinjonsson01.sqtechpumps;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import org.bukkit.Bukkit;
 import org.bukkit.block.Block;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import com.starquestminecraft.sqtechbase.Machine;
+import com.martinjonsson01.sqtechpumps.objects.Pump;
+import com.martinjonsson01.sqtechpumps.objects.SmallTank;
 import com.starquestminecraft.sqtechbase.SQTechBase;
+import com.starquestminecraft.sqtechbase.objects.Machine;
 
 public class SQTechPumps extends JavaPlugin {
 	
-	static SQTechPumps plugin;
+	public static SQTechPumps plugin;
 	
 	public static FileConfiguration config = null;
 	
 	public static List<Machine> pumpingList = new ArrayList<Machine>();
 	
-	public static List<Block> waterBlocks;
+	public static List<Block> waterBlocks = new ArrayList<Block>();
+	
+	public static List<Machine> smallTanks = new ArrayList<Machine>();
+	
+	public static HashMap<List<Block>, Machine> smallTankLapisBlocks = new HashMap<List<Block>, Machine>();
+	
+	public static HashMap<Machine, Player> machinePlayerMap = new HashMap<Machine, Player>();
+	
+	public static HashMap<Inventory, Machine> inventoryMap = new HashMap<Inventory, Machine>();
 	
 	@Override
 	public void onEnable() {
@@ -39,6 +52,7 @@ public class SQTechPumps extends JavaPlugin {
 		config = this.getConfig();
 		
 		SQTechBase.addMachineType(new Pump(config.getInt("maxEnergy")));
+		SQTechBase.addMachineType(new SmallTank(0));
 		
 	}
 	
@@ -47,7 +61,7 @@ public class SQTechPumps extends JavaPlugin {
 		
 		for (Machine m : SQTechPumps.pumpingList) {
 			
-			Pump.stopPumpingImmediately(m);
+			Pump.stopPumpingImmediately(m, machinePlayerMap.get(m));
 			
 		}
 		
