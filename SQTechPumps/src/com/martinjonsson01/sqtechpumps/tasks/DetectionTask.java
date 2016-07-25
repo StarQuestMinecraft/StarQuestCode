@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.logging.Level;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -45,7 +47,13 @@ public class DetectionTask extends BukkitRunnable{
 				while (true) {
 
 					ArrayList<Block> to_search = new ArrayList<Block>();
-
+					
+					if (to_search.size() >= 200 || found.size() >= 200 || search_blocks.size() >= 200) {
+						
+						break;
+						
+					}
+					
 					for (Block b2 : search_blocks) {
 
 						found.add(b2);
@@ -60,7 +68,7 @@ public class DetectionTask extends BukkitRunnable{
 
 					}
 
-					if (to_search.size() == 0 || to_search.size() > 10000) {
+					if (to_search.size() == 0) {
 
 						break;
 

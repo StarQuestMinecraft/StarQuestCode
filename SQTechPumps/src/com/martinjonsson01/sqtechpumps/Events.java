@@ -5,6 +5,7 @@ import java.util.List;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
@@ -27,9 +28,13 @@ public class Events implements Listener{
 		
 		if (SQTechPumps.waterBlocks != null) {
 			
-			if (SQTechPumps.waterBlocks.contains(e.getBlock())) {
+			for (Machine m : SQTechPumps.waterBlocks.keySet()) {
 				
-				e.setCancelled(true);
+				if (SQTechPumps.waterBlocks.get(m).contains(e.getBlock()) || SQTechPumps.waterBlocks.get(m).contains(e.getToBlock())) {
+					
+					e.setCancelled(true);
+					
+				}
 				
 			}
 			
@@ -65,7 +70,7 @@ public class Events implements Listener{
 	@EventHandler
 	public void onInventoryClick(InventoryClickEvent e) {
 		
-		if (e.getInventory().getName().equals(ChatColor.BLUE + "SQTech - Choose tank type")) {
+		if (e.getInventory().getName().equals(ChatColor.BLUE + "SQTech - Choose small tank type")) {
 			
 			e.setCancelled(true);
 			
@@ -77,6 +82,7 @@ public class Events implements Listener{
 					if (f.name.equals("Lava")) {
 						machine.maxLiquid.put(f, SQTechPumps.config.getInt("small tank max liquid"));
 						e.getWhoClicked().closeInventory();
+						machine.getGUI((Player) e.getWhoClicked()).open();
 					}
 				}
 				
@@ -86,6 +92,63 @@ public class Events implements Listener{
 					if (f.name.equals("Water")) {
 						machine.maxLiquid.put(f, SQTechPumps.config.getInt("small tank max liquid"));
 						e.getWhoClicked().closeInventory();
+						machine.getGUI((Player) e.getWhoClicked()).open();
+					}
+				}
+				
+			}
+			
+		} else if (e.getInventory().getName().equals(ChatColor.BLUE + "SQTech - Choose medium tank type")) {
+			
+			e.setCancelled(true);
+			
+			Machine machine = SQTechPumps.inventoryMap.get(e.getInventory());
+			
+			if (e.getSlot() == 10) {
+				//Lava
+				for (Fluid f : SQTechBase.fluids) {
+					if (f.name.equals("Lava")) {
+						machine.maxLiquid.put(f, SQTechPumps.config.getInt("medium tank max liquid"));
+						e.getWhoClicked().closeInventory();
+						machine.getGUI((Player) e.getWhoClicked()).open();
+					}
+				}
+				
+			} else if (e.getSlot() == 16) {
+				//Water
+				for (Fluid f : SQTechBase.fluids) {
+					if (f.name.equals("Water")) {
+						machine.maxLiquid.put(f, SQTechPumps.config.getInt("medium tank max liquid"));
+						e.getWhoClicked().closeInventory();
+						machine.getGUI((Player) e.getWhoClicked()).open();
+					}
+				}
+				
+			}
+			
+		} else if (e.getInventory().getName().equals(ChatColor.BLUE + "SQTech - Choose large tank type")) {
+			
+			e.setCancelled(true);
+			
+			Machine machine = SQTechPumps.inventoryMap.get(e.getInventory());
+			
+			if (e.getSlot() == 10) {
+				//Lava
+				for (Fluid f : SQTechBase.fluids) {
+					if (f.name.equals("Lava")) {
+						machine.maxLiquid.put(f, SQTechPumps.config.getInt("large tank max liquid"));
+						e.getWhoClicked().closeInventory();
+						machine.getGUI((Player) e.getWhoClicked()).open();
+					}
+				}
+				
+			} else if (e.getSlot() == 16) {
+				//Water
+				for (Fluid f : SQTechBase.fluids) {
+					if (f.name.equals("Water")) {
+						machine.maxLiquid.put(f, SQTechPumps.config.getInt("large tank max liquid"));
+						e.getWhoClicked().closeInventory();
+						machine.getGUI((Player) e.getWhoClicked()).open();
 					}
 				}
 				

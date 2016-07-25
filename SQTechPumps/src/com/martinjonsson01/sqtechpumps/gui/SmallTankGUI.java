@@ -51,7 +51,7 @@ public class SmallTankGUI extends GUI{
 		}
 		
 		if (firstOpen) {
-			TankTypeGUI tankTypeGUI = new TankTypeGUI(machine, owner);
+			SmallTankTypeGUI tankTypeGUI = new SmallTankTypeGUI(machine, owner);
 			tankTypeGUI.open();
 			return;
 		}
@@ -178,7 +178,7 @@ public class SmallTankGUI extends GUI{
 
 							World w = machine.getGUIBlock().getLocation().getWorld();
 							w.playSound(machine.getGUIBlock().getLocation(), Sound.BLOCK_FIRE_EXTINGUISH, 1, 1);
-							w.spawnParticle(Particle.SMOKE_LARGE, machine.getGUIBlock().getLocation(), 0, 1, 1, 1);
+							w.spawnParticle(Particle.SMOKE_LARGE, machine.getGUIBlock().getLocation(), 100, 1, 1, 1);
 							machine.setLiquid(f, 0);
 
 						}

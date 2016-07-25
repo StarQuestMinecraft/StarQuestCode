@@ -3,7 +3,6 @@ package com.martinjonsson01.sqtechpumps.gui;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
-import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 
 import com.martinjonsson01.sqtechpumps.SQTechPumps;
@@ -12,20 +11,21 @@ import com.starquestminecraft.sqtechbase.util.InventoryUtils;
 
 import net.md_5.bungee.api.ChatColor;
 
-public class TankTypeGUI {
-
+public class LargeTankTypeGUI {
+	
+	
 	Player owner;
 
 	Machine m;
 
-	public TankTypeGUI(Machine m, Player owner) {
+	public LargeTankTypeGUI(Machine m, Player owner) {
 		this.owner = owner;
 		this.m = m;
 	}
 
 	public void open() {
 
-		Inventory gui = Bukkit.createInventory(owner, 27, ChatColor.BLUE + "SQTech - Choose tank type");
+		Inventory gui = Bukkit.createInventory(owner, 27, ChatColor.BLUE + "SQTech - Choose large tank type");
 
 		gui.setItem(0, InventoryUtils.createSpecialItem(Material.IRON_FENCE, (short) 0, " ", new String[]{ChatColor.RED + "" + ChatColor.MAGIC + "Contraband"}));
 		gui.setItem(1, InventoryUtils.createSpecialItem(Material.IRON_FENCE, (short) 0, " ", new String[]{ChatColor.RED + "" + ChatColor.MAGIC + "Contraband"}));
@@ -44,7 +44,7 @@ public class TankTypeGUI {
 		gui.setItem(13, InventoryUtils.createSpecialItem(Material.IRON_FENCE, (short) 0, " ", new String[]{ChatColor.RED + "" + ChatColor.MAGIC + "Contraband"}));
 		gui.setItem(14, InventoryUtils.createSpecialItem(Material.IRON_FENCE, (short) 0, " ", new String[]{ChatColor.RED + "" + ChatColor.MAGIC + "Contraband"}));
 		gui.setItem(15, InventoryUtils.createSpecialItem(Material.IRON_FENCE, (short) 0, " ", new String[]{ChatColor.RED + "" + ChatColor.MAGIC + "Contraband"}));
-		//Select lava
+		//Select water
 		gui.setItem(16, InventoryUtils.createSpecialItem(Material.WATER_BUCKET, (short) 0, ChatColor.BLUE + "Select" + ChatColor.AQUA + " Water", new String[]{ChatColor.RED + "" + ChatColor.MAGIC + "Contraband"}));
 		gui.setItem(17, InventoryUtils.createSpecialItem(Material.IRON_FENCE, (short) 0, " ", new String[]{ChatColor.RED + "" + ChatColor.MAGIC + "Contraband"}));
 		gui.setItem(18, InventoryUtils.createSpecialItem(Material.IRON_FENCE, (short) 0, " ", new String[]{ChatColor.RED + "" + ChatColor.MAGIC + "Contraband"}));

@@ -1,9 +1,5 @@
 package com.martinjonsson01.sqtechpumps.gui;
 
-import java.util.Map.Entry;
-import java.util.NavigableMap;
-import java.util.TreeMap;
-
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Particle;
@@ -16,7 +12,6 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 import com.martinjonsson01.sqtechpumps.SQTechPumps;
-import com.martinjonsson01.sqtechpumps.objects.Pump;
 import com.starquestminecraft.sqtechbase.SQTechBase;
 import com.starquestminecraft.sqtechbase.gui.GUI;
 import com.starquestminecraft.sqtechbase.objects.Fluid;
@@ -26,50 +21,63 @@ import com.starquestminecraft.sqtechbase.util.ObjectUtils;
 
 import net.md_5.bungee.api.ChatColor;
 
-public class PumpGUI extends GUI{
-
-	public PumpGUI(Player player, int id) {
-
+public class MediumTankGUI extends GUI{
+	
+	
+	public MediumTankGUI(Player player, int id) {
 		super(player, id);
-
 	}
 
 	@Override
 	public void open() {
-
-		Inventory gui = Bukkit.createInventory(owner, 27, ChatColor.BLUE + "SQTech - Pump");
+		
+		Inventory gui = Bukkit.createInventory(owner, 27, ChatColor.BLUE + "SQTech - Medium Tank");
 
 		Machine machine = ObjectUtils.getMachineFromMachineGUI(this);
 
-		//Energy button
+		//Needed for SQTechPumps.java @ line 61
+		SQTechPumps.machinePlayerMap.put(machine, owner);
+		
+		Boolean firstOpen = true;
+		
 		Fluid fluid = null;
-		int amount = 0;
-		String name = "none";
-
+		
 		for (Fluid f : SQTechBase.fluids) {
-			if (machine.getLiquid(f) > 0) {
+			if (machine.getMaxLiquid(f) > 0) {
+				firstOpen = false;
 				fluid = f;
 			}
 		}
+		
+		if (firstOpen) {
+			MediumTankTypeGUI tankTypeGUI = new MediumTankTypeGUI(machine, owner);
+			tankTypeGUI.open();
+			return;
+		}
+		
+		//Energy button
+		int amount = 0;
+		String name = "none";
+		
 		if (fluid != null) {
 			amount = machine.getLiquid(fluid);
 			name = fluid.name;
 		}
+		
+		String[] energyLore = new String[] {
+				ChatColor.DARK_PURPLE + "Energy: Tanks do not require energy.",
+				ChatColor.RED + "" + ChatColor.MAGIC + "Contraband"
+		};
+		gui.setItem(8, InventoryUtils.createSpecialItem(Material.REDSTONE, (short) 0, ChatColor.BLUE + "Tank Energy", energyLore));
 
+		//Info button
 		String[] infoLore = new String[] {
-				ChatColor.DARK_PURPLE + PumpGUI.format(machine.getEnergy()) + "/" + PumpGUI.format(machine.getMachineType().getMaxEnergy()) + " (" +machine.getEnergy() + ")",
+				ChatColor.BLUE + "This tank can store " + name,
+				ChatColor.BLUE + "Amount in millibuckets: " + PumpGUI.format(amount) + "/" + PumpGUI.format(SQTechPumps.config.getInt("medium tank max liquid")),
+				ChatColor.BLUE + "Amount in buckets: " + PumpGUI.format(amount/1000) + "/" + PumpGUI.format(SQTechPumps.config.getInt("medium tank max liquid")/1000),
 				ChatColor.RED + "" + ChatColor.MAGIC + "Contraband"
 		};
-		gui.setItem(8, InventoryUtils.createSpecialItem(Material.REDSTONE, (short) 0, ChatColor.BLUE + "Energy", infoLore));
-
-		//Liquid info button
-		String[] liquidLore = new String[] {
-				ChatColor.BLUE + "Liquid Type: " + name,
-				ChatColor.BLUE + "Amount in millibuckets: " + PumpGUI.format(amount) + "/" + PumpGUI.format(SQTechPumps.config.getInt("max liquid")),
-				ChatColor.BLUE + "Amount in buckets: " + PumpGUI.format(amount/1000) + "/" + PumpGUI.format(SQTechPumps.config.getInt("max liquid")/1000),
-				ChatColor.RED + "" + ChatColor.MAGIC + "Contraband"
-		};
-		gui.setItem(17, InventoryUtils.createSpecialItem(Material.BUCKET, (short) 0, ChatColor.BLUE + "Pump Liquid Info", liquidLore));
+		gui.setItem(17, InventoryUtils.createSpecialItem(Material.BUCKET, (short) 0, ChatColor.BLUE + "Tank Info", infoLore));
 
 		//Bucket button
 		String[] bucketLore = new String[] {
@@ -87,25 +95,6 @@ public class PumpGUI extends GUI{
 		gui.setItem(22, InventoryUtils.createSpecialItem(Material.IRON_FENCE, (short) 0, " ", new String[]{ChatColor.RED + "" + ChatColor.MAGIC + "Contraband"}));
 		gui.setItem(23, InventoryUtils.createSpecialItem(Material.IRON_FENCE, (short) 0, " ", new String[]{ChatColor.RED + "" + ChatColor.MAGIC + "Contraband"}));
 
-		//Enable/disable button
-		if (SQTechPumps.pumpingList.contains(machine)) {
-
-			String[] glassLore = new String[] {
-					ChatColor.GRAY + "Click to " + ChatColor.RED + " DISABLE " + ChatColor.GRAY + "pump.",
-					ChatColor.RED + "" + ChatColor.MAGIC + "Contraband"
-			};
-			gui.setItem(0, InventoryUtils.createSpecialItem(Material.STAINED_GLASS, (short) 13, ChatColor.GREEN + "Pump ENABLED", glassLore));
-
-		} else if (!SQTechPumps.pumpingList.contains(machine)) {
-
-			String[] glassLore = new String[] {
-					ChatColor.GRAY + "Click to " + ChatColor.GREEN + " ENABLE " + ChatColor.GRAY + "pump.",
-					ChatColor.RED + "" + ChatColor.MAGIC + "Contraband"
-			};
-			gui.setItem(0, InventoryUtils.createSpecialItem(Material.STAINED_GLASS, (short) 14, ChatColor.RED + "Pump DISABLED", glassLore));
-
-		}
-
 		//Back button
 		String[] doorLore = new String[] {
 				ChatColor.RED + "Leave this menu.",
@@ -115,10 +104,10 @@ public class PumpGUI extends GUI{
 
 		//Vaporize button
 		String[] barrierLore = new String[] {
-				ChatColor.RED + "WARNING: Deletes all liquid currently stored in pump.",
+				ChatColor.RED + "WARNING: Deletes all liquid currently stored in tank.",
 				ChatColor.RED + "" + ChatColor.MAGIC + "Contraband"
 		};
-		gui.setItem(18, InventoryUtils.createSpecialItem(Material.BARRIER, (short) 0, ChatColor.DARK_RED + "Vaporize stored liquid", barrierLore));
+		gui.setItem(10, InventoryUtils.createSpecialItem(Material.BARRIER, (short) 0, ChatColor.DARK_RED + "Vaporize stored liquid", barrierLore));
 
 		owner.openInventory(gui);
 
@@ -134,8 +123,6 @@ public class PumpGUI extends GUI{
 		}
 
 	}
-
-
 
 	@Override
 	public void click(final InventoryClickEvent event) {
@@ -178,55 +165,27 @@ public class PumpGUI extends GUI{
 
 			}
 
-			if (event.getClickedInventory().getTitle().equals(ChatColor.BLUE + "SQTech - Pump")) {
+			if (event.getClickedInventory().getTitle().equals(ChatColor.BLUE + "SQTech - Medium Tank")) {
 
 				Machine machine = ObjectUtils.getMachineFromMachineGUI(this);
-				if (event.getSlot() == 0) {
-					
-					if (SQTechPumps.lastClick.containsKey(owner)) {
-						if (System.currentTimeMillis() - SQTechPumps.lastClick.get(owner) < 3000) {
-							owner.sendMessage(ChatColor.RED + "Don't spam the button. Please wait at least 3 seconds. " + (System.currentTimeMillis() - SQTechPumps.lastClick.get(owner)));
-							return;
-						}
-					}
-					
-					SQTechPumps.lastClick.put(owner, System.currentTimeMillis());
-					
-					if (SQTechPumps.pumpingList.contains(machine)) {
 
-						String[] glassLore = new String[] {
-								ChatColor.GRAY + "Click to " + ChatColor.GREEN + " ENABLE " + ChatColor.GRAY + "pump.",
-								ChatColor.RED + "" + ChatColor.MAGIC + "Contraband"
-						};
-						event.getClickedInventory().setItem(0, InventoryUtils.createSpecialItem(Material.STAINED_GLASS, (short) 14, ChatColor.RED + "Pump DISABLED", glassLore));
+				if (event.getSlot() == 10) {
 
-						SQTechPumps.pumpingList.remove(machine);
-						Pump.stopPumping(machine, owner);
-						event.getWhoClicked().sendMessage(ChatColor.GREEN + "Successfully disabled pump.");
+					for (Fluid f : SQTechBase.fluids) {
 
-					} else if (!SQTechPumps.pumpingList.contains(machine)) {
+						if (machine.getLiquid(f) > 0) {
 
-						if (machine.getEnergy() >= SQTechPumps.config.getInt("activate energy consumption")) {
+							World w = machine.getGUIBlock().getLocation().getWorld();
+							w.playSound(machine.getGUIBlock().getLocation(), Sound.BLOCK_FIRE_EXTINGUISH, 1, 1);
+							w.spawnParticle(Particle.SMOKE_LARGE, machine.getGUIBlock().getLocation(), 100, 1, 1, 1);
+							machine.setLiquid(f, 0);
 
-							String[] glassLore = new String[] {
-									ChatColor.GRAY + "Click to " + ChatColor.RED + " DISABLE " + ChatColor.GRAY + "pump.",
-									ChatColor.RED + "" + ChatColor.MAGIC + "Contraband"
-							};
-							event.getClickedInventory().setItem(0, InventoryUtils.createSpecialItem(Material.STAINED_GLASS, (short) 13, ChatColor.GREEN + "Pump ENABLED", glassLore));
-
-							SQTechPumps.pumpingList.add(machine);
-							Pump.startPumping(machine, owner);
-							machine.setEnergy(machine.getEnergy() - SQTechPumps.config.getInt("activate energy consumption"));
 						}
 
 					}
-
-				} else if (event.getSlot() == 8) {
-
-
 
 				} else if (event.getSlot() == 13) {
-
+					
 					if (event.getClickedInventory().getItem(event.getSlot()) == null) return;
 
 					//Check if the item is a bucket
@@ -285,32 +244,17 @@ public class PumpGUI extends GUI{
 						}
 						
 					}
-
-				} else if (event.getSlot() == 18) {
-
-					for (Fluid f : SQTechBase.fluids) {
-
-						if (machine.getLiquid(f) > 0) {
-
-							World w = machine.getGUIBlock().getLocation().getWorld();
-							w.playSound(machine.getGUIBlock().getLocation(), Sound.BLOCK_FIRE_EXTINGUISH, 1, 1);
-							w.spawnParticle(Particle.SMOKE_LARGE, machine.getGUIBlock().getLocation(), 0, 1, 1, 1);
-							machine.setLiquid(f, 0);
-
-						}
-
-					}
-
+					
 				} else if (event.getSlot() == 26) {
-
+					
 					machine.getGUIBlock().getGUI(owner).open();
 
 				}
 
-			} else {
+			}  else {
 
 				if (event.getAction().equals(InventoryAction.MOVE_TO_OTHER_INVENTORY)) {
-
+					
 					event.setCancelled(true);
 
 				}
@@ -320,30 +264,5 @@ public class PumpGUI extends GUI{
 		}
 
 	}
-
-	private static final NavigableMap<Long, String> suffixes = new TreeMap<> ();
-	static {
-		suffixes.put(1_000L, "k");
-		suffixes.put(1_000_000L, "M");
-		suffixes.put(1_000_000_000L, "G");
-		suffixes.put(1_000_000_000_000L, "T");
-		suffixes.put(1_000_000_000_000_000L, "P");
-		suffixes.put(1_000_000_000_000_000_000L, "E");
-	}
-
-	public static String format(long value) {
-		//Long.MIN_VALUE == -Long.MIN_VALUE so we need an adjustment here
-		if (value == Long.MIN_VALUE) return format(Long.MIN_VALUE + 1);
-		if (value < 0) return "-" + format(-value);
-		if (value < 1000) return Long.toString(value); //deal with easy case
-
-		Entry<Long, String> e = suffixes.floorEntry(value);
-		Long divideBy = e.getKey();
-		String suffix = e.getValue();
-
-		long truncated = value / (divideBy / 10); //the number part of the output times 10
-		boolean hasDecimal = truncated < 100 && (truncated / 10d) != (truncated / 10);
-		return hasDecimal ? (truncated / 10d) + suffix : (truncated / 10) + suffix;
-	}
-
+	
 }

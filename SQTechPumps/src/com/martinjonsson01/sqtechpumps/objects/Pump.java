@@ -73,15 +73,15 @@ public class Pump extends MachineType {
 
 	@Override
 	public void updateEnergy(Machine machine) {
-		
+
 		for (Player player : SQTechBase.currentGui.keySet()) {
-			
+
 			if (SQTechBase.currentGui.get(player).id == machine.getGUI(player).id) {
-				
+
 				if (player.getOpenInventory() != null) {
-					
+
 					if (player.getOpenInventory().getTitle().equals(ChatColor.BLUE + "SQTech - Pump")) {
-						
+
 						String[] infoLore = new String[] {
 								ChatColor.DARK_PURPLE + PumpGUI.format(machine.getEnergy()) + "/" + PumpGUI.format(machine.getMachineType().getMaxEnergy()) + " (" +machine.getEnergy() + ")",
 								ChatColor.RED + "" + ChatColor.MAGIC + "Contraband"
@@ -100,7 +100,7 @@ public class Pump extends MachineType {
 
 	@Override
 	public void updateLiquid(Machine machine) {
-		
+
 		for (Player player : SQTechBase.currentGui.keySet()) {
 
 			if (SQTechBase.currentGui.get(player).id == machine.getGUI(player).id) {
@@ -130,7 +130,7 @@ public class Pump extends MachineType {
 								ChatColor.RED + "" + ChatColor.MAGIC + "Contraband"
 						};
 						player.getOpenInventory().setItem(17, InventoryUtils.createSpecialItem(Material.BUCKET, (short) 0, ChatColor.BLUE + "Pump Liquid Info", liquidLore));
-						
+
 					}
 
 				}
@@ -184,10 +184,20 @@ public class Pump extends MachineType {
 						if (b.getRelative(BlockFace.DOWN).getType() == Material.WATER ||
 								b.getRelative(BlockFace.DOWN).getType() == Material.LAVA) {
 
-							Long before = System.currentTimeMillis();
-							detect(b.getRelative(BlockFace.DOWN), machine, owner);
-							Bukkit.getLogger().log(Level.INFO, "[SQTechPump] Detection took " + (System.currentTimeMillis() - before) + " ms");
+							/*if (SQTechPumps.resumeWaterBlocks.get(machine) != null && SQTechPumps.resumeWaterBlocks.get(machine).size() > 0) {
+								
+								ArrayList<Block> waterBlocks = SQTechPumps.resumeWaterBlocks.get(machine);
+								
+								Pump.pump(waterBlocks, machine, owner);
+								Bukkit.getLogger().log(Level.INFO, "[SQTechPump] Found: " + (SQTechPumps.resumeWaterBlocks.get(machine).size()-1) + " water blocks from origin: " + SQTechPumps.resumeWaterBlocks.get(machine).get(0));
+								
+							} else {*/
+								
+								Long before = System.currentTimeMillis();
+								detect(b.getRelative(BlockFace.DOWN), machine, owner);
+								Bukkit.getLogger().log(Level.INFO, "[SQTechPump] Detection took " + (System.currentTimeMillis() - before) + " ms");
 
+							//}
 
 						}
 
@@ -207,6 +217,10 @@ public class Pump extends MachineType {
 	public static void stopPumping(Machine machine, Player owner) {
 
 		Bukkit.getScheduler().cancelTask(taskId.get(machine));
+
+		if (SQTechPumps.waterBlocks.get(machine) != null) {
+			SQTechPumps.waterBlocks.get(machine).clear();
+		}
 
 		if (SQTechPumps.pumpingList.contains(machine)) {
 			SQTechPumps.pumpingList.remove(machine);
@@ -255,6 +269,8 @@ public class Pump extends MachineType {
 	public static void stopPumpingImmediately(Machine machine, Player owner) {
 
 		Bukkit.getScheduler().cancelTask(taskId.get(machine));
+
+		SQTechPumps.waterBlocks.get(machine).clear();
 
 		if (SQTechPumps.pumpingList.contains(machine)) {
 			SQTechPumps.pumpingList.remove(machine);
@@ -321,7 +337,7 @@ public class Pump extends MachineType {
 
 		PumpTask task = new PumpTask(waterBlocks, machine, owner);
 		task.runTask(SQTechPumps.plugin);
-		
+
 	}
 
 

@@ -8,11 +8,20 @@ energy consumption: 50
 activate energy consumption: 1000
 
 #How fast it pumps blocks. E.g. 20 -> 1 block/s  10 -> 2 block/s   5 -> 4 block/s
-pumping speed: 5
+pumping speed: 10
 
 #How much liquid a normal pump can store. (in millibuckets, 1 bucket -> 1000mb)
 #Please use multiples of 1000 since one bucket is 1000mb.
-max liquid: 10000
+max liquid: 50000
 
 #How much liquid a small tank can store. (in millibuckets, 1 bucket -> 1000mb)
+#Please use multiples of 1000 since one bucket is 1000mb.
 small tank max liquid: 100000
+
+#How much liquid a small tank can store. (in millibuckets, 1 bucket -> 1000mb)
+#Please use multiples of 1000 since one bucket is 1000mb.
+medium tank max liquid: 500000
+
+#How much liquid a small tank can store. (in millibuckets, 1 bucket -> 1000mb)
+#Please use multiples of 1000 since one bucket is 1000mb.
+large tank max liquid: 1000000
