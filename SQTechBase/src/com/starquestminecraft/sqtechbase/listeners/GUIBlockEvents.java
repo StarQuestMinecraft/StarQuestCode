@@ -232,7 +232,7 @@ public class GUIBlockEvents implements Listener {
 								
 								for (Machine machine : SQTechBase.machines) {
 									
-									if (machine.getGUIBlock().getLocation().equals(network.getGUIBlocks().get(i).getLocation())) {
+									if (machine.getGUIBlock().id == network.getGUIBlocks().get(i).id) {
 										
 										if (machine.detectStructure()) {
 											

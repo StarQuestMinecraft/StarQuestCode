@@ -28,7 +28,6 @@ import com.sk89q.worldguard.protection.ApplicableRegionSet;
 import com.sk89q.worldguard.protection.flags.DefaultFlag;
 import com.sk89q.worldguard.protection.flags.StateFlag.State;
 import com.sk89q.worldguard.protection.regions.ProtectedCuboidRegion;
-import com.sk89q.worldguard.protection.regions.ProtectedPolygonalRegion;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import com.whirlwindgames.dibujaron.sqempire.database.object.EmpirePercentage;
 import com.whirlwindgames.dibujaron.sqempire.database.object.EmpirePlayer;
@@ -80,12 +79,14 @@ public class EmpireCommand implements CommandExecutor{
 			Player p = Bukkit.getPlayer(args[0]);
 			EmpirePlayer ep = EmpirePlayer.getOnlinePlayer(p);
 			
-			Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "pp user " + p.getName() + " removegroup " + ep.getEmpire().getName() + "0");
-			Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "pp user " + p.getName() + " removegroup " + ep.getEmpire().getName() + "1");
-			Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "pp user " + p.getName() + " removegroup " + ep.getEmpire().getName() + "2");
-			Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "pp user " + p.getName() + " removegroup " + ep.getEmpire().getName() + "3");
-			Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "pp user " + p.getName() + " removegroup " + ep.getEmpire().getName() + "4");
-			Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "pp user " + p.getName() + " removegroup " + ep.getEmpire().getName() + "5");
+			Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "pp user " + p.getUniqueId().toString() + " removegroup " + ep.getEmpire().getName() + "0");
+			Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "pp user " + p.getUniqueId().toString() + " removegroup " + ep.getEmpire().getName() + "1");
+			Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "pp user " + p.getUniqueId().toString() + " removegroup " + ep.getEmpire().getName() + "2");
+			Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "pp user " + p.getUniqueId().toString() + " removegroup " + ep.getEmpire().getName() + "3");
+			Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "pp user " + p.getUniqueId().toString() + " removegroup " + ep.getEmpire().getName() + "4");
+			Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "pp user " + p.getUniqueId().toString() + " removegroup " + ep.getEmpire().getName() + "5");
+
+			Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "pp user " + p.getUniqueId().toString() + " addgroup Guest");
 			
 			ep.setEmpire(Empire.NONE);
 			ep.publishData();
@@ -943,7 +944,7 @@ public class EmpireCommand implements CommandExecutor{
 		if (ep.getEmpire() != Empire.NONE && ep.lastChanged.after(cal.getTime())) {		
 			
 			p.sendMessage(ChatColor.RED + "You have changed empires in the last month");
-			
+		
 		}
 		if(args.length < 2){
 			p.sendMessage(ChatColor.RED + "You must specify an empire to join, please choose Arator, Requiem, or Yavari.");
@@ -1000,21 +1001,22 @@ public class EmpireCommand implements CommandExecutor{
 					
 					if (ep.getEmpire() != Empire.NONE) {
 						
-						Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "pp user " + p.getName() + " removegroup " + ep.getEmpire().getName() + "0");
-						Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "pp user " + p.getName() + " removegroup " + ep.getEmpire().getName() + "1");
-						Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "pp user " + p.getName() + " removegroup " + ep.getEmpire().getName() + "2");
-						Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "pp user " + p.getName() + " removegroup " + ep.getEmpire().getName() + "3");
-						Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "pp user " + p.getName() + " removegroup " + ep.getEmpire().getName() + "4");
-						Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "pp user " + p.getName() + " removegroup " + ep.getEmpire().getName() + "5");
+						Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "pp user " + p.getUniqueId().toString() + " removegroup " + ep.getEmpire().getName() + "0");
+						Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "pp user " + p.getUniqueId().toString() + " removegroup " + ep.getEmpire().getName() + "1");
+						Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "pp user " + p.getUniqueId().toString() + " removegroup " + ep.getEmpire().getName() + "2");
+						Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "pp user " + p.getUniqueId().toString() + " removegroup " + ep.getEmpire().getName() + "3");
+						Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "pp user " + p.getUniqueId().toString() + " removegroup " + ep.getEmpire().getName() + "4");
+						Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "pp user " + p.getUniqueId().toString() + " removegroup " + ep.getEmpire().getName() + "5");
 						
 						SQEmpire.economy.withdrawPlayer(p, SQEmpire.economy.getBalance(p));
 						BungeePlayerHandler.wipePlayerInventory(p);
 							
 						MPlayer.get(p).setFaction(FactionColl.get().getNone());
+					
+						ep.lastChanged = Calendar.getInstance().getTime();
 						
 					}
 					
-					ep.lastChanged = Calendar.getInstance().getTime();
 					ep.setEmpire(e);
 					if(theirPercentage > 0.345)
 						SQEmpire.economy.depositPlayer(p, 7500);
@@ -1025,22 +1027,22 @@ public class EmpireCommand implements CommandExecutor{
 					}
 					p.sendMessage(ChatColor.GREEN + "You have succesfully joined empire " + e + "!");
 					if(e == Empire.ARATOR){
-						Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "pp user " + p.getName() + " addgroup Arator0");
+						Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "pp user " + p.getUniqueId().toString() + " addgroup Arator0");
 						BungeePlayerHandler.sendPlayer(p, "AratorSystem", "AratorSystem", 2598, 100, 1500);
 						Bukkit.dispatchCommand(Bukkit.getConsoleSender(), 
 								"eb janesudo Aratorians, please welcome your newest member " + p.getName() + "!");
 					} else if(e == Empire.REQUIEM){
-						Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "pp user " + p.getName() + " addgroup Requiem0");
+						Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "pp user " + p.getUniqueId().toString() + " addgroup Requiem0");
 						BungeePlayerHandler.sendPlayer(p, "QuillonSystem", "QuillonSystem", 1375, 100, -2381);
 						Bukkit.dispatchCommand(Bukkit.getConsoleSender(), 
 								"eb janesudo Requiem, please welcome your newest member " + p.getName() + "!");
 					} else if(e == Empire.YAVARI){
-						Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "pp user " + p.getName() + " addgroup Yavari0");
+						Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "pp user " + p.getUniqueId().toString() + " addgroup Yavari0");
 						BungeePlayerHandler.sendPlayer(p, "YavarSystem", "YavarSystem", 0, 231, 2500);
 						Bukkit.dispatchCommand(Bukkit.getConsoleSender(), 
 								"eb janesudo Yavari, please welcome your newest member " + p.getName() + "!");
 					}
-					Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "pp user " + p.getName() + " removegroup Guest");
+					Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "pp user " + p.getUniqueId().toString() + " removegroup Guest");
 				}
 			} else {
 				p.sendMessage(ChatColor.RED + "Incorrect usage, type /empire join <name>");

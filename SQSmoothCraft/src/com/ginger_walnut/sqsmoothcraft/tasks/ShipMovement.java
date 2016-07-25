@@ -1,4 +1,4 @@
-package com.ginger_walnut.sqsmoothcraft.ship;
+package com.ginger_walnut.sqsmoothcraft.tasks;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,12 +6,17 @@ import java.util.List;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.block.BlockFace;
+import org.bukkit.boss.BarColor;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.util.EulerAngle;
 import org.bukkit.util.Vector;
 import com.ginger_walnut.sqsmoothcraft.SQSmoothCraft;
+import com.ginger_walnut.sqsmoothcraft.objects.Ship;
+import com.ginger_walnut.sqsmoothcraft.objects.ShipBlock;
+import com.ginger_walnut.sqsmoothcraft.objects.ShipLocation;
 
 public class ShipMovement extends Thread {
 	
@@ -72,11 +77,29 @@ public class ShipMovement extends Thread {
 								
 							if ((ship.speed / ship.maxSpeed) < 1.0) {
 								
-								ship.speedBar.setProgress(ship.speed / ship.maxSpeed);
+								if (ship.speed > 0) {
+									
+									ship.speedBar.setColor(BarColor.BLUE);
+									
+									ship.speedBar.setProgress(ship.speed / ship.maxSpeed);
+									
+								} else if (ship.speed < 0) {
+									
+									ship.speedBar.setColor(BarColor.RED);
+									
+									ship.speedBar.setProgress(Math.abs(ship.speed) / ship.maxSpeed);
+									
+								} else {
+									
+									ship.speedBar.setColor(BarColor.WHITE);
+									
+									ship.speedBar.setProgress(0.0f);
+									
+								}
 								
 							}
 
-							ship.fuel = ship.fuel - ((((float) SQSmoothCraft.config.getDouble("utilites.reactor.fuel per second") / 20) * (ship.speed / ship.maxSpeed)) * ship.reactorList.size() * ship.reactorList.size());
+							ship.fuel = ship.fuel - ((((float) SQSmoothCraft.config.getDouble("utilites.reactor.fuel per second") / 20) * (Math.abs(ship.speed) / ship.maxSpeed)) * ship.reactorList.size() * ship.reactorList.size());
 							
 							if (ship.fuel < 0.0f) {
 								
@@ -84,7 +107,15 @@ public class ShipMovement extends Thread {
 								
 							}
 
-							ship.fuelBar.setProgress((ship.fuel / ship.startingFuel));
+							if (ship.startingFuel > 0) {
+								
+								ship.fuelBar.setProgress((ship.fuel / ship.startingFuel));
+								
+							} else {
+								
+								ship.fuelBar.setProgress(0.0);
+								
+							}
 							
 							if (ship.fuel > 0.0f) {
 
@@ -164,7 +195,7 @@ public class ShipMovement extends Thread {
 					}
 					
 				}
-						
+				
 				List<ShipBlock> shipBlocks = new ArrayList<ShipBlock>();
 				
 				for (int i = 0; i < SQSmoothCraft.shipMap.size(); i ++) {
@@ -273,8 +304,17 @@ public class ShipMovement extends Thread {
 							
 						}*/
 						
-						//if (clear) {						
-						if (detectionLocation.getWorld().getBlockAt(detectionLocation).getType().equals(Material.AIR)) {
+						//if (clear) {			
+						
+						List<Material> flyableBlocks = new ArrayList<Material>();
+						
+						flyableBlocks.add(Material.AIR);
+						//flyableBlocks.add(Material.WATER);
+						flyableBlocks.add(Material.YELLOW_FLOWER);
+						flyableBlocks.add(Material.LONG_GRASS);
+						//flyableBlocks.add(Material.STATIONARY_WATER);
+						
+						if (flyableBlocks.contains(detectionLocation.getWorld().getBlockAt(detectionLocation).getType())) {
 
 							locationShip.setX(x);
 							locationShip.setY(y);
@@ -282,7 +322,7 @@ public class ShipMovement extends Thread {
 							
 							stand.teleport(locationShip);
 							
-							if (locationShip.getWorld().getBlockAt(locationShip).getType().equals(Material.AIR)) {
+							if (flyableBlocks.contains(locationShip.getWorld().getBlockAt(locationShip).getType())) {
 
 								stand.setVelocity(locationShip.toVector().subtract(stand.getLocation().toVector()));
 
@@ -416,8 +456,17 @@ public class ShipMovement extends Thread {
 								
 							}*/
 							
-							//if (clear) {						
-							if (detectionLocation.getWorld().getBlockAt(detectionLocation).getType().equals(Material.AIR)) {
+							//if (clear) {
+							
+							List<Material> flyableBlocks = new ArrayList<Material>();
+							
+							flyableBlocks.add(Material.AIR);
+							//flyableBlocks.add(Material.WATER);
+							flyableBlocks.add(Material.YELLOW_FLOWER);
+							flyableBlocks.add(Material.LONG_GRASS);
+							//flyableBlocks.add(Material.STATIONARY_WATER);
+							
+							if (flyableBlocks.contains(detectionLocation.getWorld().getBlockAt(detectionLocation).getType())) {
 								
 								locationShip.setX(x);
 								locationShip.setY(y);
@@ -425,7 +474,7 @@ public class ShipMovement extends Thread {
 								
 								stand.teleport(locationShip);
 								
-								if (locationShip.getWorld().getBlockAt(locationShip).getType().equals(Material.AIR)) {
+								if (flyableBlocks.contains(locationShip.getWorld().getBlockAt(locationShip).getType())) {
 
 									stand.setVelocity(locationShip.toVector().subtract(stand.getLocation().toVector()));
 
@@ -487,7 +536,7 @@ public class ShipMovement extends Thread {
 				
 			}			
 			
-		}, 0, 1);
+		}, 0, 0);
 		
 	}
 	

@@ -1,4 +1,4 @@
-package com.ginger_walnut.sqsmoothcraft.ship;
+package com.ginger_walnut.sqsmoothcraft.listeners;
 
 import java.util.List;
 import java.util.ListIterator;
@@ -24,7 +24,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -40,19 +39,13 @@ import org.bukkit.metadata.MetadataValue;
 
 import com.dibujaron.cardboardbox.Knapsack;
 import com.ginger_walnut.sqsmoothcraft.SQSmoothCraft;
+import com.ginger_walnut.sqsmoothcraft.events.ShipExitEvent;
+import com.ginger_walnut.sqsmoothcraft.objects.Ship;
+import com.ginger_walnut.sqsmoothcraft.objects.ShipBlock;
+import com.ginger_walnut.sqsmoothcraft.utils.ShipUtils;
 import com.martinjonsson01.sqsmoothcraft.missile.MissileGUI;
 
 public class ShipEvents implements Listener {
-	
-	@EventHandler void onEntityDamage(EntityDamageEvent event) {
-		
-		if (event.getEntity() instanceof ArmorStand) {
-			
-			//System.out.print(event.getCause());
-			
-		}
-		
-	}
 	
 	@EventHandler
 	public void onProjectileHit(ProjectileHitEvent event) {
@@ -517,6 +510,22 @@ public class ShipEvents implements Listener {
 			ship.exit(true);
 			ship.setSpeed(0);
 			ship.blockify(true);
+			
+		}
+		
+	}
+	
+	@EventHandler
+	public void onShipExit(ShipExitEvent event) {
+		
+		if (event.player.getBukkitEntity() instanceof Player) {
+			
+			Player player = (Player) event.player.getBukkitEntity();
+			
+			if (SQSmoothCraft.shipMap.containsKey(player.getUniqueId())) {
+				event.setCancelled(true);
+
+			}
 			
 		}
 		

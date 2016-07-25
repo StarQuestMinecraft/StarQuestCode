@@ -9,7 +9,7 @@ import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import com.ginger_walnut.sqsmoothcraft.ship.ShipUtils;
+import com.ginger_walnut.sqsmoothcraft.utils.ShipUtils;
 
 public class Option {
 

@@ -1,4 +1,4 @@
-package com.ginger_walnut.sqsmoothcraft.ship;
+package com.ginger_walnut.sqsmoothcraft.tasks;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -7,6 +7,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.scheduler.BukkitScheduler;
 
 import com.ginger_walnut.sqsmoothcraft.SQSmoothCraft;
+import com.ginger_walnut.sqsmoothcraft.objects.Ship;
+import com.ginger_walnut.sqsmoothcraft.objects.ShipBlock;
 
 public class ShipTasks extends Thread {
 	

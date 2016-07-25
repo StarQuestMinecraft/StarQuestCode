@@ -5,15 +5,13 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 
-import org.bukkit.Bukkit;
-
 public class SQLDatabase {
 
 	BedspawnConnectionProvider con;
 
 	static final String WRITE_OBJECT_SETTINGS_SQL = "CALL set_smoothcraft_options(?, ?, ?);";
 	static final String READ_OBJECT_SETTINGS_SQL = "SELECT * FROM minecraft.smoothcraft_settings";
-	static final String CREATE_TABLE_SETTINGS = "CREATE TABLE IF NOT EXISTS minecraft.smoothcraft_settings(player varchar(40) NOT NULL, last_update datetime NOT NULL, locked_direction tinyint DEFAULT 1)";
+	static final String CREATE_TABLE_SETTINGS = "CREATE TABLE IF NOT EXISTS minecraft.smoothcraft_settings(player varchar(40) NOT NULL, object BLOB)";
 	
 	public SQLDatabase() {
 		

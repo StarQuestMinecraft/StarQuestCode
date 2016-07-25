@@ -1,4 +1,4 @@
-package com.ginger_walnut.sqsmoothcraft.ship;
+package com.ginger_walnut.sqsmoothcraft.objects;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,11 +33,15 @@ import org.bukkit.util.Vector;
 import us.higashiyama.george.SQSpace.SQSpace;
 
 import com.ginger_walnut.sqsmoothcraft.SQSmoothCraft;
+import com.ginger_walnut.sqsmoothcraft.enums.BlockType;
 import com.ginger_walnut.sqsmoothcraft.gui.MainGui;
+import com.ginger_walnut.sqsmoothcraft.tasks.CooldownHandler;
+import com.ginger_walnut.sqsmoothcraft.tasks.ProjectileSmoother;
+import com.ginger_walnut.sqsmoothcraft.tasks.ShipCreator;
 
 public class Ship {
 	
-	Player captain = null;
+	public Player captain = null;
 	
 	public List<ShipBlock> blockList = null;
 	public List<ShipBlock> cannonList = null;	
@@ -47,41 +51,44 @@ public class Ship {
 	
 	public double shieldHealth = 0;
 	
-	ShipBlock mainBlock = null;
+	public ShipBlock mainBlock = null;
 	
 	public ShipBlock thirdPersonBlock = null;
 	public EntityPlayer thirdPersonPlayer = null;
 	
-	float speed = 0.0f;
-	float maxSpeed = 0.0f;
+	public float speed = 0.0f;
+	public float maxSpeed = 0.0f;
 	
-	float acceleration = 0.0f;
+	public float playerInput;
+	public float lastPlayerInput;
 	
-	float maxYawRate = 0.0f;
+	public float acceleration = 0.0f;
 	
-	ShipDirection pointingDirection = null;
-	ShipDirection movingDirection = null;
+	public float maxYawRate = 0.0f;
 	
-	ShipDirection lastPointingDirection = null;
-	ShipDirection lastMovingDirection = null;
+	public ShipDirection pointingDirection = null;
+	public ShipDirection movingDirection = null;
 	
-	Location lastLocation = null;
+	public ShipDirection lastPointingDirection = null;
+	public ShipDirection lastMovingDirection = null;
 	
-	Location location = null;	
+	public Location lastLocation = null;
 	
-	boolean lockedDirection = true;
+	public Location location = null;	
 	
-	float fuel = 0;
-	float startingFuel = 0;
+	public boolean lockedDirection = true;
 	
-	int catalysts = 0;
+	public float fuel = 0;
+	public float startingFuel = 0;
 	
-	BossBar speedBar = null;
-	BossBar fuelBar = null;
+	public int catalysts = 0;
 	
-	boolean alternatingBlockDirection = false;
+	public BossBar speedBar = null;
+	public BossBar fuelBar = null;
 	
-	boolean explosiveMode = false;
+	public boolean alternatingBlockDirection = false;
+	
+	public boolean explosiveMode = false;
 	
 	public Ship (List<ShipBlock> shipBlocks, ShipBlock firstMainBlock, Player firstCaptain, float firstMaxSpeed, float firstMaxYawRate, float maxAcceleration, float firstFuel, int firstCatalysts) {
 		
@@ -104,7 +111,7 @@ public class Ship {
 		
 		lastPointingDirection = new ShipDirection(captain.getLocation().getYaw(), captain.getLocation().getPitch());
 		lastMovingDirection = new ShipDirection(captain.getLocation().getYaw(), captain.getLocation().getPitch());
-		
+
 		acceleration = maxAcceleration;
 		
 		speedBar = Bukkit.createBossBar("Speed", BarColor.BLUE, BarStyle.SEGMENTED_10);
@@ -797,46 +804,30 @@ public class Ship {
 		
 	}	
 	
-	public void accelerate(float multiplier) {
-		
-		if (fuel > 0.0f) {
-			
-			if (speed >= maxSpeed){
-				
-				speed = maxSpeed;
-				
-			} else {
-				
-				speed = speed + (acceleration * multiplier);
-				
-			}
-			
-		}
-		
-	}
-	
 	public void decelerate(float multiplier) {
-		
-		if (fuel > 0.0f) {
 			
-			if (speed <= 0){
+		if (speed <= 0){
 				
-				speed = 0;
-				
-			} else {
-				
-				speed = speed - (acceleration * multiplier);
-				
-			}
+			speed = speed + (acceleration * multiplier);
 			
-			if (speed < 0) {
+			if (speed >= 0) {
 				
 				speed = 0;
 				
 			}
 			
+		} else {
+				
+			speed = speed - (acceleration * multiplier);
+			
+			if (speed <= 0) {
+				
+				speed = 0;
+				
+			}
+				
 		}
-		
+
 	}
 	
 	public void toggleLock() {
@@ -893,16 +884,8 @@ public class Ship {
 		
 		if (itemInHand.getType().equals(Material.WATCH)) {
 			
-			if (itemInHand.getItemMeta().getDisplayName().equals("Accelerator")) {
-				
-				accelerate(1);
-				
-			} else if (itemInHand.getItemMeta().getDisplayName().equals("Decelerator")) {
-				
-				decelerate(1);
-				
-			}
-			
+			fireMissles();
+
 		} else if (itemInHand.getType().equals(Material.COMPASS)) {
 			
 			toggleLock();
@@ -921,8 +904,7 @@ public class Ship {
 			p.sendMessage(ChatColor.GOLD + "" + ChatColor.BOLD + "[EM Field] " + "Field strength currently at: " + SQSmoothCraft.shipMap.get(p.getUniqueId()).shieldHealth);
 			
 		} else {
-			
-			
+
 			return true;
 			
 		}
@@ -939,13 +921,9 @@ public class Ship {
 			
 			String name = itemInHand.getItemMeta().getDisplayName();
 			
-			if (name.equals("Main Control Device") || name.equals("Accelerator") || name.equals("Decelerator")) {
+			if (name.equals("Main Control Device")) {
 				
 				fireCannons();
-				
-			} else if (name.equals("Missile Controler")) {
-				
-				fireMissles();
 				
 			}
 			

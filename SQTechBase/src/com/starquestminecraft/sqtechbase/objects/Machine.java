@@ -27,7 +27,9 @@ public class Machine {
 	public List<Fluid> liquidExports = new ArrayList<Fluid>();
 	public List<Fluid> liquidImports = new ArrayList<Fluid>();
 	
-	private HashMap<Fluid, Integer> liquid = new HashMap<Fluid, Integer>();
+	public HashMap<Fluid, Integer> liquid = new HashMap<Fluid, Integer>();
+	
+	public HashMap<Fluid, Integer> maxLiquid = new HashMap<Fluid, Integer>();
 	
 	public Machine(int energy, GUIBlock guiBlock, MachineType machineType) {
 		
@@ -63,11 +65,13 @@ public class Machine {
 		
 		SQTechBase.machines.removeAll(removeMachines);
 		
-		for (Fluid fluid : machineType.maxLiquid.keySet()) {
+		for (Fluid fluid : maxLiquid.keySet()) {
 			
 			liquid.put(fluid, 0);
 			
 		}
+		
+		machineType.initialize(this);
  		
 	}
 	
@@ -158,7 +162,25 @@ public class Machine {
 			
 			machineType.updateLiquid(this);
 			
+		} else {
+			
+			liquid.put(fluid, amount);
+			
+			machineType.updateLiquid(this);
+			
 		}
+		
+	}
+	
+	public int getMaxLiquid(Fluid fluid) {
+		
+		if (maxLiquid.containsKey(fluid)) {
+			
+			return maxLiquid.get(fluid);
+			
+		}
+		
+		return 0;
 		
 	}
 	

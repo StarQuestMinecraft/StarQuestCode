@@ -1,4 +1,4 @@
-package com.ginger_walnut.sqsmoothcraft.ship;
+package com.ginger_walnut.sqsmoothcraft.utils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,6 +13,8 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import com.ginger_walnut.sqsmoothcraft.SQSmoothCraft;
+import com.ginger_walnut.sqsmoothcraft.objects.Ship;
+import com.ginger_walnut.sqsmoothcraft.objects.ShipBlock;
 
 public class ShipUtils {
 	
@@ -98,7 +100,8 @@ public class ShipUtils {
 		mcdLore.add(ChatColor.DARK_PURPLE + "Point in the direction you want to turn");
 		mcdLore.add(ChatColor.DARK_PURPLE + "while holding this to turn. You can left");
 		mcdLore.add(ChatColor.DARK_PURPLE + "click while holding this to fire the");
-		mcdLore.add(ChatColor.DARK_PURPLE + "ship's main cannons.");
+		mcdLore.add(ChatColor.DARK_PURPLE + "ship's main cannons and right click to");
+		mcdLore.add(ChatColor.DARK_PURPLE + "fire the ship's missiles.");
 		
 		mcdMeta.setLore(mcdLore);
 		
@@ -106,41 +109,7 @@ public class ShipUtils {
 		
 		player.getInventory().setItem(1, mcd);
 		SQSmoothCraft.controlItems.add(mcd);
-		
-		ItemStack accel = new ItemStack(Material.WATCH);
-		ItemMeta accelMeta = accel.getItemMeta();
-		
-		accelMeta.setDisplayName("Accelerator");
-		
-		List<String> accelLore = new ArrayList<String>();
-		accelLore.add(ChatColor.DARK_PURPLE + "Has the same function as the Main Control");
-		accelLore.add(ChatColor.DARK_PURPLE + "Device except when you right click, the");
-		accelLore.add(ChatColor.DARK_PURPLE + "ship accelerates");
-		
-		accelMeta.setLore(accelLore);
-		
-		accel.setItemMeta(accelMeta);
-		
-		player.getInventory().setItem(2, accel);
-		SQSmoothCraft.controlItems.add(accel);
-		
-		ItemStack decel = new ItemStack(Material.WATCH);
-		ItemMeta decelMeta = decel.getItemMeta();
-		
-		decelMeta.setDisplayName("Decelerator");
-		
-		List<String> decelLore = new ArrayList<String>();
-		decelLore.add(ChatColor.DARK_PURPLE + "Has the same function as the Main Control");
-		decelLore.add(ChatColor.DARK_PURPLE + "Device except when you right click, the");
-		decelLore.add(ChatColor.DARK_PURPLE + "ship decelerates");
-		
-		decelMeta.setLore(decelLore);
-		
-		decel.setItemMeta(decelMeta);
-		
-		player.getInventory().setItem(3, decel);
-		SQSmoothCraft.controlItems.add(decel);
-		
+
 		ItemStack explosive = new ItemStack(Material.SULPHUR);
 		ItemMeta explosiveMeta = explosive.getItemMeta();
 		
@@ -154,25 +123,8 @@ public class ShipUtils {
 		
 		explosive.setItemMeta(explosiveMeta);
 		
-		player.getInventory().setItem(4, explosive);
+		player.getInventory().setItem(2, explosive);
 		SQSmoothCraft.controlItems.add(explosive);
-		
-		ItemStack missle = new ItemStack(Material.WATCH);
-		ItemMeta missleMeta = missle.getItemMeta();
-		
-		missleMeta.setDisplayName("Missile Controler");
-		
-		List<String> missleLore = new ArrayList<String>();
-		missleLore.add(ChatColor.DARK_PURPLE + "Has the same function as the Main Control");
-		missleLore.add(ChatColor.DARK_PURPLE + "Device except when you left click, missiles");
-		missleLore.add(ChatColor.DARK_PURPLE + "are launched");
-		
-		missleMeta.setLore(missleLore);
-		
-		missle.setItemMeta(missleMeta);
-		
-		player.getInventory().setItem(5, missle);
-		SQSmoothCraft.controlItems.add(missle);
 		
 		ItemStack directionLock = new ItemStack(Material.COMPASS);
 		ItemMeta directionLockMeta = directionLock.getItemMeta();

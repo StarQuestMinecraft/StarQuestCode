@@ -39,6 +39,10 @@ public class SerializableMachine implements Serializable {
 	List<Integer> liquidExports = new ArrayList<Integer>();
 	List<Integer> liquidImports = new ArrayList<Integer>();
 	
+	public HashMap<Integer, Integer> liquid = new HashMap<Integer, Integer>();
+	
+	public HashMap<Integer, Integer> maxLiquid = new HashMap<Integer, Integer>();
+	
 	public SerializableMachine(Machine machine) {
 		
 		machineType = machine.getMachineType().name;
@@ -82,6 +86,18 @@ public class SerializableMachine implements Serializable {
 		for (Fluid fluid : machine.liquidImports) {
 			
 			liquidImports.add(fluid.id);
+			
+		}
+		
+		for (Fluid fluid : machine.liquid.keySet()) {
+			
+			liquid.put(fluid.id, machine.liquid.get(fluid));
+			
+		}
+		
+		for (Fluid fluid : machine.maxLiquid.keySet()) {
+			
+			maxLiquid.put(fluid.id, machine.maxLiquid.get(fluid));
 			
 		}
 		
@@ -136,8 +152,6 @@ public class SerializableMachine implements Serializable {
 										
 										if (fluid.id == id) {
 											
-											System.out.print(id);
-											
 											machine.liquidExports.add(fluid);
 											
 										}
@@ -153,6 +167,38 @@ public class SerializableMachine implements Serializable {
 										if (fluid.id == id) {
 											
 											machine.liquidImports.add(fluid);
+											
+										}
+										
+									}
+									
+								}
+								
+							}
+							
+							if (liquid != null) {
+								
+								for (Integer id : liquid.keySet()) {
+									
+									for (Fluid fluid : SQTechBase.fluids) {
+										
+										if (fluid.id == id) {
+											
+											machine.liquid.put(fluid, liquid.get(id));
+											
+										}
+										
+									}
+									
+								}
+								
+								for (Integer id : maxLiquid.keySet()) {
+									
+									for (Fluid fluid : SQTechBase.fluids) {
+										
+										if (fluid.id == id) {
+											
+											machine.maxLiquid.put(fluid, maxLiquid.get(id));
 											
 										}
 										

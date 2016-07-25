@@ -38,7 +38,7 @@ public class LiquidExportGUI extends GUI {
 		
 		List<Fluid> fluids = new ArrayList<Fluid>();
 		
-		fluids.addAll(machine.getMachineType().maxLiquid.keySet());
+		fluids.addAll(machine.maxLiquid.keySet());
 		
 		for (int i = 0; i < fluids.size(); i ++) {
 				
@@ -117,7 +117,7 @@ public class LiquidExportGUI extends GUI {
 					
 					List<Fluid> fluids = new ArrayList<Fluid>();
 					
-					fluids.addAll(machine.getMachineType().maxLiquid.keySet());
+					fluids.addAll(machine.maxLiquid.keySet());
 					
 					if (fluids.size() + 8 >= event.getSlot()) {
 

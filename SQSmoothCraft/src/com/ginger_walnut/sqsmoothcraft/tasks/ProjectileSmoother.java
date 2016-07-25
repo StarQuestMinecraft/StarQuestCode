@@ -1,4 +1,4 @@
-package com.ginger_walnut.sqsmoothcraft.ship;
+package com.ginger_walnut.sqsmoothcraft.tasks;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
