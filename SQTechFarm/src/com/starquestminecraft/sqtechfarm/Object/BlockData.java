@@ -32,4 +32,14 @@ public class BlockData
 	{
 		return blockLoc;
 	}
+	
+	public Block getBlock()
+	{
+		return blockLoc.getBlock();
+	}
+	
+	public void changeLoc(Location newLoc)
+	{
+		this.blockLoc = newLoc;
+	}
 }

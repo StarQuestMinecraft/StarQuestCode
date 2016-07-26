@@ -22,7 +22,13 @@ import com.starquestminecraft.sqtechfarm.util.DirectionUtils;
 
 public class Harvester extends MachineType
 {
-
+	public static enum HarvesterSize
+	{
+		SMALL,
+		MEDIUM,
+		LARGE
+	};
+	
 	private SQTechFarm plugin;
 	
 	public String name = "Harvester";
@@ -36,6 +42,21 @@ public class Harvester extends MachineType
 	}
 	
 	/**
+	 * Return a default size of 10 if no size in the config could be found.
+	 */
+	public int getSizeForHarvesterSize(HarvesterSize size)
+	{
+		switch(size)
+		{
+			case SMALL: return plugin.getSettings().getHarvesterSizeSmall();
+			case MEDIUM: return plugin.getSettings().getHarvesterSizeMedium();
+			case LARGE: return plugin.getSettings().getHarvesterSizeLarge();
+			default:
+				return 10;
+		}
+	}
+	
+	/**
 	 * @return boolean indicating if the detection was successful
 	 */
 	public boolean detectStructure(GUIBlock guiBlock)
@@ -45,7 +66,7 @@ public class Harvester extends MachineType
 		Block ironFarmHeadAnchorBlock; // the iron block
 		Block chest;
 		Block dropper;
-		Block farmHarvesterHead; // the stained glass pane
+		Block farmHarvesterHead; // the stained glass pane / end rod
 		List<Block> anchorSupports; // the wood fence
 		List<Block> farmHeadSupports; // the iron bars
 		
@@ -178,6 +199,9 @@ public class Harvester extends MachineType
 	{
 		List<Block> result = new ArrayList<Block>();
 		
+		if(forward == null)
+			return result;
+		
 		boolean running = true;
 		int length = 1;
 		
@@ -244,7 +268,6 @@ public class Harvester extends MachineType
 	
 	/**
 	 * Gets the location of the harvesting row on the farm supports or null if something went wrong.
-	 * @param anchor the iron anchor Block for harvesters
 	 * @param forward the forward direction of a harvester
 	 * @return an Integer representing the location of the harvesting row location
 	 */
@@ -274,6 +297,30 @@ public class Harvester extends MachineType
 				}
 			}
 			count++;
+		}
+		
+		return null;
+	}
+	
+	/**
+	 * Gets the location of the harvesting head on the supports or null if something went wrong.
+	 * @param forward the forward direction of a harvester
+	 * @return an Integer representing the location of the harvesting head location
+	 */
+	public Integer getHarvesterHeadLocation(Block guiBlock, BlockFace forward, List<Block> farmHeadSupport)
+	{
+		if(farmHeadSupport.size() == 0)
+			return null;
+		
+		Integer count = 1;
+		
+		for(Block support : farmHeadSupport)
+		{
+			if(support.getRelative(BlockFace.UP).getType() == Material.STAINED_GLASS_PANE 
+					|| support.getRelative(BlockFace.UP).getType() == Material.END_ROD)
+				return count;
+			else
+				count++;
 		}
 		
 		return null;

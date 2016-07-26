@@ -16,6 +16,7 @@ import com.starquestminecraft.sqtechbase.util.InventoryUtils;
 import com.starquestminecraft.sqtechbase.util.ObjectUtils;
 import com.starquestminecraft.sqtechfarm.SQTechFarm;
 import com.starquestminecraft.sqtechfarm.harvester.Harvester;
+import com.starquestminecraft.sqtechfarm.harvester.Harvester.HarvesterSize;
 import com.starquestminecraft.sqtechfarm.harvester.Object.MovingHarvester;
 
 public class HarvesterGUI extends GUI
@@ -42,12 +43,20 @@ public class HarvesterGUI extends GUI
 		
 		gui.setItem(8, InventoryUtils.createSpecialItem(Material.WOOD_DOOR, (short) 0, ChatColor.GOLD + "Back", new String[] {ChatColor.RED + "" + ChatColor.MAGIC + "Contraband"}));	
 		gui.setItem(7, InventoryUtils.createSpecialItem(Material.REDSTONE, (short) 0, ChatColor.GREEN + "Energy: " + machine.getEnergy(), new String[] {ChatColor.RED + "" + ChatColor.MAGIC + "Contraband"}));	
-			
-		if(plugin.isActive(machine) == true)
-			gui.setItem(4, InventoryUtils.createSpecialItem(Material.REDSTONE_TORCH_ON, (short) 0, ChatColor.RED + "Stop", new String[] {ChatColor.RED + "" + ChatColor.MAGIC + "Contraband"}));	
+		
+		if(machine.data.get("blocked") != null && (Boolean) machine.data.get("blocked") == true)
+		{
+			gui.setItem(4, InventoryUtils.createSpecialItem(Material.BEDROCK, (short) 0, ChatColor.DARK_GRAY + "" + ChatColor.ITALIC + "Blocked", new String[] {ChatColor.GOLD + "This happens when a harvester is doing something that can't be interrupted.",ChatColor.RED + "" + ChatColor.MAGIC + "Contraband"}));	
+		}
 		else
-			gui.setItem(4, InventoryUtils.createSpecialItem(Material.REDSTONE_LAMP_OFF, (short) 0, ChatColor.RED + "Start", new String[] {ChatColor.RED + "" + ChatColor.MAGIC + "Contraband"}));	
-
+		{
+			if(plugin.isActive(machine) == true)
+				gui.setItem(4, InventoryUtils.createSpecialItem(Material.REDSTONE_TORCH_ON, (short) 0, ChatColor.RED + "Stop", new String[] {ChatColor.RED + "" + ChatColor.MAGIC + "Contraband"}));	
+			else
+				gui.setItem(4, InventoryUtils.createSpecialItem(Material.REDSTONE_LAMP_OFF, (short) 0, ChatColor.RED + "Start", new String[] {ChatColor.RED + "" + ChatColor.MAGIC + "Contraband"}));	
+		}
+		//TODO replace when upgrades are implemented
+		machine.data.put("maxSize", plugin.getSettings().getDefaultSize()); // Sets the default size to minimum
 		
 		owner.openInventory(gui);
 		
@@ -88,19 +97,32 @@ public class HarvesterGUI extends GUI
 			}
 			else if(event.getSlot() == 4) // start/stop button
 			{
-				boolean isActive;
+				boolean isActive = true;
+				boolean isBlocked = false;
 				
 				if(clickedItem.getType() == Material.REDSTONE_LAMP_OFF)
 					isActive = false;
-				else
-					isActive = true;
+				else if(clickedItem.getType() == Material.BEDROCK) // blocked
+					isBlocked = true;
+				
+				if(isBlocked)
+				{
+					event.getWhoClicked().closeInventory();
+					return;
+				}
 				
 				if(isActive == false) // turn on
 				{
 					if(event.getWhoClicked().hasPermission("SQTechFarm.harvester.activate"))
 					{
-						MovingHarvester harvester = new MovingHarvester(plugin, ObjectUtils.getMachineFromMachineGUI(this), (Player) event.getWhoClicked());
-						harvester.startHarvester();
+						// Check if the machine is too big.
+						if((Integer) machine.data.get("size") > plugin.getHarvesterType().getSizeForHarvesterSize((HarvesterSize) machine.data.get("maxSize")))
+							event.getWhoClicked().sendMessage(ChatColor.RED + "Your harvester is too big!");
+						else
+						{
+							MovingHarvester harvester = new MovingHarvester(plugin, machine, (Player) event.getWhoClicked());
+							harvester.startHarvester(); // Harvester is registered
+						}
 						event.getWhoClicked().closeInventory();
 						return;
 					}
@@ -114,6 +136,7 @@ public class HarvesterGUI extends GUI
 				{
 					//main.movingDrill.deactivateDrill(machine, (Player) event.getWhoClicked());
 					machine.data.put("isActive", false);
+					plugin.unRegisterMovingHarvester(machine);
 					event.getWhoClicked().closeInventory();
 					return;
 				}

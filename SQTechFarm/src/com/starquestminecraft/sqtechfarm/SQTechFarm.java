@@ -49,8 +49,8 @@ public class SQTechFarm extends JavaPlugin
 			machine.data.put("isActive", false);
 			return false;
 		}
-		
-		return (Boolean) machine.data.get("isActive");
+		else
+			return (Boolean) machine.data.get("isActive");
 	}
 	
 	public void setActive(Machine machine)
