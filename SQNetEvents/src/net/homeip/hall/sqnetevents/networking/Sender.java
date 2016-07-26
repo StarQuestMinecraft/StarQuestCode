@@ -7,6 +7,8 @@ import java.net.SocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
 
+import org.bukkit.Bukkit;
+
 import net.homeip.hall.sqnetevents.SQNetEvents;
 import net.homeip.hall.sqnetevents.packet.Packet;
 
@@ -57,14 +59,15 @@ public class Sender implements Closeable {
 			}
 			System.out.println("[NetEvents] Sent packet to address " + getSendAddress());
 		}
-		// Will attempt to reestablish connection
+		// Will attempt to reestablish connection after 10000ms delay
 		else {
-			if(!(SQNetEvents.getInstance().isHub())) {
-				System.out.println("[NetEvents] Attempting to reestablish connection with address " + getSendAddress());
-			}
-			ConnectThread connectThread = new ConnectThread();
-			connectThread.start();
-			
+			System.out.println("[NetEvents] Attempting to reestablish connection with address " + getSendAddress());
+			Bukkit.getScheduler().runTaskLaterAsynchronously(SQNetEvents.getInstance(), new Runnable() {
+				public void run() {
+					connect();
+				}
+			}, 10000L);
+			connect();
 		}
 	}
 
@@ -99,7 +102,7 @@ public class Sender implements Closeable {
 						e.printStackTrace();
 					}
 				} catch (IOException e) {
-					System.out.println("[NetEvents] Failed to connect. Reattempting...");
+					//System.out.println("[NetEvents] Failed to connect. Reattempting...");
 					try {
 						sleep(10000L);
 					} catch (InterruptedException ie) {
