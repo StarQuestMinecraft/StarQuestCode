@@ -65,7 +65,6 @@ public class MovingHarvester
 	public void stopHarvester()
 	{
 		plugin.unRegisterMovingHarvester(machine);
-		plugin.setInactive(machine);
 		task.cancel();
 		plugin.setInactive(machine);
 	}
@@ -106,7 +105,8 @@ public class MovingHarvester
 	 */
 	void restartTask(int delay)
 	{
-		this.task.runTaskLater(plugin, delay);
+		this.task = new HarvesterTask(plugin, this, player, machine, harvester); // moves head and harvests foods
+		task.runTaskLater(plugin, delay);
 	}
 
 }
