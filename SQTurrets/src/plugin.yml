@@ -1,6 +1,6 @@
 name: SQTurrets
 main: us.higashiyama.george.SQTurrets.SQTurrets
-version: 1.7.3
+version: 1.8.0
 commands:
   turretsreload:
   turretlist:

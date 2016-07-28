@@ -4,6 +4,7 @@ package us.higashiyama.george.SQTurrets;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 
 import org.bukkit.Bukkit;
@@ -31,11 +32,13 @@ import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import us.higashiyama.george.SQTurrets.types.*;
+
 public class SQTurrets extends JavaPlugin implements Listener {
 
 	public static HashMap<Player, Long> cooldownMap = new HashMap<Player, Long>();
 	public static ArrayList<Turret> turretTypes = new ArrayList<Turret>();
-	public static ArrayList<Ammo> ammoTypes = new ArrayList<Ammo>();
+	public static List<Ammo> ammoTypes = new ArrayList<Ammo>();
 	public static SQTurrets instance;
 	public static ArrayList<Projectile> eggs = new ArrayList<Projectile>();
 	public static FileConfiguration config;
@@ -56,45 +59,49 @@ public class SQTurrets extends JavaPlugin implements Listener {
 		for (String name : config.getConfigurationSection("ammos").getKeys(false)) {
 			Ammo a = new Ammo();
 			a.setName(name);
-			a.setItem(new ItemStack(config.getInt("ammos." + name + ".id"), config.getInt("ammos." + name + ".quantity")));
+			a.setItem(new ItemStack(Material.matchMaterial(config.getString("ammos." + name + ".id")), config.getInt("ammos." + name + ".quantity")));
 			a.setFire(config.getBoolean("ammos." + name + ".fire"));
 			a.setVelocity(config.getDouble("ammos." + name + ".velocity"));
 			ammoTypes.add(a);
 		}
 	}
 
-	private static void loadTurrets() {
-
-		for (String name : config.getConfigurationSection("turrets").getKeys(false)) {
-			Turret t = new Turret();
-			t.setName(name);
-			t.setPermission(config.getString("turrets." + name + ".permission"));
-			t.setCooldown(config.getLong("turrets." + name + ".cooldown"));
-			List<Integer> base = config.getIntegerList("turrets." + name + ".basematerials");
+	private static void loadTurrets(){
+		turretTypes.add(new ArrowTurret());
+		turretTypes.add(new FireballTurret());
+		//turretTypes.add(new BeamTurret());
+		turretTypes.add(new PotionTurret());
+		Iterator<Turret> it = turretTypes.iterator();
+		while(it.hasNext()){
+			Turret turret = it.next();
+			turret.setPermission(config.getString("turrets." + turret.getName() + ".permission"));
+			turret.setCooldown(config.getLong("turrets." + turret.getName() + ".cooldown"));
+			List<String> base = config.getStringList("turrets." + turret.getName() + ".basematerials");
 			ArrayList<Material> baseMaterials = new ArrayList<Material>();
-			for (int sId : base) {
-				baseMaterials.add(Material.getMaterial(sId));
+			for(String material : base){
+				baseMaterials.add(Material.matchMaterial(material));
 			}
-			List<Integer> top = config.getIntegerList("turrets." + name + ".topmaterials");
+			turret.setBaseMaterials(baseMaterials);
+			List<String> top = config.getStringList("turrets." + turret.getName() + ".topmaterials");
 			ArrayList<Material> topMaterials = new ArrayList<Material>();
-			for (int sId : top) {
-				topMaterials.add(Material.getMaterial(sId));
+			for (String material : top) {
+				topMaterials.add(Material.matchMaterial(material));
 			}
-			t.setBaseMaterials(baseMaterials);
-			t.setTopMaterials(topMaterials);
+			turret.setTopMaterials(topMaterials);
 			ArrayList<Ammo> turretAmmo = new ArrayList<Ammo>();
-			List<String> turretAmmoStrings = config.getStringList("turrets." + name + ".ammo");
+			List<String> turretAmmoStrings = config.getStringList("turrets." + turret.getName() + ".ammo");
+			System.out.print(turret.getName() + " ammo types: ");
 			for (Ammo a : ammoTypes) {
 				for (String s : turretAmmoStrings) {
 					if (a.getName().equalsIgnoreCase(s)) {
+						System.out.print(a.getName() + ", ");
 						turretAmmo.add(a);
 					}
 				}
 			}
-			t.setProjectileString(config.getString("turrets." + name + ".projectile"));
-			t.setAmmos(turretAmmo);
-			t.setVelocity(config.getDouble("turrets." + name + ".velocity"));
-			turretTypes.add(t);
+			System.out.println();
+			turret.setAmmos(turretAmmo);
+			turret.setVelocity(config.getDouble("turrets." + turret.getName() + ".velocity"));
 		}
 	}
 
@@ -174,7 +181,7 @@ public class SQTurrets extends JavaPlugin implements Listener {
 				if ((s.getLine(0).equalsIgnoreCase(ChatColor.BLUE + t.getName().toUpperCase())) && (s.getLine(1).equals(ChatColor.GREEN + "UNOCCUPIED"))) {
 					// if the construction is a turret
 					if (Turret.detectTurret(s, t)) {
-						if (event.getPlayer().getItemInHand().getType() == Material.WATCH) {
+						if (event.getPlayer().getInventory().getItemInMainHand().getType() == Material.WATCH) {
 							if (!DirectionUtils.playerOffsetLocation(event.getPlayer(), s)) {
 								event.getPlayer().sendMessage(ChatColor.RED + "You must be standing next to the turret sign to use it!");
 								return;
@@ -200,7 +207,7 @@ public class SQTurrets extends JavaPlugin implements Listener {
 
 		}
 
-		if ((event.getAction() == Action.LEFT_CLICK_BLOCK) && (event.getPlayer().getItemInHand().getType() == Material.WATCH)
+		if ((event.getAction() == Action.LEFT_CLICK_BLOCK) && (event.getPlayer().getInventory().getItemInMainHand().getType() == Material.WATCH)
 				&& (isInTurret(event.getPlayer()))) {
 
 			Turret t = detectTurretType((Player) event.getPlayer());
@@ -212,7 +219,7 @@ public class SQTurrets extends JavaPlugin implements Listener {
 			return;
 		}
 
-		if ((event.getAction() == Action.RIGHT_CLICK_BLOCK) && (event.getPlayer().getItemInHand().getType() == Material.WATCH)
+		if ((event.getAction() == Action.RIGHT_CLICK_BLOCK) && (event.getPlayer().getInventory().getItemInMainHand().getType() == Material.WATCH)
 				&& (isInTurret(event.getPlayer()))) {
 
 			Turret t = detectTurretType((Player) event.getPlayer());
@@ -310,6 +317,7 @@ public class SQTurrets extends JavaPlugin implements Listener {
 		return true;
 	}
 
+	@SuppressWarnings("unused")
 	private static BlockFace yawToFace(float yaw, boolean useSubCardinalDirections) {
 
 		BlockFace[] axis = { BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST };
