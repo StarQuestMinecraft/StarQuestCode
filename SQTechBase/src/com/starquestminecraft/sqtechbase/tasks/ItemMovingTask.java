@@ -438,12 +438,16 @@ public class ItemMovingTask extends Thread {
 																	
 																	spaceLeft = spaceLeft + (itemStack.getMaxStackSize() - itemStack.getAmount());
 																	
-																	if (!inventories.contains(secondInventory)) {
+																	if ((itemStack.getMaxStackSize() - itemStack.getAmount()) > 1) {
 																		
-																		inventories.add(secondInventory);
+																		if (!inventories.contains(secondInventory)) {
+																			
+																			inventories.add(secondInventory);
+																			
+																		}
 																		
 																	}
-																	
+	
 																}
 																
 															}

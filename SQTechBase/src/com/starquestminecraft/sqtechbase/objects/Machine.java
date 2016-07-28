@@ -13,7 +13,7 @@ public class Machine {
 
 	int energy;
 	
-	GUIBlock guiBlock;
+	public GUIBlock guiBlock;
 	
 	MachineType machineType;
 	
