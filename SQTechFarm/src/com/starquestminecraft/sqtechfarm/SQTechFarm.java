@@ -30,6 +30,8 @@ public class SQTechFarm extends JavaPlugin
         this.settings = new Settings(this);
 		
 		SQTechBase.addMachineType(harvesterType = new Harvester(settings.getHarvesterMaxEnergy(), this));
+		
+		this.getServer().getPluginManager().registerEvents(new Events(this), this);
 	}
 	
 	public void onDisable()
@@ -37,7 +39,10 @@ public class SQTechFarm extends JavaPlugin
 		for(Machine mach : SQTechBase.machines) // set all harvesters to inactive when the server stops
 		{
 			if(mach.getMachineType() instanceof Harvester)
+			{
 				this.setInactive(mach);
+				mach.data.put("blocked", false); // set all harvesters to not blocked
+			}
 		}
 	}
 	

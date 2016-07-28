@@ -33,6 +33,8 @@ public class SQTechDrill extends JavaPlugin
 		this.getConfig().options().copyDefaults(true);
         this.saveConfig();
         
+        this.getServer().getPluginManager().registerEvents(new Events(), this);
+        
         if(getConfig().getBoolean("testing version") == true)
         {
         	@SuppressWarnings("unused")
