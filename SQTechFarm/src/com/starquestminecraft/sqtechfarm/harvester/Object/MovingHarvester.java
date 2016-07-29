@@ -67,6 +67,7 @@ public class MovingHarvester
 		plugin.unRegisterMovingHarvester(machine);
 		task.cancel();
 		plugin.setInactive(machine);
+		machine.data.put("blocked", false);
 	}
 
 	/**

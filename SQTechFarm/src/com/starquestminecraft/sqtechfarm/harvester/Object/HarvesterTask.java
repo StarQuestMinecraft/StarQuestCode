@@ -186,7 +186,13 @@ public class HarvesterTask extends BukkitRunnable
 			{
 				if (this.cancelled == true || !plugin.isActive(machine))
 					return;
-				movingHarvester.moveRow(forward);
+				
+				if(movingHarvester.moveRow(forward) == false)
+				{
+					cancel();
+					movingHarvester.stopHarvester();
+					return;
+				}
 
 				movingHarvester.restartTask(plugin.getSettings().getHarvesterSpeed());
 				return;
@@ -195,7 +201,13 @@ public class HarvesterTask extends BukkitRunnable
 			{
 
 				BlockTranslation headMove = new BlockTranslation(Arrays.asList(harvesterHead), headForwards);
-				headMove.cut();
+				if(headMove.detectObstruction())
+				{
+					movingHarvester.stopHarvester();
+					return;
+				}
+				else
+					headMove.cut();
 
 				movingHarvester.restartTask(plugin.getSettings().getHarvesterSpeed());
 			}
@@ -238,7 +250,12 @@ public class HarvesterTask extends BukkitRunnable
 
 				machine.data.put("blocked", true);
 
-				mh.moveRow(direction);
+				if(mh.moveRow(direction) == false)
+				{
+					cancel();
+					movingHarvester.stopHarvester();
+					return;
+				}
 
 				if (rowPos == 1)
 				{
@@ -317,7 +334,13 @@ public class HarvesterTask extends BukkitRunnable
 				}
 
 				BlockTranslation movement = new BlockTranslation(Arrays.asList(farmHead.getBlock()), right);
-				movement.cut(); // paste the block
+				if(movement.detectObstruction())
+				{
+					movingHarvester.stopHarvester();
+					return;
+				}
+				else
+					movement.cut(); // paste the block
 
 				Location newLoc = farmHead.getBlock().getRelative(right).getLocation();
 				farmHead.changeLoc(newLoc);
