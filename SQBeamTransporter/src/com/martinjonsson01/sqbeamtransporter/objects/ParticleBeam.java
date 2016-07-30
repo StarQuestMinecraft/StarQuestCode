@@ -1,5 +1,6 @@
 package com.martinjonsson01.sqbeamtransporter.objects;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 
@@ -21,12 +22,14 @@ public class ParticleBeam {
 	
 	public void spawnHelix() {
 		
-		for (double y = 0; y <= this.height; y+= 0.08) {
+		for (double y = 0; y <= this.height; y+= 0.2) {
 			double adjustedX = 1 * Math.cos(y);
 			double adjustedZ = 1 * Math.sin(y);
 			Location loc = this.bottom;
 			loc.add(adjustedX, y, adjustedZ);
+			
 			loc.getWorld().spawnParticle(Particle.REDSTONE, loc, 0, -10, 0, 1);
+			
 			loc.subtract(adjustedX, y, adjustedZ);
 		}
 		

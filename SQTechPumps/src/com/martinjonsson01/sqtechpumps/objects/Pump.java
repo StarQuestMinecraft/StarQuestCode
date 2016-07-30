@@ -182,20 +182,24 @@ public class Pump extends MachineType {
 						b.getLocation().getWorld().playSound(b.getLocation(), Sound.BLOCK_PISTON_EXTEND, 1, 1);
 
 						if (b.getRelative(BlockFace.DOWN).getType() == Material.WATER ||
+								b.getRelative(BlockFace.DOWN).getType() == Material.STATIONARY_WATER ||
+								b.getRelative(BlockFace.DOWN).getType() == Material.STATIONARY_LAVA ||
 								b.getRelative(BlockFace.DOWN).getType() == Material.LAVA) {
 
 							/*if (SQTechPumps.resumeWaterBlocks.get(machine) != null && SQTechPumps.resumeWaterBlocks.get(machine).size() > 0) {
-								
+
 								ArrayList<Block> waterBlocks = SQTechPumps.resumeWaterBlocks.get(machine);
-								
+
 								Pump.pump(waterBlocks, machine, owner);
 								Bukkit.getLogger().log(Level.INFO, "[SQTechPump] Found: " + (SQTechPumps.resumeWaterBlocks.get(machine).size()-1) + " water blocks from origin: " + SQTechPumps.resumeWaterBlocks.get(machine).get(0));
-								
+
 							} else {*/
-								
-								Long before = System.currentTimeMillis();
-								detect(b.getRelative(BlockFace.DOWN), machine, owner);
-								Bukkit.getLogger().log(Level.INFO, "[SQTechPump] Detection took " + (System.currentTimeMillis() - before) + " ms");
+
+							Long before = System.currentTimeMillis();
+							
+							detect(b.getRelative(BlockFace.DOWN), machine, owner);
+							
+							Bukkit.getLogger().log(Level.INFO, "[SQTechPump] Detection took " + (System.currentTimeMillis() - before) + " ms");
 
 							//}
 

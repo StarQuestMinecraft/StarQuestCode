@@ -185,7 +185,7 @@ public class PumpGUI extends GUI{
 					
 					if (SQTechPumps.lastClick.containsKey(owner)) {
 						if (System.currentTimeMillis() - SQTechPumps.lastClick.get(owner) < 3000) {
-							owner.sendMessage(ChatColor.RED + "Don't spam the button. Please wait at least 3 seconds. " + (System.currentTimeMillis() - SQTechPumps.lastClick.get(owner)));
+							owner.sendMessage(ChatColor.RED + "Don't spam the button. Please wait at least 3 seconds.");
 							return;
 						}
 					}
