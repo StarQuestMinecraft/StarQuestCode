@@ -1,34 +1,22 @@
 
-package us.higashiyama.george.SQTurrets;
+package us.higashiyama.george.SQTurrets.types;
 
 import java.util.ArrayList;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Dispenser;
 import org.bukkit.block.Sign;
-import org.bukkit.entity.Arrow;
-import org.bukkit.entity.Egg;
-import org.bukkit.entity.EnderPearl;
-import org.bukkit.entity.Fireball;
-import org.bukkit.entity.Fish;
-import org.bukkit.entity.LargeFireball;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.Projectile;
-import org.bukkit.entity.SmallFireball;
-import org.bukkit.entity.Snowball;
-import org.bukkit.entity.ThrownExpBottle;
-import org.bukkit.entity.ThrownPotion;
-import org.bukkit.entity.WitherSkull;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.projectiles.ProjectileSource;
-import org.bukkit.util.Vector;
+import us.higashiyama.george.SQTurrets.Ammo;
+import us.higashiyama.george.SQTurrets.DirectionUtils;
+import us.higashiyama.george.SQTurrets.SQTurrets;
 
-public class Turret {
+public abstract class Turret {
 
 	// Name of the turret type (The name on the sign)
 	private String name;
@@ -40,103 +28,18 @@ public class Turret {
 	private ArrayList<Material> baseMaterials = new ArrayList<Material>();
 	// Acceptable materials for the top block
 	private ArrayList<Material> topMaterials = new ArrayList<Material>();
-	/*
-	 * Projectile to shoot ( Arrow, Egg, EnderPearl, Fireball, Fish,
-	 * LargeFireball, SmallFireball, Snowball, ThrownExpBottle, ThrownPotion,
-	 * WitherSkull)
-	 */
-	private Class<? extends Projectile> projectileClass;
-
-	private String projectileString;
 	// velocity to shoot the projectile
 	private double velocity;
 	// Arraylist of acceptable ammos
 	private ArrayList<Ammo> ammos = new ArrayList<Ammo>();
 
-	public Turret() {
-
-	}
-
-	public void shoot(final Player p) {
-
-		// First create a vector
-		Vector v = new Vector(velocity, velocity, velocity);
-		Vector pVec = p.getLocation().getDirection();
-		Vector finalVec = new Vector(v.getX() * pVec.getX(), v.getY() * pVec.getY(), v.getZ() * pVec.getZ());
-
-		Location eye = p.getEyeLocation();
-		Location oneUp = eye.add(0.0D, 1.0D, 0.0D);
-		Location loc = oneUp.toVector().add(p.getLocation().getDirection().multiply(2))
-				.toLocation(p.getWorld(), p.getLocation().getYaw(), p.getLocation().getPitch());
-
-		// then launch the projectile
-		Projectile proj = p.getWorld().spawn(loc, this.projectileClass);
-		// launchProjectile(this.projectileClass, finalVec);
-		// finally, set the shooter
-		proj.setVelocity(finalVec);
-
-		/*if (!(proj instanceof Egg) || !(proj instanceof Snowball)) {
-			proj.setShooter((ProjectileSource) p);
-		}*/
-		proj.setShooter(p);
-
-		if (proj instanceof Egg) {
-			SQTurrets.eggs.add(proj);
-		}
-
-		// play sounds
-		p.getWorld().playSound(p.getLocation(), Sound.SHOOT_ARROW, 2.0F, 1.0F);
-	}
-
-	/*
-	 * Advanced shoot method will have to be overwritten for all new turret
-	 * classes that have an extended version of a turret that takes ammo
-	 */
-	public void shootAdvanced(final Player p) {
-
-		// Very first, we have to see what ammo the player is using
-		Ammo a = getLoadedAmmo(p);
-		if (a == null) {
-			return;
-		}
-
-		// create a vector for the initial projectile
-		Vector v = new Vector(this.velocity, this.velocity, this.velocity);
-
-		// Now create a vector for the advanced version modifier
-		Vector vMod = new Vector(a.getVelocity(), a.getVelocity(), a.getVelocity());
-		Vector pVec = p.getLocation().getDirection();
-		Vector finalV = pVec.multiply(v.multiply(vMod));
-
-		// then launch the projectile
-		Location eye = p.getEyeLocation();
-		Location oneUp = eye.add(0.0D, 1.0D, 0.0D);
-		Location loc = oneUp.toVector().add(p.getLocation().getDirection().multiply(2))
-				.toLocation(p.getWorld(), p.getLocation().getYaw(), p.getLocation().getPitch());
-
-		// then launch the projectile
-		Projectile proj = p.getWorld().spawn(loc, this.projectileClass);
-
-		proj.setVelocity(finalV);
-
-		if (proj instanceof Egg) {
-			SQTurrets.eggs.add(proj);
-		}
-
-		if (!(proj instanceof Egg) || !(proj instanceof Snowball)) {
-			proj.setShooter((ProjectileSource) p);
-		}
-		// SQTurrets.liveProjectiles.add(proj);
-
-		// Ammo specific settings
-
-		if (a.isFire()) {
-			proj.setFireTicks(Integer.MAX_VALUE);
-		}
-
-		// play sounds
-		p.getWorld().playSound(p.getLocation(), Sound.SHOOT_ARROW, 0.5F, 1.0F);
-	}
+	public Turret() {}
+	
+	// Override this for firing
+	public abstract void shoot(final Player p);
+	
+	// Override this for firing with ammo
+	public abstract void shoot(final Player p, Ammo loaded_ammo);
 
 	/*
 	 * Fire method is called from the SQTurret class, this should not be
@@ -145,22 +48,16 @@ public class Turret {
 	public void fire(Player p) {
 
 		if (!p.hasPermission(this.permission)) {
-
 			p.sendMessage(ChatColor.RED + "You don't have permission to use this turret type!");
 			return;
-
 		}
 
 		if (this.isInCooldown(p))
 			return;
 
-		if (this.isAdvanced(p)) {
-			// Returning true here will take the ammo
-			if (!this.hasAmmo(p)) {
-				p.sendMessage(ChatColor.RED + "Out of recognized Ammo!");
-				return;
-			}
-			this.shootAdvanced(p);
+		Ammo loaded = getLoadedAmmo(p);
+		if (this.hasAmmo(p)) {
+			this.shoot(p, loaded);
 		} else {
 			this.shoot(p);
 		}
@@ -255,9 +152,9 @@ public class Turret {
 		return false;
 	}
 
-	/*
-	 * Returns whether this turret has an ammo taking version
-	 */
+
+	// Returns whether this turret has an ammo taking version
+	 
 	public boolean isAdvanced(Player p) {
 
 		Block b = p.getLocation().getBlock().getRelative(BlockFace.DOWN);
@@ -272,7 +169,7 @@ public class Turret {
 	/*
 	 * Returns whether the turret has ammo. It will also take the ammo it finds.
 	 */
-	private boolean hasAmmo(Player p) {
+	protected boolean hasAmmo(Player p) {
 
 		// This method is called after we already know that it is an advanced
 		// turret
@@ -281,19 +178,23 @@ public class Turret {
 			return false;
 		Dispenser d = (Dispenser) b.getState();
 		Inventory i = d.getInventory();
-		for (Ammo ammo : this.getAmmos()) {
+		for (Ammo ammo : ammos) {
 			if (i.containsAtLeast(ammo.getItem(), ammo.getItem().getAmount())) {
 				i.removeItem(ammo.getItem());
-
 				return true;
-
+			} else if (i.contains(Material.SPLASH_POTION) && ammo.getName().equalsIgnoreCase("potion")){
+				i.removeItem(i.getItem(i.first(Material.SPLASH_POTION)));
+				return true;
+			} else if (i.contains(Material.LINGERING_POTION) && ammo.getName().equalsIgnoreCase("potion")){
+				i.removeItem(i.getItem(i.first(Material.LINGERING_POTION)));
+				return true;
 			}
 		}
 		return false;
 
 	}
 
-	private Ammo getLoadedAmmo(Player p) {
+	protected Ammo getLoadedAmmo(Player p) {
 
 		// This method returns the ammo type we are using
 		Block b = p.getLocation().getBlock().getRelative(BlockFace.DOWN);
@@ -302,7 +203,12 @@ public class Turret {
 		for (Ammo ammo : this.getAmmos()) {
 			if (i.containsAtLeast(ammo.getItem(), 1)) {
 				return ammo;
-
+			} else if (i.contains(Material.SPLASH_POTION) && ammo.getName().equalsIgnoreCase("potion")){
+				ammo.setItem(i.getItem(i.first(Material.SPLASH_POTION)));
+				return ammo;
+			} else if (i.contains(Material.LINGERING_POTION) && ammo.getName().equalsIgnoreCase("potion")){
+				ammo.setItem(i.getItem(i.first(Material.LINGERING_POTION)));
+				return ammo;
 			}
 		}
 		return null;
@@ -393,52 +299,6 @@ public class Turret {
 	public void setAmmos(ArrayList<Ammo> ammos) {
 
 		this.ammos = ammos;
-	}
-
-	public String getProjectileString() {
-
-		return projectileString;
-	}
-
-	public void setProjectileString(String projectileString) {
-
-		this.projectileString = projectileString;
-		switch (this.projectileString.toUpperCase()) {
-			case "ARROW":
-				this.projectileClass = Arrow.class;
-				break;
-			case "EGG":
-				this.projectileClass = Egg.class;
-				break;
-			case "ENDERPEARL":
-				this.projectileClass = EnderPearl.class;
-				break;
-			case "FIREBALL":
-				this.projectileClass = Fireball.class;
-				break;
-			case "FISH":
-				this.projectileClass = Fish.class;
-				break;
-			case "LARGEFIREBALL":
-				this.projectileClass = LargeFireball.class;
-				break;
-			case "SMALLFIREBALL":
-				this.projectileClass = SmallFireball.class;
-				break;
-			case "SNOWBALL":
-				this.projectileClass = Snowball.class;
-				break;
-			case "THROWNEXPBOTTLE":
-				this.projectileClass = ThrownExpBottle.class;
-				break;
-			case "THROWNPOTION":
-				this.projectileClass = ThrownPotion.class;
-				break;
-			case "WITHERSKULL":
-				this.projectileClass = WitherSkull.class;
-				break;
-		}
-
 	}
 
 }

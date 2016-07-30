@@ -9,6 +9,7 @@ import net.countercraft.movecraft.bungee.BungeePlayerHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.BlockCommandSender;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -165,8 +166,10 @@ public class EmpireCommand implements CommandExecutor{
 
 				EmpirePlayer ep = EmpirePlayer.getOnlinePlayer(p);
 				
-				p.sendMessage(ChatColor.GOLD + "Your empire is " + ep.getEmpire().getName() + ".");				
+				p.sendMessage(ChatColor.GOLD + "Your empire is " + ep.getEmpire().getName() + ".");
+				
 				p.sendMessage(ChatColor.GOLD + "/empire help - Displays this");
+				p.sendMessage(ChatColor.GOLD + "/empire stats <empire> - Displays the stats of an empire");
 				p.sendMessage(ChatColor.GOLD + "/empire join <empire> - Join an empire");
 				
 				if (p.hasPermission("SQEmpire.manageControlPoints")) {
@@ -301,15 +304,15 @@ public class EmpireCommand implements CommandExecutor{
 						
 					} else {
 						
-						Player player = Bukkit.getOfflinePlayer(args[1]).getPlayer();
+						OfflinePlayer player = Bukkit.getOfflinePlayer(args[1]);
 						
-						if (player != null) {
+						if (player.hasPlayedBefore()) {
 							
-							p.sendMessage(ChatColor.GOLD + "That player is in " + EmpirePlayer.getOnlinePlayer(player).getEmpire());
+							p.sendMessage(ChatColor.GOLD + "That player is in " + EmpirePlayer.getFromUUID(player.getUniqueId()).getEmpire());
 							
 						} else {
 							
-							p.sendMessage(ChatColor.RED + "That player does not exsist");
+							p.sendMessage(ChatColor.RED + "That player does not exsist or has not been to this server before");
 							
 						}
 
@@ -944,8 +947,11 @@ public class EmpireCommand implements CommandExecutor{
 		if (ep.getEmpire() != Empire.NONE && ep.lastChanged.after(cal.getTime())) {		
 			
 			p.sendMessage(ChatColor.RED + "You have changed empires in the last month");
+			
+			return;
 		
 		}
+		
 		if(args.length < 2){
 			p.sendMessage(ChatColor.RED + "You must specify an empire to join, please choose Arator, Requiem, or Yavari.");
 		}
@@ -982,7 +988,7 @@ public class EmpireCommand implements CommandExecutor{
 				p.sendMessage(ChatColor.RED + "Since you are already in an empire you, will lose your inventory, be removed from your faction, and will lose all of your current money. You will not be able to change empires for a month if you change.");
 			}
 			
-			p.sendMessage(ChatColor.GOLD + "Are you sure you want to join " + e.getName() + "? Type / empire join " + e.getName() + " confirm to confirm.");
+			p.sendMessage(ChatColor.GOLD + "Are you sure you want to join " + e.getDarkColor() + e.getName() + ChatColor.GOLD + "? Type / empire join " + e.getDarkColor() + e.getName() + ChatColor.GOLD + " confirm to confirm.");
 		} else if(args.length == 3){
 			if(args[2].equalsIgnoreCase("confirm")){
 				String empire = args[1];

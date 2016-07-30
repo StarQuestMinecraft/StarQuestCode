@@ -21,12 +21,8 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
-import com.comphenix.protocol.events.ListenerPriority;
-import com.comphenix.protocol.events.PacketAdapter;
-import com.comphenix.protocol.events.PacketEvent;
 import com.dibujaron.cardboardbox.Knapsack;
 import com.ginger_walnut.sqsmoothcraft.entites.CustomEntityType;
 import com.ginger_walnut.sqsmoothcraft.enums.BlockType;

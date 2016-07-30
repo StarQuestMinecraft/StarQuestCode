@@ -252,7 +252,29 @@ public class GUIBlockEvents implements Listener {
 								SQTechBase.machines.removeAll(removeMachines);
 
 								if (!isMachine) {
-									
+
+									for (Machine machine : SQTechBase.machines) {
+												
+										if (machine.detectStructure() && machine.getGUIBlock().id != network.getGUIBlocks().get(i).id) {
+										
+											if (machine.guiBlock.getLocation().equals(network.getGUIBlocks().get(i).getLocation())) {
+												
+												machine.guiBlock = network.getGUIBlocks().get(i);
+												
+												if (!SQTechBase.currentGui.containsKey(event.getPlayer())) {
+													
+													network.getGUIBlocks().get(i).getGUI(event.getPlayer()).open();
+													
+													return;
+													
+												}
+												
+											}
+																						
+										}
+										
+									}
+
 									for (MachineType machineType : SQTechBase.machineTypes) {
 										
 										if (machineType.autodetect) {
@@ -274,6 +296,8 @@ public class GUIBlockEvents implements Listener {
 								if (!SQTechBase.currentGui.containsKey(event.getPlayer())) {
 									
 									network.getGUIBlocks().get(i).getGUI(event.getPlayer()).open();
+									
+									return;
 									
 								}
 

@@ -15,8 +15,12 @@ public class EmpirePercentage {
 		
 		for (EmpirePlayer player : players) {
 			
-			retvals[player.getEmpire().getID() - 1] ++;
-			
+			if (player.getEmpire().getID() != 0) {
+				
+				retvals[player.getEmpire().getID() - 1] ++;
+				
+			}
+	
 		}
 		
 		return retvals;

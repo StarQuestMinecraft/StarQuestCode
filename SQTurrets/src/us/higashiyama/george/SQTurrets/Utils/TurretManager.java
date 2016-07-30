@@ -4,34 +4,35 @@ package us.higashiyama.george.SQTurrets.Utils;
 import java.io.File;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
 
 import us.higashiyama.george.SQTurrets.SQTurrets;
-import us.higashiyama.george.SQTurrets.Turret;
+import us.higashiyama.george.SQTurrets.types.Turret;
 
 public class TurretManager {
 
-	public static Map<String, Class<? extends Turret>> turrets;
+	//public static Map<String, Class<? extends Turret>> turrets;
+	public static ArrayList<Class<? extends Turret>> turrets;
 
 	public static void loadTurrets() {
 
 		File dir = new File(SQTurrets.getInstance().getDataFolder(), "turrets");
-		if (turrets == null)
-			turrets = new HashMap<String, Class<? extends Turret>>();
+		/*if (turrets == null)
+			turrets = new HashMap<String, Class<? extends Turret>>();*/
 		if (!dir.exists())
 			dir.mkdir();
 
-		int i = 0;
+		/*int i = 0;
 		while (i < 50) {
 			i++;
 			System.out.println(" ");
-		}
+		}*/
 		System.out.println("Starting turret loading");
-		loadCustomTurrets(dir);
+		//loadCustomTurrets(dir);
+		loadClasses(dir);
 	}
 
-	public static void loadCustomTurrets(File classDir) {
+	/*public static void loadCustomTurrets(File classDir) {
 
 		if (turrets == null)
 			turrets = new HashMap<String, Class<? extends Turret>>();
@@ -39,7 +40,7 @@ public class TurretManager {
 		// Load all the custom abilities.
 		System.out.println("Calling load method");
 		loadClasses(classDir);
-	}
+	}*/
 
 	private static void register(Class<? extends Turret> cls) {
 
@@ -48,8 +49,7 @@ public class TurretManager {
 		if (name.contains("$"))
 			return;
 		System.out.println(name + " redistered! ");
-		turrets.put(name, cls);
-
+		turrets.add(cls);
 	}
 
 	private static void loadClasses(File classDir) {
@@ -57,9 +57,9 @@ public class TurretManager {
 		// Grab the class loader
 		ClassLoader loader = getLoader(classDir);
 		System.out.println(loader.toString());
-		if (loader == null) {
+		/*if (loader == null) {
 			return;
-		}
+		}*/
 
 		for (File file : classDir.listFiles()) {
 			String filename = file.getName();
