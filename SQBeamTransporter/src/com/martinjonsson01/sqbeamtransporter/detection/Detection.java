@@ -15,13 +15,17 @@ public class Detection {
 				stainedGlass.getRelative(BlockFace.WEST).getRelative(BlockFace.WEST).getType() == Material.WALL_SIGN|| 
 				stainedGlass.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getType() == Material.WALL_SIGN) {
 
-				if (stainedGlass.getRelative(BlockFace.NORTH).getType() == Material.STEP) {
+				if (stainedGlass.getRelative(BlockFace.NORTH).getType() == Material.STEP ||
+						stainedGlass.getRelative(BlockFace.NORTH).getType() == Material.DOUBLE_STEP) {
 
-					if (stainedGlass.getRelative(BlockFace.EAST).getType() == Material.STEP) {
+					if (stainedGlass.getRelative(BlockFace.EAST).getType() == Material.STEP ||
+							stainedGlass.getRelative(BlockFace.EAST).getType() == Material.DOUBLE_STEP) {
 
-						if (stainedGlass.getRelative(BlockFace.WEST).getType() == Material.STEP) {
+						if (stainedGlass.getRelative(BlockFace.WEST).getType() == Material.STEP ||
+								stainedGlass.getRelative(BlockFace.WEST).getType() == Material.DOUBLE_STEP) {
 
-							if (stainedGlass.getRelative(BlockFace.SOUTH).getType() == Material.STEP) {
+							if (stainedGlass.getRelative(BlockFace.SOUTH).getType() == Material.STEP ||
+									stainedGlass.getRelative(BlockFace.SOUTH).getType() == Material.DOUBLE_STEP) {
 
 								Block sign = stainedGlass.getRelative(BlockFace.DOWN);
 								
