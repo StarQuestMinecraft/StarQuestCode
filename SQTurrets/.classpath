@@ -8,6 +8,6 @@
 	</classpathentry>
 	<classpathentry kind="lib" path="D:/Minecraft/SQ/dependencies/spigot-1.10.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="D:/Minecraft/SQ/dependencies/GuardianBeamAPI.jar"/>
+	<classpathentry kind="lib" path="D:/Minecraft/SQ/dependencies/ParticleAPI_v2.1.1.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
