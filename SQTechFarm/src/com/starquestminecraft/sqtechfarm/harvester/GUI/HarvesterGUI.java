@@ -17,7 +17,6 @@ import com.starquestminecraft.sqtechbase.util.ObjectUtils;
 import com.starquestminecraft.sqtechfarm.SQTechFarm;
 import com.starquestminecraft.sqtechfarm.harvester.Harvester;
 import com.starquestminecraft.sqtechfarm.harvester.Harvester.HarvesterSize;
-import com.starquestminecraft.sqtechfarm.harvester.Object.MovingHarvester;
 
 public class HarvesterGUI extends GUI
 {
@@ -120,8 +119,9 @@ public class HarvesterGUI extends GUI
 							event.getWhoClicked().sendMessage(ChatColor.RED + "Your harvester is too big!");
 						else
 						{
-							MovingHarvester harvester = new MovingHarvester(plugin, machine, (Player) event.getWhoClicked());
-							harvester.startHarvester(); // Harvester is registered
+							plugin.startHarvester(machine);
+							//MovingHarvester harvester = new MovingHarvester(plugin, machine, (Player) event.getWhoClicked());
+							//harvester.startHarvester(); // Harvester is registered
 						}
 						event.getWhoClicked().closeInventory();
 						return;
@@ -136,7 +136,8 @@ public class HarvesterGUI extends GUI
 				{
 					//main.movingDrill.deactivateDrill(machine, (Player) event.getWhoClicked());
 					machine.data.put("isActive", false);
-					plugin.unRegisterMovingHarvester(machine);
+					//plugin.unRegisterMovingHarvester(machine);
+					plugin.stopHarvester(machine);
 					event.getWhoClicked().closeInventory();
 					return;
 				}
