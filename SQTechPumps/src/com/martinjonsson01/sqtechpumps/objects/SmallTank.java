@@ -5,6 +5,8 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
+import org.bukkit.material.MaterialData;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import com.martinjonsson01.sqtechpumps.SQTechPumps;
 import com.martinjonsson01.sqtechpumps.gui.PumpGUI;
@@ -52,7 +54,7 @@ public class SmallTank extends MachineType{
 					if (middleStainedGlass.getRelative(left).getType() == Material.STAINED_CLAY) {
 						if (middleStainedGlass.getRelative(up).getType() == Material.STAINED_CLAY) {
 							if (middleStainedGlass.getRelative(down).getType() == Material.LAPIS_BLOCK) {
-								if (middleStainedGlass.getRelative(f).getType() == Material.AIR) {
+								if (middleStainedGlass.getRelative(f).getType() == Material.AIR || middleStainedGlass.getRelative(f).getType() == Material.STATIONARY_WATER || middleStainedGlass.getRelative(f).getType() == Material.STATIONARY_LAVA) {
 									if (middleStainedGlass.getRelative(f).getRelative(left).getType() == Material.STAINED_GLASS_PANE) {
 										if (middleStainedGlass.getRelative(f).getRelative(right).getType() == Material.STAINED_GLASS_PANE) {
 											if (middleStainedGlass.getRelative(f).getRelative(up).getType() == Material.STAINED_CLAY) {
@@ -100,9 +102,249 @@ public class SmallTank extends MachineType{
 
 	}
 
+	@SuppressWarnings("deprecation")
+	public static void updatePhysicalLiquid(Machine machine) {
+
+		Block waterBlock = getMiddleBlock(machine.getGUIBlock());
+
+		if (!SQTechPumps.tankWaterBlocks.contains(waterBlock)) {
+			SQTechPumps.tankWaterBlocks.add(waterBlock);
+		}
+
+		for (Fluid f : SQTechBase.fluids) {
+
+			if (!(machine.getMaxLiquid(f) > 1)) continue;
+
+			if (f.name == "Water") {
+				SQTechPumps.machineLiquidTypeIdMap.put(machine, 9);
+			} else if (f.name == "Lava") {
+				SQTechPumps.machineLiquidTypeIdMap.put(machine, 11);
+			}
+
+			int max = machine.getMaxLiquid(f);
+
+			int current = machine.getLiquid(f);
+
+			double twelvePercent = (max/100) * 12.5;
+
+			if (current >= twelvePercent && current < twelvePercent*2) {
+
+				Bukkit.getScheduler().runTask(SQTechPumps.plugin, new BukkitRunnable() {
+					@Override
+					public void run() {
+						if (SQTechPumps.machineLiquidTypeIdMap.get(machine) != null) {
+							waterBlock.setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 7, false);
+						}
+					}
+				});
+
+			} else if (current >= twelvePercent*2 && current < twelvePercent*3) {
+
+				Bukkit.getScheduler().runTask(SQTechPumps.plugin, new BukkitRunnable() {
+					@Override
+					public void run() {
+						if (SQTechPumps.machineLiquidTypeIdMap.get(machine) != null) {
+							waterBlock.setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 6, false);
+						}
+					}
+				});
+
+			} else if (current >= twelvePercent*3 && current < twelvePercent*4) {
+
+				Bukkit.getScheduler().runTask(SQTechPumps.plugin, new BukkitRunnable() {
+					@Override
+					public void run() {
+						if (SQTechPumps.machineLiquidTypeIdMap.get(machine) != null) {
+							waterBlock.setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 5, false);
+						}
+					}
+				});
+
+			} else if (current >= twelvePercent*4 && current < twelvePercent*5) {
+
+				Bukkit.getScheduler().runTask(SQTechPumps.plugin, new BukkitRunnable() {
+					@Override
+					public void run() {
+						if (SQTechPumps.machineLiquidTypeIdMap.get(machine) != null) {
+							waterBlock.setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 4, false);
+						}
+					}
+				});
+
+			} else if (current >= twelvePercent*5 && current < twelvePercent*6) {
+
+				Bukkit.getScheduler().runTask(SQTechPumps.plugin, new BukkitRunnable() {
+					@Override
+					public void run() {
+						if (SQTechPumps.machineLiquidTypeIdMap.get(machine) != null) {
+							waterBlock.setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 3, false);
+						}
+					}
+				});
+
+			} else if (current >= twelvePercent*6 && current < twelvePercent*7) {
+
+				Bukkit.getScheduler().runTask(SQTechPumps.plugin, new BukkitRunnable() {
+					@Override
+					public void run() {
+						if (SQTechPumps.machineLiquidTypeIdMap.get(machine) != null) {
+							waterBlock.setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 2, false);
+						}
+					}
+				});
+
+			} else if (current >= twelvePercent*7 && current < twelvePercent*8) {
+
+				Bukkit.getScheduler().runTask(SQTechPumps.plugin, new BukkitRunnable() {
+					@Override
+					public void run() {
+						if (SQTechPumps.machineLiquidTypeIdMap.get(machine) != null) {
+							waterBlock.setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 1, false);
+						}
+					}
+				});
+
+			} else if (current >= twelvePercent*8) {
+
+				Bukkit.getScheduler().runTask(SQTechPumps.plugin, new BukkitRunnable() {
+					@Override
+					public void run() {
+						if (SQTechPumps.machineLiquidTypeIdMap.get(machine) != null) {
+							waterBlock.setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 0, false);
+						}
+					}
+				});
+
+			}
+
+			updateBlock(waterBlock.getRelative(BlockFace.NORTH));
+
+		}
+
+	}
+
+	@SuppressWarnings("deprecation")
 	@Override
 	public void updateLiquid(Machine machine) {
-		
+
+		if (getMiddleBlock(machine.getGUIBlock()) != null) {
+
+			Block waterBlock = getMiddleBlock(machine.getGUIBlock());
+
+			SQTechPumps.tankWaterBlocks.add(waterBlock);
+
+			for (Fluid f : SQTechBase.fluids) {
+
+				if (!(machine.getMaxLiquid(f) > 1)) continue;
+
+				if (f.name == "Water") {
+					SQTechPumps.machineLiquidTypeIdMap.put(machine, 9);
+				} else if (f.name == "Lava") {
+					SQTechPumps.machineLiquidTypeIdMap.put(machine, 11);
+				}
+
+				int max = machine.getMaxLiquid(f);
+
+				int current = machine.getLiquid(f);
+
+				double twelvePercent = (max/100) * 12.5;
+
+				if (current >= twelvePercent && current < twelvePercent*2) {
+
+					Bukkit.getScheduler().runTask(SQTechPumps.plugin, new BukkitRunnable() {
+						@Override
+						public void run() {
+							if (SQTechPumps.machineLiquidTypeIdMap.get(machine) != null) {
+								waterBlock.setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 7, false);
+							}
+						}
+					});
+
+				} else if (current >= twelvePercent*2 && current < twelvePercent*3) {
+
+					Bukkit.getScheduler().runTask(SQTechPumps.plugin, new BukkitRunnable() {
+						@Override
+						public void run() {
+							if (SQTechPumps.machineLiquidTypeIdMap.get(machine) != null) {
+								waterBlock.setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 6, false);
+							}
+						}
+					});
+
+				} else if (current >= twelvePercent*3 && current < twelvePercent*4) {
+
+					Bukkit.getScheduler().runTask(SQTechPumps.plugin, new BukkitRunnable() {
+						@Override
+						public void run() {
+							if (SQTechPumps.machineLiquidTypeIdMap.get(machine) != null) {
+								waterBlock.setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 5, false);
+							}
+						}
+					});
+
+				} else if (current >= twelvePercent*4 && current < twelvePercent*5) {
+
+					Bukkit.getScheduler().runTask(SQTechPumps.plugin, new BukkitRunnable() {
+						@Override
+						public void run() {
+							if (SQTechPumps.machineLiquidTypeIdMap.get(machine) != null) {
+								waterBlock.setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 4, false);
+							}
+						}
+					});
+
+				} else if (current >= twelvePercent*5 && current < twelvePercent*6) {
+
+					Bukkit.getScheduler().runTask(SQTechPumps.plugin, new BukkitRunnable() {
+						@Override
+						public void run() {
+							if (SQTechPumps.machineLiquidTypeIdMap.get(machine) != null) {
+								waterBlock.setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 3, false);
+							}
+						}
+					});
+
+				} else if (current >= twelvePercent*6 && current < twelvePercent*7) {
+
+					Bukkit.getScheduler().runTask(SQTechPumps.plugin, new BukkitRunnable() {
+						@Override
+						public void run() {
+							if (SQTechPumps.machineLiquidTypeIdMap.get(machine) != null) {
+								waterBlock.setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 2, false);
+							}
+						}
+					});
+
+				} else if (current >= twelvePercent*7 && current < twelvePercent*8) {
+
+					Bukkit.getScheduler().runTask(SQTechPumps.plugin, new BukkitRunnable() {
+						@Override
+						public void run() {
+							if (SQTechPumps.machineLiquidTypeIdMap.get(machine) != null) {
+								waterBlock.setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 1, false);
+							}
+						}
+					});
+
+				} else if (current >= twelvePercent*8) {
+
+					Bukkit.getScheduler().runTask(SQTechPumps.plugin, new BukkitRunnable() {
+						@Override
+						public void run() {
+							if (SQTechPumps.machineLiquidTypeIdMap.get(machine) != null) {
+								waterBlock.setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 0, false);
+							}
+						}
+					});
+
+				}
+				
+				updateBlock(waterBlock.getRelative(BlockFace.NORTH));
+
+			}
+
+		}
+
 		for (Player player : SQTechBase.currentGui.keySet()) {
 
 			if (SQTechBase.currentGui.get(player).id == machine.getGUI(player).id) {
@@ -125,7 +367,7 @@ public class SmallTank extends MachineType{
 							amount = machine.getLiquid(fluid);
 							name = fluid.name;
 						}
-						
+
 						String[] infoLore = new String[] {
 								ChatColor.BLUE + "This tank can store " + name,
 								ChatColor.BLUE + "Amount in millibuckets: " + PumpGUI.format(amount) + "/" + PumpGUI.format(SQTechPumps.config.getInt("small tank max liquid")),
@@ -145,7 +387,90 @@ public class SmallTank extends MachineType{
 
 	}
 
+	@SuppressWarnings("deprecation")
+	private static void updateBlock(Block b) {
 
+		Bukkit.getScheduler().runTask(SQTechPumps.plugin, new BukkitRunnable() {
+
+			@Override
+			public void run() {
+
+				Byte data = b.getData();
+				int typeId = b.getTypeId();
+
+				b.setType(Material.AIR);
+				b.setTypeIdAndData(typeId, data, false);
+
+				return;
+
+			}
+
+		});
+
+	}
+
+	public static Block getMiddleBlock(GUIBlock block) {
+
+		Block middleStainedGlass = block.getLocation().getBlock().getRelative(BlockFace.UP);
+
+		BlockFace[] faces = new BlockFace[]{
+				BlockFace.NORTH,
+				BlockFace.EAST,
+				BlockFace.WEST,
+				BlockFace.SOUTH
+		};
+
+		for (BlockFace f : faces) {
+			BlockFace left = DirectionUtils.getLeft(f);
+			BlockFace right = DirectionUtils.getRight(f);
+			BlockFace up = BlockFace.UP;
+			BlockFace down = BlockFace.DOWN;
+
+			if (middleStainedGlass.getType() == Material.STAINED_GLASS_PANE) {
+				if (middleStainedGlass.getRelative(right).getType() == Material.STAINED_CLAY) {
+					if (middleStainedGlass.getRelative(left).getType() == Material.STAINED_CLAY) {
+						if (middleStainedGlass.getRelative(up).getType() == Material.STAINED_CLAY) {
+							if (middleStainedGlass.getRelative(down).getType() == Material.LAPIS_BLOCK) {
+								if (middleStainedGlass.getRelative(f).getType() == Material.AIR || middleStainedGlass.getRelative(f).getType() == Material.STATIONARY_WATER || middleStainedGlass.getRelative(f).getType() == Material.STATIONARY_LAVA) {
+									if (middleStainedGlass.getRelative(f).getRelative(left).getType() == Material.STAINED_GLASS_PANE) {
+										if (middleStainedGlass.getRelative(f).getRelative(right).getType() == Material.STAINED_GLASS_PANE) {
+											if (middleStainedGlass.getRelative(f).getRelative(up).getType() == Material.STAINED_CLAY) {
+												if (middleStainedGlass.getRelative(f).getRelative(down).getType() == Material.STAINED_CLAY) {
+													if (middleStainedGlass.getRelative(f).getRelative(up).getRelative(left).getType() == Material.STAINED_CLAY) {
+														if (middleStainedGlass.getRelative(f).getRelative(up).getRelative(right).getType() == Material.STAINED_CLAY) {
+															if (middleStainedGlass.getRelative(f).getRelative(down).getRelative(left).getType() == Material.STAINED_CLAY) {
+																if (middleStainedGlass.getRelative(f).getRelative(down).getRelative(right).getType() == Material.STAINED_CLAY) {
+																	if (middleStainedGlass.getRelative(f).getRelative(f).getType() == Material.STAINED_GLASS_PANE) {
+																		if (middleStainedGlass.getRelative(f).getRelative(f).getRelative(right).getType() == Material.STAINED_CLAY) {
+																			if (middleStainedGlass.getRelative(f).getRelative(f).getRelative(left).getType() == Material.STAINED_CLAY) {
+																				if (middleStainedGlass.getRelative(f).getRelative(f).getRelative(up).getType() == Material.STAINED_CLAY) {
+																					if (middleStainedGlass.getRelative(f).getRelative(f).getRelative(down).getType() == Material.STAINED_CLAY) {
+																						return middleStainedGlass.getRelative(f);
+																					}
+																				}
+																			}
+																		}
+																	}
+																}
+															}
+														}
+													}
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+
+		}
+
+		return null;
+
+	}
 
 
 

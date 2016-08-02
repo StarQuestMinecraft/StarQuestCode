@@ -7,6 +7,7 @@ import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.World;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -14,6 +15,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 import com.martinjonsson01.sqtechpumps.SQTechPumps;
+import com.martinjonsson01.sqtechpumps.objects.SmallTank;
 import com.starquestminecraft.sqtechbase.SQTechBase;
 import com.starquestminecraft.sqtechbase.gui.GUI;
 import com.starquestminecraft.sqtechbase.objects.Fluid;
@@ -176,11 +178,16 @@ public class SmallTankGUI extends GUI{
 
 						if (machine.getLiquid(f) > 0) {
 
+							Block waterBlock = SmallTank.getMiddleBlock(machine.getGUIBlock());
 							World w = machine.getGUIBlock().getLocation().getWorld();
+							
 							w.playSound(machine.getGUIBlock().getLocation(), Sound.BLOCK_FIRE_EXTINGUISH, 1, 1);
 							w.spawnParticle(Particle.SMOKE_LARGE, machine.getGUIBlock().getLocation(), 100, 1, 1, 1);
 							machine.setLiquid(f, 0);
-
+							waterBlock.setType(Material.AIR);
+							
+							event.getWhoClicked().closeInventory();
+							
 						}
 
 					}

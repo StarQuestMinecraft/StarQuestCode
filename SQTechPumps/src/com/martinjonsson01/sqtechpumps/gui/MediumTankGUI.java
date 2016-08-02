@@ -5,6 +5,8 @@ import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.World;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -12,6 +14,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 import com.martinjonsson01.sqtechpumps.SQTechPumps;
+import com.martinjonsson01.sqtechpumps.objects.MediumTank;
 import com.starquestminecraft.sqtechbase.SQTechBase;
 import com.starquestminecraft.sqtechbase.gui.GUI;
 import com.starquestminecraft.sqtechbase.objects.Fluid;
@@ -174,11 +177,58 @@ public class MediumTankGUI extends GUI{
 					for (Fluid f : SQTechBase.fluids) {
 
 						if (machine.getLiquid(f) > 0) {
-
+							
+							Block waterBlock = MediumTank.getMiddleBlock(machine.getGUIBlock());
+							Block waterBlock2 = waterBlock.getRelative(BlockFace.UP);
+							Block waterBlock3 = waterBlock2.getRelative(BlockFace.UP);
+							Block waterBlock4 = waterBlock3.getRelative(BlockFace.UP);
 							World w = machine.getGUIBlock().getLocation().getWorld();
+							
 							w.playSound(machine.getGUIBlock().getLocation(), Sound.BLOCK_FIRE_EXTINGUISH, 1, 1);
 							w.spawnParticle(Particle.SMOKE_LARGE, machine.getGUIBlock().getLocation(), 100, 1, 1, 1);
 							machine.setLiquid(f, 0);
+							
+							waterBlock.setType(Material.AIR);
+							waterBlock.getRelative(BlockFace.NORTH).setType(Material.AIR);
+							waterBlock.getRelative(BlockFace.EAST).setType(Material.AIR);
+							waterBlock.getRelative(BlockFace.WEST).setType(Material.AIR);
+							waterBlock.getRelative(BlockFace.SOUTH).setType(Material.AIR);
+							waterBlock.getRelative(BlockFace.NORTH_EAST).setType(Material.AIR);
+							waterBlock.getRelative(BlockFace.NORTH_WEST).setType(Material.AIR);
+							waterBlock.getRelative(BlockFace.SOUTH_EAST).setType(Material.AIR);
+							waterBlock.getRelative(BlockFace.SOUTH_WEST).setType(Material.AIR);
+							
+							waterBlock2.setType(Material.AIR);
+							waterBlock2.getRelative(BlockFace.NORTH).setType(Material.AIR);
+							waterBlock2.getRelative(BlockFace.EAST).setType(Material.AIR);
+							waterBlock2.getRelative(BlockFace.WEST).setType(Material.AIR);
+							waterBlock2.getRelative(BlockFace.SOUTH).setType(Material.AIR);
+							waterBlock2.getRelative(BlockFace.NORTH_EAST).setType(Material.AIR);
+							waterBlock2.getRelative(BlockFace.NORTH_WEST).setType(Material.AIR);
+							waterBlock2.getRelative(BlockFace.SOUTH_EAST).setType(Material.AIR);
+							waterBlock2.getRelative(BlockFace.SOUTH_WEST).setType(Material.AIR);
+							
+							waterBlock3.setType(Material.AIR);
+							waterBlock3.getRelative(BlockFace.NORTH).setType(Material.AIR);
+							waterBlock3.getRelative(BlockFace.EAST).setType(Material.AIR);
+							waterBlock3.getRelative(BlockFace.WEST).setType(Material.AIR);
+							waterBlock3.getRelative(BlockFace.SOUTH).setType(Material.AIR);
+							waterBlock3.getRelative(BlockFace.NORTH_EAST).setType(Material.AIR);
+							waterBlock3.getRelative(BlockFace.NORTH_WEST).setType(Material.AIR);
+							waterBlock3.getRelative(BlockFace.SOUTH_EAST).setType(Material.AIR);
+							waterBlock3.getRelative(BlockFace.SOUTH_WEST).setType(Material.AIR);
+							
+							waterBlock4.setType(Material.AIR);
+							waterBlock4.getRelative(BlockFace.NORTH).setType(Material.AIR);
+							waterBlock4.getRelative(BlockFace.EAST).setType(Material.AIR);
+							waterBlock4.getRelative(BlockFace.WEST).setType(Material.AIR);
+							waterBlock4.getRelative(BlockFace.SOUTH).setType(Material.AIR);
+							waterBlock4.getRelative(BlockFace.NORTH_EAST).setType(Material.AIR);
+							waterBlock4.getRelative(BlockFace.NORTH_WEST).setType(Material.AIR);
+							waterBlock4.getRelative(BlockFace.SOUTH_EAST).setType(Material.AIR);
+							waterBlock4.getRelative(BlockFace.SOUTH_WEST).setType(Material.AIR);
+							
+							event.getWhoClicked().closeInventory();
 
 						}
 
