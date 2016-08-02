@@ -62,6 +62,8 @@ public class SQTurrets extends JavaPlugin implements Listener {
 			a.setItem(new ItemStack(Material.matchMaterial(config.getString("ammos." + name + ".id")), config.getInt("ammos." + name + ".quantity")));
 			a.setFire(config.getBoolean("ammos." + name + ".fire"));
 			a.setVelocity(config.getDouble("ammos." + name + ".velocity"));
+			a.setYield(config.getDouble("ammos." + name + ".yield"));
+			a.setYield2(config.getDouble("ammos." + name + ".yield2"));
 			ammoTypes.add(a);
 		}
 	}
@@ -69,7 +71,7 @@ public class SQTurrets extends JavaPlugin implements Listener {
 	private static void loadTurrets(){
 		turretTypes.add(new ArrowTurret());
 		turretTypes.add(new FireballTurret());
-		//turretTypes.add(new BeamTurret());
+		turretTypes.add(new BeamTurret());
 		turretTypes.add(new PotionTurret());
 		Iterator<Turret> it = turretTypes.iterator();
 		while(it.hasNext()){
@@ -90,7 +92,6 @@ public class SQTurrets extends JavaPlugin implements Listener {
 			turret.setTopMaterials(topMaterials);
 			ArrayList<Ammo> turretAmmo = new ArrayList<Ammo>();
 			List<String> turretAmmoStrings = config.getStringList("turrets." + turret.getName() + ".ammo");
-			System.out.print(turret.getName() + " ammo types: ");
 			for (Ammo a : ammoTypes) {
 				for (String s : turretAmmoStrings) {
 					if (a.getName().equalsIgnoreCase(s)) {
@@ -99,7 +100,6 @@ public class SQTurrets extends JavaPlugin implements Listener {
 					}
 				}
 			}
-			System.out.println();
 			turret.setAmmos(turretAmmo);
 			turret.setVelocity(config.getDouble("turrets." + turret.getName() + ".velocity"));
 		}
