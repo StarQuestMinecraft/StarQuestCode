@@ -5,7 +5,6 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
-import org.bukkit.material.MaterialData;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import com.martinjonsson01.sqtechpumps.SQTechPumps;
@@ -222,128 +221,103 @@ public class SmallTank extends MachineType{
 		}
 
 	}
-
+	
+	private long lastUpdate = 0;
+	
 	@SuppressWarnings("deprecation")
 	@Override
 	public void updateLiquid(Machine machine) {
+		
+		if (System.currentTimeMillis() - lastUpdate < 900) {
+			return;
+		}
+		
+		Bukkit.getServer().getScheduler().runTask(SQTechPumps.plugin, new BukkitRunnable() {
 
-		if (getMiddleBlock(machine.getGUIBlock()) != null) {
+			@Override
+			public void run() {
 
-			Block waterBlock = getMiddleBlock(machine.getGUIBlock());
+				if (getMiddleBlock(machine.getGUIBlock()) != null) {
 
-			SQTechPumps.tankWaterBlocks.add(waterBlock);
+					Block waterBlock = getMiddleBlock(machine.getGUIBlock());
 
-			for (Fluid f : SQTechBase.fluids) {
+					SQTechPumps.tankWaterBlocks.add(waterBlock);
 
-				if (!(machine.getMaxLiquid(f) > 1)) continue;
+					for (Fluid f : SQTechBase.fluids) {
 
-				if (f.name == "Water") {
-					SQTechPumps.machineLiquidTypeIdMap.put(machine, 9);
-				} else if (f.name == "Lava") {
-					SQTechPumps.machineLiquidTypeIdMap.put(machine, 11);
-				}
+						if (!(machine.getMaxLiquid(f) > 1)) continue;
 
-				int max = machine.getMaxLiquid(f);
+						if (f.name == "Water") {
+							SQTechPumps.machineLiquidTypeIdMap.put(machine, 9);
+						} else if (f.name == "Lava") {
+							SQTechPumps.machineLiquidTypeIdMap.put(machine, 11);
+						}
 
-				int current = machine.getLiquid(f);
+						int max = machine.getMaxLiquid(f);
 
-				double twelvePercent = (max/100) * 12.5;
+						int current = machine.getLiquid(f);
 
-				if (current >= twelvePercent && current < twelvePercent*2) {
+						double twelvePercent = (max/100) * 12.5;
 
-					Bukkit.getScheduler().runTask(SQTechPumps.plugin, new BukkitRunnable() {
-						@Override
-						public void run() {
+						if (current >= twelvePercent && current < twelvePercent*2) {
+
 							if (SQTechPumps.machineLiquidTypeIdMap.get(machine) != null) {
 								waterBlock.setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 7, false);
 							}
-						}
-					});
 
-				} else if (current >= twelvePercent*2 && current < twelvePercent*3) {
+						} else if (current >= twelvePercent*2 && current < twelvePercent*3) {
 
-					Bukkit.getScheduler().runTask(SQTechPumps.plugin, new BukkitRunnable() {
-						@Override
-						public void run() {
 							if (SQTechPumps.machineLiquidTypeIdMap.get(machine) != null) {
 								waterBlock.setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 6, false);
 							}
-						}
-					});
 
-				} else if (current >= twelvePercent*3 && current < twelvePercent*4) {
+						} else if (current >= twelvePercent*3 && current < twelvePercent*4) {
 
-					Bukkit.getScheduler().runTask(SQTechPumps.plugin, new BukkitRunnable() {
-						@Override
-						public void run() {
 							if (SQTechPumps.machineLiquidTypeIdMap.get(machine) != null) {
 								waterBlock.setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 5, false);
 							}
-						}
-					});
 
-				} else if (current >= twelvePercent*4 && current < twelvePercent*5) {
+						} else if (current >= twelvePercent*4 && current < twelvePercent*5) {
 
-					Bukkit.getScheduler().runTask(SQTechPumps.plugin, new BukkitRunnable() {
-						@Override
-						public void run() {
 							if (SQTechPumps.machineLiquidTypeIdMap.get(machine) != null) {
 								waterBlock.setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 4, false);
 							}
-						}
-					});
 
-				} else if (current >= twelvePercent*5 && current < twelvePercent*6) {
+						} else if (current >= twelvePercent*5 && current < twelvePercent*6) {
 
-					Bukkit.getScheduler().runTask(SQTechPumps.plugin, new BukkitRunnable() {
-						@Override
-						public void run() {
 							if (SQTechPumps.machineLiquidTypeIdMap.get(machine) != null) {
 								waterBlock.setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 3, false);
 							}
-						}
-					});
 
-				} else if (current >= twelvePercent*6 && current < twelvePercent*7) {
+						} else if (current >= twelvePercent*6 && current < twelvePercent*7) {
 
-					Bukkit.getScheduler().runTask(SQTechPumps.plugin, new BukkitRunnable() {
-						@Override
-						public void run() {
 							if (SQTechPumps.machineLiquidTypeIdMap.get(machine) != null) {
 								waterBlock.setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 2, false);
 							}
-						}
-					});
 
-				} else if (current >= twelvePercent*7 && current < twelvePercent*8) {
+						} else if (current >= twelvePercent*7 && current < twelvePercent*8) {
 
-					Bukkit.getScheduler().runTask(SQTechPumps.plugin, new BukkitRunnable() {
-						@Override
-						public void run() {
 							if (SQTechPumps.machineLiquidTypeIdMap.get(machine) != null) {
 								waterBlock.setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 1, false);
 							}
-						}
-					});
 
-				} else if (current >= twelvePercent*8) {
+						} else if (current >= twelvePercent*8) {
 
-					Bukkit.getScheduler().runTask(SQTechPumps.plugin, new BukkitRunnable() {
-						@Override
-						public void run() {
 							if (SQTechPumps.machineLiquidTypeIdMap.get(machine) != null) {
 								waterBlock.setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 0, false);
 							}
+
 						}
-					});
+
+						updateBlock(waterBlock.getRelative(BlockFace.NORTH));
+
+					}
 
 				}
-				
-				updateBlock(waterBlock.getRelative(BlockFace.NORTH));
 
 			}
 
-		}
+		});
 
 		for (Player player : SQTechBase.currentGui.keySet()) {
 
@@ -384,7 +358,9 @@ public class SmallTank extends MachineType{
 			}
 
 		}
-
+		
+		lastUpdate = System.currentTimeMillis();
+		
 	}
 
 	@SuppressWarnings("deprecation")

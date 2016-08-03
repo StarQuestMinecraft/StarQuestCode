@@ -1,7 +1,5 @@
 package com.martinjonsson01.sqtechpumps.gui;
 
-import java.util.HashMap;
-
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Particle;
