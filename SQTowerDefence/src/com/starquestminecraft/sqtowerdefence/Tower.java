@@ -21,6 +21,7 @@ public class Tower extends MachineType {
 		
 	public Tower(int maxEnergy) {
 		super(maxEnergy);
+		name = "Tower";
 	}
 	
 	@Override

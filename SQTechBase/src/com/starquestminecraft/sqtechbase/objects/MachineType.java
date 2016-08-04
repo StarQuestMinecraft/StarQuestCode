@@ -12,9 +12,16 @@ public class MachineType {
 	
 	public boolean autodetect = true;
 	
+	public boolean defaultExport = false;
+	public boolean defaultImport = false;
+	
 	public MachineType(int maxEnergy) {
 		
 		this.maxEnergy = maxEnergy;
+		
+	}
+	
+	public void initialize(Machine machine) {
 		
 	}
 	
@@ -53,6 +60,10 @@ public class MachineType {
 	}
 	
 	public void updateEnergy(Machine machine) {
+		
+	}
+	
+	public void updateLiquid(Machine machine) {
 		
 	}
 	

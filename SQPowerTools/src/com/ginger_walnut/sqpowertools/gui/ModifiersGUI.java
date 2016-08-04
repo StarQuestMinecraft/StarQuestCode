@@ -224,6 +224,68 @@ public class ModifiersGUI extends GUI{
 					
 				}
 				
+				if (blasterStats.ammo != 0) {
+					
+					if (blasterStats.ammo > 0) {
+						
+						modLore.add(ChatColor.GOLD + "+ " + blasterStats.ammo + " Max Ammo");
+						
+						
+					} else if (blasterStats.ammo < 0) {
+						
+						modLore.add(ChatColor.GOLD + "- " + Math.abs(blasterStats.ammo) + " Max Ammo");
+						
+					}
+					
+				}	
+				
+				if (blasterStats.reload != 0) {
+					
+					if (Double.toString(Double.parseDouble(Integer.toString(blasterStats.reload)) / 20.0).endsWith(".0")) {
+						
+						if (blasterStats.reload / 20.0 > 0) {
+								
+							modLore.add(ChatColor.GOLD + "+ " + (blasterStats.reload / 20.0) + " Reload Time");
+								
+								
+						} else if (blasterStats.reload / 20.0 < 0) {
+								
+							modLore.add(ChatColor.GOLD + "- " + Math.abs(blasterStats.reload / 20.0) + " Reload Time");
+								
+						}
+						
+					} else {
+						
+						if (Double.parseDouble(Integer.toString(blasterStats.reload)) / 20.0 > 0) {
+							
+							modLore.add(ChatColor.GOLD + "+ " + (Double.parseDouble(Integer.toString(blasterStats.reload)) / 20.0) + " Reload Time");
+								
+								
+						} else if (Double.parseDouble(Integer.toString(blasterStats.reload)) / 20.0 < 0) {
+								
+							modLore.add(ChatColor.GOLD + "- " + Math.abs(Double.parseDouble(Integer.toString(blasterStats.reload)) / 20.0) + " Reload Time");
+								
+						}
+						
+					}
+				
+				}
+				
+				if (blasterStats.explosionSize != 0) {
+					
+					if (blasterStats.explosionSize > 0) {
+						
+						modLore.add(ChatColor.GOLD + "+ " + blasterStats.explosionSize + " Explosion Size");
+						
+						
+					} else if (blasterStats.explosionSize < 0) {
+						
+						modLore.add(ChatColor.GOLD + "- " + Math.abs(blasterStats.explosionSize) + " Explosion Size");
+						
+					}
+					
+				}	
+				
 			}
 			
 			if (modifier.effects.size() > 0) {

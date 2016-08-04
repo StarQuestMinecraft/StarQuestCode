@@ -54,14 +54,14 @@ public class BeamTransporter {
 	public void beamToFloor(Floor from, Floor to, Entity entity, Player messageReciever, boolean fromIsGround) {
 
 		if (isEntityOnTransporter(entity) || fromIsGround) {
-			
+
 			if (isEntityOnFloor(to)) {
-			
+
 				messageReciever.sendMessage(ChatColor.RED + "Error - There is an entity on the floor above you, activating transporter would cause that entity to fall and die.");
 				return;
-				
+
 			}
-			
+
 			if (from == null) {
 				messageReciever.sendMessage(ChatColor.RED + "Error - Could not find the floor 'from'");
 				return;
@@ -75,7 +75,7 @@ public class BeamTransporter {
 			} else if (to.getY() > from.getY()) {
 				this.goingUp = true;
 			}
-			
+
 			if (this.goingUp) {
 				if (!scanShaftUp(entity.getLocation(), to)) {
 					entity.sendMessage(ChatColor.RED + "Error - Block is in the way of beam");
@@ -87,7 +87,14 @@ public class BeamTransporter {
 					return;
 				}
 			}
-			
+			//Bukkit.getServer().broadcastMessage(ChatColor.GOLD + "testing: " + this + " FULL LIST: " + SQBeamTransporter.currentlyBeaming);
+			if (SQBeamTransporter.currentlyBeaming.contains(this)) {
+				
+				entity.sendMessage(ChatColor.RED + "Error - This beam transporter is currently being used.");
+				return;
+
+			}
+
 			this.startFloor = from;
 			this.destFloor = to;
 			// DEBUG entity.sendMessage("Start: " + this.startFloor.getY() + " Dest: " + this.destFloor.getY());
@@ -95,7 +102,7 @@ public class BeamTransporter {
 
 			//First remove all stained glass from all of the floors
 			this.removeStainedGlass();
-			
+
 			SQBeamTransporter.beamEntities.add(entity);
 			SQBeamTransporter.transporterMap.put(entity, this);
 			//Create particle beam
@@ -115,9 +122,9 @@ public class BeamTransporter {
 	}
 
 	public void beamToGround(Entity entity) {
-		
+
 		if (isEntityOnTransporter(entity)) {
-			
+
 			this.startFloor = getFloorFromStainedGlass(entity.getLocation().getBlock().getRelative(BlockFace.DOWN), this);
 
 			this.destFloor = getGroundFloor(entity.getLocation().getBlock().getRelative(BlockFace.DOWN));
@@ -128,7 +135,7 @@ public class BeamTransporter {
 			} else if (this.destFloor.getY() > this.startFloor.getY()) {
 				this.goingUp = true;
 			}
-			
+
 			if (this.goingUp) {
 				if (!scanShaftUp(entity.getLocation(), this.destFloor)) {
 					entity.sendMessage(ChatColor.RED + "Error - Block is in the way of beam");
@@ -140,9 +147,9 @@ public class BeamTransporter {
 					return;
 				}
 			}
-			
+
 			this.startFloor.getStainedGlass().setType(Material.AIR);
-			
+
 			SQBeamTransporter.beamEntities.add(entity);
 			SQBeamTransporter.transporterMap.put(entity, this);
 			//Create particle beam
@@ -156,21 +163,21 @@ public class BeamTransporter {
 			}
 			//Start beaming player
 			(new BeamTask()).run();
-			
+
 		}
 
 	}
-	
+
 	public void createBeam(Entity entity, BeamTransporter bt) {
-		
+
 		//Prepare variables for beam
-		
+
 		if (!Beam.groundBlocks.contains(entity.getLocation().getBlock().getRelative(BlockFace.DOWN))) {
 			if (BeamTransporter.getBeamTransporterFromStainedGlass(entity.getLocation().getBlock().getRelative(BlockFace.DOWN)) == null) {
 				Beam.groundBlocks.add(entity.getLocation().getBlock().getRelative(BlockFace.DOWN));
 			}
 		}
-		
+
 		Block bottomBlock = entity.getLocation().getBlock();
 		if (bt.goingUp) bottomBlock = bottomBlock.getRelative(BlockFace.DOWN);
 		Block middleBlock = bottomBlock.getRelative(BlockFace.UP);
@@ -178,7 +185,7 @@ public class BeamTransporter {
 		BlockFace direction = null;
 		if (bt.goingUp) direction = BlockFace.UP;
 		if (!bt.goingUp) direction = BlockFace.DOWN;
-		
+
 		//Create new beam and start it
 		Beam beam = new Beam(bottomBlock, middleBlock, topBlock, direction, Material.STAINED_GLASS, bt.color);
 		this.beam = beam;
@@ -189,19 +196,19 @@ public class BeamTransporter {
 		} else if (this.goingUp) {
 			beam.myTask.runTaskTimer(SQBeamTransporter.getPluginMain(), 3, 2);
 		}
-		
+
 	}
-	
+
 	public void createParticleBeam(Location bottom, double height) {
-		
+
 		ParticleBeam pBeam = new ParticleBeam(bottom, height);
 		this.pBeam = pBeam;
 		pBeam.myTask.runTaskTimer(SQBeamTransporter.getPluginMain(), 0, 10);
-		
+
 	}
 
 	public void scanFloors(Block airBlock) {
-		
+
 		int floorNumber = 1;
 
 		for (int yscan = 0 + 1; yscan <= 256; ++yscan) {
@@ -228,7 +235,7 @@ public class BeamTransporter {
 				}
 			}
 		}
-		
+
 		Floor bottomFloor = this.floorMap.firstEntry().getValue();
 		this.groundBlock = getGroundBlock(bottomFloor.getStainedGlass());
 
@@ -311,14 +318,14 @@ public class BeamTransporter {
 			Block checkBlock = playerLoc.getWorld().getBlockAt(playerLoc.getBlockX(), yscan, playerLoc.getBlockZ());
 			//Bukkit.getServer().broadcastMessage("Currently checking y: " + checkBlock.getY() + " Block type: " + checkBlock.getType());
 			if (!(checkBlock.getType() == Material.AIR)) {
-				
+
 				return false;
 
 			}
 		}
 		return false;
 	}
-	
+
 	public boolean scanShaftDown(Location playerLoc, Floor destFloor) {
 		//Bukkit.getServer().broadcastMessage("Are there blocks between " + playerLoc.getBlockY() + " and " + destFloor.getY());
 		for (int yscan = playerLoc.getBlockY() - 1; yscan <= 256; --yscan) {
@@ -329,7 +336,7 @@ public class BeamTransporter {
 			Block checkBlock = playerLoc.getWorld().getBlockAt(playerLoc.getBlockX(), yscan, playerLoc.getBlockZ());
 			//Bukkit.getServer().broadcastMessage("Currently checking y: " + checkBlock.getY() + " Block type: " + checkBlock.getType());
 			if (!(checkBlock.getType() == Material.AIR)) {
-				
+
 				return false;
 
 			}
@@ -356,7 +363,7 @@ public class BeamTransporter {
 		for (Map.Entry<Integer, Floor> entry : this.floorMap.entrySet()) {
 
 			Floor f = entry.getValue();
-			
+
 			f.getStainedGlass().setType(Material.AIR);
 
 		}
@@ -364,38 +371,38 @@ public class BeamTransporter {
 	}
 
 	public static boolean isEntityOnTransporter(Entity entity) {
-		
+
 		if (Detection.detectTransporter(entity.getLocation().getBlock().getRelative(BlockFace.DOWN))) {
 			return true;
 		}
 		return false;
 	}
-	
+
 	public static boolean isEntityOnFloor(Floor floor) {
-		
+
 		Set<Entity> set = getEntitiesInChunks(floor.getStainedGlass().getLocation(), 0);
-		
+
 		for (Entity e : set) {
-			
+
 			if (isEntityOnTransporter(e)) {
-				
+
 				if (getBeamTransporterFromStainedGlass(e.getLocation().getBlock().getRelative(BlockFace.DOWN)) != null) {
-					
+
 					BeamTransporter bt = getBeamTransporterFromStainedGlass(e.getLocation().getBlock().getRelative(BlockFace.DOWN));
-					
+
 					if (getFloorFromStainedGlass(e.getLocation().getBlock().getRelative(BlockFace.DOWN), bt).equals(floor)) {
-						
+
 						return true;
-						
+
 					}
-					
+
 				}
-				
+
 			}
-			
+
 		}
 		return false;
-		
+
 	}
 
 	public static BeamTransporter getBeamTransporterFromStainedGlass(Block stainedGlass) {
@@ -405,7 +412,7 @@ public class BeamTransporter {
 			for (Map.Entry<Integer, Floor> entry : bt.floorMap.entrySet()) {
 
 				Floor f = entry.getValue();
-				
+
 				if (f.getStainedGlass().equals(stainedGlass)) {
 
 					return bt;
@@ -467,7 +474,7 @@ public class BeamTransporter {
 		return null;
 
 	}
-	
+
 	public static BeamTransporter createBeamTransporterFromXZ(int x, int z, String worldName, OfflinePlayer p) {
 
 		for (int yscan = 0 + 1; yscan <= 256; ++yscan) {
@@ -481,9 +488,9 @@ public class BeamTransporter {
 			if (checkBlock.getType() == Material.STAINED_GLASS) {
 
 				if (Detection.detectTransporter(checkBlock)) {
-					
+
 					BeamTransporter bt = new BeamTransporter(checkBlock, p);
-					
+
 					return bt;
 
 				}
@@ -494,18 +501,18 @@ public class BeamTransporter {
 		return null;
 
 	}
-	
+
 	public static Set<Entity> getEntitiesInChunks(Location l, int chunkRadius) {
-	    Block b = l.getBlock();
-	    Set<Entity> entities = new HashSet<Entity>();
-	    for (int x = -16 * chunkRadius; x <= 16 * chunkRadius; x += 16) {
-	        for (int z = -16 * chunkRadius; z <= 16 * chunkRadius; z += 16) {
-	            for (Entity e : b.getRelative(x, 0, z).getChunk().getEntities()) {
-	                entities.add(e);
-	            }
-	        }
-	    }
-	    return entities;
+		Block b = l.getBlock();
+		Set<Entity> entities = new HashSet<Entity>();
+		for (int x = -16 * chunkRadius; x <= 16 * chunkRadius; x += 16) {
+			for (int z = -16 * chunkRadius; z <= 16 * chunkRadius; z += 16) {
+				for (Entity e : b.getRelative(x, 0, z).getChunk().getEntities()) {
+					entities.add(e);
+				}
+			}
+		}
+		return entities;
 	}
 
 }

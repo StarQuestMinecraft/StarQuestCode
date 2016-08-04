@@ -13,6 +13,7 @@ public class Ammo {
 	private boolean fire;
 	// velocity modifier (MULTIPLICATION)
 	private double velocity;
+	private double yield;
 
 	public ItemStack getItem() {
 
@@ -52,6 +53,14 @@ public class Ammo {
 	public void setName(String name) {
 
 		this.name = name;
+	}
+	
+	public double getYield(){
+		return yield;
+	}
+	
+	public void setYield(double yield){
+		this.yield = yield;
 	}
 
 }

@@ -32,7 +32,7 @@ public class DrillGUI extends GUI
 {
 	private Machine machine;
 	HashMap<String, Object> machineData;
-	private static SQTechDrill main;
+	private final SQTechDrill main;
 
 	public DrillGUI(SQTechDrill mainPlugin, Player player, int id)
 	{
@@ -46,12 +46,6 @@ public class DrillGUI extends GUI
 		Inventory gui = Bukkit.createInventory(owner, 9, ChatColor.BLUE + "Drill");
 
 		machine = ObjectUtils.getMachineFromMachineGUI(this); // gets the machine for this gui
-
-		/*for (Machine listMachine : SQTechBase.machines)
-		{
-			if (listMachine.getGUIBlock().id == id)
-				machine = listMachine;
-		}*/
 
 		if(machine == null)
 		{
@@ -187,7 +181,8 @@ public class DrillGUI extends GUI
 							return;
 						}
 						event.getWhoClicked().sendMessage(ChatColor.RED + "Activating drill!");
-						main.movingDrill.activateDrill(machine, (Player) event.getWhoClicked());
+						//main.movingDrill.activateDrill(machine, (Player) event.getWhoClicked());
+						main.activateDrill(machine, (Player) event.getWhoClicked());
 						event.getWhoClicked().closeInventory();
 						return;
 					}
@@ -202,7 +197,8 @@ public class DrillGUI extends GUI
 				else // turn off drill
 				{
 					event.getWhoClicked().sendMessage(ChatColor.RED + "Deactivating drill!");
-					main.movingDrill.deactivateDrill(machine, (Player) event.getWhoClicked());
+					//main.movingDrill.deactivateDrill(machine, (Player) event.getWhoClicked());
+					main.deActivateDrill(machine);
 					event.setCancelled(true);
 					event.getWhoClicked().closeInventory();
 					return;

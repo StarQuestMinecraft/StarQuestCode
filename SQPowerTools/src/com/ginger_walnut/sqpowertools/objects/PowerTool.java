@@ -12,6 +12,8 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import com.ginger_walnut.sqpowertools.SQPowerTools;
+import com.ginger_walnut.sqpowertools.enums.AmmoType;
+import com.ginger_walnut.sqpowertools.enums.ProjectileType;
 import com.ginger_walnut.sqpowertools.utils.AttributeUtils;
 import com.ginger_walnut.sqpowertools.utils.EffectUtils;
 
@@ -87,7 +89,7 @@ public class PowerTool {
 		this.item = new ItemStack(type.material);
 		
 		ItemMeta itemMeta = this.item.getItemMeta();	
-		itemMeta.setDisplayName(type.name);	
+		itemMeta.setDisplayName(item.getItemMeta().getDisplayName());	
 		this.item.setItemMeta(itemMeta);
 		
 		List<Enchantment> oldEnchants = new ArrayList<Enchantment>();
@@ -415,17 +417,17 @@ public class PowerTool {
 		
 		List<String> lore = new ArrayList<String>();
 		
-		for (String line : type.extraLore) {
-			
-			lore.add(ChatColor.GRAY + line);
-			
-		}
-		
 		lore.add(ChatColor.DARK_PURPLE + "Power Tool");
 		lore.add(ChatColor.DARK_PURPLE + type.name);
 		
 		List<Modifier> modifiers = new ArrayList<Modifier>();
 		modifiers.addAll(modifierMap.keySet());
+		
+		for (String line : type.extraLore) {
+			
+			lore.add(line);
+			
+		}
 		
 		lore.add(ChatColor.RED + "Energy: " + SQPowerTools.formatEnergy(energy) + "/" + SQPowerTools.formatEnergy(maxEnergy));
 		
@@ -487,6 +489,30 @@ public class PowerTool {
 			}
 
 			lore.add(ChatColor.GOLD + "Ranged Scope: " + (blasterStats.scope + 1));
+			
+			if (blasterStats.ammo > 0) {
+				
+				lore.add(ChatColor.GOLD + "Max Ammo: " + blasterStats.ammo);
+				
+				if (Double.toString(Double.parseDouble(Integer.toString(blasterStats.reload)) / 20.0).endsWith(".0")) {
+					
+					lore.add(ChatColor.GOLD + "Reload Time: " + (blasterStats.reload / 20.0) + " seconds");
+					
+				} else {
+					
+					lore.add(ChatColor.GOLD + "Reload Time: " + (Double.parseDouble(Integer.toString(blasterStats.reload)) / 20.0) + " seconds");
+					
+				}
+				
+			}
+			
+			lore.add(ChatColor.GOLD + "Ranged Ammo: " + blasterStats.ammoType.getName());
+			
+			if (blasterStats.projectileType.equals(ProjectileType.FIREBALL)) {
+				
+				lore.add(ChatColor.GOLD + "Explosion Size: " + blasterStats.explosionSize);
+				
+			}
 			
 		}
 		
@@ -732,6 +758,11 @@ public class PowerTool {
 			blasterStats.cooldown = type.blasterStats.cooldown;
 			blasterStats.damage = type.blasterStats.damage;
 			blasterStats.scope = type.blasterStats.scope;
+			blasterStats.ammo = type.blasterStats.ammo;
+			blasterStats.reload = type.blasterStats.reload;
+			blasterStats.ammoType = type.blasterStats.ammoType;
+			blasterStats.projectileType = type.blasterStats.projectileType;
+			blasterStats.explosionSize = type.blasterStats.explosionSize;
 			
 		}
 		
@@ -742,12 +773,69 @@ public class PowerTool {
 				blasterStats.cooldown = blasterStats.cooldown + (modifier.blasterStats.cooldown * modifierMap.get(modifier));
 				blasterStats.damage = blasterStats.damage + (modifier.blasterStats.damage * modifierMap.get(modifier));
 				blasterStats.scope = blasterStats.scope + (modifier.blasterStats.scope * modifierMap.get(modifier));
+				blasterStats.ammo = blasterStats.ammo + (modifier.blasterStats.ammo * modifierMap.get(modifier));
+				blasterStats.reload = blasterStats.reload + (modifier.blasterStats.reload * modifierMap.get(modifier)); 
+				blasterStats.explosionSize = blasterStats.explosionSize + (modifier.blasterStats.explosionSize * modifierMap.get(modifier)); 
 				
 			}
 			
 		}
 		
 		return blasterStats;
+		
+	}
+	
+	public int getAmmo() {
+		
+		boolean start = false;
+		
+		String amount = "";
+		
+		for (char letter : item.getItemMeta().getDisplayName().toCharArray()) {
+			
+			if (start) {
+				
+				if (letter != ' ') {
+					
+					if (letter == '/') {
+						
+						try {
+							
+							return Integer.parseInt(amount);
+							
+						} catch (Exception e) {
+							
+							e.printStackTrace();
+							
+						}
+
+					} else {
+						
+						amount = amount + letter;
+						
+					}
+
+				}
+				
+			}
+			
+			if (letter == '-') {
+				
+				start = true;
+				
+			}
+			
+		}
+		
+		return 0;
+		
+	}
+	
+	public void setDisplayName(String name) {
+		
+		ItemMeta itemMeta = item.getItemMeta();
+		itemMeta.setDisplayName(name);
+		item.setItemMeta(itemMeta);
 		
 	}
 	

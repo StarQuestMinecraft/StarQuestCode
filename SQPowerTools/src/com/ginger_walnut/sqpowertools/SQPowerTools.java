@@ -27,6 +27,8 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import com.ginger_walnut.sqpowertools.enums.AmmoType;
+import com.ginger_walnut.sqpowertools.enums.ProjectileType;
 import com.ginger_walnut.sqpowertools.events.BlasterEvents;
 import com.ginger_walnut.sqpowertools.events.ToolUseEvents;
 import com.ginger_walnut.sqpowertools.gui.GUI;
@@ -38,7 +40,6 @@ import com.ginger_walnut.sqpowertools.objects.Modifier;
 import com.ginger_walnut.sqpowertools.objects.PowerTool;
 import com.ginger_walnut.sqpowertools.objects.PowerToolType;
 import com.ginger_walnut.sqpowertools.tasks.BlasterTask;
-import com.ginger_walnut.sqpowertools.tasks.ChargerTask;
 import com.ginger_walnut.sqpowertools.tasks.CooldownTask;
 import com.ginger_walnut.sqpowertools.tasks.HoldingTask;
 import com.ginger_walnut.sqpowertools.utils.EffectUtils;
@@ -69,8 +70,7 @@ public class SQPowerTools extends JavaPlugin {
 			this.getServer().getPluginManager().registerEvents(new Events(), this);
 			this.getServer().getPluginManager().registerEvents(new ToolUseEvents(), this);
 			this.getServer().getPluginManager().registerEvents(new BlasterEvents(), this);
-			
-			(new ChargerTask()).run();
+
 			(new HoldingTask()).run();
 			(new CooldownTask()).run();
 			(new BlasterTask()).run();
@@ -145,6 +145,32 @@ public class SQPowerTools extends JavaPlugin {
 							blasterStats.cooldown = config.getInt("power tools." + powerTool + ".blaster.cooldown");
 							blasterStats.damage = config.getDouble("power tools." + powerTool + ".blaster.damage");
 							blasterStats.scope = config.getInt("power tools." + powerTool + ".blaster.scope") - 1;
+							
+							if (config.contains("power tools." + powerTool + ".blaster.ammo")) {
+								
+								blasterStats.ammo = config.getInt("power tools." + powerTool + ".blaster.ammo");
+								blasterStats.reload = config.getInt("power tools." + powerTool + ".blaster.reload");
+								
+							}
+							
+							if (config.contains("power tools." + powerTool + ".blaster.ammoType")) {
+								
+								blasterStats.ammoType = AmmoType.getById(config.getInt("power tools." + powerTool + ".blaster.ammoType"));
+
+							}
+							
+							
+							if (config.contains("power tools." + powerTool + ".blaster.projectileType")) {
+								
+								blasterStats.projectileType = ProjectileType.getById(config.getInt("power tools." + powerTool + ".blaster.projectileType"));
+								
+							}
+							
+							if (config.contains("power tools." + powerTool + ".blaster.explosionSize")) {
+								
+								blasterStats.explosionSize = (float) config.getDouble("power tools." + powerTool + ".blaster.explosionSize");
+								
+							}
 							
 							powerToolType.blasterStats = blasterStats;
 							
@@ -279,6 +305,18 @@ public class SQPowerTools extends JavaPlugin {
 									if (config.contains("power tools." + powerTool + ".mods." + mod + ".blaster.scope")) {
 										
 										blasterStats.scope = config.getInt("power tools." + powerTool + ".mods." + mod + ".blaster.scope");
+										
+									}
+									
+									if (config.contains("power tools." + powerTool + ".mods." + mod + ".blaster.ammo")) {
+										
+										blasterStats.ammo = config.getInt("power tools." + powerTool + ".mods." + mod + ".blaster.ammo");
+										
+									}
+									
+									if (config.contains("power tools." + powerTool + ".mods." + mod + ".blaster.reload")) {
+										
+										blasterStats.reload = config.getInt("power tools." + powerTool + ".mods." + mod + ".blaster.reload");
 										
 									}
 									
@@ -979,8 +1017,10 @@ public class SQPowerTools extends JavaPlugin {
 			
 			PowerTool powerToolObject = new PowerTool(type, modifiers);
 			powerToolObject.setEnergy(currentEnergy);
-			
+
+			powerToolObject.setDisplayName(powerTool.getItemMeta().getDisplayName());
 			powerTool = powerToolObject.getItem();
+		
 			
 		} else {
 			

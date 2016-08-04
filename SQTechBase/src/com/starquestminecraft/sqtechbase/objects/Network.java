@@ -23,9 +23,9 @@ public class Network {
 	
 	Block startBlock;
 	
-	public Network(Block startingBlock) {
+	public Network(Block startingBlock, boolean detectMachines) {
 		
-		if (startingBlock.getType().equals(Material.LAPIS_BLOCK) || startingBlock.getType().equals(Material.STAINED_GLASS) || startingBlock.getType().equals(Material.GLASS)) {
+		if (startingBlock.getType().equals(Material.LAPIS_BLOCK) || startingBlock.getType().equals(Material.STAINED_GLASS) || startingBlock.getType().equals(Material.GLASS) || startingBlock.getType().equals(Material.END_ROD)) {
 			
 			startBlock = startingBlock;
 			
@@ -40,7 +40,7 @@ public class Network {
 				
 				detectedGUIBlocks.add(startingBlock);
 				
-			} else if (startingBlock.getType().equals(Material.STAINED_GLASS) || startingBlock.getType().equals(Material.GLASS)) {
+			} else if (startingBlock.getType().equals(Material.STAINED_GLASS) || startingBlock.getType().equals(Material.GLASS) || startingBlock.getType().equals(Material.END_ROD)) {
 				
 				detectedWireBlocks.add(startingBlock);
 				
@@ -104,7 +104,7 @@ public class Network {
 			
 			for (Block block : detectedGUIBlocks) {
 				
-				GUIBlocks.add(new GUIBlock(block.getLocation()));
+				GUIBlocks.add(new GUIBlock(block.getLocation(), detectMachines));
 				
 				List<Network> networks = new ArrayList<Network>();
 				networks.addAll(SQTechBase.networks);
@@ -163,7 +163,7 @@ public class Network {
 					detectedGUIBlocks.add(sideBlock);	
 					attemptableBlocksFrom.add(sideBlock);
 
-				} else if (sideBlock.getType().equals(Material.STAINED_GLASS) && (block.getType().equals(Material.LAPIS_BLOCK) || block.getType().equals(Material.GLASS) || block.getType().equals(Material.STAINED_GLASS))) {
+				} else if (sideBlock.getType().equals(Material.STAINED_GLASS) && (block.getType().equals(Material.LAPIS_BLOCK) || block.getType().equals(Material.GLASS) || block.getType().equals(Material.STAINED_GLASS) || block.getType().equals(Material.END_ROD))) {
 					
 					if (block.getType().equals(Material.STAINED_GLASS)) {
 						
@@ -185,7 +185,7 @@ public class Network {
 						
 					}
 					
-				} else if (sideBlock.getType().equals(Material.GLASS)) {
+				} else if (sideBlock.getType().equals(Material.GLASS) || sideBlock.getType().equals(Material.END_ROD)) {
 					
 					attemptedBlocks.add(sideBlock);
 					

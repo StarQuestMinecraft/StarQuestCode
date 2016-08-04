@@ -1,7 +1,10 @@
 package me.dan14941.sqtechdrill;
 
 import java.util.HashMap;
+import java.util.List;
 
+import org.bukkit.ChatColor;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
@@ -10,6 +13,7 @@ import com.starquestminecraft.sqtechbase.SQTechBase;
 import com.starquestminecraft.sqtechbase.objects.Machine;
 
 import me.dan14941.sqtechdrill.movement.MovingDrill;
+import me.dan14941.sqtechdrill.task.DrillManager;
 
 public class SQTechDrill extends JavaPlugin
 {
@@ -17,13 +21,15 @@ public class SQTechDrill extends JavaPlugin
 	public Drill drill;
 	public EventSimulator eventSim;
 	private static SQTechDrill plugin;
+	private DrillManager task;
 	
-    private HashMap<Player, Integer> active = new HashMap<Player, Integer>();
     private HashMap<Machine, BukkitTask> machinesBurningFuel = new HashMap<Machine, BukkitTask>();
 	
 	public void onEnable()
 	{
 		plugin = this;
+		
+		task = null;
 		
 		this.drill = new Drill(this.getDrillMaxEnergyFromConfig(), this);
 		SQTechBase.addMachineType(drill);
@@ -51,26 +57,52 @@ public class SQTechDrill extends JavaPlugin
         }
 	}
 	
-	/**
-	 * Gets the amount of active drills a player currently has
-	 * @param player the Player with active drills
-	 * @return the amount of active drills a player currently has
-	 */
-	public Integer getActiveDrillsForPlayer(Player player)
+	public void activateDrill(Machine drill, Player player)
 	{
-		return this.active.get(player);
+		drill.data.put("isActive", true);
+		
+		List<Block> frontBlocks = MovingDrill.getBlocksInFront(drill);
+		if(frontBlocks == null)
+		{
+			player.sendMessage(ChatColor.RED + "The drill could not start!");
+			return;
+		}
+
+		for (Block block : frontBlocks)
+		{
+			if(movingDrill.attemptDrill(block, player) == false)
+			{
+				drill.data.put("isActive", false);
+				return;
+			}
+		} // Checks front blocks
+
+		if((boolean) drill.data.get("isActive") == false)
+			return;
+		
+		if(this.task == null)
+		{
+			this.getLogger().info("Starting a new drill manager task.");
+			task = new DrillManager(this);
+			task.runTaskTimer(this, this.getFastDrillSpeed()+1, this.getFastDrillSpeed()+1);
+		}
+		
+		task.addDrill(drill);
 	}
 	
-	/**
-	 * Sets the current active amount of drills for a Player.
-	 * @param player the Player who has the active drills
-	 * @param integer amount of drills active
-	 * @return Current active drills for a Player after changing it
-	 */
-	public Integer setActiveDrillsForPlayer(Player player, Integer integer)
+	public void deActivateDrill(Machine drill)
 	{
-		this.active.put(player, integer);
-		return this.active.get(player);
+		if(task == null)
+			return;
+		task.removeActiveMachine(drill);
+		if(task.activeDrills() < 1)
+		{
+			this.getLogger().info("Stopping the drill manager task.");
+			task.cancel();
+			task = null;
+		}
+		
+		drill.data.put("isActive", false);
 	}
 	
 	public static SQTechDrill getMain()

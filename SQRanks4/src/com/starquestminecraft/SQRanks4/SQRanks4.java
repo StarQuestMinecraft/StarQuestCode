@@ -34,14 +34,28 @@ public class SQRanks4 extends JavaPlugin implements Listener{
 		this.saveDefaultConfig();
 	}
 	
+	private String rankTitle(String rank){
+		String unformatted = chat.getGroupPrefix(Bukkit.getWorlds().get(0), rank);
+		if(rank.startsWith("Arator")){
+			return ChatColor.BLUE + unformatted.substring(3, unformatted.length()-3) + ChatColor.RESET;
+		}
+		else if(rank.startsWith("Requiem")){
+			return ChatColor.RED + unformatted.substring(3, unformatted.length()-3) + ChatColor.RESET;
+		}
+		else if(rank.startsWith("Yavari")){
+			return ChatColor.LIGHT_PURPLE + unformatted.substring(3, unformatted.length()-3) + ChatColor.RESET;
+		}
+		return "Unknown";
+	}
+	
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args){
 		if(cmd.getName().equalsIgnoreCase("rankup") && sender instanceof Player){
 			return buyrank(sender, args);
 		} else if(cmd.getName().equalsIgnoreCase("ranklist")){
 			for(int i = 0; i <=5; i++){
-				sender.sendMessage(chat.getGroupPrefix(Bukkit.getWorlds().get(0), ara_ranks[i])+ "/" + chat.getGroupPrefix(Bukkit.getWorlds().get(0), req_ranks[i]) + "/" + chat.getGroupPrefix(Bukkit.getWorlds().get(0), yav_ranks[i]) + 
-						" Cost: " + getConfig().getDouble("ranks."+req_ranks[i]+".price") + ", Power: " + getConfig().getInt("ranks."+req_ranks[i]+".level"));
+				sender.sendMessage(rankTitle(ara_ranks[i]) + "/" + rankTitle(req_ranks[i]) + "/" + rankTitle(yav_ranks[i]) + " Cost: " + 
+						getConfig().getDouble("ranks."+req_ranks[i]+".price") + ", Power: " + getConfig().getInt("ranks."+req_ranks[i]+".level"));
 			}
 			return true;
 		}
@@ -89,7 +103,7 @@ public class SQRanks4 extends JavaPlugin implements Listener{
 				//Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "pp user " + player.getName() + " removegroup " + current_rank);
 				Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "pp user " + player.getName() + " addgroup " + next_rank);
 				eco.withdrawPlayer(player, price);
-				player.sendMessage(ChatColor.GREEN + "You have bought the rank: " + ChatColor.RESET + chat.getGroupPrefix(Bukkit.getWorlds().get(0), next_rank));
+				player.sendMessage(ChatColor.GREEN + "You have bought the rank: " + rankTitle(next_rank));
 			}
 			else{
 				if(ExperienceAPI.getPowerLevel(player) < level){
@@ -110,7 +124,7 @@ public class SQRanks4 extends JavaPlugin implements Listener{
 			//Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "pp user " + player.getName() + " removegroup " + current_rank);
 			Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "pp user " + player.getName() + " addgroup " + next_rank);
 			eco.withdrawPlayer(player, price);
-			player.sendMessage(ChatColor.GREEN + "You have bought the rank: " + ChatColor.RESET + chat.getGroupPrefix(Bukkit.getWorlds().get(0), next_rank));
+			player.sendMessage(ChatColor.GREEN + "You have bought the rank: " + rankTitle(next_rank));
 		}
 		else{
 			if(ExperienceAPI.getLevel(player, skill) < level){

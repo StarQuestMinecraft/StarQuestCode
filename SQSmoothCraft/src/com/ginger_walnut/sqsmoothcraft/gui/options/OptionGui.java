@@ -15,7 +15,7 @@ import com.ginger_walnut.sqsmoothcraft.PlayerOptions;
 import com.ginger_walnut.sqsmoothcraft.SQSmoothCraft;
 import com.ginger_walnut.sqsmoothcraft.gui.Gui;
 import com.ginger_walnut.sqsmoothcraft.gui.MainGui;
-import com.ginger_walnut.sqsmoothcraft.ship.ShipUtils;
+import com.ginger_walnut.sqsmoothcraft.utils.ShipUtils;
 
 public class OptionGui extends Gui{
 

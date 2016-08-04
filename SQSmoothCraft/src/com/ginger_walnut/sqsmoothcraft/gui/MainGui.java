@@ -13,13 +13,13 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 import com.ginger_walnut.sqsmoothcraft.SQSmoothCraft;
+import com.ginger_walnut.sqsmoothcraft.enums.BlockType;
 import com.ginger_walnut.sqsmoothcraft.gui.options.OptionGui;
-import com.ginger_walnut.sqsmoothcraft.ship.BlockType;
-import com.ginger_walnut.sqsmoothcraft.ship.Ship;
-import com.ginger_walnut.sqsmoothcraft.ship.ShipBlock;
-import com.ginger_walnut.sqsmoothcraft.ship.ShipDetection;
-import com.ginger_walnut.sqsmoothcraft.ship.ShipLocation;
-import com.ginger_walnut.sqsmoothcraft.ship.ShipUtils;
+import com.ginger_walnut.sqsmoothcraft.objects.Ship;
+import com.ginger_walnut.sqsmoothcraft.objects.ShipBlock;
+import com.ginger_walnut.sqsmoothcraft.objects.ShipLocation;
+import com.ginger_walnut.sqsmoothcraft.tasks.ShipDetection;
+import com.ginger_walnut.sqsmoothcraft.utils.ShipUtils;
 import com.martinjonsson01.sqsmoothcraft.missile.MissileGUI;
 
 public class MainGui extends Gui{

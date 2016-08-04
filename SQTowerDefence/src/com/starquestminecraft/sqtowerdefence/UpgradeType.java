@@ -1,6 +1,8 @@
 package com.starquestminecraft.sqtowerdefence;
 
-public enum UpgradeType {
+import java.io.Serializable;
+
+public enum UpgradeType implements Serializable{
 	SPEED, DAMAGE, RANGE, ACCURACY, BOT_HEALTH, BOT_DAMAGE, MAX_BOTS, BOT_WEAPON, POTION_EFFECT, TOWER;
 	
 	public UpgradeType getUpgradeType(String string) {

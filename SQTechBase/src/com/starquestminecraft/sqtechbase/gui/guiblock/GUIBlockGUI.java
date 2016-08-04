@@ -38,8 +38,7 @@ public class GUIBlockGUI extends GUI {
 			
 			if (SQTechBase.currentGui.get(owner) == null) {
 				
-				fromNoWhere = true;
-				
+				fromNoWhere = true;				
 			}
 			
 			if (fromNoWhere) {
@@ -106,6 +105,13 @@ public class GUIBlockGUI extends GUI {
 					gui.setItem(10, InventoryUtils.createSpecialItem(Material.STAINED_GLASS, (short) 14, "Imports Energy: False", new String[] {ChatColor.RED + "" + ChatColor.MAGIC + "Contraband"}));
 					
 				}
+
+			}
+			
+			if (machine.maxLiquid.size() > 0) { 
+				
+				gui.setItem(18, InventoryUtils.createSpecialItem(Material.BUCKET, (short) 0, "Liquid Exports", new String[] {ChatColor.RED + "" + ChatColor.MAGIC + "Contraband"}));
+				gui.setItem(19, InventoryUtils.createSpecialItem(Material.WATER_BUCKET, (short) 0, "Liquid Imports", new String[] {ChatColor.RED + "" + ChatColor.MAGIC + "Contraband"}));
 				
 			}
 	
@@ -211,6 +217,26 @@ public class GUIBlockGUI extends GUI {
 							gui.setItem(10, InventoryUtils.createSpecialItem(Material.STAINED_GLASS, (short) 14, "Imports Energy: False", new String[] {ChatColor.RED + "" + ChatColor.MAGIC + "Contraband"}));
 							
 						}
+						
+					}
+					
+				} else if (event.getSlot() == 18) {
+					
+					Machine machine = ObjectUtils.getMachineFromGUIBlock(ObjectUtils.getGUIBlockFromGUI(this));
+					
+					if (machine.maxLiquid.size() > 0) { 
+					
+						new LiquidExportGUI(owner, id).open();
+						
+					}
+					
+				} else if (event.getSlot() == 19) {
+					
+					Machine machine = ObjectUtils.getMachineFromGUIBlock(ObjectUtils.getGUIBlockFromGUI(this));
+					
+					if (machine.maxLiquid.size() > 0) { 
+					
+						new LiquidImportGUI(owner, id).open();
 						
 					}
 					

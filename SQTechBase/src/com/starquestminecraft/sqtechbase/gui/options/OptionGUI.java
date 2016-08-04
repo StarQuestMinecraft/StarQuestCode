@@ -86,27 +86,31 @@ public class OptionGUI extends GUI {
 	@Override
 	public void click(InventoryClickEvent event) {
 		
-		if (event.getClickedInventory().getTitle().startsWith(ChatColor.BLUE + "SQTech")) {
+		if (event.getClickedInventory() != null) {
 			
-			event.setCancelled(true);
-			
-			ItemStack clickedItem = event.getInventory().getItem(event.getSlot());
-			
-			boolean normalItem = true;
-			
-			if (clickedItem == null) {
+			if (event.getClickedInventory().getTitle().startsWith(ChatColor.BLUE + "SQTech")) {
 				
-				normalItem = false;
+				event.setCancelled(true);
 				
-			} else {
+				ItemStack clickedItem = event.getInventory().getItem(event.getSlot());
 				
-				if (clickedItem.hasItemMeta()) {
+				boolean normalItem = true;
+				
+				if (clickedItem == null) {
 					
-					if (clickedItem.getItemMeta().hasLore()) {
+					normalItem = false;
+					
+				} else {
+					
+					if (clickedItem.hasItemMeta()) {
 						
-						if (clickedItem.getItemMeta().getLore().contains(ChatColor.RED + "" + ChatColor.MAGIC + "Contraband")) {
+						if (clickedItem.getItemMeta().hasLore()) {
 							
-							normalItem = false;
+							if (clickedItem.getItemMeta().getLore().contains(ChatColor.RED + "" + ChatColor.MAGIC + "Contraband")) {
+								
+								normalItem = false;
+								
+							}
 							
 						}
 						
@@ -114,59 +118,59 @@ public class OptionGUI extends GUI {
 					
 				}
 				
-			}
-			
-			if (normalItem) {
-				
-				event.setCancelled(false);
-				
-			}
-			
-			String itemName = "";
-			int slot = event.getSlot();
-			
-			if (event.getCurrentItem().hasItemMeta()) {
-				
-				itemName = event.getCurrentItem().getItemMeta().getDisplayName();
-				
-			}
-
-			if (!(itemName.equals(" ") || optionNames.contains(itemName))) {
-				
-				if (options.get(slot - 9).type.equals(OptionType.BOOLEANFALSE)) {
+				if (normalItem) {
 					
-					options.get(slot - 9).type = OptionType.BOOLEANTRUE;
+					event.setCancelled(false);
 					
-					if (slot == 9) {
-						
-						SQTechBase.currentOptions.get(owner.getUniqueId()).machineGUI = true;
-						
-					}
-		
-				} else if (options.get(slot - 9).type.equals(OptionType.BOOLEANTRUE)) {
-					
-					options.get(slot - 9).type = OptionType.BOOLEANFALSE;
-					
-					if (slot == 9) {
-						
-						SQTechBase.currentOptions.get(owner.getUniqueId()).machineGUI = false;
-						
-					}
-
 				}
 				
-				this.open();
+				String itemName = "";
+				int slot = event.getSlot();
 				
-			}
-			
-		} else {
-			
-			if (event.getAction().equals(InventoryAction.MOVE_TO_OTHER_INVENTORY)) {
-				
-				event.setCancelled(true);
-				
-			}
+				if (event.getCurrentItem().hasItemMeta()) {
+					
+					itemName = event.getCurrentItem().getItemMeta().getDisplayName();
+					
+				}
 
+				if (!(itemName.equals(" ") || optionNames.contains(itemName))) {
+					
+					if (options.get(slot - 9).type.equals(OptionType.BOOLEANFALSE)) {
+						
+						options.get(slot - 9).type = OptionType.BOOLEANTRUE;
+						
+						if (slot == 9) {
+							
+							SQTechBase.currentOptions.get(owner.getUniqueId()).machineGUI = true;
+							
+						}
+			
+					} else if (options.get(slot - 9).type.equals(OptionType.BOOLEANTRUE)) {
+						
+						options.get(slot - 9).type = OptionType.BOOLEANFALSE;
+						
+						if (slot == 9) {
+							
+							SQTechBase.currentOptions.get(owner.getUniqueId()).machineGUI = false;
+							
+						}
+
+					}
+					
+					this.open();
+					
+				}
+				
+			} else {
+				
+				if (event.getAction().equals(InventoryAction.MOVE_TO_OTHER_INVENTORY)) {
+					
+					event.setCancelled(true);
+					
+				}
+
+			}
+			
 		}
 		
 	}

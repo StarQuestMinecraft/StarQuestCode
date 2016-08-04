@@ -37,6 +37,16 @@ public class ExportGUI extends GUI {
 			
 		}
 		
+		if (guiBlock.exportAll) {
+			
+			gui.setItem(25, InventoryUtils.createSpecialItem(Material.EYE_OF_ENDER, (short) 0, "Export All: True", new String[] {ChatColor.RED + "" + ChatColor.MAGIC + "Contraband"}));
+			
+		} else {
+			
+			gui.setItem(25, InventoryUtils.createSpecialItem(Material.ENDER_PEARL, (short) 0, "Export All: False", new String[] {ChatColor.RED + "" + ChatColor.MAGIC + "Contraband"}));
+			
+		}
+		
 		gui.setItem(26, InventoryUtils.createSpecialItem(Material.WOOD_DOOR, (short) 0, "Back", new String[] {ChatColor.RED + "" + ChatColor.MAGIC + "Contraband"}));
 	
 		owner.openInventory(gui);
@@ -71,7 +81,7 @@ public class ExportGUI extends GUI {
 
 				}
 								
-				if (event.getSlot() != 26) {
+				if (event.getSlot() != 26 && event.getSlot() != 25) {
 					
 					if (event.getClickedInventory().getItem(event.getSlot()) == null) {
 						
@@ -109,9 +119,31 @@ public class ExportGUI extends GUI {
 					
 				} else {
 					
-					GUIBlock guiBlock = ObjectUtils.getGUIBlockFromGUI(this);
-					
-					guiBlock.getGUI(owner).open();
+					if (event.getSlot() == 26) {
+						
+						GUIBlock guiBlock = ObjectUtils.getGUIBlockFromGUI(this);
+						
+						guiBlock.getGUI(owner).open();
+						
+					} else if (event.getSlot() == 25) {
+						
+						GUIBlock guiBlock = ObjectUtils.getGUIBlockFromGUI(this);
+						
+						if (guiBlock.exportAll) {
+							
+							event.getClickedInventory().setItem(25, InventoryUtils.createSpecialItem(Material.ENDER_PEARL, (short) 0, "Export All: False", new String[] {ChatColor.RED + "" + ChatColor.MAGIC + "Contraband"}));
+							
+							guiBlock.exportAll = false;
+							
+						} else {
+							
+							event.getClickedInventory().setItem(25, InventoryUtils.createSpecialItem(Material.EYE_OF_ENDER, (short) 0, "Export All: True", new String[] {ChatColor.RED + "" + ChatColor.MAGIC + "Contraband"}));
+							
+							guiBlock.exportAll = true;
+							
+						}
+						
+					}
 					
 				}
 				

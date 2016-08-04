@@ -48,8 +48,8 @@ public class HomingTask extends BukkitRunnable {
 			f.setFireworkMeta(fm);
 			f.detonate();
 			this.target.getWorld().playEffect(this.target.getLocation(), Effect.ENDER_SIGNAL, 0);
-			this.arrow.getWorld().playSound(this.arrow.getLocation(), Sound.EXPLODE, 25, 0.75F);
-			this.arrow.getWorld().playSound(this.arrow.getLocation(), Sound.EXPLODE, 25, 10F);
+			this.arrow.getWorld().playSound(this.arrow.getLocation(), Sound.ENTITY_GENERIC_EXPLODE, 25, 0.75F);
+			this.arrow.getWorld().playSound(this.arrow.getLocation(), Sound.ENTITY_GENERIC_EXPLODE, 25, 10F);
 			return;
 		}
 		Vector toTarget = this.target.getLocation().clone().add(new Vector(0.0D, 0.5D, 0.0D)).subtract(this.arrow.getLocation()).toVector();

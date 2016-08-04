@@ -180,13 +180,11 @@ public class SQDuties extends JavaPlugin implements Listener{
 				
 				for (int i = 0; i < deaths.size(); i ++) {
 
-					sender.sendMessage(ChatColor.AQUA + "" + i + ": " + deaths.get(i)); 
+					sender.sendMessage(ChatColor.AQUA + "" + (i + 1) + ": " + deaths.get(i)); 
 					
 				}
 				
 			} else if (args.length == 2) { 
-				
-				sender.sendMessage(ChatColor.AQUA + "Inventory restored"); 
 				
 				Player player = getServer().getPlayer(args[0]);
 				
@@ -203,6 +201,8 @@ public class SQDuties extends JavaPlugin implements Listener{
 				knapsack.unpack(player);
 				
 				player.setHealth(health);
+				
+				sender.sendMessage(ChatColor.AQUA + "Inventory restored"); 
 				
 			} 
 
