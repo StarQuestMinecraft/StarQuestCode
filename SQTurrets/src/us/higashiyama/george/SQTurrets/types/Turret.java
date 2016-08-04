@@ -12,6 +12,8 @@ import org.bukkit.block.Dispenser;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
+
 import us.higashiyama.george.SQTurrets.Ammo;
 import us.higashiyama.george.SQTurrets.DirectionUtils;
 import us.higashiyama.george.SQTurrets.SQTurrets;
@@ -56,7 +58,7 @@ public abstract class Turret {
 			return;
 
 		Ammo loaded = getLoadedAmmo(p);
-		if (this.hasAmmo(p)) {
+		if (hasAmmo(p)) {
 			this.shoot(p, loaded);
 		} else {
 			this.shoot(p);
@@ -179,14 +181,14 @@ public abstract class Turret {
 		Dispenser d = (Dispenser) b.getState();
 		Inventory i = d.getInventory();
 		for (Ammo ammo : ammos) {
-			if (i.containsAtLeast(ammo.getItem(), ammo.getItem().getAmount())) {
-				i.removeItem(ammo.getItem());
-				return true;
-			} else if (i.contains(Material.SPLASH_POTION) && ammo.getName().equalsIgnoreCase("potion")){
+			if (i.contains(Material.SPLASH_POTION) && ammo.getName().equalsIgnoreCase("potion")){
 				i.removeItem(i.getItem(i.first(Material.SPLASH_POTION)));
 				return true;
 			} else if (i.contains(Material.LINGERING_POTION) && ammo.getName().equalsIgnoreCase("potion")){
 				i.removeItem(i.getItem(i.first(Material.LINGERING_POTION)));
+				return true;
+			} else if (i.contains(ammo.getItem().getType(), ammo.getItem().getAmount())) {
+				i.removeItem(ammo.getItem());
 				return true;
 			}
 		}
@@ -201,13 +203,16 @@ public abstract class Turret {
 		Dispenser d = (Dispenser) b.getState();
 		Inventory i = d.getInventory();
 		for (Ammo ammo : this.getAmmos()) {
-			if (i.containsAtLeast(ammo.getItem(), 1)) {
-				return ammo;
-			} else if (i.contains(Material.SPLASH_POTION) && ammo.getName().equalsIgnoreCase("potion")){
+			if (i.contains(Material.SPLASH_POTION) && ammo.getName().equalsIgnoreCase("potion")){
 				ammo.setItem(i.getItem(i.first(Material.SPLASH_POTION)));
 				return ammo;
 			} else if (i.contains(Material.LINGERING_POTION) && ammo.getName().equalsIgnoreCase("potion")){
 				ammo.setItem(i.getItem(i.first(Material.LINGERING_POTION)));
+				return ammo;
+			} else if (i.contains(ammo.getItem().getType())) {
+				ItemStack stack = new ItemStack(i.getItem(i.first(ammo.getItem().getType())));
+				stack.setAmount(ammo.getItem().getAmount());
+				ammo.setItem(stack);
 				return ammo;
 			}
 		}
