@@ -1,15 +1,10 @@
 package me.dan14941.sqtechdrill.task;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 
-import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.block.Chest;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import com.starquestminecraft.sqtechbase.objects.Machine;
@@ -24,6 +19,7 @@ public class DrillManager extends BukkitRunnable
 	private final SQTechDrill plugin;
 	private final List<Machine> activeDrills;
 	final List<Machine> queueInactive;
+	private BlockBreakManager breakManager;
 	
 	public DrillManager(SQTechDrill plugin)
 	{
@@ -33,6 +29,13 @@ public class DrillManager extends BukkitRunnable
 	}
 	
 	private static boolean faster = true;
+	
+	@Override
+	public void cancel()
+	{
+		super.cancel();
+		this.breakManager.cancel();
+	}
 	
 	@Override
 	public void run()
@@ -70,7 +73,13 @@ public class DrillManager extends BukkitRunnable
 					liquidPresent = (Boolean) value;
 			}
 			
-			int energyPerBlock = plugin.getEnergyPerBlockMined();
+			if(this.breakManager == null)
+			{
+				this.breakManager = new BlockBreakManager(plugin);
+				this.breakManager.runTaskTimer(plugin, plugin.getFastDrillSpeed(), plugin.getFastDrillSpeed());
+			}
+			if(breakManager.isBreakingBlock(activeDrill))
+				continue;
 			
 			if (air == activeDrill.frontBlocks.size() && !liquidPresent) // checks if all block in front of the drill are air
 			{
@@ -90,6 +99,7 @@ public class DrillManager extends BukkitRunnable
 					if(!frontBlock.isEmpty() && !frontBlock.isLiquid()) // Make sure its not air and not liquid
 						blocksToRemove.add(frontBlock); // add it to the List
 				
+				/*
 				BukkitRunnable blockBreak = new BukkitRunnable() // new runnable to remove the blocks
 				{
 					int count = 1; // blocks removed
@@ -148,6 +158,11 @@ public class DrillManager extends BukkitRunnable
 				};
 				
 				blockBreak.runTaskTimer(SQTechDrill.getMain(), 0, plugin.drill.getDrillSpeed(machine));
+				*/
+				boolean slowDrill = true;
+				if(plugin.drill.getDrillSpeed(machine) == plugin.getFastDrillSpeed())
+					slowDrill = false;
+				this.breakBlock(activeDrill, blocksToRemove, slowDrill);
 			}
 		}
 		
@@ -221,6 +236,14 @@ public class DrillManager extends BukkitRunnable
 	public void addDrill(Machine drill)
 	{
 		this.activeDrills.add(drill);
+	}
+	
+	public void breakBlock(ActiveDrill drill, List<Block> blocks, boolean slow)
+	{	
+		if(slow == true)
+			this.breakManager.addBlocksToRemoveSlow(drill, blocks);
+		else
+			this.breakManager.addBlocksToRemoveFast(drill, blocks);
 	}
 
 }

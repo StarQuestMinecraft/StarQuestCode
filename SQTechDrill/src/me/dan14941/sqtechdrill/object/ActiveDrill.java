@@ -82,4 +82,9 @@ public class ActiveDrill
 	{
 		return this.forward;
 	}
+	
+	public Machine getMachine()
+	{
+		return this.machine;
+	}
 }
