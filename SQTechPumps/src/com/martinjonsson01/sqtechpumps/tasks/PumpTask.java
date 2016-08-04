@@ -86,10 +86,10 @@ public class PumpTask extends BukkitRunnable{
 							waterBlocks.get(0).getRelative(BlockFace.DOWN).getType() == Material.STATIONARY_WATER ||
 							waterBlocks.get(0).getRelative(BlockFace.DOWN).getType() == Material.LAVA ||
 							waterBlocks.get(0).getRelative(BlockFace.DOWN).getType() == Material.STATIONARY_LAVA) {
-
+						
+						//Continuing pumping downwards
 						SQTechPumps.waterBlocks.get(machine).clear();
 						Pump.startPumping(machine, owner);
-						//Bukkit.getServer().broadcastMessage("Amount pumped CONTINUING: " + waterBlocks.size());
 						Bukkit.getScheduler().cancelTask(Pump.taskId.get(machine));
 
 					} else {

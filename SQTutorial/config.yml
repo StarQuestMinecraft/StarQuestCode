@@ -1,0 +1,8 @@
+tutorials:
+  start:
+    stages:
+      welcome:
+        message: "&6Welcome to Starquest!"
+        voice path: ""
+        wait: 10
+        delay: 1

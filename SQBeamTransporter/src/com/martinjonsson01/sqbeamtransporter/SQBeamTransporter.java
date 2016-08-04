@@ -28,6 +28,8 @@ public class SQBeamTransporter extends JavaPlugin{
 
 	public static List<Entity> beamEntities = new ArrayList<Entity>();
 	public static HashMap<Entity, BeamTransporter> transporterMap = new HashMap<Entity, BeamTransporter>();
+	public static HashMap<BeamTransporter, Long> timeoutMap = new HashMap<BeamTransporter, Long>();
+	public static ArrayList<BeamTransporter> currentlyBeaming = new ArrayList<BeamTransporter>();
 	public static SQBeamTransporter plugin;
 	public static FileConfiguration config;
 	public static List<BeamTransporter> beamTransporterList = new ArrayList<BeamTransporter>();

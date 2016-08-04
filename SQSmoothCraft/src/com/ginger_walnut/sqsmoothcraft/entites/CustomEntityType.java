@@ -10,7 +10,7 @@ import net.minecraft.server.v1_10_R1.EntityTypes;
 
 public enum CustomEntityType {
 
-	MAIN_ARMOR_STAND("ArmorStand", 30, EntityType.ARMOR_STAND, EntityArmorStand.class, MainArmorStand.class);
+	MAIN_ARMOR_STAND("MainArmorStand", 300, EntityType.ARMOR_STAND, EntityArmorStand.class, MainArmorStand.class);
 	
 	private String name;
 	private int id;

@@ -116,9 +116,13 @@ public class SQEmpire extends JavaPlugin{
 			
 			if (entity instanceof ArmorStand) {
 				
-				if (entity.getCustomName().startsWith("Health Left: ")) {
+				if (entity.getCustomName() != null) {
 					
-					entity.remove();
+					if (entity.getCustomName().startsWith("Health Left: ")) {
+						
+						entity.remove();
+						
+					}
 					
 				}
 				

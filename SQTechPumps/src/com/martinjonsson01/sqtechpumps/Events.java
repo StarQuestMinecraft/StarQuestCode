@@ -2,7 +2,6 @@ package com.martinjonsson01.sqtechpumps;
 
 import java.util.List;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -10,6 +9,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockFromToEvent;
+import org.bukkit.event.block.BlockPhysicsEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
@@ -35,6 +35,21 @@ public class Events implements Listener{
 					e.setCancelled(true);
 					
 				}
+				
+			}
+			
+		}
+		
+	}
+	
+	@EventHandler
+	public void onTankWaterDisappear(BlockPhysicsEvent e) {
+		
+		if (SQTechPumps.tankWaterBlocks != null) {
+			
+			if (SQTechPumps.tankWaterBlocks.contains(e.getBlock())) {
+				
+				e.setCancelled(true);
 				
 			}
 			
