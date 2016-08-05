@@ -52,6 +52,19 @@ public class BeamTask extends Thread{
 						passenger.setVelocity(new Vector(0.0D, -beamTransporter.speed, 0.0D));
 					}
 					
+					if (passenger.getLocation().getBlockX() != beamTransporter.startFloor.getStainedGlass().getX()) {
+						passenger.sendMessage(ChatColor.RED + "Please do not exit the beam.");
+						Location beamLoc = new Location(beamTransporter.startFloor.getWorld(), beamTransporter.startFloor.getStainedGlass().getLocation().getX()+0.5, passenger.getLocation().getY(), beamTransporter.startFloor.getStainedGlass().getLocation().getZ()+0.5, passenger.getLocation().getYaw(), passenger.getLocation().getPitch());
+						passenger.teleport(beamLoc);
+					}
+					if (passenger.getLocation().getBlockZ() != beamTransporter.startFloor.getStainedGlass().getZ()) {
+						passenger.sendMessage(ChatColor.RED + "Please do not exit the beam.");
+						Location beamLoc = new Location(beamTransporter.startFloor.getWorld(), beamTransporter.startFloor.getStainedGlass().getLocation().getX()+0.5, passenger.getLocation().getY(), beamTransporter.startFloor.getStainedGlass().getLocation().getZ()+0.5, passenger.getLocation().getYaw(), passenger.getLocation().getPitch());
+						passenger.teleport(beamLoc);
+					}
+					
+					passenger.setGravity(false);
+					
 					passenger.setFallDistance(0.0F);
 					//Bukkit.getServer().broadcastMessage("Player: " + passenger.getLocation().getY() + " Goal: " + beamTransporter.destFloor.getY() + 1.1D);
 					if (beamTransporter.goingUp && passenger.getLocation().getY() > (double) beamTransporter.destFloor.getY() + 1.1D
@@ -86,6 +99,8 @@ public class BeamTask extends Thread{
 						beamTransporter.setStainedGlass();
 						beamTransporter.setStainedGlass();
 						beamTransporter.setStainedGlass();
+						
+						passenger.setGravity(true);
 						
 					}
 					
