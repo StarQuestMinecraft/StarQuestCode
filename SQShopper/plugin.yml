@@ -1,6 +1,6 @@
 name: SQShopper
 main: me.Tongonto.SQShopper
-version: 1.0
+version: 1.0.1
 commands:
    cart:
       description: Main SQShopper command
