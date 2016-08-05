@@ -6,6 +6,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -23,7 +24,7 @@ public class BeamTurret extends Turret {
 	
 	@Override
 	public void shoot(Player p) {
-		p.sendMessage("Beam turrets require ____ as ammo");
+		p.sendMessage("Beam turrets require ammo");
 	}
 
 	@Override
@@ -56,12 +57,14 @@ public class BeamTurret extends Turret {
 					if (entity instanceof LivingEntity && entity.getEntityId() != p.getEntityId()) {
 						i = (int) getVelocity();
 						LivingEntity target = (LivingEntity) entity;
-						target.setHealth(Math.max(0, target.getHealth() - ammo.getYield()));
-						loc.getWorld().playSound(loc, Sound.ENTITY_GENERIC_HURT, 1.0F, 1.0F);
+						if(target instanceof HumanEntity && !((HumanEntity) target).isBlocking()){
+							target.setHealth(Math.max(0, target.getHealth() - ammo.getYield()));
+							loc.getWorld().playSound(loc, Sound.ENTITY_GENERIC_HURT, 1.0F, 1.0F);
+						}
 						
-						if(target instanceof Player){
+						if(target instanceof Player && counter % 2 == 0){
 							Player ptarget = (Player) target;
-							ptarget.setSaturation((float) (Math.max(0, ptarget.getSaturation() - ammo.getYield2())));
+							ptarget.setFoodLevel(Math.max(0, ptarget.getFoodLevel() - 1));
 						}
 					}	
 				}

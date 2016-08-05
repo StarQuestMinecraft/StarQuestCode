@@ -63,7 +63,6 @@ public class SQTurrets extends JavaPlugin implements Listener {
 			a.setFire(config.getBoolean("ammos." + name + ".fire"));
 			a.setVelocity(config.getDouble("ammos." + name + ".velocity"));
 			a.setYield(config.getDouble("ammos." + name + ".yield"));
-			a.setYield2(config.getDouble("ammos." + name + ".yield2"));
 			ammoTypes.add(a);
 		}
 	}
@@ -95,7 +94,6 @@ public class SQTurrets extends JavaPlugin implements Listener {
 			for (Ammo a : ammoTypes) {
 				for (String s : turretAmmoStrings) {
 					if (a.getName().equalsIgnoreCase(s)) {
-						System.out.print(a.getName() + ", ");
 						turretAmmo.add(a);
 					}
 				}

@@ -14,7 +14,6 @@ public class Ammo {
 	// velocity modifier (MULTIPLICATION)
 	private double velocity;
 	private double yield;
-	private double yield2 = 0;
 
 	public ItemStack getItem() {
 
@@ -62,14 +61,6 @@ public class Ammo {
 	
 	public void setYield(double yield){
 		this.yield = yield;
-	}
-	
-	public double getYield2(){
-		return yield2;
-	}
-	
-	public void setYield2(double yield2){
-		this.yield2 = yield2;
 	}
 
 }

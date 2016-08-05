@@ -2,9 +2,11 @@ package us.higashiyama.george.SQTurrets.types;
 
 import org.bukkit.Location;
 import org.bukkit.Sound;
+import org.bukkit.entity.Arrow;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.Projectile;
+import org.bukkit.entity.TippedArrow;
+import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.projectiles.ProjectileSource;
 import org.bukkit.util.Vector;
 
@@ -41,12 +43,18 @@ public class ArrowTurret extends Turret {
 		Location oneUp = eye.add(0.0D, 1.0D, 0.0D);
 		Location loc = oneUp.toVector().add(p.getLocation().getDirection().multiply(2))
 				.toLocation(p.getWorld(), p.getLocation().getYaw(), p.getLocation().getPitch());
-
+		
 		// then launch the projectile
-		Projectile proj = (Projectile) p.getWorld().spawnEntity(loc, EntityType.ARROW);
-
+		Arrow proj;
+		if(loaded_ammo.getItem().hasItemMeta()){
+			proj = (TippedArrow) p.getWorld().spawnEntity(loc, EntityType.TIPPED_ARROW);
+			PotionMeta meta = (PotionMeta) loaded_ammo.getItem().getItemMeta();
+			((TippedArrow) proj).setBasePotionData(meta.getBasePotionData());
+		} else {
+			proj = (Arrow) p.getWorld().spawnEntity(loc, EntityType.ARROW);
+		}
+		proj.setCritical(true);
 		proj.setVelocity(finalV);
-
 		proj.setShooter((ProjectileSource) p);
 
 		// Ammo specific settings
