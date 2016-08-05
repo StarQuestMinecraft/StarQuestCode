@@ -1,5 +1,9 @@
 package com.martinjonsson01.sqtechpumps.objects;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -19,6 +23,7 @@ import com.starquestminecraft.sqtechbase.objects.Machine;
 import com.starquestminecraft.sqtechbase.objects.MachineType;
 import com.starquestminecraft.sqtechbase.util.DirectionUtils;
 import com.starquestminecraft.sqtechbase.util.InventoryUtils;
+import com.starquestminecraft.sqtechbase.util.ObjectUtils;
 
 import net.md_5.bungee.api.ChatColor;
 
@@ -33,7 +38,9 @@ public class LargeTank extends MachineType{
 
 	@Override
 	public boolean detectStructure(GUIBlock block) {
-
+		
+		Machine machine = ObjectUtils.getMachineFromGUIBlock(block);
+		
 		BlockFace[] faces = new BlockFace[]{
 				BlockFace.NORTH,
 				BlockFace.EAST,
@@ -155,7 +162,7 @@ public class LargeTank extends MachineType{
 																																					if (firstLevel6.getType() == Material.STAINED_CLAY) {
 																																						if (firstLevel6.getRelative(right).getType() == Material.STAINED_CLAY) {
 																																							if (firstLevel6.getRelative(left).getType() == Material.STAINED_CLAY) {
-																																								
+
 																																								if (secondLevel.getType() == Material.STAINED_GLASS_PANE) {
 																																									if (secondLevel.getRelative(right).getType() == Material.STAINED_GLASS_PANE) {
 																																										if (secondLevel.getRelative(right).getRelative(right).getType() == Material.STAINED_CLAY) {
@@ -201,7 +208,7 @@ public class LargeTank extends MachineType{
 																																																																																		if (secondLevel6.getRelative(left).getRelative(left).getType() == Material.STAINED_CLAY) {
 																																																																																			if (secondLevel6.getRelative(right).getType() == Material.STAINED_GLASS_PANE) {
 																																																																																				if (secondLevel6.getRelative(right).getRelative(right).getType() == Material.STAINED_CLAY) {
-																																																																																					
+
 																																																																																					if (thirdLevel.getType() == Material.STAINED_GLASS_PANE) {
 																																																																																						if (thirdLevel.getRelative(right).getType() == Material.STAINED_GLASS_PANE) {
 																																																																																							if (thirdLevel.getRelative(right).getRelative(right).getType() == Material.STAINED_CLAY) {
@@ -247,7 +254,7 @@ public class LargeTank extends MachineType{
 																																																																																																																															if (thirdLevel6.getRelative(left).getRelative(left).getType() == Material.STAINED_CLAY) {
 																																																																																																																																if (thirdLevel6.getRelative(right).getType() == Material.STAINED_GLASS_PANE) {
 																																																																																																																																	if (thirdLevel6.getRelative(right).getRelative(right).getType() == Material.STAINED_CLAY) {
-																																																																																																																																		
+
 																																																																																																																																		if (fourthLevel.getType() == Material.STAINED_GLASS_PANE) {
 																																																																																																																																			if (fourthLevel.getRelative(right).getType() == Material.STAINED_GLASS_PANE) {
 																																																																																																																																				if (fourthLevel.getRelative(right).getRelative(right).getType() == Material.STAINED_CLAY) {
@@ -293,7 +300,7 @@ public class LargeTank extends MachineType{
 																																																																																																																																																																												if (fourthLevel6.getRelative(left).getRelative(left).getType() == Material.STAINED_CLAY) {
 																																																																																																																																																																													if (fourthLevel6.getRelative(right).getType() == Material.STAINED_GLASS_PANE) {
 																																																																																																																																																																														if (fourthLevel6.getRelative(right).getRelative(right).getType() == Material.STAINED_CLAY) {
-																																																																																																																																																																															
+
 																																																																																																																																																																															if (fifthLevel.getType() == Material.STAINED_GLASS_PANE) {
 																																																																																																																																																																																if (fifthLevel.getRelative(right).getType() == Material.STAINED_GLASS_PANE) {
 																																																																																																																																																																																	if (fifthLevel.getRelative(right).getRelative(right).getType() == Material.STAINED_CLAY) {
@@ -339,7 +346,7 @@ public class LargeTank extends MachineType{
 																																																																																																																																																																																																																									if (fifthLevel6.getRelative(left).getRelative(left).getType() == Material.STAINED_CLAY) {
 																																																																																																																																																																																																																										if (fifthLevel6.getRelative(right).getType() == Material.STAINED_GLASS_PANE) {
 																																																																																																																																																																																																																											if (fifthLevel6.getRelative(right).getRelative(right).getType() == Material.STAINED_CLAY) {
-																																																																																																																																																																																																																												
+
 																																																																																																																																																																																																																												if (sixthLevel.getType() == Material.STAINED_GLASS_PANE) {
 																																																																																																																																																																																																																													if (sixthLevel.getRelative(right).getType() == Material.STAINED_GLASS_PANE) {
 																																																																																																																																																																																																																														if (sixthLevel.getRelative(right).getRelative(right).getType() == Material.STAINED_CLAY) {
@@ -385,7 +392,7 @@ public class LargeTank extends MachineType{
 																																																																																																																																																																																																																																																																						if (sixthLevel6.getRelative(left).getRelative(left).getType() == Material.STAINED_CLAY) {
 																																																																																																																																																																																																																																																																							if (sixthLevel6.getRelative(right).getType() == Material.STAINED_GLASS_PANE) {
 																																																																																																																																																																																																																																																																								if (sixthLevel6.getRelative(right).getRelative(right).getType() == Material.STAINED_CLAY) {
-																																																																																																																																																																																																																																																																									
+
 																																																																																																																																																																																																																																																																									if (seventhLevel.getType() == Material.STAINED_GLASS_PANE) {
 																																																																																																																																																																																																																																																																										if (seventhLevel.getRelative(right).getType() == Material.STAINED_GLASS_PANE) {
 																																																																																																																																																																																																																																																																											if (seventhLevel.getRelative(right).getRelative(right).getType() == Material.STAINED_CLAY) {
@@ -431,7 +438,7 @@ public class LargeTank extends MachineType{
 																																																																																																																																																																																																																																																																																																																			if (seventhLevel6.getRelative(left).getRelative(left).getType() == Material.STAINED_CLAY) {
 																																																																																																																																																																																																																																																																																																																				if (seventhLevel6.getRelative(right).getType() == Material.STAINED_GLASS_PANE) {
 																																																																																																																																																																																																																																																																																																																					if (seventhLevel6.getRelative(right).getRelative(right).getType() == Material.STAINED_CLAY) {
-																																																																																																																																																																																																																																																																																																																						
+
 																																																																																																																																																																																																																																																																																																																						if (eightLevel.getType() == Material.STAINED_GLASS_PANE) {
 																																																																																																																																																																																																																																																																																																																							if (eightLevel.getRelative(right).getType() == Material.STAINED_GLASS_PANE) {
 																																																																																																																																																																																																																																																																																																																								if (eightLevel.getRelative(right).getRelative(right).getType() == Material.STAINED_CLAY) {
@@ -477,7 +484,7 @@ public class LargeTank extends MachineType{
 																																																																																																																																																																																																																																																																																																																																																																if (eightLevel6.getRelative(left).getRelative(left).getType() == Material.STAINED_CLAY) {
 																																																																																																																																																																																																																																																																																																																																																																	if (eightLevel6.getRelative(right).getType() == Material.STAINED_GLASS_PANE) {
 																																																																																																																																																																																																																																																																																																																																																																		if (eightLevel6.getRelative(right).getRelative(right).getType() == Material.STAINED_CLAY) {
-																																																																																																																																																																																																																																																																																																																																																																			
+
 																																																																																																																																																																																																																																																																																																																																																																			if (ninthLevel.getType() == Material.STAINED_CLAY) {
 																																																																																																																																																																																																																																																																																																																																																																				if (ninthLevel.getRelative(right).getType() == Material.STAINED_CLAY) {
 																																																																																																																																																																																																																																																																																																																																																																					if (ninthLevel.getRelative(left).getType() == Material.STAINED_CLAY) {
@@ -516,6 +523,7 @@ public class LargeTank extends MachineType{
 																																																																																																																																																																																																																																																																																																																																																																																																						if (ninthLevel6.getRelative(right).getType() == Material.STAINED_CLAY) {
 																																																																																																																																																																																																																																																																																																																																																																																																							if (ninthLevel6.getRelative(left).getType() == Material.STAINED_CLAY) {
 																																																																																																																																																																																																																																																																																																																																																																																																								
+																																																																																																																																																																																																																																																																																																																																																																																																								LargeTank.updatePhysicalLiquid(machine);
 																																																																																																																																																																																																																																																																																																																																																																																																								return true;
 
 																																																																																																																																																																																																																																																																																																																																																																																																							}
@@ -917,7 +925,20 @@ public class LargeTank extends MachineType{
 			}
 		}
 
-
+		if (SQTechPumps.tankWaterBlocks.get(machine) != null) {
+			
+			Iterator<Block> it = SQTechPumps.tankWaterBlocks.get(machine).iterator();
+			while (it.hasNext()) {
+				
+				Block b = it.next();
+				
+				b.setType(Material.AIR);
+				
+				it.remove();
+				
+			}
+			
+		}
 
 		return false;
 
@@ -929,26 +950,26 @@ public class LargeTank extends MachineType{
 		return new LargeTankGUI(player, id);
 
 	}
-	
+
 	private long lastUpdate = 0;
-	
+
 	@SuppressWarnings("deprecation")
 	@Override
 	public void updateLiquid(Machine machine) {
-		
+
 		if (System.currentTimeMillis() - lastUpdate < 900) {
 			return;
 		}
-		
+
 		Bukkit.getServer().getScheduler().runTask(SQTechPumps.plugin, new BukkitRunnable() {
 
 			@Override
 			public void run() {
-				
+
 				if (machine != null) {
-					
+
 					if (machine.getGUIBlock() != null) {
-						
+
 						if (getMiddleBlock(machine.getGUIBlock()) != null &&
 								getMiddleBlock(machine.getGUIBlock()).getLocation().add(0, 1, 0).getBlock() != null &&
 								getMiddleBlock(machine.getGUIBlock()).getLocation().add(0, 2, 0).getBlock() != null &&
@@ -957,7 +978,7 @@ public class LargeTank extends MachineType{
 								getMiddleBlock(machine.getGUIBlock()).getLocation().add(0, 5, 0).getBlock() != null &&
 								getMiddleBlock(machine.getGUIBlock()).getLocation().add(0, 6, 0).getBlock() != null &&
 								getMiddleBlock(machine.getGUIBlock()).getLocation().add(0, 7, 0).getBlock() != null) {
-							
+
 							Block waterBlock = getMiddleBlock(machine.getGUIBlock());
 							Block waterBlock2 = getMiddleBlock(machine.getGUIBlock()).getLocation().add(0, 1, 0).getBlock();
 							Block waterBlock3 = getMiddleBlock(machine.getGUIBlock()).getLocation().add(0, 2, 0).getBlock();
@@ -965,201 +986,562 @@ public class LargeTank extends MachineType{
 							Block waterBlock5 = getMiddleBlock(machine.getGUIBlock()).getLocation().add(0, 4, 0).getBlock();
 							Block waterBlock6 = getMiddleBlock(machine.getGUIBlock()).getLocation().add(0, 5, 0).getBlock();
 							Block waterBlock7 = getMiddleBlock(machine.getGUIBlock()).getLocation().add(0, 6, 0).getBlock();
+
+							List<Block> waterBlocks = new ArrayList<Block>();
+							if (SQTechPumps.tankWaterBlocks.get(machine) != null) {
+								waterBlocks = SQTechPumps.tankWaterBlocks.get(machine);
+							}
+
+							if (!waterBlocks.contains(waterBlock)) {
+								waterBlocks.add(waterBlock);
+							}
+							if (!waterBlocks.contains(waterBlock.getRelative(BlockFace.NORTH))) {
+								waterBlocks.add(waterBlock.getRelative(BlockFace.NORTH));
+							}
+							if (!waterBlocks.contains(waterBlock.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH))) {
+								waterBlocks.add(waterBlock.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH));
+							}
+							if (!waterBlocks.contains(waterBlock.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST))) {
+								waterBlocks.add(waterBlock.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST));
+							}
+							if (!waterBlocks.contains(waterBlock.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST))) {
+								waterBlocks.add(waterBlock.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST));
+							}
+							if (!waterBlocks.contains(waterBlock.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST))) {
+								waterBlocks.add(waterBlock.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST));
+							}
+							if (!waterBlocks.contains(waterBlock.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST))) {
+								waterBlocks.add(waterBlock.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST));
+							}
+							if (!waterBlocks.contains(waterBlock.getRelative(BlockFace.SOUTH))) {
+								waterBlocks.add(waterBlock.getRelative(BlockFace.SOUTH));
+							}
+							if (!waterBlocks.contains(waterBlock.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH))) {
+								waterBlocks.add(waterBlock.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH));
+							}
+							if (!waterBlocks.contains(waterBlock.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST))) {
+								waterBlocks.add(waterBlock.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST));
+							}
+							if (!waterBlocks.contains(waterBlock.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST))) {
+								waterBlocks.add(waterBlock.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST));
+							}
+							if (!waterBlocks.contains(waterBlock.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST))) {
+								waterBlocks.add(waterBlock.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST));
+							}
+							if (!waterBlocks.contains(waterBlock.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST))) {
+								waterBlocks.add(waterBlock.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST));
+							}
+							if (!waterBlocks.contains(waterBlock.getRelative(BlockFace.WEST))) {
+								waterBlocks.add(waterBlock.getRelative(BlockFace.WEST));
+							}
+							if (!waterBlocks.contains(waterBlock.getRelative(BlockFace.WEST).getRelative(BlockFace.WEST))) {
+								waterBlocks.add(waterBlock.getRelative(BlockFace.WEST).getRelative(BlockFace.WEST));
+							}
+							if (!waterBlocks.contains(waterBlock.getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST))) {
+								waterBlocks.add(waterBlock.getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST));
+							}
+							if (!waterBlocks.contains(waterBlock.getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST))) {
+								waterBlocks.add(waterBlock.getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST));
+							}
+							if (!waterBlocks.contains(waterBlock.getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST))) {
+								waterBlocks.add(waterBlock.getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST));
+							}
+							if (!waterBlocks.contains(waterBlock.getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST))) {
+								waterBlocks.add(waterBlock.getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST));
+							}
+							if (!waterBlocks.contains(waterBlock.getRelative(BlockFace.EAST))) {
+								waterBlocks.add(waterBlock.getRelative(BlockFace.EAST));
+							}
+							if (!waterBlocks.contains(waterBlock.getRelative(BlockFace.EAST).getRelative(BlockFace.EAST))) {
+								waterBlocks.add(waterBlock.getRelative(BlockFace.EAST).getRelative(BlockFace.EAST));
+							}
+							if (!waterBlocks.contains(waterBlock.getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST))) {
+								waterBlocks.add(waterBlock.getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST));
+							}
+							if (!waterBlocks.contains(waterBlock.getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST))) {
+								waterBlocks.add(waterBlock.getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST));
+							}
+							if (!waterBlocks.contains(waterBlock.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST))) {
+								waterBlocks.add(waterBlock.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST));
+							}
+							if (!waterBlocks.contains(waterBlock.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST))) {
+								waterBlocks.add(waterBlock.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST));
+							}
+
+							//INBETWEEN
 							
-							if (!SQTechPumps.tankWaterBlocks.contains(waterBlock)) {
-								SQTechPumps.tankWaterBlocks.add(waterBlock);
-								SQTechPumps.tankWaterBlocks.add(waterBlock.getRelative(BlockFace.NORTH));
-								SQTechPumps.tankWaterBlocks.add(waterBlock.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH));
-								SQTechPumps.tankWaterBlocks.add(waterBlock.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST));
-								SQTechPumps.tankWaterBlocks.add(waterBlock.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST));
-								SQTechPumps.tankWaterBlocks.add(waterBlock.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST));
-								SQTechPumps.tankWaterBlocks.add(waterBlock.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST));
-								SQTechPumps.tankWaterBlocks.add(waterBlock.getRelative(BlockFace.SOUTH));
-								SQTechPumps.tankWaterBlocks.add(waterBlock.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH));
-								SQTechPumps.tankWaterBlocks.add(waterBlock.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST));
-								SQTechPumps.tankWaterBlocks.add(waterBlock.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST));
-								SQTechPumps.tankWaterBlocks.add(waterBlock.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST));
-								SQTechPumps.tankWaterBlocks.add(waterBlock.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST));
-								SQTechPumps.tankWaterBlocks.add(waterBlock.getRelative(BlockFace.WEST));
-								SQTechPumps.tankWaterBlocks.add(waterBlock.getRelative(BlockFace.WEST).getRelative(BlockFace.WEST));
-								SQTechPumps.tankWaterBlocks.add(waterBlock.getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST));
-								SQTechPumps.tankWaterBlocks.add(waterBlock.getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST));
-								SQTechPumps.tankWaterBlocks.add(waterBlock.getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST));
-								SQTechPumps.tankWaterBlocks.add(waterBlock.getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST));
-								SQTechPumps.tankWaterBlocks.add(waterBlock.getRelative(BlockFace.EAST));
-								SQTechPumps.tankWaterBlocks.add(waterBlock.getRelative(BlockFace.EAST).getRelative(BlockFace.EAST));
-								SQTechPumps.tankWaterBlocks.add(waterBlock.getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST));
-								SQTechPumps.tankWaterBlocks.add(waterBlock.getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST));
-								SQTechPumps.tankWaterBlocks.add(waterBlock.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST));
-								SQTechPumps.tankWaterBlocks.add(waterBlock.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST));
+							if (!waterBlocks.contains(waterBlock2)) {
+								waterBlocks.add(waterBlock2);
 							}
-							if (!SQTechPumps.tankWaterBlocks.contains(waterBlock2)) {
-								SQTechPumps.tankWaterBlocks.add(waterBlock2);
-								SQTechPumps.tankWaterBlocks.add(waterBlock2.getRelative(BlockFace.NORTH));
-								SQTechPumps.tankWaterBlocks.add(waterBlock2.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH));
-								SQTechPumps.tankWaterBlocks.add(waterBlock2.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST));
-								SQTechPumps.tankWaterBlocks.add(waterBlock2.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST));
-								SQTechPumps.tankWaterBlocks.add(waterBlock2.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST));
-								SQTechPumps.tankWaterBlocks.add(waterBlock2.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST));
-								SQTechPumps.tankWaterBlocks.add(waterBlock2.getRelative(BlockFace.SOUTH));
-								SQTechPumps.tankWaterBlocks.add(waterBlock2.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH));
-								SQTechPumps.tankWaterBlocks.add(waterBlock2.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST));
-								SQTechPumps.tankWaterBlocks.add(waterBlock2.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST));
-								SQTechPumps.tankWaterBlocks.add(waterBlock2.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST));
-								SQTechPumps.tankWaterBlocks.add(waterBlock2.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST));
-								SQTechPumps.tankWaterBlocks.add(waterBlock2.getRelative(BlockFace.WEST));
-								SQTechPumps.tankWaterBlocks.add(waterBlock2.getRelative(BlockFace.WEST).getRelative(BlockFace.WEST));
-								SQTechPumps.tankWaterBlocks.add(waterBlock2.getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST));
-								SQTechPumps.tankWaterBlocks.add(waterBlock2.getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST));
-								SQTechPumps.tankWaterBlocks.add(waterBlock2.getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST));
-								SQTechPumps.tankWaterBlocks.add(waterBlock2.getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST));
-								SQTechPumps.tankWaterBlocks.add(waterBlock2.getRelative(BlockFace.EAST));
-								SQTechPumps.tankWaterBlocks.add(waterBlock2.getRelative(BlockFace.EAST).getRelative(BlockFace.EAST));
-								SQTechPumps.tankWaterBlocks.add(waterBlock2.getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST));
-								SQTechPumps.tankWaterBlocks.add(waterBlock2.getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST));
-								SQTechPumps.tankWaterBlocks.add(waterBlock2.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST));
-								SQTechPumps.tankWaterBlocks.add(waterBlock2.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST));
+							if (!waterBlocks.contains(waterBlock2.getRelative(BlockFace.NORTH))) {
+								waterBlocks.add(waterBlock2.getRelative(BlockFace.NORTH));
 							}
-							if (!SQTechPumps.tankWaterBlocks.contains(waterBlock3)) {
-								SQTechPumps.tankWaterBlocks.add(waterBlock3);
-								SQTechPumps.tankWaterBlocks.add(waterBlock3.getRelative(BlockFace.NORTH));
-								SQTechPumps.tankWaterBlocks.add(waterBlock3.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH));
-								SQTechPumps.tankWaterBlocks.add(waterBlock3.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST));
-								SQTechPumps.tankWaterBlocks.add(waterBlock3.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST));
-								SQTechPumps.tankWaterBlocks.add(waterBlock3.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST));
-								SQTechPumps.tankWaterBlocks.add(waterBlock3.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST));
-								SQTechPumps.tankWaterBlocks.add(waterBlock3.getRelative(BlockFace.SOUTH));
-								SQTechPumps.tankWaterBlocks.add(waterBlock3.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH));
-								SQTechPumps.tankWaterBlocks.add(waterBlock3.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST));
-								SQTechPumps.tankWaterBlocks.add(waterBlock3.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST));
-								SQTechPumps.tankWaterBlocks.add(waterBlock3.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST));
-								SQTechPumps.tankWaterBlocks.add(waterBlock3.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST));
-								SQTechPumps.tankWaterBlocks.add(waterBlock3.getRelative(BlockFace.WEST));
-								SQTechPumps.tankWaterBlocks.add(waterBlock3.getRelative(BlockFace.WEST).getRelative(BlockFace.WEST));
-								SQTechPumps.tankWaterBlocks.add(waterBlock3.getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST));
-								SQTechPumps.tankWaterBlocks.add(waterBlock3.getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST));
-								SQTechPumps.tankWaterBlocks.add(waterBlock3.getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST));
-								SQTechPumps.tankWaterBlocks.add(waterBlock3.getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST));
-								SQTechPumps.tankWaterBlocks.add(waterBlock3.getRelative(BlockFace.EAST));
-								SQTechPumps.tankWaterBlocks.add(waterBlock3.getRelative(BlockFace.EAST).getRelative(BlockFace.EAST));
-								SQTechPumps.tankWaterBlocks.add(waterBlock3.getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST));
-								SQTechPumps.tankWaterBlocks.add(waterBlock3.getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST));
-								SQTechPumps.tankWaterBlocks.add(waterBlock3.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST));
-								SQTechPumps.tankWaterBlocks.add(waterBlock3.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST));
+							if (!waterBlocks.contains(waterBlock2.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH))) {
+								waterBlocks.add(waterBlock2.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH));
 							}
-							if (!SQTechPumps.tankWaterBlocks.contains(waterBlock4)) {
-								SQTechPumps.tankWaterBlocks.add(waterBlock4);
-								SQTechPumps.tankWaterBlocks.add(waterBlock4.getRelative(BlockFace.NORTH));
-								SQTechPumps.tankWaterBlocks.add(waterBlock4.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH));
-								SQTechPumps.tankWaterBlocks.add(waterBlock4.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST));
-								SQTechPumps.tankWaterBlocks.add(waterBlock4.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST));
-								SQTechPumps.tankWaterBlocks.add(waterBlock4.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST));
-								SQTechPumps.tankWaterBlocks.add(waterBlock4.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST));
-								SQTechPumps.tankWaterBlocks.add(waterBlock4.getRelative(BlockFace.SOUTH));
-								SQTechPumps.tankWaterBlocks.add(waterBlock4.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH));
-								SQTechPumps.tankWaterBlocks.add(waterBlock4.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST));
-								SQTechPumps.tankWaterBlocks.add(waterBlock4.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST));
-								SQTechPumps.tankWaterBlocks.add(waterBlock4.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST));
-								SQTechPumps.tankWaterBlocks.add(waterBlock4.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST));
-								SQTechPumps.tankWaterBlocks.add(waterBlock4.getRelative(BlockFace.WEST));
-								SQTechPumps.tankWaterBlocks.add(waterBlock4.getRelative(BlockFace.WEST).getRelative(BlockFace.WEST));
-								SQTechPumps.tankWaterBlocks.add(waterBlock4.getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST));
-								SQTechPumps.tankWaterBlocks.add(waterBlock4.getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST));
-								SQTechPumps.tankWaterBlocks.add(waterBlock4.getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST));
-								SQTechPumps.tankWaterBlocks.add(waterBlock4.getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST));
-								SQTechPumps.tankWaterBlocks.add(waterBlock4.getRelative(BlockFace.EAST));
-								SQTechPumps.tankWaterBlocks.add(waterBlock4.getRelative(BlockFace.EAST).getRelative(BlockFace.EAST));
-								SQTechPumps.tankWaterBlocks.add(waterBlock4.getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST));
-								SQTechPumps.tankWaterBlocks.add(waterBlock4.getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST));
-								SQTechPumps.tankWaterBlocks.add(waterBlock4.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST));
-								SQTechPumps.tankWaterBlocks.add(waterBlock4.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST));
+							if (!waterBlocks.contains(waterBlock2.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST))) {
+								waterBlocks.add(waterBlock2.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST));
 							}
-							if (!SQTechPumps.tankWaterBlocks.contains(waterBlock5)) {
-								SQTechPumps.tankWaterBlocks.add(waterBlock5);
-								SQTechPumps.tankWaterBlocks.add(waterBlock5.getRelative(BlockFace.NORTH));
-								SQTechPumps.tankWaterBlocks.add(waterBlock5.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH));
-								SQTechPumps.tankWaterBlocks.add(waterBlock5.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST));
-								SQTechPumps.tankWaterBlocks.add(waterBlock5.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST));
-								SQTechPumps.tankWaterBlocks.add(waterBlock5.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST));
-								SQTechPumps.tankWaterBlocks.add(waterBlock5.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST));
-								SQTechPumps.tankWaterBlocks.add(waterBlock5.getRelative(BlockFace.SOUTH));
-								SQTechPumps.tankWaterBlocks.add(waterBlock5.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH));
-								SQTechPumps.tankWaterBlocks.add(waterBlock5.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST));
-								SQTechPumps.tankWaterBlocks.add(waterBlock5.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST));
-								SQTechPumps.tankWaterBlocks.add(waterBlock5.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST));
-								SQTechPumps.tankWaterBlocks.add(waterBlock5.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST));
-								SQTechPumps.tankWaterBlocks.add(waterBlock5.getRelative(BlockFace.WEST));
-								SQTechPumps.tankWaterBlocks.add(waterBlock5.getRelative(BlockFace.WEST).getRelative(BlockFace.WEST));
-								SQTechPumps.tankWaterBlocks.add(waterBlock5.getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST));
-								SQTechPumps.tankWaterBlocks.add(waterBlock5.getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST));
-								SQTechPumps.tankWaterBlocks.add(waterBlock5.getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST));
-								SQTechPumps.tankWaterBlocks.add(waterBlock5.getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST));
-								SQTechPumps.tankWaterBlocks.add(waterBlock5.getRelative(BlockFace.EAST));
-								SQTechPumps.tankWaterBlocks.add(waterBlock5.getRelative(BlockFace.EAST).getRelative(BlockFace.EAST));
-								SQTechPumps.tankWaterBlocks.add(waterBlock5.getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST));
-								SQTechPumps.tankWaterBlocks.add(waterBlock5.getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST));
-								SQTechPumps.tankWaterBlocks.add(waterBlock5.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST));
-								SQTechPumps.tankWaterBlocks.add(waterBlock5.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST));
+							if (!waterBlocks.contains(waterBlock2.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST))) {
+								waterBlocks.add(waterBlock2.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST));
 							}
-							if (!SQTechPumps.tankWaterBlocks.contains(waterBlock6)) {
-								SQTechPumps.tankWaterBlocks.add(waterBlock6);
-								SQTechPumps.tankWaterBlocks.add(waterBlock6.getRelative(BlockFace.NORTH));
-								SQTechPumps.tankWaterBlocks.add(waterBlock6.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH));
-								SQTechPumps.tankWaterBlocks.add(waterBlock6.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST));
-								SQTechPumps.tankWaterBlocks.add(waterBlock6.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST));
-								SQTechPumps.tankWaterBlocks.add(waterBlock6.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST));
-								SQTechPumps.tankWaterBlocks.add(waterBlock6.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST));
-								SQTechPumps.tankWaterBlocks.add(waterBlock6.getRelative(BlockFace.SOUTH));
-								SQTechPumps.tankWaterBlocks.add(waterBlock6.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH));
-								SQTechPumps.tankWaterBlocks.add(waterBlock6.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST));
-								SQTechPumps.tankWaterBlocks.add(waterBlock6.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST));
-								SQTechPumps.tankWaterBlocks.add(waterBlock6.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST));
-								SQTechPumps.tankWaterBlocks.add(waterBlock6.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST));
-								SQTechPumps.tankWaterBlocks.add(waterBlock6.getRelative(BlockFace.WEST));
-								SQTechPumps.tankWaterBlocks.add(waterBlock6.getRelative(BlockFace.WEST).getRelative(BlockFace.WEST));
-								SQTechPumps.tankWaterBlocks.add(waterBlock6.getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST));
-								SQTechPumps.tankWaterBlocks.add(waterBlock6.getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST));
-								SQTechPumps.tankWaterBlocks.add(waterBlock6.getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST));
-								SQTechPumps.tankWaterBlocks.add(waterBlock6.getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST));
-								SQTechPumps.tankWaterBlocks.add(waterBlock6.getRelative(BlockFace.EAST));
-								SQTechPumps.tankWaterBlocks.add(waterBlock6.getRelative(BlockFace.EAST).getRelative(BlockFace.EAST));
-								SQTechPumps.tankWaterBlocks.add(waterBlock6.getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST));
-								SQTechPumps.tankWaterBlocks.add(waterBlock6.getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST));
-								SQTechPumps.tankWaterBlocks.add(waterBlock6.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST));
-								SQTechPumps.tankWaterBlocks.add(waterBlock6.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST));
+							if (!waterBlocks.contains(waterBlock2.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST))) {
+								waterBlocks.add(waterBlock2.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST));
 							}
-							if (!SQTechPumps.tankWaterBlocks.contains(waterBlock7)) {
-								SQTechPumps.tankWaterBlocks.add(waterBlock7);
-								SQTechPumps.tankWaterBlocks.add(waterBlock7.getRelative(BlockFace.NORTH));
-								SQTechPumps.tankWaterBlocks.add(waterBlock7.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH));
-								SQTechPumps.tankWaterBlocks.add(waterBlock7.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST));
-								SQTechPumps.tankWaterBlocks.add(waterBlock7.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST));
-								SQTechPumps.tankWaterBlocks.add(waterBlock7.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST));
-								SQTechPumps.tankWaterBlocks.add(waterBlock7.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST));
-								SQTechPumps.tankWaterBlocks.add(waterBlock7.getRelative(BlockFace.SOUTH));
-								SQTechPumps.tankWaterBlocks.add(waterBlock7.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH));
-								SQTechPumps.tankWaterBlocks.add(waterBlock7.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST));
-								SQTechPumps.tankWaterBlocks.add(waterBlock7.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST));
-								SQTechPumps.tankWaterBlocks.add(waterBlock7.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST));
-								SQTechPumps.tankWaterBlocks.add(waterBlock7.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST));
-								SQTechPumps.tankWaterBlocks.add(waterBlock7.getRelative(BlockFace.WEST));
-								SQTechPumps.tankWaterBlocks.add(waterBlock7.getRelative(BlockFace.WEST).getRelative(BlockFace.WEST));
-								SQTechPumps.tankWaterBlocks.add(waterBlock7.getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST));
-								SQTechPumps.tankWaterBlocks.add(waterBlock7.getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST));
-								SQTechPumps.tankWaterBlocks.add(waterBlock7.getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST));
-								SQTechPumps.tankWaterBlocks.add(waterBlock7.getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST));
-								SQTechPumps.tankWaterBlocks.add(waterBlock7.getRelative(BlockFace.EAST));
-								SQTechPumps.tankWaterBlocks.add(waterBlock7.getRelative(BlockFace.EAST).getRelative(BlockFace.EAST));
-								SQTechPumps.tankWaterBlocks.add(waterBlock7.getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST));
-								SQTechPumps.tankWaterBlocks.add(waterBlock7.getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST));
-								SQTechPumps.tankWaterBlocks.add(waterBlock7.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST));
-								SQTechPumps.tankWaterBlocks.add(waterBlock7.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST));
+							if (!waterBlocks.contains(waterBlock2.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST))) {
+								waterBlocks.add(waterBlock2.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST));
+							}
+							if (!waterBlocks.contains(waterBlock2.getRelative(BlockFace.SOUTH))) {
+								waterBlocks.add(waterBlock2.getRelative(BlockFace.SOUTH));
+							}
+							if (!waterBlocks.contains(waterBlock2.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH))) {
+								waterBlocks.add(waterBlock2.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH));
+							}
+							if (!waterBlocks.contains(waterBlock2.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST))) {
+								waterBlocks.add(waterBlock2.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST));
+							}
+							if (!waterBlocks.contains(waterBlock2.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST))) {
+								waterBlocks.add(waterBlock2.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST));
+							}
+							if (!waterBlocks.contains(waterBlock2.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST))) {
+								waterBlocks.add(waterBlock2.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST));
+							}
+							if (!waterBlocks.contains(waterBlock2.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST))) {
+								waterBlocks.add(waterBlock2.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST));
+							}
+							if (!waterBlocks.contains(waterBlock2.getRelative(BlockFace.WEST))) {
+								waterBlocks.add(waterBlock2.getRelative(BlockFace.WEST));
+							}
+							if (!waterBlocks.contains(waterBlock2.getRelative(BlockFace.WEST).getRelative(BlockFace.WEST))) {
+								waterBlocks.add(waterBlock2.getRelative(BlockFace.WEST).getRelative(BlockFace.WEST));
+							}
+							if (!waterBlocks.contains(waterBlock2.getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST))) {
+								waterBlocks.add(waterBlock2.getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST));
+							}
+							if (!waterBlocks.contains(waterBlock2.getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST))) {
+								waterBlocks.add(waterBlock2.getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST));
+							}
+							if (!waterBlocks.contains(waterBlock2.getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST))) {
+								waterBlocks.add(waterBlock2.getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST));
+							}
+							if (!waterBlocks.contains(waterBlock2.getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST))) {
+								waterBlocks.add(waterBlock2.getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST));
+							}
+							if (!waterBlocks.contains(waterBlock2.getRelative(BlockFace.EAST))) {
+								waterBlocks.add(waterBlock2.getRelative(BlockFace.EAST));
+							}
+							if (!waterBlocks.contains(waterBlock2.getRelative(BlockFace.EAST).getRelative(BlockFace.EAST))) {
+								waterBlocks.add(waterBlock2.getRelative(BlockFace.EAST).getRelative(BlockFace.EAST));
+							}
+							if (!waterBlocks.contains(waterBlock2.getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST))) {
+								waterBlocks.add(waterBlock2.getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST));
+							}
+							if (!waterBlocks.contains(waterBlock2.getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST))) {
+								waterBlocks.add(waterBlock2.getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST));
+							}
+							if (!waterBlocks.contains(waterBlock2.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST))) {
+								waterBlocks.add(waterBlock2.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST));
+							}
+							if (!waterBlocks.contains(waterBlock2.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST))) {
+								waterBlocks.add(waterBlock2.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST));
 							}
 							
+							//INBETWEEN
+							
+							if (!waterBlocks.contains(waterBlock3)) {
+								waterBlocks.add(waterBlock3);
+							}
+							if (!waterBlocks.contains(waterBlock3.getRelative(BlockFace.NORTH))) {
+								waterBlocks.add(waterBlock3.getRelative(BlockFace.NORTH));
+							}
+							if (!waterBlocks.contains(waterBlock3.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH))) {
+								waterBlocks.add(waterBlock3.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH));
+							}
+							if (!waterBlocks.contains(waterBlock3.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST))) {
+								waterBlocks.add(waterBlock3.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST));
+							}
+							if (!waterBlocks.contains(waterBlock3.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST))) {
+								waterBlocks.add(waterBlock3.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST));
+							}
+							if (!waterBlocks.contains(waterBlock3.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST))) {
+								waterBlocks.add(waterBlock3.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST));
+							}
+							if (!waterBlocks.contains(waterBlock3.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST))) {
+								waterBlocks.add(waterBlock3.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST));
+							}
+							if (!waterBlocks.contains(waterBlock3.getRelative(BlockFace.SOUTH))) {
+								waterBlocks.add(waterBlock3.getRelative(BlockFace.SOUTH));
+							}
+							if (!waterBlocks.contains(waterBlock3.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH))) {
+								waterBlocks.add(waterBlock3.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH));
+							}
+							if (!waterBlocks.contains(waterBlock3.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST))) {
+								waterBlocks.add(waterBlock3.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST));
+							}
+							if (!waterBlocks.contains(waterBlock3.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST))) {
+								waterBlocks.add(waterBlock3.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST));
+							}
+							if (!waterBlocks.contains(waterBlock3.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST))) {
+								waterBlocks.add(waterBlock3.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST));
+							}
+							if (!waterBlocks.contains(waterBlock3.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST))) {
+								waterBlocks.add(waterBlock3.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST));
+							}
+							if (!waterBlocks.contains(waterBlock3.getRelative(BlockFace.WEST))) {
+								waterBlocks.add(waterBlock3.getRelative(BlockFace.WEST));
+							}
+							if (!waterBlocks.contains(waterBlock3.getRelative(BlockFace.WEST).getRelative(BlockFace.WEST))) {
+								waterBlocks.add(waterBlock3.getRelative(BlockFace.WEST).getRelative(BlockFace.WEST));
+							}
+							if (!waterBlocks.contains(waterBlock3.getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST))) {
+								waterBlocks.add(waterBlock3.getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST));
+							}
+							if (!waterBlocks.contains(waterBlock3.getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST))) {
+								waterBlocks.add(waterBlock3.getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST));
+							}
+							if (!waterBlocks.contains(waterBlock3.getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST))) {
+								waterBlocks.add(waterBlock3.getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST));
+							}
+							if (!waterBlocks.contains(waterBlock3.getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST))) {
+								waterBlocks.add(waterBlock3.getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST));
+							}
+							if (!waterBlocks.contains(waterBlock3.getRelative(BlockFace.EAST))) {
+								waterBlocks.add(waterBlock3.getRelative(BlockFace.EAST));
+							}
+							if (!waterBlocks.contains(waterBlock3.getRelative(BlockFace.EAST).getRelative(BlockFace.EAST))) {
+								waterBlocks.add(waterBlock3.getRelative(BlockFace.EAST).getRelative(BlockFace.EAST));
+							}
+							if (!waterBlocks.contains(waterBlock3.getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST))) {
+								waterBlocks.add(waterBlock3.getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST));
+							}
+							if (!waterBlocks.contains(waterBlock3.getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST))) {
+								waterBlocks.add(waterBlock3.getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST));
+							}
+							if (!waterBlocks.contains(waterBlock3.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST))) {
+								waterBlocks.add(waterBlock3.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST));
+							}
+							if (!waterBlocks.contains(waterBlock3.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST))) {
+								waterBlocks.add(waterBlock3.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST));
+							}
+							
+							//INBETWEEN
+							
+							if (!waterBlocks.contains(waterBlock4)) {
+								waterBlocks.add(waterBlock4);
+							}
+							if (!waterBlocks.contains(waterBlock4.getRelative(BlockFace.NORTH))) {
+								waterBlocks.add(waterBlock4.getRelative(BlockFace.NORTH));
+							}
+							if (!waterBlocks.contains(waterBlock4.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH))) {
+								waterBlocks.add(waterBlock4.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH));
+							}
+							if (!waterBlocks.contains(waterBlock4.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST))) {
+								waterBlocks.add(waterBlock4.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST));
+							}
+							if (!waterBlocks.contains(waterBlock4.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST))) {
+								waterBlocks.add(waterBlock4.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST));
+							}
+							if (!waterBlocks.contains(waterBlock4.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST))) {
+								waterBlocks.add(waterBlock4.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST));
+							}
+							if (!waterBlocks.contains(waterBlock4.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST))) {
+								waterBlocks.add(waterBlock4.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST));
+							}
+							if (!waterBlocks.contains(waterBlock4.getRelative(BlockFace.SOUTH))) {
+								waterBlocks.add(waterBlock4.getRelative(BlockFace.SOUTH));
+							}
+							if (!waterBlocks.contains(waterBlock4.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH))) {
+								waterBlocks.add(waterBlock4.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH));
+							}
+							if (!waterBlocks.contains(waterBlock4.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST))) {
+								waterBlocks.add(waterBlock4.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST));
+							}
+							if (!waterBlocks.contains(waterBlock4.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST))) {
+								waterBlocks.add(waterBlock4.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST));
+							}
+							if (!waterBlocks.contains(waterBlock4.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST))) {
+								waterBlocks.add(waterBlock4.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST));
+							}
+							if (!waterBlocks.contains(waterBlock4.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST))) {
+								waterBlocks.add(waterBlock4.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST));
+							}
+							if (!waterBlocks.contains(waterBlock4.getRelative(BlockFace.WEST))) {
+								waterBlocks.add(waterBlock4.getRelative(BlockFace.WEST));
+							}
+							if (!waterBlocks.contains(waterBlock4.getRelative(BlockFace.WEST).getRelative(BlockFace.WEST))) {
+								waterBlocks.add(waterBlock4.getRelative(BlockFace.WEST).getRelative(BlockFace.WEST));
+							}
+							if (!waterBlocks.contains(waterBlock4.getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST))) {
+								waterBlocks.add(waterBlock4.getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST));
+							}
+							if (!waterBlocks.contains(waterBlock4.getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST))) {
+								waterBlocks.add(waterBlock4.getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST));
+							}
+							if (!waterBlocks.contains(waterBlock4.getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST))) {
+								waterBlocks.add(waterBlock4.getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST));
+							}
+							if (!waterBlocks.contains(waterBlock4.getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST))) {
+								waterBlocks.add(waterBlock4.getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST));
+							}
+							if (!waterBlocks.contains(waterBlock4.getRelative(BlockFace.EAST))) {
+								waterBlocks.add(waterBlock4.getRelative(BlockFace.EAST));
+							}
+							if (!waterBlocks.contains(waterBlock4.getRelative(BlockFace.EAST).getRelative(BlockFace.EAST))) {
+								waterBlocks.add(waterBlock4.getRelative(BlockFace.EAST).getRelative(BlockFace.EAST));
+							}
+							if (!waterBlocks.contains(waterBlock4.getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST))) {
+								waterBlocks.add(waterBlock4.getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST));
+							}
+							if (!waterBlocks.contains(waterBlock4.getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST))) {
+								waterBlocks.add(waterBlock4.getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST));
+							}
+							if (!waterBlocks.contains(waterBlock4.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST))) {
+								waterBlocks.add(waterBlock4.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST));
+							}
+							if (!waterBlocks.contains(waterBlock4.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST))) {
+								waterBlocks.add(waterBlock4.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST));
+							}
+							
+							//INBETWEEN
+							
+							if (!waterBlocks.contains(waterBlock5)) {
+								waterBlocks.add(waterBlock5);
+							}
+							if (!waterBlocks.contains(waterBlock5.getRelative(BlockFace.NORTH))) {
+								waterBlocks.add(waterBlock5.getRelative(BlockFace.NORTH));
+							}
+							if (!waterBlocks.contains(waterBlock5.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH))) {
+								waterBlocks.add(waterBlock5.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH));
+							}
+							if (!waterBlocks.contains(waterBlock5.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST))) {
+								waterBlocks.add(waterBlock5.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST));
+							}
+							if (!waterBlocks.contains(waterBlock5.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST))) {
+								waterBlocks.add(waterBlock5.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST));
+							}
+							if (!waterBlocks.contains(waterBlock5.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST))) {
+								waterBlocks.add(waterBlock5.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST));
+							}
+							if (!waterBlocks.contains(waterBlock5.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST))) {
+								waterBlocks.add(waterBlock5.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST));
+							}
+							if (!waterBlocks.contains(waterBlock5.getRelative(BlockFace.SOUTH))) {
+								waterBlocks.add(waterBlock5.getRelative(BlockFace.SOUTH));
+							}
+							if (!waterBlocks.contains(waterBlock5.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH))) {
+								waterBlocks.add(waterBlock5.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH));
+							}
+							if (!waterBlocks.contains(waterBlock5.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST))) {
+								waterBlocks.add(waterBlock5.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST));
+							}
+							if (!waterBlocks.contains(waterBlock5.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST))) {
+								waterBlocks.add(waterBlock5.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST));
+							}
+							if (!waterBlocks.contains(waterBlock5.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST))) {
+								waterBlocks.add(waterBlock5.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST));
+							}
+							if (!waterBlocks.contains(waterBlock5.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST))) {
+								waterBlocks.add(waterBlock5.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST));
+							}
+							if (!waterBlocks.contains(waterBlock5.getRelative(BlockFace.WEST))) {
+								waterBlocks.add(waterBlock5.getRelative(BlockFace.WEST));
+							}
+							if (!waterBlocks.contains(waterBlock5.getRelative(BlockFace.WEST).getRelative(BlockFace.WEST))) {
+								waterBlocks.add(waterBlock5.getRelative(BlockFace.WEST).getRelative(BlockFace.WEST));
+							}
+							if (!waterBlocks.contains(waterBlock5.getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST))) {
+								waterBlocks.add(waterBlock5.getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST));
+							}
+							if (!waterBlocks.contains(waterBlock5.getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST))) {
+								waterBlocks.add(waterBlock5.getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST));
+							}
+							if (!waterBlocks.contains(waterBlock5.getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST))) {
+								waterBlocks.add(waterBlock5.getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST));
+							}
+							if (!waterBlocks.contains(waterBlock5.getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST))) {
+								waterBlocks.add(waterBlock5.getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST));
+							}
+							if (!waterBlocks.contains(waterBlock5.getRelative(BlockFace.EAST))) {
+								waterBlocks.add(waterBlock5.getRelative(BlockFace.EAST));
+							}
+							if (!waterBlocks.contains(waterBlock5.getRelative(BlockFace.EAST).getRelative(BlockFace.EAST))) {
+								waterBlocks.add(waterBlock5.getRelative(BlockFace.EAST).getRelative(BlockFace.EAST));
+							}
+							if (!waterBlocks.contains(waterBlock5.getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST))) {
+								waterBlocks.add(waterBlock5.getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST));
+							}
+							if (!waterBlocks.contains(waterBlock5.getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST))) {
+								waterBlocks.add(waterBlock5.getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST));
+							}
+							if (!waterBlocks.contains(waterBlock5.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST))) {
+								waterBlocks.add(waterBlock5.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST));
+							}
+							if (!waterBlocks.contains(waterBlock5.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST))) {
+								waterBlocks.add(waterBlock5.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST));
+							}
+							
+							//INBETWEEN
+							
+							if (!waterBlocks.contains(waterBlock6)) {
+								waterBlocks.add(waterBlock6);
+							}
+							if (!waterBlocks.contains(waterBlock6.getRelative(BlockFace.NORTH))) {
+								waterBlocks.add(waterBlock6.getRelative(BlockFace.NORTH));
+							}
+							if (!waterBlocks.contains(waterBlock6.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH))) {
+								waterBlocks.add(waterBlock6.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH));
+							}
+							if (!waterBlocks.contains(waterBlock6.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST))) {
+								waterBlocks.add(waterBlock6.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST));
+							}
+							if (!waterBlocks.contains(waterBlock6.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST))) {
+								waterBlocks.add(waterBlock6.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST));
+							}
+							if (!waterBlocks.contains(waterBlock6.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST))) {
+								waterBlocks.add(waterBlock6.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST));
+							}
+							if (!waterBlocks.contains(waterBlock6.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST))) {
+								waterBlocks.add(waterBlock6.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST));
+							}
+							if (!waterBlocks.contains(waterBlock6.getRelative(BlockFace.SOUTH))) {
+								waterBlocks.add(waterBlock6.getRelative(BlockFace.SOUTH));
+							}
+							if (!waterBlocks.contains(waterBlock6.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH))) {
+								waterBlocks.add(waterBlock6.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH));
+							}
+							if (!waterBlocks.contains(waterBlock6.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST))) {
+								waterBlocks.add(waterBlock6.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST));
+							}
+							if (!waterBlocks.contains(waterBlock6.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST))) {
+								waterBlocks.add(waterBlock6.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST));
+							}
+							if (!waterBlocks.contains(waterBlock6.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST))) {
+								waterBlocks.add(waterBlock6.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST));
+							}
+							if (!waterBlocks.contains(waterBlock6.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST))) {
+								waterBlocks.add(waterBlock6.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST));
+							}
+							if (!waterBlocks.contains(waterBlock6.getRelative(BlockFace.WEST))) {
+								waterBlocks.add(waterBlock6.getRelative(BlockFace.WEST));
+							}
+							if (!waterBlocks.contains(waterBlock6.getRelative(BlockFace.WEST).getRelative(BlockFace.WEST))) {
+								waterBlocks.add(waterBlock6.getRelative(BlockFace.WEST).getRelative(BlockFace.WEST));
+							}
+							if (!waterBlocks.contains(waterBlock6.getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST))) {
+								waterBlocks.add(waterBlock6.getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST));
+							}
+							if (!waterBlocks.contains(waterBlock6.getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST))) {
+								waterBlocks.add(waterBlock6.getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST));
+							}
+							if (!waterBlocks.contains(waterBlock6.getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST))) {
+								waterBlocks.add(waterBlock6.getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST));
+							}
+							if (!waterBlocks.contains(waterBlock6.getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST))) {
+								waterBlocks.add(waterBlock6.getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST));
+							}
+							if (!waterBlocks.contains(waterBlock6.getRelative(BlockFace.EAST))) {
+								waterBlocks.add(waterBlock6.getRelative(BlockFace.EAST));
+							}
+							if (!waterBlocks.contains(waterBlock6.getRelative(BlockFace.EAST).getRelative(BlockFace.EAST))) {
+								waterBlocks.add(waterBlock6.getRelative(BlockFace.EAST).getRelative(BlockFace.EAST));
+							}
+							if (!waterBlocks.contains(waterBlock6.getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST))) {
+								waterBlocks.add(waterBlock6.getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST));
+							}
+							if (!waterBlocks.contains(waterBlock6.getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST))) {
+								waterBlocks.add(waterBlock6.getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST));
+							}
+							if (!waterBlocks.contains(waterBlock6.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST))) {
+								waterBlocks.add(waterBlock6.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST));
+							}
+							if (!waterBlocks.contains(waterBlock6.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST))) {
+								waterBlocks.add(waterBlock6.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST));
+							}
+							
+							//INBETWEEN
+							
+							if (!waterBlocks.contains(waterBlock7)) {
+								waterBlocks.add(waterBlock7);
+							}
+							if (!waterBlocks.contains(waterBlock7.getRelative(BlockFace.NORTH))) {
+								waterBlocks.add(waterBlock7.getRelative(BlockFace.NORTH));
+							}
+							if (!waterBlocks.contains(waterBlock7.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH))) {
+								waterBlocks.add(waterBlock7.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH));
+							}
+							if (!waterBlocks.contains(waterBlock7.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST))) {
+								waterBlocks.add(waterBlock7.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST));
+							}
+							if (!waterBlocks.contains(waterBlock7.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST))) {
+								waterBlocks.add(waterBlock7.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST));
+							}
+							if (!waterBlocks.contains(waterBlock7.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST))) {
+								waterBlocks.add(waterBlock7.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST));
+							}
+							if (!waterBlocks.contains(waterBlock7.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST))) {
+								waterBlocks.add(waterBlock7.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST));
+							}
+							if (!waterBlocks.contains(waterBlock7.getRelative(BlockFace.SOUTH))) {
+								waterBlocks.add(waterBlock7.getRelative(BlockFace.SOUTH));
+							}
+							if (!waterBlocks.contains(waterBlock7.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH))) {
+								waterBlocks.add(waterBlock7.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH));
+							}
+							if (!waterBlocks.contains(waterBlock7.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST))) {
+								waterBlocks.add(waterBlock7.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST));
+							}
+							if (!waterBlocks.contains(waterBlock7.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST))) {
+								waterBlocks.add(waterBlock7.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST));
+							}
+							if (!waterBlocks.contains(waterBlock7.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST))) {
+								waterBlocks.add(waterBlock7.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST));
+							}
+							if (!waterBlocks.contains(waterBlock7.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST))) {
+								waterBlocks.add(waterBlock7.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST));
+							}
+							if (!waterBlocks.contains(waterBlock7.getRelative(BlockFace.WEST))) {
+								waterBlocks.add(waterBlock7.getRelative(BlockFace.WEST));
+							}
+							if (!waterBlocks.contains(waterBlock7.getRelative(BlockFace.WEST).getRelative(BlockFace.WEST))) {
+								waterBlocks.add(waterBlock7.getRelative(BlockFace.WEST).getRelative(BlockFace.WEST));
+							}
+							if (!waterBlocks.contains(waterBlock7.getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST))) {
+								waterBlocks.add(waterBlock7.getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST));
+							}
+							if (!waterBlocks.contains(waterBlock7.getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST))) {
+								waterBlocks.add(waterBlock7.getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST));
+							}
+							if (!waterBlocks.contains(waterBlock7.getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST))) {
+								waterBlocks.add(waterBlock7.getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST));
+							}
+							if (!waterBlocks.contains(waterBlock7.getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST))) {
+								waterBlocks.add(waterBlock7.getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST));
+							}
+							if (!waterBlocks.contains(waterBlock7.getRelative(BlockFace.EAST))) {
+								waterBlocks.add(waterBlock7.getRelative(BlockFace.EAST));
+							}
+							if (!waterBlocks.contains(waterBlock7.getRelative(BlockFace.EAST).getRelative(BlockFace.EAST))) {
+								waterBlocks.add(waterBlock7.getRelative(BlockFace.EAST).getRelative(BlockFace.EAST));
+							}
+							if (!waterBlocks.contains(waterBlock7.getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST))) {
+								waterBlocks.add(waterBlock7.getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST));
+							}
+							if (!waterBlocks.contains(waterBlock7.getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST))) {
+								waterBlocks.add(waterBlock7.getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST));
+							}
+							if (!waterBlocks.contains(waterBlock7.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST))) {
+								waterBlocks.add(waterBlock7.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST));
+							}
+							if (!waterBlocks.contains(waterBlock7.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST))) {
+								waterBlocks.add(waterBlock7.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST));
+							}
+							
+							SQTechPumps.tankWaterBlocks.put(machine, waterBlocks);
+
 							for (Fluid f : SQTechBase.fluids) {
-								
+
 								if (!(machine.getMaxLiquid(f) > 1)) continue;
-								
+
 								if (f.name == "Water") {
 									SQTechPumps.machineLiquidTypeIdMap.put(machine, 9);
 								} else if (f.name == "Lava") {
@@ -1171,30 +1553,30 @@ public class LargeTank extends MachineType{
 								int current = machine.getLiquid(f);
 
 								double oneAndAHalfPercent = (max/100) * 1.785;
-								
+
 								if (LargeTankAssets.waterBlock(waterBlock, current, oneAndAHalfPercent, machine)) {
-									
+
 									/*It executes the code inside itself, so no need to put anything here. 
 									 * This had to be done like that because of the max byte limit for a java function.
 									 * All of them were not done this way because once these 3 were removed, it no longer
 									 * exceeded the limit.*/
-									
+
 								} else if (LargeTankAssets.waterBlock2(waterBlock2, current, oneAndAHalfPercent, machine)) {
-									
+
 									/*It executes the code inside itself, so no need to put anything here. 
 									 * This had to be done like that because of the max byte limit for a java function.
 									 * All of them were not done this way because once these 3 were removed, it no longer
 									 * exceeded the limit.*/
-									
+
 								} else if (LargeTankAssets.waterBlock3(waterBlock3, current, oneAndAHalfPercent, machine)) {
-									
+
 									/*It executes the code inside itself, so no need to put anything here. 
 									 * This had to be done like that because of the max byte limit for a java function.
 									 * All of them were not done this way because once these 3 were removed, it no longer
 									 * exceeded the limit.*/
-									
+
 								} else if (current >= oneAndAHalfPercent*25 && current < oneAndAHalfPercent*26) {
-									
+
 									if (SQTechPumps.machineLiquidTypeIdMap.get(machine) != null) {
 										waterBlock4.setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 7, false);
 										waterBlock4.getRelative(BlockFace.NORTH).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 7, false);
@@ -1222,9 +1604,9 @@ public class LargeTank extends MachineType{
 										waterBlock4.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 7, false);
 										waterBlock4.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 7, false);
 									}
-									
+
 								} else if (current >= oneAndAHalfPercent*26 && current < oneAndAHalfPercent*27) {
-									
+
 									if (SQTechPumps.machineLiquidTypeIdMap.get(machine) != null) {
 										waterBlock4.setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 6, false);
 										waterBlock4.getRelative(BlockFace.NORTH).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 6, false);
@@ -1252,9 +1634,9 @@ public class LargeTank extends MachineType{
 										waterBlock4.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 6, false);
 										waterBlock4.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 6, false);
 									}
-									
+
 								} else if (current >= oneAndAHalfPercent*27 && current < oneAndAHalfPercent*28) {
-									
+
 									if (SQTechPumps.machineLiquidTypeIdMap.get(machine) != null) {
 										waterBlock4.setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 5, false);
 										waterBlock4.getRelative(BlockFace.NORTH).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 5, false);
@@ -1282,9 +1664,9 @@ public class LargeTank extends MachineType{
 										waterBlock4.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 5, false);
 										waterBlock4.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 5, false);
 									}
-									
+
 								} else if (current >= oneAndAHalfPercent*28 && current < oneAndAHalfPercent*29) {
-									
+
 									if (SQTechPumps.machineLiquidTypeIdMap.get(machine) != null) {
 										waterBlock4.setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 4, false);
 										waterBlock4.getRelative(BlockFace.NORTH).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 4, false);
@@ -1312,9 +1694,9 @@ public class LargeTank extends MachineType{
 										waterBlock4.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 4, false);
 										waterBlock4.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 4, false);
 									}
-									
+
 								} else if (current >= oneAndAHalfPercent*29 && current < oneAndAHalfPercent*30) {
-									
+
 									if (SQTechPumps.machineLiquidTypeIdMap.get(machine) != null) {
 										waterBlock4.setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 3, false);
 										waterBlock4.getRelative(BlockFace.NORTH).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 3, false);
@@ -1342,9 +1724,9 @@ public class LargeTank extends MachineType{
 										waterBlock4.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 3, false);
 										waterBlock4.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 3, false);
 									}
-									
+
 								} else if (current >= oneAndAHalfPercent*30 && current < oneAndAHalfPercent*31) {
-									
+
 									if (SQTechPumps.machineLiquidTypeIdMap.get(machine) != null) {
 										waterBlock4.setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 2, false);
 										waterBlock4.getRelative(BlockFace.NORTH).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 2, false);
@@ -1372,9 +1754,9 @@ public class LargeTank extends MachineType{
 										waterBlock4.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 2, false);
 										waterBlock4.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 2, false);
 									}
-									
+
 								} else if (current >= oneAndAHalfPercent*31 && current < oneAndAHalfPercent*32) {
-									
+
 									if (SQTechPumps.machineLiquidTypeIdMap.get(machine) != null) {
 										waterBlock4.setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 1, false);
 										waterBlock4.getRelative(BlockFace.NORTH).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 1, false);
@@ -1402,9 +1784,9 @@ public class LargeTank extends MachineType{
 										waterBlock4.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 1, false);
 										waterBlock4.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 1, false);
 									}
-									
+
 								} else if (current >= oneAndAHalfPercent*32 && current < oneAndAHalfPercent*33) {
-									
+
 									if (SQTechPumps.machineLiquidTypeIdMap.get(machine) != null) {
 										waterBlock4.setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 0, false);
 										waterBlock4.getRelative(BlockFace.NORTH).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 0, false);
@@ -1432,9 +1814,9 @@ public class LargeTank extends MachineType{
 										waterBlock4.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 0, false);
 										waterBlock4.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 0, false);
 									}
-									
+
 								} else if (current >= oneAndAHalfPercent*33 && current < oneAndAHalfPercent*34) {
-									
+
 									if (SQTechPumps.machineLiquidTypeIdMap.get(machine) != null) {
 										waterBlock5.setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 7, false);
 										waterBlock5.getRelative(BlockFace.NORTH).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 7, false);
@@ -1462,9 +1844,9 @@ public class LargeTank extends MachineType{
 										waterBlock5.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 7, false);
 										waterBlock5.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 7, false);
 									}
-									
+
 								} else if (current >= oneAndAHalfPercent*34 && current < oneAndAHalfPercent*35) {
-									
+
 									if (SQTechPumps.machineLiquidTypeIdMap.get(machine) != null) {
 										waterBlock5.setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 6, false);
 										waterBlock5.getRelative(BlockFace.NORTH).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 6, false);
@@ -1492,9 +1874,9 @@ public class LargeTank extends MachineType{
 										waterBlock5.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 6, false);
 										waterBlock5.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 6, false);
 									}
-									
+
 								} else if (current >= oneAndAHalfPercent*35 && current < oneAndAHalfPercent*36) {
-									
+
 									if (SQTechPumps.machineLiquidTypeIdMap.get(machine) != null) {
 										waterBlock5.setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 5, false);
 										waterBlock5.getRelative(BlockFace.NORTH).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 5, false);
@@ -1522,9 +1904,9 @@ public class LargeTank extends MachineType{
 										waterBlock5.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 5, false);
 										waterBlock5.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 5, false);
 									}
-									
+
 								} else if (current >= oneAndAHalfPercent*36 && current < oneAndAHalfPercent*37) {
-									
+
 									if (SQTechPumps.machineLiquidTypeIdMap.get(machine) != null) {
 										waterBlock5.setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 4, false);
 										waterBlock5.getRelative(BlockFace.NORTH).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 4, false);
@@ -1552,9 +1934,9 @@ public class LargeTank extends MachineType{
 										waterBlock5.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 4, false);
 										waterBlock5.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 4, false);
 									}
-									
+
 								} else if (current >= oneAndAHalfPercent*37 && current < oneAndAHalfPercent*38) {
-									
+
 									if (SQTechPumps.machineLiquidTypeIdMap.get(machine) != null) {
 										waterBlock5.setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 3, false);
 										waterBlock5.getRelative(BlockFace.NORTH).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 3, false);
@@ -1582,9 +1964,9 @@ public class LargeTank extends MachineType{
 										waterBlock5.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 3, false);
 										waterBlock5.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 3, false);
 									}
-									
+
 								} else if (current >= oneAndAHalfPercent*38 && current < oneAndAHalfPercent*39) {
-									
+
 									if (SQTechPumps.machineLiquidTypeIdMap.get(machine) != null) {
 										waterBlock5.setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 2, false);
 										waterBlock5.getRelative(BlockFace.NORTH).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 2, false);
@@ -1612,9 +1994,9 @@ public class LargeTank extends MachineType{
 										waterBlock5.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 2, false);
 										waterBlock5.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 2, false);
 									}
-									
+
 								} else if (current >= oneAndAHalfPercent*39 && current < oneAndAHalfPercent*40) {
-									
+
 									if (SQTechPumps.machineLiquidTypeIdMap.get(machine) != null) {
 										waterBlock5.setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 1, false);
 										waterBlock5.getRelative(BlockFace.NORTH).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 1, false);
@@ -1642,9 +2024,9 @@ public class LargeTank extends MachineType{
 										waterBlock5.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 1, false);
 										waterBlock5.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 1, false);
 									}
-									
+
 								} else if (current >= oneAndAHalfPercent*40 && current < oneAndAHalfPercent*41) {
-									
+
 									if (SQTechPumps.machineLiquidTypeIdMap.get(machine) != null) {
 										waterBlock5.setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 0, false);
 										waterBlock5.getRelative(BlockFace.NORTH).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 0, false);
@@ -1672,9 +2054,9 @@ public class LargeTank extends MachineType{
 										waterBlock5.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 0, false);
 										waterBlock5.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 0, false);
 									}
-									
+
 								} else if (current >= oneAndAHalfPercent*41 && current < oneAndAHalfPercent*42) {
-									
+
 									if (SQTechPumps.machineLiquidTypeIdMap.get(machine) != null) {
 										waterBlock6.setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 7, false);
 										waterBlock6.getRelative(BlockFace.NORTH).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 7, false);
@@ -1702,9 +2084,9 @@ public class LargeTank extends MachineType{
 										waterBlock6.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 7, false);
 										waterBlock6.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 7, false);
 									}
-									
+
 								} else if (current >= oneAndAHalfPercent*42 && current < oneAndAHalfPercent*43) {
-									
+
 									if (SQTechPumps.machineLiquidTypeIdMap.get(machine) != null) {
 										waterBlock6.setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 6, false);
 										waterBlock6.getRelative(BlockFace.NORTH).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 6, false);
@@ -1732,9 +2114,9 @@ public class LargeTank extends MachineType{
 										waterBlock6.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 6, false);
 										waterBlock6.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 6, false);
 									}
-									
+
 								} else if (current >= oneAndAHalfPercent*43 && current < oneAndAHalfPercent*44) {
-									
+
 									if (SQTechPumps.machineLiquidTypeIdMap.get(machine) != null) {
 										waterBlock6.setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 5, false);
 										waterBlock6.getRelative(BlockFace.NORTH).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 5, false);
@@ -1762,9 +2144,9 @@ public class LargeTank extends MachineType{
 										waterBlock6.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 5, false);
 										waterBlock6.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 5, false);
 									}
-									
+
 								} else if (current >= oneAndAHalfPercent*44 && current < oneAndAHalfPercent*45) {
-									
+
 									if (SQTechPumps.machineLiquidTypeIdMap.get(machine) != null) {
 										waterBlock6.setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 4, false);
 										waterBlock6.getRelative(BlockFace.NORTH).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 4, false);
@@ -1792,9 +2174,9 @@ public class LargeTank extends MachineType{
 										waterBlock6.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 4, false);
 										waterBlock6.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 4, false);
 									}
-									
+
 								} else if (current >= oneAndAHalfPercent*45 && current < oneAndAHalfPercent*46) {
-									
+
 									if (SQTechPumps.machineLiquidTypeIdMap.get(machine) != null) {
 										waterBlock6.setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 3, false);
 										waterBlock6.getRelative(BlockFace.NORTH).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 3, false);
@@ -1822,9 +2204,9 @@ public class LargeTank extends MachineType{
 										waterBlock6.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 3, false);
 										waterBlock6.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 3, false);
 									}
-									
+
 								} else if (current >= oneAndAHalfPercent*46 && current < oneAndAHalfPercent*47) {
-									
+
 									if (SQTechPumps.machineLiquidTypeIdMap.get(machine) != null) {
 										waterBlock6.setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 2, false);
 										waterBlock6.getRelative(BlockFace.NORTH).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 2, false);
@@ -1852,9 +2234,9 @@ public class LargeTank extends MachineType{
 										waterBlock6.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 2, false);
 										waterBlock6.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 2, false);
 									}
-									
+
 								} else if (current >= oneAndAHalfPercent*47 && current < oneAndAHalfPercent*48) {
-									
+
 									if (SQTechPumps.machineLiquidTypeIdMap.get(machine) != null) {
 										waterBlock6.setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 1, false);
 										waterBlock6.getRelative(BlockFace.NORTH).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 1, false);
@@ -1882,9 +2264,9 @@ public class LargeTank extends MachineType{
 										waterBlock6.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 1, false);
 										waterBlock6.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 1, false);
 									}
-									
+
 								} else if (current >= oneAndAHalfPercent*48 && current < oneAndAHalfPercent*49) {
-									
+
 									if (SQTechPumps.machineLiquidTypeIdMap.get(machine) != null) {
 										waterBlock6.setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 0, false);
 										waterBlock6.getRelative(BlockFace.NORTH).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 0, false);
@@ -1912,9 +2294,9 @@ public class LargeTank extends MachineType{
 										waterBlock6.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 0, false);
 										waterBlock6.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 0, false);
 									}
-									
+
 								} else if (current >= oneAndAHalfPercent*49 && current < oneAndAHalfPercent*50) {
-									
+
 									if (SQTechPumps.machineLiquidTypeIdMap.get(machine) != null) {
 										waterBlock7.setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 7, false);
 										waterBlock7.getRelative(BlockFace.NORTH).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 7, false);
@@ -1942,9 +2324,9 @@ public class LargeTank extends MachineType{
 										waterBlock7.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 7, false);
 										waterBlock7.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 7, false);
 									}
-									
+
 								} else if (current >= oneAndAHalfPercent*50 && current < oneAndAHalfPercent*51) {
-									
+
 									if (SQTechPumps.machineLiquidTypeIdMap.get(machine) != null) {
 										waterBlock7.setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 6, false);
 										waterBlock7.getRelative(BlockFace.NORTH).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 6, false);
@@ -1972,9 +2354,9 @@ public class LargeTank extends MachineType{
 										waterBlock7.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 6, false);
 										waterBlock7.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 6, false);
 									}
-									
+
 								} else if (current >= oneAndAHalfPercent*51 && current < oneAndAHalfPercent*52) {
-									
+
 									if (SQTechPumps.machineLiquidTypeIdMap.get(machine) != null) {
 										waterBlock7.setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 5, false);
 										waterBlock7.getRelative(BlockFace.NORTH).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 5, false);
@@ -2002,9 +2384,9 @@ public class LargeTank extends MachineType{
 										waterBlock7.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 5, false);
 										waterBlock7.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 5, false);
 									}
-									
+
 								} else if (current >= oneAndAHalfPercent*52 && current < oneAndAHalfPercent*53) {
-									
+
 									if (SQTechPumps.machineLiquidTypeIdMap.get(machine) != null) {
 										waterBlock7.setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 4, false);
 										waterBlock7.getRelative(BlockFace.NORTH).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 4, false);
@@ -2032,9 +2414,9 @@ public class LargeTank extends MachineType{
 										waterBlock7.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 4, false);
 										waterBlock7.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 4, false);
 									}
-									
+
 								} else if (current >= oneAndAHalfPercent*53 && current < oneAndAHalfPercent*54) {
-									
+
 									if (SQTechPumps.machineLiquidTypeIdMap.get(machine) != null) {
 										waterBlock7.setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 3, false);
 										waterBlock7.getRelative(BlockFace.NORTH).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 3, false);
@@ -2062,9 +2444,9 @@ public class LargeTank extends MachineType{
 										waterBlock7.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 3, false);
 										waterBlock7.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 3, false);
 									}
-									
+
 								} else if (current >= oneAndAHalfPercent*54 && current < oneAndAHalfPercent*55) {
-									
+
 									if (SQTechPumps.machineLiquidTypeIdMap.get(machine) != null) {
 										waterBlock7.setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 2, false);
 										waterBlock7.getRelative(BlockFace.NORTH).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 2, false);
@@ -2092,9 +2474,9 @@ public class LargeTank extends MachineType{
 										waterBlock7.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 2, false);
 										waterBlock7.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 2, false);
 									}
-									
+
 								} else if (current >= oneAndAHalfPercent*55 && current < oneAndAHalfPercent*56) {
-									
+
 									if (SQTechPumps.machineLiquidTypeIdMap.get(machine) != null) {
 										waterBlock7.setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 1, false);
 										waterBlock7.getRelative(BlockFace.NORTH).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 1, false);
@@ -2122,9 +2504,9 @@ public class LargeTank extends MachineType{
 										waterBlock7.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 1, false);
 										waterBlock7.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 1, false);
 									}
-									
+
 								} else if (current >= oneAndAHalfPercent*56) {
-									
+
 									if (SQTechPumps.machineLiquidTypeIdMap.get(machine) != null) {
 										waterBlock7.setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 0, false);
 										waterBlock7.getRelative(BlockFace.NORTH).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 0, false);
@@ -2152,23 +2534,23 @@ public class LargeTank extends MachineType{
 										waterBlock7.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 0, false);
 										waterBlock7.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 0, false);
 									}
-									
+
 								}
-								
+
 								updateBlock(waterBlock.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH));
-								
+
 							}
-							
+
 						}
-						
+
 					}
-					
+
 				}
-				
+
 			}
-			
+
 		});
-		
+
 		for (Player player : SQTechBase.currentGui.keySet()) {
 
 			if (SQTechBase.currentGui.get(player).id == machine.getGUI(player).id) {
@@ -2208,11 +2590,11 @@ public class LargeTank extends MachineType{
 			}
 
 		}
-		
+
 		lastUpdate = System.currentTimeMillis();
-		
+
 	}
-	
+
 	@SuppressWarnings("deprecation")
 	private static void updateBlock(Block b) {
 
@@ -2234,7 +2616,1604 @@ public class LargeTank extends MachineType{
 		});
 
 	}
-	
+
+	@SuppressWarnings("deprecation")
+	public static void updatePhysicalLiquid(Machine machine) {
+		
+		if (machine == null) return;
+		
+		Bukkit.getServer().getScheduler().runTask(SQTechPumps.plugin, new BukkitRunnable() {
+
+			@Override
+			public void run() {
+
+				if (machine != null) {
+
+					if (machine.getGUIBlock() != null) {
+
+						if (getMiddleBlock(machine.getGUIBlock()) != null &&
+								getMiddleBlock(machine.getGUIBlock()).getLocation().add(0, 1, 0).getBlock() != null &&
+								getMiddleBlock(machine.getGUIBlock()).getLocation().add(0, 2, 0).getBlock() != null &&
+								getMiddleBlock(machine.getGUIBlock()).getLocation().add(0, 3, 0).getBlock() != null &&
+								getMiddleBlock(machine.getGUIBlock()).getLocation().add(0, 4, 0).getBlock() != null &&
+								getMiddleBlock(machine.getGUIBlock()).getLocation().add(0, 5, 0).getBlock() != null &&
+								getMiddleBlock(machine.getGUIBlock()).getLocation().add(0, 6, 0).getBlock() != null &&
+								getMiddleBlock(machine.getGUIBlock()).getLocation().add(0, 7, 0).getBlock() != null) {
+
+							Block waterBlock = getMiddleBlock(machine.getGUIBlock());
+							Block waterBlock2 = getMiddleBlock(machine.getGUIBlock()).getLocation().add(0, 1, 0).getBlock();
+							Block waterBlock3 = getMiddleBlock(machine.getGUIBlock()).getLocation().add(0, 2, 0).getBlock();
+							Block waterBlock4 = getMiddleBlock(machine.getGUIBlock()).getLocation().add(0, 3, 0).getBlock();
+							Block waterBlock5 = getMiddleBlock(machine.getGUIBlock()).getLocation().add(0, 4, 0).getBlock();
+							Block waterBlock6 = getMiddleBlock(machine.getGUIBlock()).getLocation().add(0, 5, 0).getBlock();
+							Block waterBlock7 = getMiddleBlock(machine.getGUIBlock()).getLocation().add(0, 6, 0).getBlock();
+
+							List<Block> waterBlocks = new ArrayList<Block>();
+							if (SQTechPumps.tankWaterBlocks.get(machine) != null) {
+								waterBlocks = SQTechPumps.tankWaterBlocks.get(machine);
+							}
+
+							if (!waterBlocks.contains(waterBlock)) {
+								waterBlocks.add(waterBlock);
+							}
+							if (!waterBlocks.contains(waterBlock.getRelative(BlockFace.NORTH))) {
+								waterBlocks.add(waterBlock.getRelative(BlockFace.NORTH));
+							}
+							if (!waterBlocks.contains(waterBlock.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH))) {
+								waterBlocks.add(waterBlock.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH));
+							}
+							if (!waterBlocks.contains(waterBlock.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST))) {
+								waterBlocks.add(waterBlock.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST));
+							}
+							if (!waterBlocks.contains(waterBlock.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST))) {
+								waterBlocks.add(waterBlock.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST));
+							}
+							if (!waterBlocks.contains(waterBlock.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST))) {
+								waterBlocks.add(waterBlock.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST));
+							}
+							if (!waterBlocks.contains(waterBlock.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST))) {
+								waterBlocks.add(waterBlock.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST));
+							}
+							if (!waterBlocks.contains(waterBlock.getRelative(BlockFace.SOUTH))) {
+								waterBlocks.add(waterBlock.getRelative(BlockFace.SOUTH));
+							}
+							if (!waterBlocks.contains(waterBlock.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH))) {
+								waterBlocks.add(waterBlock.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH));
+							}
+							if (!waterBlocks.contains(waterBlock.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST))) {
+								waterBlocks.add(waterBlock.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST));
+							}
+							if (!waterBlocks.contains(waterBlock.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST))) {
+								waterBlocks.add(waterBlock.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST));
+							}
+							if (!waterBlocks.contains(waterBlock.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST))) {
+								waterBlocks.add(waterBlock.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST));
+							}
+							if (!waterBlocks.contains(waterBlock.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST))) {
+								waterBlocks.add(waterBlock.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST));
+							}
+							if (!waterBlocks.contains(waterBlock.getRelative(BlockFace.WEST))) {
+								waterBlocks.add(waterBlock.getRelative(BlockFace.WEST));
+							}
+							if (!waterBlocks.contains(waterBlock.getRelative(BlockFace.WEST).getRelative(BlockFace.WEST))) {
+								waterBlocks.add(waterBlock.getRelative(BlockFace.WEST).getRelative(BlockFace.WEST));
+							}
+							if (!waterBlocks.contains(waterBlock.getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST))) {
+								waterBlocks.add(waterBlock.getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST));
+							}
+							if (!waterBlocks.contains(waterBlock.getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST))) {
+								waterBlocks.add(waterBlock.getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST));
+							}
+							if (!waterBlocks.contains(waterBlock.getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST))) {
+								waterBlocks.add(waterBlock.getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST));
+							}
+							if (!waterBlocks.contains(waterBlock.getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST))) {
+								waterBlocks.add(waterBlock.getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST));
+							}
+							if (!waterBlocks.contains(waterBlock.getRelative(BlockFace.EAST))) {
+								waterBlocks.add(waterBlock.getRelative(BlockFace.EAST));
+							}
+							if (!waterBlocks.contains(waterBlock.getRelative(BlockFace.EAST).getRelative(BlockFace.EAST))) {
+								waterBlocks.add(waterBlock.getRelative(BlockFace.EAST).getRelative(BlockFace.EAST));
+							}
+							if (!waterBlocks.contains(waterBlock.getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST))) {
+								waterBlocks.add(waterBlock.getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST));
+							}
+							if (!waterBlocks.contains(waterBlock.getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST))) {
+								waterBlocks.add(waterBlock.getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST));
+							}
+							if (!waterBlocks.contains(waterBlock.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST))) {
+								waterBlocks.add(waterBlock.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST));
+							}
+							if (!waterBlocks.contains(waterBlock.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST))) {
+								waterBlocks.add(waterBlock.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST));
+							}
+
+							//INBETWEEN
+							
+							if (!waterBlocks.contains(waterBlock2)) {
+								waterBlocks.add(waterBlock2);
+							}
+							if (!waterBlocks.contains(waterBlock2.getRelative(BlockFace.NORTH))) {
+								waterBlocks.add(waterBlock2.getRelative(BlockFace.NORTH));
+							}
+							if (!waterBlocks.contains(waterBlock2.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH))) {
+								waterBlocks.add(waterBlock2.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH));
+							}
+							if (!waterBlocks.contains(waterBlock2.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST))) {
+								waterBlocks.add(waterBlock2.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST));
+							}
+							if (!waterBlocks.contains(waterBlock2.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST))) {
+								waterBlocks.add(waterBlock2.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST));
+							}
+							if (!waterBlocks.contains(waterBlock2.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST))) {
+								waterBlocks.add(waterBlock2.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST));
+							}
+							if (!waterBlocks.contains(waterBlock2.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST))) {
+								waterBlocks.add(waterBlock2.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST));
+							}
+							if (!waterBlocks.contains(waterBlock2.getRelative(BlockFace.SOUTH))) {
+								waterBlocks.add(waterBlock2.getRelative(BlockFace.SOUTH));
+							}
+							if (!waterBlocks.contains(waterBlock2.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH))) {
+								waterBlocks.add(waterBlock2.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH));
+							}
+							if (!waterBlocks.contains(waterBlock2.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST))) {
+								waterBlocks.add(waterBlock2.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST));
+							}
+							if (!waterBlocks.contains(waterBlock2.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST))) {
+								waterBlocks.add(waterBlock2.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST));
+							}
+							if (!waterBlocks.contains(waterBlock2.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST))) {
+								waterBlocks.add(waterBlock2.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST));
+							}
+							if (!waterBlocks.contains(waterBlock2.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST))) {
+								waterBlocks.add(waterBlock2.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST));
+							}
+							if (!waterBlocks.contains(waterBlock2.getRelative(BlockFace.WEST))) {
+								waterBlocks.add(waterBlock2.getRelative(BlockFace.WEST));
+							}
+							if (!waterBlocks.contains(waterBlock2.getRelative(BlockFace.WEST).getRelative(BlockFace.WEST))) {
+								waterBlocks.add(waterBlock2.getRelative(BlockFace.WEST).getRelative(BlockFace.WEST));
+							}
+							if (!waterBlocks.contains(waterBlock2.getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST))) {
+								waterBlocks.add(waterBlock2.getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST));
+							}
+							if (!waterBlocks.contains(waterBlock2.getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST))) {
+								waterBlocks.add(waterBlock2.getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST));
+							}
+							if (!waterBlocks.contains(waterBlock2.getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST))) {
+								waterBlocks.add(waterBlock2.getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST));
+							}
+							if (!waterBlocks.contains(waterBlock2.getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST))) {
+								waterBlocks.add(waterBlock2.getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST));
+							}
+							if (!waterBlocks.contains(waterBlock2.getRelative(BlockFace.EAST))) {
+								waterBlocks.add(waterBlock2.getRelative(BlockFace.EAST));
+							}
+							if (!waterBlocks.contains(waterBlock2.getRelative(BlockFace.EAST).getRelative(BlockFace.EAST))) {
+								waterBlocks.add(waterBlock2.getRelative(BlockFace.EAST).getRelative(BlockFace.EAST));
+							}
+							if (!waterBlocks.contains(waterBlock2.getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST))) {
+								waterBlocks.add(waterBlock2.getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST));
+							}
+							if (!waterBlocks.contains(waterBlock2.getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST))) {
+								waterBlocks.add(waterBlock2.getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST));
+							}
+							if (!waterBlocks.contains(waterBlock2.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST))) {
+								waterBlocks.add(waterBlock2.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST));
+							}
+							if (!waterBlocks.contains(waterBlock2.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST))) {
+								waterBlocks.add(waterBlock2.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST));
+							}
+							
+							//INBETWEEN
+							
+							if (!waterBlocks.contains(waterBlock3)) {
+								waterBlocks.add(waterBlock3);
+							}
+							if (!waterBlocks.contains(waterBlock3.getRelative(BlockFace.NORTH))) {
+								waterBlocks.add(waterBlock3.getRelative(BlockFace.NORTH));
+							}
+							if (!waterBlocks.contains(waterBlock3.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH))) {
+								waterBlocks.add(waterBlock3.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH));
+							}
+							if (!waterBlocks.contains(waterBlock3.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST))) {
+								waterBlocks.add(waterBlock3.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST));
+							}
+							if (!waterBlocks.contains(waterBlock3.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST))) {
+								waterBlocks.add(waterBlock3.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST));
+							}
+							if (!waterBlocks.contains(waterBlock3.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST))) {
+								waterBlocks.add(waterBlock3.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST));
+							}
+							if (!waterBlocks.contains(waterBlock3.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST))) {
+								waterBlocks.add(waterBlock3.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST));
+							}
+							if (!waterBlocks.contains(waterBlock3.getRelative(BlockFace.SOUTH))) {
+								waterBlocks.add(waterBlock3.getRelative(BlockFace.SOUTH));
+							}
+							if (!waterBlocks.contains(waterBlock3.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH))) {
+								waterBlocks.add(waterBlock3.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH));
+							}
+							if (!waterBlocks.contains(waterBlock3.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST))) {
+								waterBlocks.add(waterBlock3.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST));
+							}
+							if (!waterBlocks.contains(waterBlock3.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST))) {
+								waterBlocks.add(waterBlock3.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST));
+							}
+							if (!waterBlocks.contains(waterBlock3.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST))) {
+								waterBlocks.add(waterBlock3.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST));
+							}
+							if (!waterBlocks.contains(waterBlock3.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST))) {
+								waterBlocks.add(waterBlock3.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST));
+							}
+							if (!waterBlocks.contains(waterBlock3.getRelative(BlockFace.WEST))) {
+								waterBlocks.add(waterBlock3.getRelative(BlockFace.WEST));
+							}
+							if (!waterBlocks.contains(waterBlock3.getRelative(BlockFace.WEST).getRelative(BlockFace.WEST))) {
+								waterBlocks.add(waterBlock3.getRelative(BlockFace.WEST).getRelative(BlockFace.WEST));
+							}
+							if (!waterBlocks.contains(waterBlock3.getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST))) {
+								waterBlocks.add(waterBlock3.getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST));
+							}
+							if (!waterBlocks.contains(waterBlock3.getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST))) {
+								waterBlocks.add(waterBlock3.getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST));
+							}
+							if (!waterBlocks.contains(waterBlock3.getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST))) {
+								waterBlocks.add(waterBlock3.getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST));
+							}
+							if (!waterBlocks.contains(waterBlock3.getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST))) {
+								waterBlocks.add(waterBlock3.getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST));
+							}
+							if (!waterBlocks.contains(waterBlock3.getRelative(BlockFace.EAST))) {
+								waterBlocks.add(waterBlock3.getRelative(BlockFace.EAST));
+							}
+							if (!waterBlocks.contains(waterBlock3.getRelative(BlockFace.EAST).getRelative(BlockFace.EAST))) {
+								waterBlocks.add(waterBlock3.getRelative(BlockFace.EAST).getRelative(BlockFace.EAST));
+							}
+							if (!waterBlocks.contains(waterBlock3.getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST))) {
+								waterBlocks.add(waterBlock3.getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST));
+							}
+							if (!waterBlocks.contains(waterBlock3.getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST))) {
+								waterBlocks.add(waterBlock3.getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST));
+							}
+							if (!waterBlocks.contains(waterBlock3.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST))) {
+								waterBlocks.add(waterBlock3.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST));
+							}
+							if (!waterBlocks.contains(waterBlock3.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST))) {
+								waterBlocks.add(waterBlock3.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST));
+							}
+							
+							//INBETWEEN
+							
+							if (!waterBlocks.contains(waterBlock4)) {
+								waterBlocks.add(waterBlock4);
+							}
+							if (!waterBlocks.contains(waterBlock4.getRelative(BlockFace.NORTH))) {
+								waterBlocks.add(waterBlock4.getRelative(BlockFace.NORTH));
+							}
+							if (!waterBlocks.contains(waterBlock4.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH))) {
+								waterBlocks.add(waterBlock4.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH));
+							}
+							if (!waterBlocks.contains(waterBlock4.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST))) {
+								waterBlocks.add(waterBlock4.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST));
+							}
+							if (!waterBlocks.contains(waterBlock4.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST))) {
+								waterBlocks.add(waterBlock4.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST));
+							}
+							if (!waterBlocks.contains(waterBlock4.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST))) {
+								waterBlocks.add(waterBlock4.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST));
+							}
+							if (!waterBlocks.contains(waterBlock4.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST))) {
+								waterBlocks.add(waterBlock4.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST));
+							}
+							if (!waterBlocks.contains(waterBlock4.getRelative(BlockFace.SOUTH))) {
+								waterBlocks.add(waterBlock4.getRelative(BlockFace.SOUTH));
+							}
+							if (!waterBlocks.contains(waterBlock4.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH))) {
+								waterBlocks.add(waterBlock4.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH));
+							}
+							if (!waterBlocks.contains(waterBlock4.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST))) {
+								waterBlocks.add(waterBlock4.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST));
+							}
+							if (!waterBlocks.contains(waterBlock4.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST))) {
+								waterBlocks.add(waterBlock4.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST));
+							}
+							if (!waterBlocks.contains(waterBlock4.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST))) {
+								waterBlocks.add(waterBlock4.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST));
+							}
+							if (!waterBlocks.contains(waterBlock4.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST))) {
+								waterBlocks.add(waterBlock4.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST));
+							}
+							if (!waterBlocks.contains(waterBlock4.getRelative(BlockFace.WEST))) {
+								waterBlocks.add(waterBlock4.getRelative(BlockFace.WEST));
+							}
+							if (!waterBlocks.contains(waterBlock4.getRelative(BlockFace.WEST).getRelative(BlockFace.WEST))) {
+								waterBlocks.add(waterBlock4.getRelative(BlockFace.WEST).getRelative(BlockFace.WEST));
+							}
+							if (!waterBlocks.contains(waterBlock4.getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST))) {
+								waterBlocks.add(waterBlock4.getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST));
+							}
+							if (!waterBlocks.contains(waterBlock4.getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST))) {
+								waterBlocks.add(waterBlock4.getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST));
+							}
+							if (!waterBlocks.contains(waterBlock4.getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST))) {
+								waterBlocks.add(waterBlock4.getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST));
+							}
+							if (!waterBlocks.contains(waterBlock4.getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST))) {
+								waterBlocks.add(waterBlock4.getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST));
+							}
+							if (!waterBlocks.contains(waterBlock4.getRelative(BlockFace.EAST))) {
+								waterBlocks.add(waterBlock4.getRelative(BlockFace.EAST));
+							}
+							if (!waterBlocks.contains(waterBlock4.getRelative(BlockFace.EAST).getRelative(BlockFace.EAST))) {
+								waterBlocks.add(waterBlock4.getRelative(BlockFace.EAST).getRelative(BlockFace.EAST));
+							}
+							if (!waterBlocks.contains(waterBlock4.getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST))) {
+								waterBlocks.add(waterBlock4.getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST));
+							}
+							if (!waterBlocks.contains(waterBlock4.getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST))) {
+								waterBlocks.add(waterBlock4.getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST));
+							}
+							if (!waterBlocks.contains(waterBlock4.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST))) {
+								waterBlocks.add(waterBlock4.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST));
+							}
+							if (!waterBlocks.contains(waterBlock4.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST))) {
+								waterBlocks.add(waterBlock4.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST));
+							}
+							
+							//INBETWEEN
+							
+							if (!waterBlocks.contains(waterBlock5)) {
+								waterBlocks.add(waterBlock5);
+							}
+							if (!waterBlocks.contains(waterBlock5.getRelative(BlockFace.NORTH))) {
+								waterBlocks.add(waterBlock5.getRelative(BlockFace.NORTH));
+							}
+							if (!waterBlocks.contains(waterBlock5.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH))) {
+								waterBlocks.add(waterBlock5.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH));
+							}
+							if (!waterBlocks.contains(waterBlock5.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST))) {
+								waterBlocks.add(waterBlock5.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST));
+							}
+							if (!waterBlocks.contains(waterBlock5.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST))) {
+								waterBlocks.add(waterBlock5.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST));
+							}
+							if (!waterBlocks.contains(waterBlock5.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST))) {
+								waterBlocks.add(waterBlock5.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST));
+							}
+							if (!waterBlocks.contains(waterBlock5.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST))) {
+								waterBlocks.add(waterBlock5.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST));
+							}
+							if (!waterBlocks.contains(waterBlock5.getRelative(BlockFace.SOUTH))) {
+								waterBlocks.add(waterBlock5.getRelative(BlockFace.SOUTH));
+							}
+							if (!waterBlocks.contains(waterBlock5.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH))) {
+								waterBlocks.add(waterBlock5.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH));
+							}
+							if (!waterBlocks.contains(waterBlock5.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST))) {
+								waterBlocks.add(waterBlock5.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST));
+							}
+							if (!waterBlocks.contains(waterBlock5.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST))) {
+								waterBlocks.add(waterBlock5.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST));
+							}
+							if (!waterBlocks.contains(waterBlock5.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST))) {
+								waterBlocks.add(waterBlock5.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST));
+							}
+							if (!waterBlocks.contains(waterBlock5.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST))) {
+								waterBlocks.add(waterBlock5.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST));
+							}
+							if (!waterBlocks.contains(waterBlock5.getRelative(BlockFace.WEST))) {
+								waterBlocks.add(waterBlock5.getRelative(BlockFace.WEST));
+							}
+							if (!waterBlocks.contains(waterBlock5.getRelative(BlockFace.WEST).getRelative(BlockFace.WEST))) {
+								waterBlocks.add(waterBlock5.getRelative(BlockFace.WEST).getRelative(BlockFace.WEST));
+							}
+							if (!waterBlocks.contains(waterBlock5.getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST))) {
+								waterBlocks.add(waterBlock5.getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST));
+							}
+							if (!waterBlocks.contains(waterBlock5.getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST))) {
+								waterBlocks.add(waterBlock5.getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST));
+							}
+							if (!waterBlocks.contains(waterBlock5.getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST))) {
+								waterBlocks.add(waterBlock5.getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST));
+							}
+							if (!waterBlocks.contains(waterBlock5.getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST))) {
+								waterBlocks.add(waterBlock5.getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST));
+							}
+							if (!waterBlocks.contains(waterBlock5.getRelative(BlockFace.EAST))) {
+								waterBlocks.add(waterBlock5.getRelative(BlockFace.EAST));
+							}
+							if (!waterBlocks.contains(waterBlock5.getRelative(BlockFace.EAST).getRelative(BlockFace.EAST))) {
+								waterBlocks.add(waterBlock5.getRelative(BlockFace.EAST).getRelative(BlockFace.EAST));
+							}
+							if (!waterBlocks.contains(waterBlock5.getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST))) {
+								waterBlocks.add(waterBlock5.getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST));
+							}
+							if (!waterBlocks.contains(waterBlock5.getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST))) {
+								waterBlocks.add(waterBlock5.getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST));
+							}
+							if (!waterBlocks.contains(waterBlock5.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST))) {
+								waterBlocks.add(waterBlock5.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST));
+							}
+							if (!waterBlocks.contains(waterBlock5.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST))) {
+								waterBlocks.add(waterBlock5.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST));
+							}
+							
+							//INBETWEEN
+							
+							if (!waterBlocks.contains(waterBlock6)) {
+								waterBlocks.add(waterBlock6);
+							}
+							if (!waterBlocks.contains(waterBlock6.getRelative(BlockFace.NORTH))) {
+								waterBlocks.add(waterBlock6.getRelative(BlockFace.NORTH));
+							}
+							if (!waterBlocks.contains(waterBlock6.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH))) {
+								waterBlocks.add(waterBlock6.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH));
+							}
+							if (!waterBlocks.contains(waterBlock6.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST))) {
+								waterBlocks.add(waterBlock6.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST));
+							}
+							if (!waterBlocks.contains(waterBlock6.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST))) {
+								waterBlocks.add(waterBlock6.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST));
+							}
+							if (!waterBlocks.contains(waterBlock6.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST))) {
+								waterBlocks.add(waterBlock6.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST));
+							}
+							if (!waterBlocks.contains(waterBlock6.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST))) {
+								waterBlocks.add(waterBlock6.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST));
+							}
+							if (!waterBlocks.contains(waterBlock6.getRelative(BlockFace.SOUTH))) {
+								waterBlocks.add(waterBlock6.getRelative(BlockFace.SOUTH));
+							}
+							if (!waterBlocks.contains(waterBlock6.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH))) {
+								waterBlocks.add(waterBlock6.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH));
+							}
+							if (!waterBlocks.contains(waterBlock6.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST))) {
+								waterBlocks.add(waterBlock6.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST));
+							}
+							if (!waterBlocks.contains(waterBlock6.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST))) {
+								waterBlocks.add(waterBlock6.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST));
+							}
+							if (!waterBlocks.contains(waterBlock6.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST))) {
+								waterBlocks.add(waterBlock6.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST));
+							}
+							if (!waterBlocks.contains(waterBlock6.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST))) {
+								waterBlocks.add(waterBlock6.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST));
+							}
+							if (!waterBlocks.contains(waterBlock6.getRelative(BlockFace.WEST))) {
+								waterBlocks.add(waterBlock6.getRelative(BlockFace.WEST));
+							}
+							if (!waterBlocks.contains(waterBlock6.getRelative(BlockFace.WEST).getRelative(BlockFace.WEST))) {
+								waterBlocks.add(waterBlock6.getRelative(BlockFace.WEST).getRelative(BlockFace.WEST));
+							}
+							if (!waterBlocks.contains(waterBlock6.getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST))) {
+								waterBlocks.add(waterBlock6.getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST));
+							}
+							if (!waterBlocks.contains(waterBlock6.getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST))) {
+								waterBlocks.add(waterBlock6.getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST));
+							}
+							if (!waterBlocks.contains(waterBlock6.getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST))) {
+								waterBlocks.add(waterBlock6.getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST));
+							}
+							if (!waterBlocks.contains(waterBlock6.getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST))) {
+								waterBlocks.add(waterBlock6.getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST));
+							}
+							if (!waterBlocks.contains(waterBlock6.getRelative(BlockFace.EAST))) {
+								waterBlocks.add(waterBlock6.getRelative(BlockFace.EAST));
+							}
+							if (!waterBlocks.contains(waterBlock6.getRelative(BlockFace.EAST).getRelative(BlockFace.EAST))) {
+								waterBlocks.add(waterBlock6.getRelative(BlockFace.EAST).getRelative(BlockFace.EAST));
+							}
+							if (!waterBlocks.contains(waterBlock6.getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST))) {
+								waterBlocks.add(waterBlock6.getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST));
+							}
+							if (!waterBlocks.contains(waterBlock6.getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST))) {
+								waterBlocks.add(waterBlock6.getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST));
+							}
+							if (!waterBlocks.contains(waterBlock6.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST))) {
+								waterBlocks.add(waterBlock6.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST));
+							}
+							if (!waterBlocks.contains(waterBlock6.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST))) {
+								waterBlocks.add(waterBlock6.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST));
+							}
+							
+							//INBETWEEN
+							
+							if (!waterBlocks.contains(waterBlock7)) {
+								waterBlocks.add(waterBlock7);
+							}
+							if (!waterBlocks.contains(waterBlock7.getRelative(BlockFace.NORTH))) {
+								waterBlocks.add(waterBlock7.getRelative(BlockFace.NORTH));
+							}
+							if (!waterBlocks.contains(waterBlock7.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH))) {
+								waterBlocks.add(waterBlock7.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH));
+							}
+							if (!waterBlocks.contains(waterBlock7.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST))) {
+								waterBlocks.add(waterBlock7.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST));
+							}
+							if (!waterBlocks.contains(waterBlock7.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST))) {
+								waterBlocks.add(waterBlock7.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST));
+							}
+							if (!waterBlocks.contains(waterBlock7.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST))) {
+								waterBlocks.add(waterBlock7.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST));
+							}
+							if (!waterBlocks.contains(waterBlock7.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST))) {
+								waterBlocks.add(waterBlock7.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST));
+							}
+							if (!waterBlocks.contains(waterBlock7.getRelative(BlockFace.SOUTH))) {
+								waterBlocks.add(waterBlock7.getRelative(BlockFace.SOUTH));
+							}
+							if (!waterBlocks.contains(waterBlock7.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH))) {
+								waterBlocks.add(waterBlock7.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH));
+							}
+							if (!waterBlocks.contains(waterBlock7.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST))) {
+								waterBlocks.add(waterBlock7.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST));
+							}
+							if (!waterBlocks.contains(waterBlock7.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST))) {
+								waterBlocks.add(waterBlock7.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST));
+							}
+							if (!waterBlocks.contains(waterBlock7.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST))) {
+								waterBlocks.add(waterBlock7.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST));
+							}
+							if (!waterBlocks.contains(waterBlock7.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST))) {
+								waterBlocks.add(waterBlock7.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST));
+							}
+							if (!waterBlocks.contains(waterBlock7.getRelative(BlockFace.WEST))) {
+								waterBlocks.add(waterBlock7.getRelative(BlockFace.WEST));
+							}
+							if (!waterBlocks.contains(waterBlock7.getRelative(BlockFace.WEST).getRelative(BlockFace.WEST))) {
+								waterBlocks.add(waterBlock7.getRelative(BlockFace.WEST).getRelative(BlockFace.WEST));
+							}
+							if (!waterBlocks.contains(waterBlock7.getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST))) {
+								waterBlocks.add(waterBlock7.getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST));
+							}
+							if (!waterBlocks.contains(waterBlock7.getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST))) {
+								waterBlocks.add(waterBlock7.getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST));
+							}
+							if (!waterBlocks.contains(waterBlock7.getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST))) {
+								waterBlocks.add(waterBlock7.getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST));
+							}
+							if (!waterBlocks.contains(waterBlock7.getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST))) {
+								waterBlocks.add(waterBlock7.getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST));
+							}
+							if (!waterBlocks.contains(waterBlock7.getRelative(BlockFace.EAST))) {
+								waterBlocks.add(waterBlock7.getRelative(BlockFace.EAST));
+							}
+							if (!waterBlocks.contains(waterBlock7.getRelative(BlockFace.EAST).getRelative(BlockFace.EAST))) {
+								waterBlocks.add(waterBlock7.getRelative(BlockFace.EAST).getRelative(BlockFace.EAST));
+							}
+							if (!waterBlocks.contains(waterBlock7.getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST))) {
+								waterBlocks.add(waterBlock7.getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST));
+							}
+							if (!waterBlocks.contains(waterBlock7.getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST))) {
+								waterBlocks.add(waterBlock7.getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST));
+							}
+							if (!waterBlocks.contains(waterBlock7.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST))) {
+								waterBlocks.add(waterBlock7.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST));
+							}
+							if (!waterBlocks.contains(waterBlock7.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST))) {
+								waterBlocks.add(waterBlock7.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST));
+							}
+							
+							SQTechPumps.tankWaterBlocks.put(machine, waterBlocks);
+
+							for (Fluid f : SQTechBase.fluids) {
+
+								if (!(machine.getMaxLiquid(f) > 1)) continue;
+
+								if (f.name == "Water") {
+									SQTechPumps.machineLiquidTypeIdMap.put(machine, 9);
+								} else if (f.name == "Lava") {
+									SQTechPumps.machineLiquidTypeIdMap.put(machine, 11);
+								}
+
+								int max = machine.getMaxLiquid(f);
+
+								int current = machine.getLiquid(f);
+
+								double oneAndAHalfPercent = (max/100) * 1.785;
+
+								if (LargeTankAssets.waterBlock(waterBlock, current, oneAndAHalfPercent, machine)) {
+
+									/*It executes the code inside itself, so no need to put anything here. 
+									 * This had to be done like that because of the max byte limit for a java function.
+									 * All of them were not done this way because once these 3 were removed, it no longer
+									 * exceeded the limit.*/
+
+								} else if (LargeTankAssets.waterBlock2(waterBlock2, current, oneAndAHalfPercent, machine)) {
+
+									/*It executes the code inside itself, so no need to put anything here. 
+									 * This had to be done like that because of the max byte limit for a java function.
+									 * All of them were not done this way because once these 3 were removed, it no longer
+									 * exceeded the limit.*/
+
+								} else if (LargeTankAssets.waterBlock3(waterBlock3, current, oneAndAHalfPercent, machine)) {
+
+									/*It executes the code inside itself, so no need to put anything here. 
+									 * This had to be done like that because of the max byte limit for a java function.
+									 * All of them were not done this way because once these 3 were removed, it no longer
+									 * exceeded the limit.*/
+
+								} else if (current >= oneAndAHalfPercent*25 && current < oneAndAHalfPercent*26) {
+
+									if (SQTechPumps.machineLiquidTypeIdMap.get(machine) != null) {
+										waterBlock4.setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 7, false);
+										waterBlock4.getRelative(BlockFace.NORTH).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 7, false);
+										waterBlock4.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 7, false);
+										waterBlock4.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 7, false);
+										waterBlock4.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 7, false);
+										waterBlock4.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 7, false);
+										waterBlock4.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 7, false);
+										waterBlock4.getRelative(BlockFace.SOUTH).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 7, false);
+										waterBlock4.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 7, false);
+										waterBlock4.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 7, false);
+										waterBlock4.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 7, false);
+										waterBlock4.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 7, false);
+										waterBlock4.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 7, false);
+										waterBlock4.getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 7, false);
+										waterBlock4.getRelative(BlockFace.WEST).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 7, false);
+										waterBlock4.getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 7, false);
+										waterBlock4.getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 7, false);
+										waterBlock4.getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 7, false);
+										waterBlock4.getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 7, false);
+										waterBlock4.getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 7, false);
+										waterBlock4.getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 7, false);
+										waterBlock4.getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 7, false);
+										waterBlock4.getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 7, false);
+										waterBlock4.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 7, false);
+										waterBlock4.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 7, false);
+									}
+
+								} else if (current >= oneAndAHalfPercent*26 && current < oneAndAHalfPercent*27) {
+
+									if (SQTechPumps.machineLiquidTypeIdMap.get(machine) != null) {
+										waterBlock4.setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 6, false);
+										waterBlock4.getRelative(BlockFace.NORTH).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 6, false);
+										waterBlock4.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 6, false);
+										waterBlock4.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 6, false);
+										waterBlock4.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 6, false);
+										waterBlock4.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 6, false);
+										waterBlock4.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 6, false);
+										waterBlock4.getRelative(BlockFace.SOUTH).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 6, false);
+										waterBlock4.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 6, false);
+										waterBlock4.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 6, false);
+										waterBlock4.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 6, false);
+										waterBlock4.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 6, false);
+										waterBlock4.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 6, false);
+										waterBlock4.getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 6, false);
+										waterBlock4.getRelative(BlockFace.WEST).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 6, false);
+										waterBlock4.getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 6, false);
+										waterBlock4.getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 6, false);
+										waterBlock4.getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 6, false);
+										waterBlock4.getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 6, false);
+										waterBlock4.getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 6, false);
+										waterBlock4.getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 6, false);
+										waterBlock4.getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 6, false);
+										waterBlock4.getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 6, false);
+										waterBlock4.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 6, false);
+										waterBlock4.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 6, false);
+									}
+
+								} else if (current >= oneAndAHalfPercent*27 && current < oneAndAHalfPercent*28) {
+
+									if (SQTechPumps.machineLiquidTypeIdMap.get(machine) != null) {
+										waterBlock4.setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 5, false);
+										waterBlock4.getRelative(BlockFace.NORTH).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 5, false);
+										waterBlock4.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 5, false);
+										waterBlock4.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 5, false);
+										waterBlock4.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 5, false);
+										waterBlock4.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 5, false);
+										waterBlock4.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 5, false);
+										waterBlock4.getRelative(BlockFace.SOUTH).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 5, false);
+										waterBlock4.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 5, false);
+										waterBlock4.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 5, false);
+										waterBlock4.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 5, false);
+										waterBlock4.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 5, false);
+										waterBlock4.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 5, false);
+										waterBlock4.getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 5, false);
+										waterBlock4.getRelative(BlockFace.WEST).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 5, false);
+										waterBlock4.getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 5, false);
+										waterBlock4.getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 5, false);
+										waterBlock4.getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 5, false);
+										waterBlock4.getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 5, false);
+										waterBlock4.getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 5, false);
+										waterBlock4.getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 5, false);
+										waterBlock4.getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 5, false);
+										waterBlock4.getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 5, false);
+										waterBlock4.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 5, false);
+										waterBlock4.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 5, false);
+									}
+
+								} else if (current >= oneAndAHalfPercent*28 && current < oneAndAHalfPercent*29) {
+
+									if (SQTechPumps.machineLiquidTypeIdMap.get(machine) != null) {
+										waterBlock4.setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 4, false);
+										waterBlock4.getRelative(BlockFace.NORTH).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 4, false);
+										waterBlock4.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 4, false);
+										waterBlock4.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 4, false);
+										waterBlock4.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 4, false);
+										waterBlock4.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 4, false);
+										waterBlock4.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 4, false);
+										waterBlock4.getRelative(BlockFace.SOUTH).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 4, false);
+										waterBlock4.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 4, false);
+										waterBlock4.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 4, false);
+										waterBlock4.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 4, false);
+										waterBlock4.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 4, false);
+										waterBlock4.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 4, false);
+										waterBlock4.getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 4, false);
+										waterBlock4.getRelative(BlockFace.WEST).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 4, false);
+										waterBlock4.getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 4, false);
+										waterBlock4.getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 4, false);
+										waterBlock4.getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 4, false);
+										waterBlock4.getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 4, false);
+										waterBlock4.getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 4, false);
+										waterBlock4.getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 4, false);
+										waterBlock4.getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 4, false);
+										waterBlock4.getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 4, false);
+										waterBlock4.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 4, false);
+										waterBlock4.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 4, false);
+									}
+
+								} else if (current >= oneAndAHalfPercent*29 && current < oneAndAHalfPercent*30) {
+
+									if (SQTechPumps.machineLiquidTypeIdMap.get(machine) != null) {
+										waterBlock4.setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 3, false);
+										waterBlock4.getRelative(BlockFace.NORTH).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 3, false);
+										waterBlock4.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 3, false);
+										waterBlock4.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 3, false);
+										waterBlock4.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 3, false);
+										waterBlock4.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 3, false);
+										waterBlock4.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 3, false);
+										waterBlock4.getRelative(BlockFace.SOUTH).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 3, false);
+										waterBlock4.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 3, false);
+										waterBlock4.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 3, false);
+										waterBlock4.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 3, false);
+										waterBlock4.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 3, false);
+										waterBlock4.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 3, false);
+										waterBlock4.getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 3, false);
+										waterBlock4.getRelative(BlockFace.WEST).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 3, false);
+										waterBlock4.getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 3, false);
+										waterBlock4.getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 3, false);
+										waterBlock4.getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 3, false);
+										waterBlock4.getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 3, false);
+										waterBlock4.getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 3, false);
+										waterBlock4.getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 3, false);
+										waterBlock4.getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 3, false);
+										waterBlock4.getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 3, false);
+										waterBlock4.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 3, false);
+										waterBlock4.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 3, false);
+									}
+
+								} else if (current >= oneAndAHalfPercent*30 && current < oneAndAHalfPercent*31) {
+
+									if (SQTechPumps.machineLiquidTypeIdMap.get(machine) != null) {
+										waterBlock4.setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 2, false);
+										waterBlock4.getRelative(BlockFace.NORTH).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 2, false);
+										waterBlock4.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 2, false);
+										waterBlock4.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 2, false);
+										waterBlock4.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 2, false);
+										waterBlock4.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 2, false);
+										waterBlock4.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 2, false);
+										waterBlock4.getRelative(BlockFace.SOUTH).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 2, false);
+										waterBlock4.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 2, false);
+										waterBlock4.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 2, false);
+										waterBlock4.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 2, false);
+										waterBlock4.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 2, false);
+										waterBlock4.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 2, false);
+										waterBlock4.getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 2, false);
+										waterBlock4.getRelative(BlockFace.WEST).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 2, false);
+										waterBlock4.getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 2, false);
+										waterBlock4.getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 2, false);
+										waterBlock4.getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 2, false);
+										waterBlock4.getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 2, false);
+										waterBlock4.getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 2, false);
+										waterBlock4.getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 2, false);
+										waterBlock4.getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 2, false);
+										waterBlock4.getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 2, false);
+										waterBlock4.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 2, false);
+										waterBlock4.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 2, false);
+									}
+
+								} else if (current >= oneAndAHalfPercent*31 && current < oneAndAHalfPercent*32) {
+
+									if (SQTechPumps.machineLiquidTypeIdMap.get(machine) != null) {
+										waterBlock4.setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 1, false);
+										waterBlock4.getRelative(BlockFace.NORTH).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 1, false);
+										waterBlock4.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 1, false);
+										waterBlock4.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 1, false);
+										waterBlock4.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 1, false);
+										waterBlock4.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 1, false);
+										waterBlock4.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 1, false);
+										waterBlock4.getRelative(BlockFace.SOUTH).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 1, false);
+										waterBlock4.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 1, false);
+										waterBlock4.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 1, false);
+										waterBlock4.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 1, false);
+										waterBlock4.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 1, false);
+										waterBlock4.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 1, false);
+										waterBlock4.getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 1, false);
+										waterBlock4.getRelative(BlockFace.WEST).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 1, false);
+										waterBlock4.getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 1, false);
+										waterBlock4.getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 1, false);
+										waterBlock4.getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 1, false);
+										waterBlock4.getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 1, false);
+										waterBlock4.getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 1, false);
+										waterBlock4.getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 1, false);
+										waterBlock4.getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 1, false);
+										waterBlock4.getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 1, false);
+										waterBlock4.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 1, false);
+										waterBlock4.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 1, false);
+									}
+
+								} else if (current >= oneAndAHalfPercent*32 && current < oneAndAHalfPercent*33) {
+
+									if (SQTechPumps.machineLiquidTypeIdMap.get(machine) != null) {
+										waterBlock4.setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 0, false);
+										waterBlock4.getRelative(BlockFace.NORTH).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 0, false);
+										waterBlock4.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 0, false);
+										waterBlock4.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 0, false);
+										waterBlock4.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 0, false);
+										waterBlock4.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 0, false);
+										waterBlock4.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 0, false);
+										waterBlock4.getRelative(BlockFace.SOUTH).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 0, false);
+										waterBlock4.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 0, false);
+										waterBlock4.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 0, false);
+										waterBlock4.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 0, false);
+										waterBlock4.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 0, false);
+										waterBlock4.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 0, false);
+										waterBlock4.getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 0, false);
+										waterBlock4.getRelative(BlockFace.WEST).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 0, false);
+										waterBlock4.getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 0, false);
+										waterBlock4.getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 0, false);
+										waterBlock4.getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 0, false);
+										waterBlock4.getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 0, false);
+										waterBlock4.getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 0, false);
+										waterBlock4.getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 0, false);
+										waterBlock4.getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 0, false);
+										waterBlock4.getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 0, false);
+										waterBlock4.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 0, false);
+										waterBlock4.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 0, false);
+									}
+
+								} else if (current >= oneAndAHalfPercent*33 && current < oneAndAHalfPercent*34) {
+
+									if (SQTechPumps.machineLiquidTypeIdMap.get(machine) != null) {
+										waterBlock5.setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 7, false);
+										waterBlock5.getRelative(BlockFace.NORTH).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 7, false);
+										waterBlock5.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 7, false);
+										waterBlock5.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 7, false);
+										waterBlock5.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 7, false);
+										waterBlock5.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 7, false);
+										waterBlock5.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 7, false);
+										waterBlock5.getRelative(BlockFace.SOUTH).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 7, false);
+										waterBlock5.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 7, false);
+										waterBlock5.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 7, false);
+										waterBlock5.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 7, false);
+										waterBlock5.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 7, false);
+										waterBlock5.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 7, false);
+										waterBlock5.getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 7, false);
+										waterBlock5.getRelative(BlockFace.WEST).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 7, false);
+										waterBlock5.getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 7, false);
+										waterBlock5.getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 7, false);
+										waterBlock5.getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 7, false);
+										waterBlock5.getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 7, false);
+										waterBlock5.getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 7, false);
+										waterBlock5.getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 7, false);
+										waterBlock5.getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 7, false);
+										waterBlock5.getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 7, false);
+										waterBlock5.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 7, false);
+										waterBlock5.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 7, false);
+									}
+
+								} else if (current >= oneAndAHalfPercent*34 && current < oneAndAHalfPercent*35) {
+
+									if (SQTechPumps.machineLiquidTypeIdMap.get(machine) != null) {
+										waterBlock5.setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 6, false);
+										waterBlock5.getRelative(BlockFace.NORTH).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 6, false);
+										waterBlock5.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 6, false);
+										waterBlock5.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 6, false);
+										waterBlock5.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 6, false);
+										waterBlock5.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 6, false);
+										waterBlock5.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 6, false);
+										waterBlock5.getRelative(BlockFace.SOUTH).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 6, false);
+										waterBlock5.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 6, false);
+										waterBlock5.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 6, false);
+										waterBlock5.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 6, false);
+										waterBlock5.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 6, false);
+										waterBlock5.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 6, false);
+										waterBlock5.getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 6, false);
+										waterBlock5.getRelative(BlockFace.WEST).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 6, false);
+										waterBlock5.getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 6, false);
+										waterBlock5.getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 6, false);
+										waterBlock5.getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 6, false);
+										waterBlock5.getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 6, false);
+										waterBlock5.getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 6, false);
+										waterBlock5.getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 6, false);
+										waterBlock5.getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 6, false);
+										waterBlock5.getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 6, false);
+										waterBlock5.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 6, false);
+										waterBlock5.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 6, false);
+									}
+
+								} else if (current >= oneAndAHalfPercent*35 && current < oneAndAHalfPercent*36) {
+
+									if (SQTechPumps.machineLiquidTypeIdMap.get(machine) != null) {
+										waterBlock5.setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 5, false);
+										waterBlock5.getRelative(BlockFace.NORTH).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 5, false);
+										waterBlock5.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 5, false);
+										waterBlock5.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 5, false);
+										waterBlock5.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 5, false);
+										waterBlock5.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 5, false);
+										waterBlock5.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 5, false);
+										waterBlock5.getRelative(BlockFace.SOUTH).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 5, false);
+										waterBlock5.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 5, false);
+										waterBlock5.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 5, false);
+										waterBlock5.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 5, false);
+										waterBlock5.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 5, false);
+										waterBlock5.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 5, false);
+										waterBlock5.getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 5, false);
+										waterBlock5.getRelative(BlockFace.WEST).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 5, false);
+										waterBlock5.getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 5, false);
+										waterBlock5.getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 5, false);
+										waterBlock5.getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 5, false);
+										waterBlock5.getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 5, false);
+										waterBlock5.getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 5, false);
+										waterBlock5.getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 5, false);
+										waterBlock5.getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 5, false);
+										waterBlock5.getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 5, false);
+										waterBlock5.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 5, false);
+										waterBlock5.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 5, false);
+									}
+
+								} else if (current >= oneAndAHalfPercent*36 && current < oneAndAHalfPercent*37) {
+
+									if (SQTechPumps.machineLiquidTypeIdMap.get(machine) != null) {
+										waterBlock5.setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 4, false);
+										waterBlock5.getRelative(BlockFace.NORTH).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 4, false);
+										waterBlock5.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 4, false);
+										waterBlock5.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 4, false);
+										waterBlock5.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 4, false);
+										waterBlock5.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 4, false);
+										waterBlock5.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 4, false);
+										waterBlock5.getRelative(BlockFace.SOUTH).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 4, false);
+										waterBlock5.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 4, false);
+										waterBlock5.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 4, false);
+										waterBlock5.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 4, false);
+										waterBlock5.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 4, false);
+										waterBlock5.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 4, false);
+										waterBlock5.getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 4, false);
+										waterBlock5.getRelative(BlockFace.WEST).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 4, false);
+										waterBlock5.getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 4, false);
+										waterBlock5.getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 4, false);
+										waterBlock5.getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 4, false);
+										waterBlock5.getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 4, false);
+										waterBlock5.getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 4, false);
+										waterBlock5.getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 4, false);
+										waterBlock5.getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 4, false);
+										waterBlock5.getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 4, false);
+										waterBlock5.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 4, false);
+										waterBlock5.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 4, false);
+									}
+
+								} else if (current >= oneAndAHalfPercent*37 && current < oneAndAHalfPercent*38) {
+
+									if (SQTechPumps.machineLiquidTypeIdMap.get(machine) != null) {
+										waterBlock5.setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 3, false);
+										waterBlock5.getRelative(BlockFace.NORTH).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 3, false);
+										waterBlock5.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 3, false);
+										waterBlock5.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 3, false);
+										waterBlock5.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 3, false);
+										waterBlock5.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 3, false);
+										waterBlock5.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 3, false);
+										waterBlock5.getRelative(BlockFace.SOUTH).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 3, false);
+										waterBlock5.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 3, false);
+										waterBlock5.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 3, false);
+										waterBlock5.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 3, false);
+										waterBlock5.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 3, false);
+										waterBlock5.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 3, false);
+										waterBlock5.getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 3, false);
+										waterBlock5.getRelative(BlockFace.WEST).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 3, false);
+										waterBlock5.getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 3, false);
+										waterBlock5.getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 3, false);
+										waterBlock5.getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 3, false);
+										waterBlock5.getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 3, false);
+										waterBlock5.getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 3, false);
+										waterBlock5.getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 3, false);
+										waterBlock5.getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 3, false);
+										waterBlock5.getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 3, false);
+										waterBlock5.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 3, false);
+										waterBlock5.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 3, false);
+									}
+
+								} else if (current >= oneAndAHalfPercent*38 && current < oneAndAHalfPercent*39) {
+
+									if (SQTechPumps.machineLiquidTypeIdMap.get(machine) != null) {
+										waterBlock5.setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 2, false);
+										waterBlock5.getRelative(BlockFace.NORTH).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 2, false);
+										waterBlock5.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 2, false);
+										waterBlock5.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 2, false);
+										waterBlock5.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 2, false);
+										waterBlock5.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 2, false);
+										waterBlock5.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 2, false);
+										waterBlock5.getRelative(BlockFace.SOUTH).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 2, false);
+										waterBlock5.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 2, false);
+										waterBlock5.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 2, false);
+										waterBlock5.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 2, false);
+										waterBlock5.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 2, false);
+										waterBlock5.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 2, false);
+										waterBlock5.getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 2, false);
+										waterBlock5.getRelative(BlockFace.WEST).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 2, false);
+										waterBlock5.getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 2, false);
+										waterBlock5.getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 2, false);
+										waterBlock5.getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 2, false);
+										waterBlock5.getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 2, false);
+										waterBlock5.getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 2, false);
+										waterBlock5.getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 2, false);
+										waterBlock5.getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 2, false);
+										waterBlock5.getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 2, false);
+										waterBlock5.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 2, false);
+										waterBlock5.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 2, false);
+									}
+
+								} else if (current >= oneAndAHalfPercent*39 && current < oneAndAHalfPercent*40) {
+
+									if (SQTechPumps.machineLiquidTypeIdMap.get(machine) != null) {
+										waterBlock5.setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 1, false);
+										waterBlock5.getRelative(BlockFace.NORTH).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 1, false);
+										waterBlock5.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 1, false);
+										waterBlock5.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 1, false);
+										waterBlock5.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 1, false);
+										waterBlock5.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 1, false);
+										waterBlock5.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 1, false);
+										waterBlock5.getRelative(BlockFace.SOUTH).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 1, false);
+										waterBlock5.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 1, false);
+										waterBlock5.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 1, false);
+										waterBlock5.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 1, false);
+										waterBlock5.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 1, false);
+										waterBlock5.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 1, false);
+										waterBlock5.getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 1, false);
+										waterBlock5.getRelative(BlockFace.WEST).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 1, false);
+										waterBlock5.getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 1, false);
+										waterBlock5.getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 1, false);
+										waterBlock5.getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 1, false);
+										waterBlock5.getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 1, false);
+										waterBlock5.getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 1, false);
+										waterBlock5.getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 1, false);
+										waterBlock5.getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 1, false);
+										waterBlock5.getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 1, false);
+										waterBlock5.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 1, false);
+										waterBlock5.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 1, false);
+									}
+
+								} else if (current >= oneAndAHalfPercent*40 && current < oneAndAHalfPercent*41) {
+
+									if (SQTechPumps.machineLiquidTypeIdMap.get(machine) != null) {
+										waterBlock5.setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 0, false);
+										waterBlock5.getRelative(BlockFace.NORTH).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 0, false);
+										waterBlock5.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 0, false);
+										waterBlock5.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 0, false);
+										waterBlock5.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 0, false);
+										waterBlock5.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 0, false);
+										waterBlock5.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 0, false);
+										waterBlock5.getRelative(BlockFace.SOUTH).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 0, false);
+										waterBlock5.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 0, false);
+										waterBlock5.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 0, false);
+										waterBlock5.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 0, false);
+										waterBlock5.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 0, false);
+										waterBlock5.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 0, false);
+										waterBlock5.getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 0, false);
+										waterBlock5.getRelative(BlockFace.WEST).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 0, false);
+										waterBlock5.getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 0, false);
+										waterBlock5.getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 0, false);
+										waterBlock5.getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 0, false);
+										waterBlock5.getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 0, false);
+										waterBlock5.getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 0, false);
+										waterBlock5.getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 0, false);
+										waterBlock5.getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 0, false);
+										waterBlock5.getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 0, false);
+										waterBlock5.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 0, false);
+										waterBlock5.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 0, false);
+									}
+
+								} else if (current >= oneAndAHalfPercent*41 && current < oneAndAHalfPercent*42) {
+
+									if (SQTechPumps.machineLiquidTypeIdMap.get(machine) != null) {
+										waterBlock6.setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 7, false);
+										waterBlock6.getRelative(BlockFace.NORTH).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 7, false);
+										waterBlock6.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 7, false);
+										waterBlock6.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 7, false);
+										waterBlock6.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 7, false);
+										waterBlock6.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 7, false);
+										waterBlock6.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 7, false);
+										waterBlock6.getRelative(BlockFace.SOUTH).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 7, false);
+										waterBlock6.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 7, false);
+										waterBlock6.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 7, false);
+										waterBlock6.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 7, false);
+										waterBlock6.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 7, false);
+										waterBlock6.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 7, false);
+										waterBlock6.getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 7, false);
+										waterBlock6.getRelative(BlockFace.WEST).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 7, false);
+										waterBlock6.getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 7, false);
+										waterBlock6.getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 7, false);
+										waterBlock6.getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 7, false);
+										waterBlock6.getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 7, false);
+										waterBlock6.getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 7, false);
+										waterBlock6.getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 7, false);
+										waterBlock6.getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 7, false);
+										waterBlock6.getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 7, false);
+										waterBlock6.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 7, false);
+										waterBlock6.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 7, false);
+									}
+
+								} else if (current >= oneAndAHalfPercent*42 && current < oneAndAHalfPercent*43) {
+
+									if (SQTechPumps.machineLiquidTypeIdMap.get(machine) != null) {
+										waterBlock6.setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 6, false);
+										waterBlock6.getRelative(BlockFace.NORTH).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 6, false);
+										waterBlock6.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 6, false);
+										waterBlock6.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 6, false);
+										waterBlock6.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 6, false);
+										waterBlock6.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 6, false);
+										waterBlock6.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 6, false);
+										waterBlock6.getRelative(BlockFace.SOUTH).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 6, false);
+										waterBlock6.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 6, false);
+										waterBlock6.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 6, false);
+										waterBlock6.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 6, false);
+										waterBlock6.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 6, false);
+										waterBlock6.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 6, false);
+										waterBlock6.getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 6, false);
+										waterBlock6.getRelative(BlockFace.WEST).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 6, false);
+										waterBlock6.getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 6, false);
+										waterBlock6.getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 6, false);
+										waterBlock6.getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 6, false);
+										waterBlock6.getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 6, false);
+										waterBlock6.getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 6, false);
+										waterBlock6.getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 6, false);
+										waterBlock6.getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 6, false);
+										waterBlock6.getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 6, false);
+										waterBlock6.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 6, false);
+										waterBlock6.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 6, false);
+									}
+
+								} else if (current >= oneAndAHalfPercent*43 && current < oneAndAHalfPercent*44) {
+
+									if (SQTechPumps.machineLiquidTypeIdMap.get(machine) != null) {
+										waterBlock6.setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 5, false);
+										waterBlock6.getRelative(BlockFace.NORTH).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 5, false);
+										waterBlock6.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 5, false);
+										waterBlock6.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 5, false);
+										waterBlock6.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 5, false);
+										waterBlock6.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 5, false);
+										waterBlock6.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 5, false);
+										waterBlock6.getRelative(BlockFace.SOUTH).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 5, false);
+										waterBlock6.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 5, false);
+										waterBlock6.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 5, false);
+										waterBlock6.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 5, false);
+										waterBlock6.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 5, false);
+										waterBlock6.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 5, false);
+										waterBlock6.getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 5, false);
+										waterBlock6.getRelative(BlockFace.WEST).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 5, false);
+										waterBlock6.getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 5, false);
+										waterBlock6.getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 5, false);
+										waterBlock6.getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 5, false);
+										waterBlock6.getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 5, false);
+										waterBlock6.getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 5, false);
+										waterBlock6.getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 5, false);
+										waterBlock6.getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 5, false);
+										waterBlock6.getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 5, false);
+										waterBlock6.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 5, false);
+										waterBlock6.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 5, false);
+									}
+
+								} else if (current >= oneAndAHalfPercent*44 && current < oneAndAHalfPercent*45) {
+
+									if (SQTechPumps.machineLiquidTypeIdMap.get(machine) != null) {
+										waterBlock6.setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 4, false);
+										waterBlock6.getRelative(BlockFace.NORTH).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 4, false);
+										waterBlock6.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 4, false);
+										waterBlock6.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 4, false);
+										waterBlock6.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 4, false);
+										waterBlock6.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 4, false);
+										waterBlock6.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 4, false);
+										waterBlock6.getRelative(BlockFace.SOUTH).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 4, false);
+										waterBlock6.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 4, false);
+										waterBlock6.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 4, false);
+										waterBlock6.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 4, false);
+										waterBlock6.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 4, false);
+										waterBlock6.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 4, false);
+										waterBlock6.getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 4, false);
+										waterBlock6.getRelative(BlockFace.WEST).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 4, false);
+										waterBlock6.getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 4, false);
+										waterBlock6.getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 4, false);
+										waterBlock6.getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 4, false);
+										waterBlock6.getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 4, false);
+										waterBlock6.getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 4, false);
+										waterBlock6.getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 4, false);
+										waterBlock6.getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 4, false);
+										waterBlock6.getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 4, false);
+										waterBlock6.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 4, false);
+										waterBlock6.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 4, false);
+									}
+
+								} else if (current >= oneAndAHalfPercent*45 && current < oneAndAHalfPercent*46) {
+
+									if (SQTechPumps.machineLiquidTypeIdMap.get(machine) != null) {
+										waterBlock6.setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 3, false);
+										waterBlock6.getRelative(BlockFace.NORTH).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 3, false);
+										waterBlock6.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 3, false);
+										waterBlock6.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 3, false);
+										waterBlock6.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 3, false);
+										waterBlock6.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 3, false);
+										waterBlock6.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 3, false);
+										waterBlock6.getRelative(BlockFace.SOUTH).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 3, false);
+										waterBlock6.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 3, false);
+										waterBlock6.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 3, false);
+										waterBlock6.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 3, false);
+										waterBlock6.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 3, false);
+										waterBlock6.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 3, false);
+										waterBlock6.getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 3, false);
+										waterBlock6.getRelative(BlockFace.WEST).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 3, false);
+										waterBlock6.getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 3, false);
+										waterBlock6.getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 3, false);
+										waterBlock6.getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 3, false);
+										waterBlock6.getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 3, false);
+										waterBlock6.getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 3, false);
+										waterBlock6.getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 3, false);
+										waterBlock6.getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 3, false);
+										waterBlock6.getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 3, false);
+										waterBlock6.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 3, false);
+										waterBlock6.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 3, false);
+									}
+
+								} else if (current >= oneAndAHalfPercent*46 && current < oneAndAHalfPercent*47) {
+
+									if (SQTechPumps.machineLiquidTypeIdMap.get(machine) != null) {
+										waterBlock6.setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 2, false);
+										waterBlock6.getRelative(BlockFace.NORTH).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 2, false);
+										waterBlock6.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 2, false);
+										waterBlock6.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 2, false);
+										waterBlock6.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 2, false);
+										waterBlock6.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 2, false);
+										waterBlock6.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 2, false);
+										waterBlock6.getRelative(BlockFace.SOUTH).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 2, false);
+										waterBlock6.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 2, false);
+										waterBlock6.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 2, false);
+										waterBlock6.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 2, false);
+										waterBlock6.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 2, false);
+										waterBlock6.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 2, false);
+										waterBlock6.getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 2, false);
+										waterBlock6.getRelative(BlockFace.WEST).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 2, false);
+										waterBlock6.getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 2, false);
+										waterBlock6.getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 2, false);
+										waterBlock6.getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 2, false);
+										waterBlock6.getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 2, false);
+										waterBlock6.getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 2, false);
+										waterBlock6.getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 2, false);
+										waterBlock6.getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 2, false);
+										waterBlock6.getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 2, false);
+										waterBlock6.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 2, false);
+										waterBlock6.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 2, false);
+									}
+
+								} else if (current >= oneAndAHalfPercent*47 && current < oneAndAHalfPercent*48) {
+
+									if (SQTechPumps.machineLiquidTypeIdMap.get(machine) != null) {
+										waterBlock6.setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 1, false);
+										waterBlock6.getRelative(BlockFace.NORTH).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 1, false);
+										waterBlock6.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 1, false);
+										waterBlock6.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 1, false);
+										waterBlock6.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 1, false);
+										waterBlock6.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 1, false);
+										waterBlock6.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 1, false);
+										waterBlock6.getRelative(BlockFace.SOUTH).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 1, false);
+										waterBlock6.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 1, false);
+										waterBlock6.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 1, false);
+										waterBlock6.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 1, false);
+										waterBlock6.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 1, false);
+										waterBlock6.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 1, false);
+										waterBlock6.getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 1, false);
+										waterBlock6.getRelative(BlockFace.WEST).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 1, false);
+										waterBlock6.getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 1, false);
+										waterBlock6.getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 1, false);
+										waterBlock6.getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 1, false);
+										waterBlock6.getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 1, false);
+										waterBlock6.getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 1, false);
+										waterBlock6.getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 1, false);
+										waterBlock6.getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 1, false);
+										waterBlock6.getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 1, false);
+										waterBlock6.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 1, false);
+										waterBlock6.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 1, false);
+									}
+
+								} else if (current >= oneAndAHalfPercent*48 && current < oneAndAHalfPercent*49) {
+
+									if (SQTechPumps.machineLiquidTypeIdMap.get(machine) != null) {
+										waterBlock6.setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 0, false);
+										waterBlock6.getRelative(BlockFace.NORTH).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 0, false);
+										waterBlock6.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 0, false);
+										waterBlock6.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 0, false);
+										waterBlock6.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 0, false);
+										waterBlock6.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 0, false);
+										waterBlock6.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 0, false);
+										waterBlock6.getRelative(BlockFace.SOUTH).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 0, false);
+										waterBlock6.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 0, false);
+										waterBlock6.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 0, false);
+										waterBlock6.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 0, false);
+										waterBlock6.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 0, false);
+										waterBlock6.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 0, false);
+										waterBlock6.getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 0, false);
+										waterBlock6.getRelative(BlockFace.WEST).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 0, false);
+										waterBlock6.getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 0, false);
+										waterBlock6.getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 0, false);
+										waterBlock6.getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 0, false);
+										waterBlock6.getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 0, false);
+										waterBlock6.getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 0, false);
+										waterBlock6.getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 0, false);
+										waterBlock6.getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 0, false);
+										waterBlock6.getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 0, false);
+										waterBlock6.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 0, false);
+										waterBlock6.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 0, false);
+									}
+
+								} else if (current >= oneAndAHalfPercent*49 && current < oneAndAHalfPercent*50) {
+
+									if (SQTechPumps.machineLiquidTypeIdMap.get(machine) != null) {
+										waterBlock7.setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 7, false);
+										waterBlock7.getRelative(BlockFace.NORTH).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 7, false);
+										waterBlock7.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 7, false);
+										waterBlock7.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 7, false);
+										waterBlock7.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 7, false);
+										waterBlock7.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 7, false);
+										waterBlock7.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 7, false);
+										waterBlock7.getRelative(BlockFace.SOUTH).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 7, false);
+										waterBlock7.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 7, false);
+										waterBlock7.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 7, false);
+										waterBlock7.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 7, false);
+										waterBlock7.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 7, false);
+										waterBlock7.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 7, false);
+										waterBlock7.getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 7, false);
+										waterBlock7.getRelative(BlockFace.WEST).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 7, false);
+										waterBlock7.getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 7, false);
+										waterBlock7.getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 7, false);
+										waterBlock7.getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 7, false);
+										waterBlock7.getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 7, false);
+										waterBlock7.getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 7, false);
+										waterBlock7.getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 7, false);
+										waterBlock7.getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 7, false);
+										waterBlock7.getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 7, false);
+										waterBlock7.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 7, false);
+										waterBlock7.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 7, false);
+									}
+
+								} else if (current >= oneAndAHalfPercent*50 && current < oneAndAHalfPercent*51) {
+
+									if (SQTechPumps.machineLiquidTypeIdMap.get(machine) != null) {
+										waterBlock7.setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 6, false);
+										waterBlock7.getRelative(BlockFace.NORTH).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 6, false);
+										waterBlock7.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 6, false);
+										waterBlock7.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 6, false);
+										waterBlock7.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 6, false);
+										waterBlock7.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 6, false);
+										waterBlock7.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 6, false);
+										waterBlock7.getRelative(BlockFace.SOUTH).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 6, false);
+										waterBlock7.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 6, false);
+										waterBlock7.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 6, false);
+										waterBlock7.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 6, false);
+										waterBlock7.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 6, false);
+										waterBlock7.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 6, false);
+										waterBlock7.getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 6, false);
+										waterBlock7.getRelative(BlockFace.WEST).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 6, false);
+										waterBlock7.getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 6, false);
+										waterBlock7.getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 6, false);
+										waterBlock7.getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 6, false);
+										waterBlock7.getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 6, false);
+										waterBlock7.getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 6, false);
+										waterBlock7.getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 6, false);
+										waterBlock7.getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 6, false);
+										waterBlock7.getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 6, false);
+										waterBlock7.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 6, false);
+										waterBlock7.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 6, false);
+									}
+
+								} else if (current >= oneAndAHalfPercent*51 && current < oneAndAHalfPercent*52) {
+
+									if (SQTechPumps.machineLiquidTypeIdMap.get(machine) != null) {
+										waterBlock7.setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 5, false);
+										waterBlock7.getRelative(BlockFace.NORTH).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 5, false);
+										waterBlock7.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 5, false);
+										waterBlock7.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 5, false);
+										waterBlock7.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 5, false);
+										waterBlock7.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 5, false);
+										waterBlock7.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 5, false);
+										waterBlock7.getRelative(BlockFace.SOUTH).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 5, false);
+										waterBlock7.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 5, false);
+										waterBlock7.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 5, false);
+										waterBlock7.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 5, false);
+										waterBlock7.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 5, false);
+										waterBlock7.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 5, false);
+										waterBlock7.getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 5, false);
+										waterBlock7.getRelative(BlockFace.WEST).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 5, false);
+										waterBlock7.getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 5, false);
+										waterBlock7.getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 5, false);
+										waterBlock7.getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 5, false);
+										waterBlock7.getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 5, false);
+										waterBlock7.getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 5, false);
+										waterBlock7.getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 5, false);
+										waterBlock7.getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 5, false);
+										waterBlock7.getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 5, false);
+										waterBlock7.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 5, false);
+										waterBlock7.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 5, false);
+									}
+
+								} else if (current >= oneAndAHalfPercent*52 && current < oneAndAHalfPercent*53) {
+
+									if (SQTechPumps.machineLiquidTypeIdMap.get(machine) != null) {
+										waterBlock7.setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 4, false);
+										waterBlock7.getRelative(BlockFace.NORTH).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 4, false);
+										waterBlock7.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 4, false);
+										waterBlock7.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 4, false);
+										waterBlock7.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 4, false);
+										waterBlock7.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 4, false);
+										waterBlock7.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 4, false);
+										waterBlock7.getRelative(BlockFace.SOUTH).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 4, false);
+										waterBlock7.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 4, false);
+										waterBlock7.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 4, false);
+										waterBlock7.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 4, false);
+										waterBlock7.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 4, false);
+										waterBlock7.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 4, false);
+										waterBlock7.getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 4, false);
+										waterBlock7.getRelative(BlockFace.WEST).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 4, false);
+										waterBlock7.getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 4, false);
+										waterBlock7.getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 4, false);
+										waterBlock7.getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 4, false);
+										waterBlock7.getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 4, false);
+										waterBlock7.getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 4, false);
+										waterBlock7.getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 4, false);
+										waterBlock7.getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 4, false);
+										waterBlock7.getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 4, false);
+										waterBlock7.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 4, false);
+										waterBlock7.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 4, false);
+									}
+
+								} else if (current >= oneAndAHalfPercent*53 && current < oneAndAHalfPercent*54) {
+
+									if (SQTechPumps.machineLiquidTypeIdMap.get(machine) != null) {
+										waterBlock7.setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 3, false);
+										waterBlock7.getRelative(BlockFace.NORTH).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 3, false);
+										waterBlock7.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 3, false);
+										waterBlock7.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 3, false);
+										waterBlock7.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 3, false);
+										waterBlock7.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 3, false);
+										waterBlock7.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 3, false);
+										waterBlock7.getRelative(BlockFace.SOUTH).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 3, false);
+										waterBlock7.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 3, false);
+										waterBlock7.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 3, false);
+										waterBlock7.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 3, false);
+										waterBlock7.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 3, false);
+										waterBlock7.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 3, false);
+										waterBlock7.getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 3, false);
+										waterBlock7.getRelative(BlockFace.WEST).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 3, false);
+										waterBlock7.getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 3, false);
+										waterBlock7.getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 3, false);
+										waterBlock7.getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 3, false);
+										waterBlock7.getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 3, false);
+										waterBlock7.getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 3, false);
+										waterBlock7.getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 3, false);
+										waterBlock7.getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 3, false);
+										waterBlock7.getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 3, false);
+										waterBlock7.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 3, false);
+										waterBlock7.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 3, false);
+									}
+
+								} else if (current >= oneAndAHalfPercent*54 && current < oneAndAHalfPercent*55) {
+
+									if (SQTechPumps.machineLiquidTypeIdMap.get(machine) != null) {
+										waterBlock7.setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 2, false);
+										waterBlock7.getRelative(BlockFace.NORTH).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 2, false);
+										waterBlock7.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 2, false);
+										waterBlock7.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 2, false);
+										waterBlock7.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 2, false);
+										waterBlock7.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 2, false);
+										waterBlock7.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 2, false);
+										waterBlock7.getRelative(BlockFace.SOUTH).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 2, false);
+										waterBlock7.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 2, false);
+										waterBlock7.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 2, false);
+										waterBlock7.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 2, false);
+										waterBlock7.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 2, false);
+										waterBlock7.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 2, false);
+										waterBlock7.getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 2, false);
+										waterBlock7.getRelative(BlockFace.WEST).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 2, false);
+										waterBlock7.getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 2, false);
+										waterBlock7.getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 2, false);
+										waterBlock7.getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 2, false);
+										waterBlock7.getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 2, false);
+										waterBlock7.getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 2, false);
+										waterBlock7.getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 2, false);
+										waterBlock7.getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 2, false);
+										waterBlock7.getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 2, false);
+										waterBlock7.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 2, false);
+										waterBlock7.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 2, false);
+									}
+
+								} else if (current >= oneAndAHalfPercent*55 && current < oneAndAHalfPercent*56) {
+
+									if (SQTechPumps.machineLiquidTypeIdMap.get(machine) != null) {
+										waterBlock7.setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 1, false);
+										waterBlock7.getRelative(BlockFace.NORTH).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 1, false);
+										waterBlock7.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 1, false);
+										waterBlock7.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 1, false);
+										waterBlock7.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 1, false);
+										waterBlock7.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 1, false);
+										waterBlock7.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 1, false);
+										waterBlock7.getRelative(BlockFace.SOUTH).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 1, false);
+										waterBlock7.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 1, false);
+										waterBlock7.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 1, false);
+										waterBlock7.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 1, false);
+										waterBlock7.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 1, false);
+										waterBlock7.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 1, false);
+										waterBlock7.getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 1, false);
+										waterBlock7.getRelative(BlockFace.WEST).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 1, false);
+										waterBlock7.getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 1, false);
+										waterBlock7.getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 1, false);
+										waterBlock7.getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 1, false);
+										waterBlock7.getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 1, false);
+										waterBlock7.getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 1, false);
+										waterBlock7.getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 1, false);
+										waterBlock7.getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 1, false);
+										waterBlock7.getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 1, false);
+										waterBlock7.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 1, false);
+										waterBlock7.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 1, false);
+									}
+
+								} else if (current >= oneAndAHalfPercent*56) {
+
+									if (SQTechPumps.machineLiquidTypeIdMap.get(machine) != null) {
+										waterBlock7.setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 0, false);
+										waterBlock7.getRelative(BlockFace.NORTH).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 0, false);
+										waterBlock7.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 0, false);
+										waterBlock7.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 0, false);
+										waterBlock7.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 0, false);
+										waterBlock7.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 0, false);
+										waterBlock7.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 0, false);
+										waterBlock7.getRelative(BlockFace.SOUTH).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 0, false);
+										waterBlock7.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 0, false);
+										waterBlock7.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 0, false);
+										waterBlock7.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 0, false);
+										waterBlock7.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 0, false);
+										waterBlock7.getRelative(BlockFace.SOUTH).getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 0, false);
+										waterBlock7.getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 0, false);
+										waterBlock7.getRelative(BlockFace.WEST).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 0, false);
+										waterBlock7.getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 0, false);
+										waterBlock7.getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 0, false);
+										waterBlock7.getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 0, false);
+										waterBlock7.getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).getRelative(BlockFace.WEST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 0, false);
+										waterBlock7.getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 0, false);
+										waterBlock7.getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 0, false);
+										waterBlock7.getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 0, false);
+										waterBlock7.getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 0, false);
+										waterBlock7.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 0, false);
+										waterBlock7.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).getRelative(BlockFace.EAST).setTypeIdAndData(SQTechPumps.machineLiquidTypeIdMap.get(machine), (byte) 0, false);
+									}
+
+								}
+
+								updateBlock(waterBlock.getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH).getRelative(BlockFace.NORTH));
+
+							}
+
+						}
+
+					}
+
+				}
+
+			}
+
+		});
+
+	}
+
 	public static Block getMiddleBlock(GUIBlock block) {
 
 		BlockFace[] faces = new BlockFace[]{
@@ -2358,7 +4337,7 @@ public class LargeTank extends MachineType{
 																																					if (firstLevel6.getType() == Material.STAINED_CLAY) {
 																																						if (firstLevel6.getRelative(right).getType() == Material.STAINED_CLAY) {
 																																							if (firstLevel6.getRelative(left).getType() == Material.STAINED_CLAY) {
-																																								
+
 																																								if (secondLevel.getType() == Material.STAINED_GLASS_PANE) {
 																																									if (secondLevel.getRelative(right).getType() == Material.STAINED_GLASS_PANE) {
 																																										if (secondLevel.getRelative(right).getRelative(right).getType() == Material.STAINED_CLAY) {
@@ -2404,7 +4383,7 @@ public class LargeTank extends MachineType{
 																																																																																		if (secondLevel6.getRelative(left).getRelative(left).getType() == Material.STAINED_CLAY) {
 																																																																																			if (secondLevel6.getRelative(right).getType() == Material.STAINED_GLASS_PANE) {
 																																																																																				if (secondLevel6.getRelative(right).getRelative(right).getType() == Material.STAINED_CLAY) {
-																																																																																					
+
 																																																																																					if (thirdLevel.getType() == Material.STAINED_GLASS_PANE) {
 																																																																																						if (thirdLevel.getRelative(right).getType() == Material.STAINED_GLASS_PANE) {
 																																																																																							if (thirdLevel.getRelative(right).getRelative(right).getType() == Material.STAINED_CLAY) {
@@ -2450,7 +4429,7 @@ public class LargeTank extends MachineType{
 																																																																																																																															if (thirdLevel6.getRelative(left).getRelative(left).getType() == Material.STAINED_CLAY) {
 																																																																																																																																if (thirdLevel6.getRelative(right).getType() == Material.STAINED_GLASS_PANE) {
 																																																																																																																																	if (thirdLevel6.getRelative(right).getRelative(right).getType() == Material.STAINED_CLAY) {
-																																																																																																																																		
+
 																																																																																																																																		if (fourthLevel.getType() == Material.STAINED_GLASS_PANE) {
 																																																																																																																																			if (fourthLevel.getRelative(right).getType() == Material.STAINED_GLASS_PANE) {
 																																																																																																																																				if (fourthLevel.getRelative(right).getRelative(right).getType() == Material.STAINED_CLAY) {
@@ -2496,7 +4475,7 @@ public class LargeTank extends MachineType{
 																																																																																																																																																																												if (fourthLevel6.getRelative(left).getRelative(left).getType() == Material.STAINED_CLAY) {
 																																																																																																																																																																													if (fourthLevel6.getRelative(right).getType() == Material.STAINED_GLASS_PANE) {
 																																																																																																																																																																														if (fourthLevel6.getRelative(right).getRelative(right).getType() == Material.STAINED_CLAY) {
-																																																																																																																																																																															
+
 																																																																																																																																																																															if (fifthLevel.getType() == Material.STAINED_GLASS_PANE) {
 																																																																																																																																																																																if (fifthLevel.getRelative(right).getType() == Material.STAINED_GLASS_PANE) {
 																																																																																																																																																																																	if (fifthLevel.getRelative(right).getRelative(right).getType() == Material.STAINED_CLAY) {
@@ -2542,7 +4521,7 @@ public class LargeTank extends MachineType{
 																																																																																																																																																																																																																									if (fifthLevel6.getRelative(left).getRelative(left).getType() == Material.STAINED_CLAY) {
 																																																																																																																																																																																																																										if (fifthLevel6.getRelative(right).getType() == Material.STAINED_GLASS_PANE) {
 																																																																																																																																																																																																																											if (fifthLevel6.getRelative(right).getRelative(right).getType() == Material.STAINED_CLAY) {
-																																																																																																																																																																																																																												
+
 																																																																																																																																																																																																																												if (sixthLevel.getType() == Material.STAINED_GLASS_PANE) {
 																																																																																																																																																																																																																													if (sixthLevel.getRelative(right).getType() == Material.STAINED_GLASS_PANE) {
 																																																																																																																																																																																																																														if (sixthLevel.getRelative(right).getRelative(right).getType() == Material.STAINED_CLAY) {
@@ -2588,7 +4567,7 @@ public class LargeTank extends MachineType{
 																																																																																																																																																																																																																																																																						if (sixthLevel6.getRelative(left).getRelative(left).getType() == Material.STAINED_CLAY) {
 																																																																																																																																																																																																																																																																							if (sixthLevel6.getRelative(right).getType() == Material.STAINED_GLASS_PANE) {
 																																																																																																																																																																																																																																																																								if (sixthLevel6.getRelative(right).getRelative(right).getType() == Material.STAINED_CLAY) {
-																																																																																																																																																																																																																																																																									
+
 																																																																																																																																																																																																																																																																									if (seventhLevel.getType() == Material.STAINED_GLASS_PANE) {
 																																																																																																																																																																																																																																																																										if (seventhLevel.getRelative(right).getType() == Material.STAINED_GLASS_PANE) {
 																																																																																																																																																																																																																																																																											if (seventhLevel.getRelative(right).getRelative(right).getType() == Material.STAINED_CLAY) {
@@ -2634,7 +4613,7 @@ public class LargeTank extends MachineType{
 																																																																																																																																																																																																																																																																																																																			if (seventhLevel6.getRelative(left).getRelative(left).getType() == Material.STAINED_CLAY) {
 																																																																																																																																																																																																																																																																																																																				if (seventhLevel6.getRelative(right).getType() == Material.STAINED_GLASS_PANE) {
 																																																																																																																																																																																																																																																																																																																					if (seventhLevel6.getRelative(right).getRelative(right).getType() == Material.STAINED_CLAY) {
-																																																																																																																																																																																																																																																																																																																						
+
 																																																																																																																																																																																																																																																																																																																						if (eightLevel.getType() == Material.STAINED_GLASS_PANE) {
 																																																																																																																																																																																																																																																																																																																							if (eightLevel.getRelative(right).getType() == Material.STAINED_GLASS_PANE) {
 																																																																																																																																																																																																																																																																																																																								if (eightLevel.getRelative(right).getRelative(right).getType() == Material.STAINED_CLAY) {
@@ -2680,7 +4659,7 @@ public class LargeTank extends MachineType{
 																																																																																																																																																																																																																																																																																																																																																																if (eightLevel6.getRelative(left).getRelative(left).getType() == Material.STAINED_CLAY) {
 																																																																																																																																																																																																																																																																																																																																																																	if (eightLevel6.getRelative(right).getType() == Material.STAINED_GLASS_PANE) {
 																																																																																																																																																																																																																																																																																																																																																																		if (eightLevel6.getRelative(right).getRelative(right).getType() == Material.STAINED_CLAY) {
-																																																																																																																																																																																																																																																																																																																																																																			
+
 																																																																																																																																																																																																																																																																																																																																																																			if (ninthLevel.getType() == Material.STAINED_CLAY) {
 																																																																																																																																																																																																																																																																																																																																																																				if (ninthLevel.getRelative(right).getType() == Material.STAINED_CLAY) {
 																																																																																																																																																																																																																																																																																																																																																																					if (ninthLevel.getRelative(left).getType() == Material.STAINED_CLAY) {
@@ -2718,7 +4697,7 @@ public class LargeTank extends MachineType{
 																																																																																																																																																																																																																																																																																																																																																																																																					if (ninthLevel6.getType() == Material.STAINED_CLAY) {
 																																																																																																																																																																																																																																																																																																																																																																																																						if (ninthLevel6.getRelative(right).getType() == Material.STAINED_CLAY) {
 																																																																																																																																																																																																																																																																																																																																																																																																							if (ninthLevel6.getRelative(left).getType() == Material.STAINED_CLAY) {
-																																																																																																																																																																																																																																																																																																																																																																																																								
+
 																																																																																																																																																																																																																																																																																																																																																																																																								return secondLevel3;
 
 																																																																																																																																																																																																																																																																																																																																																																																																							}
@@ -3119,7 +5098,7 @@ public class LargeTank extends MachineType{
 				}
 			}
 		}
-		
+
 		return null;
 
 	}

@@ -1,8 +1,6 @@
 package com.martinjonsson01.sqtechpumps.tasks;
 
 import java.util.ArrayList;
-import java.util.logging.Level;
-
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -47,8 +45,17 @@ public class PumpTask extends BukkitRunnable{
 
 			@Override
 			public void run() {
-				//Bukkit.getServer().broadcastMessage("i = " + i + "  waterBlocks = " + waterBlocksSize);
-
+				
+				if (SQTechPumps.machineExtendingMap.get(machine) == null) {
+					SQTechPumps.machineExtendingMap.put(machine, false);
+				}
+				
+				if (SQTechPumps.machineExtendingMap.get(machine) == true) {
+					
+					SQTechPumps.machineExtendingMap.put(machine, false);
+					
+				}
+				
 				if (i >= waterBlocksSize  && machine.getEnergy() < SQTechPumps.config.getInt("energy consumption")) {
 
 					if (waterBlocks.size() <= 1) {
@@ -59,7 +66,7 @@ public class PumpTask extends BukkitRunnable{
 						return;
 
 					}
-
+					owner.sendMessage("waterBlocks(0): " + waterBlocks.get(0));
 					if (!(waterBlocks.get(0).getRelative(BlockFace.DOWN).getType() == Material.WATER) ||
 							!(waterBlocks.get(0).getRelative(BlockFace.DOWN).getType() == Material.STATIONARY_WATER) ||
 							!(waterBlocks.get(0).getRelative(BlockFace.DOWN).getType() == Material.LAVA) ||
@@ -102,7 +109,7 @@ public class PumpTask extends BukkitRunnable{
 
 				} else if (machine.getEnergy() < SQTechPumps.config.getInt("energy consumption")) {
 
-					owner.sendMessage(ChatColor.GREEN + "Pump out of energy.");
+					owner.sendMessage(ChatColor.RED + "Pump is out of energy.");
 					//SQTechPumps.resumeWaterBlocks.put(machine, waterBlocks);
 					//SQTechPumps.waterBlocks.get(machine).clear();
 					Pump.stopPumping(machine, owner);

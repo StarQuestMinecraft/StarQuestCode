@@ -184,6 +184,12 @@ public class SmallTankGUI extends GUI{
 							machine.setLiquid(f, 0);
 							waterBlock.setType(Material.AIR);
 							
+							if (SQTechPumps.tankWaterBlocks.get(machine) != null) {
+								
+								SQTechPumps.tankWaterBlocks.get(machine).remove(waterBlock);
+								
+							}
+							
 							event.getWhoClicked().closeInventory();
 							
 						}

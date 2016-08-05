@@ -1,5 +1,9 @@
 package com.martinjonsson01.sqtechpumps.objects;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -18,6 +22,7 @@ import com.starquestminecraft.sqtechbase.objects.Machine;
 import com.starquestminecraft.sqtechbase.objects.MachineType;
 import com.starquestminecraft.sqtechbase.util.DirectionUtils;
 import com.starquestminecraft.sqtechbase.util.InventoryUtils;
+import com.starquestminecraft.sqtechbase.util.ObjectUtils;
 
 import net.md_5.bungee.api.ChatColor;
 
@@ -34,7 +39,9 @@ public class SmallTank extends MachineType{
 	public boolean detectStructure(GUIBlock block) {
 
 		Block middleStainedGlass = block.getLocation().getBlock().getRelative(BlockFace.UP);
-
+		
+		Machine machine = ObjectUtils.getMachineFromGUIBlock(block);
+		
 		BlockFace[] faces = new BlockFace[]{
 				BlockFace.NORTH,
 				BlockFace.EAST,
@@ -67,6 +74,7 @@ public class SmallTank extends MachineType{
 																			if (middleStainedGlass.getRelative(f).getRelative(f).getRelative(left).getType() == Material.STAINED_CLAY) {
 																				if (middleStainedGlass.getRelative(f).getRelative(f).getRelative(up).getType() == Material.STAINED_CLAY) {
 																					if (middleStainedGlass.getRelative(f).getRelative(f).getRelative(down).getType() == Material.STAINED_CLAY) {
+																						SmallTank.updatePhysicalLiquid(machine);
 																						return true;
 																					}
 																				}
@@ -89,7 +97,22 @@ public class SmallTank extends MachineType{
 			}
 
 		}
+		
+		if (SQTechPumps.tankWaterBlocks.get(machine) != null) {
 
+			Iterator<Block> it = SQTechPumps.tankWaterBlocks.get(machine).iterator();
+			while (it.hasNext()) {
+
+				Block b = it.next();
+
+				b.setType(Material.AIR);
+
+				it.remove();
+
+			}
+
+		}
+		
 		return false;
 
 	}
@@ -103,12 +126,15 @@ public class SmallTank extends MachineType{
 
 	@SuppressWarnings("deprecation")
 	public static void updatePhysicalLiquid(Machine machine) {
-
+		
+		if (machine == null) return;
+		
 		Block waterBlock = getMiddleBlock(machine.getGUIBlock());
-
-		if (!SQTechPumps.tankWaterBlocks.contains(waterBlock)) {
-			SQTechPumps.tankWaterBlocks.add(waterBlock);
-		}
+		
+		List<Block> waterBlockIntoList = new ArrayList<Block>();
+		waterBlockIntoList.add(waterBlock);
+		
+		SQTechPumps.tankWaterBlocks.put(machine, waterBlockIntoList);
 
 		for (Fluid f : SQTechBase.fluids) {
 
@@ -241,7 +267,10 @@ public class SmallTank extends MachineType{
 
 					Block waterBlock = getMiddleBlock(machine.getGUIBlock());
 
-					SQTechPumps.tankWaterBlocks.add(waterBlock);
+					List<Block> waterBlockIntoList = new ArrayList<Block>();
+					waterBlockIntoList.add(waterBlock);
+					
+					SQTechPumps.tankWaterBlocks.put(machine, waterBlockIntoList);
 
 					for (Fluid f : SQTechBase.fluids) {
 

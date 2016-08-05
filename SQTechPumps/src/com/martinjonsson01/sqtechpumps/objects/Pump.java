@@ -46,18 +46,51 @@ public class Pump extends MachineType {
 	public boolean detectStructure(GUIBlock guiBlock) {
 
 		Block block = guiBlock.getLocation().getBlock();
+		
+		BlockFace[] faces = new BlockFace[]{
+				BlockFace.NORTH,
+				BlockFace.EAST,
+				BlockFace.WEST,
+				BlockFace.SOUTH
+		};
+		
+		for (BlockFace f : faces) {
+			
+			BlockFace back = BlockFace.SOUTH;
+			BlockFace right = BlockFace.EAST;
+			BlockFace left = BlockFace.WEST;
+			
+			if (f.equals(BlockFace.NORTH)) {
+				back = BlockFace.SOUTH;
+				right = BlockFace.EAST;
+				left = BlockFace.WEST;
+			} else if (f.equals(BlockFace.EAST)) {
+				back = BlockFace.WEST;
+				right = BlockFace.SOUTH;
+				left = BlockFace.NORTH;
+			} else if (f.equals(BlockFace.WEST)) {
+				back = BlockFace.EAST;
+				right = BlockFace.NORTH;
+				left = BlockFace.SOUTH;
+			} else if (f.equals(BlockFace.SOUTH)) {
+				back = BlockFace.NORTH;
+				right = BlockFace.WEST;
+				left = BlockFace.EAST;
+			}
+			
+			if (block.getRelative(f).getType().equals(Material.DROPPER) &&
+					block.getRelative(right).getType().equals(Material.STAINED_GLASS_PANE) &&
+					block.getRelative(left).getType().equals(Material.STAINED_GLASS_PANE) &&
+					block.getRelative(back).getType().equals(Material.STAINED_GLASS_PANE) &&
+					block.getRelative(BlockFace.DOWN).getRelative(f).getType().equals(Material.STAINED_CLAY) &&
+					block.getRelative(BlockFace.DOWN).getRelative(right).getType().equals(Material.STAINED_CLAY) &&
+					block.getRelative(BlockFace.DOWN).getRelative(left).getType().equals(Material.STAINED_CLAY) &&
+					block.getRelative(BlockFace.DOWN).getRelative(back).getType().equals(Material.STAINED_CLAY)) {
 
-		if (block.getRelative(BlockFace.NORTH).getType().equals(Material.STAINED_GLASS_PANE) &&
-				block.getRelative(BlockFace.EAST).getType().equals(Material.STAINED_GLASS_PANE) &&
-				block.getRelative(BlockFace.WEST).getType().equals(Material.STAINED_GLASS_PANE) &&
-				block.getRelative(BlockFace.SOUTH).getType().equals(Material.STAINED_GLASS_PANE) &&
-				block.getRelative(BlockFace.DOWN).getRelative(BlockFace.NORTH).getType().equals(Material.STAINED_CLAY) &&
-				block.getRelative(BlockFace.DOWN).getRelative(BlockFace.EAST).getType().equals(Material.STAINED_CLAY) &&
-				block.getRelative(BlockFace.DOWN).getRelative(BlockFace.WEST).getType().equals(Material.STAINED_CLAY) &&
-				block.getRelative(BlockFace.DOWN).getRelative(BlockFace.SOUTH).getType().equals(Material.STAINED_CLAY)) {
+				return true;
 
-			return true;
-
+			}	
+			
 		}
 
 		return false;
@@ -144,77 +177,78 @@ public class Pump extends MachineType {
 	@SuppressWarnings("deprecation")
 	public static void startPumping(Machine machine, Player owner) {
 
-		List<Block> tubeBlocks = new ArrayList<Block>();
+		Bukkit.getServer().getScheduler().runTask(SQTechPumps.plugin, new BukkitRunnable() {
 
-		List<BlockFace> faces = new ArrayList<BlockFace>();
-		faces.add(BlockFace.NORTH);
-		faces.add(BlockFace.EAST);
-		faces.add(BlockFace.WEST);
-		faces.add(BlockFace.SOUTH);
+			@Override
+			public void run() {
+				
+				List<Block> tubeBlocks = new ArrayList<Block>();
 
-		//Block waterBlock = null;
+				List<BlockFace> faces = new ArrayList<BlockFace>();
+				faces.add(BlockFace.NORTH);
+				faces.add(BlockFace.EAST);
+				faces.add(BlockFace.WEST);
+				faces.add(BlockFace.SOUTH);
 
-		Block next = machine.getGUIBlock().getLocation().getBlock().getRelative(BlockFace.DOWN);
-		while (next.getType() == Material.AIR || next.getType() == Material.IRON_FENCE) {
+				//Block waterBlock = null;
 
-			tubeBlocks.add(next);
-			next = next.getRelative(BlockFace.DOWN);
+				Block next = machine.getGUIBlock().getLocation().getBlock().getRelative(BlockFace.DOWN);
+				while (next.getType() == Material.AIR || next.getType() == Material.IRON_FENCE) {
 
-		}
+					tubeBlocks.add(next);
+					next = next.getRelative(BlockFace.DOWN);
 
-		if (next.getType() == Material.WATER ||
-				next.getType() == Material.STATIONARY_WATER ||
-				next.getType() == Material.STATIONARY_LAVA ||
-				next.getType() == Material.LAVA) {
+				}
 
-			//waterBlock = next.getRelative(BlockFace.DOWN);
+				if (next.getType() == Material.WATER ||
+						next.getType() == Material.STATIONARY_WATER ||
+						next.getType() == Material.STATIONARY_LAVA ||
+						next.getType() == Material.LAVA) {
 
-			int i = 0;
+					//waterBlock = next.getRelative(BlockFace.DOWN);
 
-			for (Block b : tubeBlocks) {
+					for (Block b2 : tubeBlocks) {
 
-				Bukkit.getScheduler().scheduleSyncDelayedTask(SQTechPumps.plugin, new BukkitRunnable(){
+						if (b2.getType() != Material.IRON_FENCE) {
 
-					@Override
-					public void run() {
-
-						b.setType(Material.IRON_FENCE);
-						b.getLocation().getWorld().playSound(b.getLocation(), Sound.BLOCK_PISTON_EXTEND, 1, 1);
-
-						if (b.getRelative(BlockFace.DOWN).getType() == Material.WATER ||
-								b.getRelative(BlockFace.DOWN).getType() == Material.STATIONARY_WATER ||
-								b.getRelative(BlockFace.DOWN).getType() == Material.STATIONARY_LAVA ||
-								b.getRelative(BlockFace.DOWN).getType() == Material.LAVA) {
-
-							/*if (SQTechPumps.resumeWaterBlocks.get(machine) != null && SQTechPumps.resumeWaterBlocks.get(machine).size() > 0) {
-
-								ArrayList<Block> waterBlocks = SQTechPumps.resumeWaterBlocks.get(machine);
-
-								Pump.pump(waterBlocks, machine, owner);
-								Bukkit.getLogger().log(Level.INFO, "[SQTechPump] Found: " + (SQTechPumps.resumeWaterBlocks.get(machine).size()-1) + " water blocks from origin: " + SQTechPumps.resumeWaterBlocks.get(machine).get(0));
-
-							} else {*/
-
-							Long before = System.currentTimeMillis();
-							
-							detect(b.getRelative(BlockFace.DOWN), machine, owner);
-							
-							Bukkit.getLogger().log(Level.INFO, "[SQTechPump] Detection took " + (System.currentTimeMillis() - before) + " ms");
-
-							//}
+							SQTechPumps.waterBlockMap.put(machine, b2);
+							break;
 
 						}
 
 					}
 
-				}, i*7);
+					if (SQTechPumps.waterBlockMap.get(machine) != null) {
+						
+						Block b = SQTechPumps.waterBlockMap.get(machine);
+						
+						SQTechPumps.machineExtendingMap.put(machine, true);
+						
+						b.setType(Material.IRON_FENCE);
+						b.getLocation().getWorld().playSound(b.getLocation(), Sound.BLOCK_PISTON_EXTEND, 1, 1);
 
-				i++;
+						Bukkit.getScheduler().scheduleSyncDelayedTask(SQTechPumps.plugin, new BukkitRunnable(){
+
+							@Override
+							public void run() {
+
+								Long before = System.currentTimeMillis();
+
+								detect(b.getRelative(BlockFace.DOWN), machine, owner);
+
+								Bukkit.getLogger().log(Level.INFO, "[SQTechPump] Detection took " + (System.currentTimeMillis() - before) + " ms");
+
+							}
+
+						}, 7);
+
+					}
+
+				}
 
 			}
-
-		}
-
+			
+		});
 	}
 
 	@SuppressWarnings("deprecation")
@@ -243,7 +277,9 @@ public class Pump extends MachineType {
 			i++;
 
 		}
-
+		
+		SQTechPumps.machineExtendingMap.put(machine, true);
+		
 		i = 0;
 
 		Collections.reverse(tube);
@@ -259,7 +295,11 @@ public class Pump extends MachineType {
 
 					b.setType(Material.AIR);
 					b.getLocation().getWorld().playSound(b.getLocation(), Sound.BLOCK_PISTON_EXTEND, 1, 1);
-
+					
+					if (b.getRelative(BlockFace.UP).getType() == Material.LAPIS_BLOCK) {
+						SQTechPumps.machineExtendingMap.put(machine, false);
+					}
+					
 				}
 
 			}, i*10);
@@ -267,7 +307,7 @@ public class Pump extends MachineType {
 			i++;
 
 		}
-
+		
 	}
 
 	public static void stopPumpingImmediately(Machine machine, Player owner) {
@@ -318,12 +358,12 @@ public class Pump extends MachineType {
 		for (BlockFace face : faces) {
 
 			Block s = b.getRelative(face);
-			if (s.getType() == Material.LAVA || s.getType() == Material.WATER ||
-					s.getType() == Material.STATIONARY_LAVA || s.getType() == Material.STATIONARY_WATER) {
+			//if (s.getType() == Material.LAVA || s.getType() == Material.WATER ||
+			//		s.getType() == Material.STATIONARY_LAVA || s.getType() == Material.STATIONARY_WATER) {
 
-				blocks.add(s);
+			blocks.add(s);
 
-			}
+			//}
 
 		}
 		return blocks;

@@ -1,5 +1,9 @@
 package com.martinjonsson01.sqtechpumps.objects;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -18,6 +22,7 @@ import com.starquestminecraft.sqtechbase.objects.Machine;
 import com.starquestminecraft.sqtechbase.objects.MachineType;
 import com.starquestminecraft.sqtechbase.util.DirectionUtils;
 import com.starquestminecraft.sqtechbase.util.InventoryUtils;
+import com.starquestminecraft.sqtechbase.util.ObjectUtils;
 
 import net.md_5.bungee.api.ChatColor;
 
@@ -32,7 +37,9 @@ public class MediumTank extends MachineType{
 
 	@Override
 	public boolean detectStructure(GUIBlock block) {
-
+		
+		Machine machine = ObjectUtils.getMachineFromGUIBlock(block);
+		
 		BlockFace[] faces = new BlockFace[]{
 				BlockFace.NORTH,
 				BlockFace.EAST,
@@ -228,7 +235,8 @@ public class MediumTank extends MachineType{
 																																																																																																																																														if (sixthLevel4.getType() == Material.STAINED_CLAY) {
 																																																																																																																																															if (sixthLevel4.getRelative(right).getType() == Material.STAINED_CLAY) {
 																																																																																																																																																if (sixthLevel4.getRelative(left).getType() == Material.STAINED_CLAY) {
-
+																																																																																																																																																	
+																																																																																																																																																	MediumTank.updatePhysicalLiquid(machine);
 																																																																																																																																																	return true;
 
 																																																																																																																																																}
@@ -380,7 +388,22 @@ public class MediumTank extends MachineType{
 			}
 
 		}
+		
+		if (SQTechPumps.tankWaterBlocks.get(machine) != null) {
 
+			Iterator<Block> it = SQTechPumps.tankWaterBlocks.get(machine).iterator();
+			while (it.hasNext()) {
+
+				Block b = it.next();
+
+				b.setType(Material.AIR);
+
+				it.remove();
+
+			}
+
+		}
+		
 		return false;
 
 	}
@@ -394,56 +417,138 @@ public class MediumTank extends MachineType{
 
 	@SuppressWarnings("deprecation")
 	public static void updatePhysicalLiquid(Machine machine) {
-
+		
+		if (machine == null) return;
+		
 		Block waterBlock = getMiddleBlock(machine.getGUIBlock());
 		Block waterBlock2 = waterBlock.getRelative(BlockFace.UP);
 		Block waterBlock3 = waterBlock2.getRelative(BlockFace.UP);
 		Block waterBlock4 = waterBlock3.getRelative(BlockFace.UP);
-
-		if (!SQTechPumps.tankWaterBlocks.contains(waterBlock))  {
-			SQTechPumps.tankWaterBlocks.add(waterBlock);
-			SQTechPumps.tankWaterBlocks.add(waterBlock.getRelative(BlockFace.NORTH));
-			SQTechPumps.tankWaterBlocks.add(waterBlock.getRelative(BlockFace.EAST));
-			SQTechPumps.tankWaterBlocks.add(waterBlock.getRelative(BlockFace.WEST));
-			SQTechPumps.tankWaterBlocks.add(waterBlock.getRelative(BlockFace.SOUTH));
-			SQTechPumps.tankWaterBlocks.add(waterBlock.getRelative(BlockFace.NORTH_EAST));
-			SQTechPumps.tankWaterBlocks.add(waterBlock.getRelative(BlockFace.NORTH_WEST));
-			SQTechPumps.tankWaterBlocks.add(waterBlock.getRelative(BlockFace.SOUTH_EAST));
-			SQTechPumps.tankWaterBlocks.add(waterBlock.getRelative(BlockFace.SOUTH_WEST));
+		
+		List<Block> waterBlocks = new ArrayList<Block>();
+		if (SQTechPumps.tankWaterBlocks.get(machine) != null) {
+			waterBlocks = SQTechPumps.tankWaterBlocks.get(machine);
 		}
-		if (!SQTechPumps.tankWaterBlocks.contains(waterBlock2)) {
-			SQTechPumps.tankWaterBlocks.add(waterBlock2);
-			SQTechPumps.tankWaterBlocks.add(waterBlock2.getRelative(BlockFace.NORTH));
-			SQTechPumps.tankWaterBlocks.add(waterBlock2.getRelative(BlockFace.EAST));
-			SQTechPumps.tankWaterBlocks.add(waterBlock2.getRelative(BlockFace.WEST));
-			SQTechPumps.tankWaterBlocks.add(waterBlock2.getRelative(BlockFace.SOUTH));
-			SQTechPumps.tankWaterBlocks.add(waterBlock2.getRelative(BlockFace.NORTH_EAST));
-			SQTechPumps.tankWaterBlocks.add(waterBlock2.getRelative(BlockFace.NORTH_WEST));
-			SQTechPumps.tankWaterBlocks.add(waterBlock2.getRelative(BlockFace.SOUTH_EAST));
-			SQTechPumps.tankWaterBlocks.add(waterBlock2.getRelative(BlockFace.SOUTH_WEST));
+		
+		if (!waterBlocks.contains(waterBlock))  {
+			waterBlocks.add(waterBlock);
 		}
-		if (!SQTechPumps.tankWaterBlocks.contains(waterBlock3)) {
-			SQTechPumps.tankWaterBlocks.add(waterBlock3);
-			SQTechPumps.tankWaterBlocks.add(waterBlock3.getRelative(BlockFace.NORTH));
-			SQTechPumps.tankWaterBlocks.add(waterBlock3.getRelative(BlockFace.EAST));
-			SQTechPumps.tankWaterBlocks.add(waterBlock3.getRelative(BlockFace.WEST));
-			SQTechPumps.tankWaterBlocks.add(waterBlock3.getRelative(BlockFace.SOUTH));
-			SQTechPumps.tankWaterBlocks.add(waterBlock3.getRelative(BlockFace.NORTH_EAST));
-			SQTechPumps.tankWaterBlocks.add(waterBlock3.getRelative(BlockFace.NORTH_WEST));
-			SQTechPumps.tankWaterBlocks.add(waterBlock3.getRelative(BlockFace.SOUTH_EAST));
-			SQTechPumps.tankWaterBlocks.add(waterBlock3.getRelative(BlockFace.SOUTH_WEST));
+		if (!waterBlocks.contains(waterBlock.getRelative(BlockFace.NORTH))) {
+			waterBlocks.add(waterBlock.getRelative(BlockFace.NORTH));
 		}
-		if (!SQTechPumps.tankWaterBlocks.contains(waterBlock4)) {
-			SQTechPumps.tankWaterBlocks.add(waterBlock4);
-			SQTechPumps.tankWaterBlocks.add(waterBlock4.getRelative(BlockFace.NORTH));
-			SQTechPumps.tankWaterBlocks.add(waterBlock4.getRelative(BlockFace.EAST));
-			SQTechPumps.tankWaterBlocks.add(waterBlock4.getRelative(BlockFace.WEST));
-			SQTechPumps.tankWaterBlocks.add(waterBlock4.getRelative(BlockFace.SOUTH));
-			SQTechPumps.tankWaterBlocks.add(waterBlock4.getRelative(BlockFace.NORTH_EAST));
-			SQTechPumps.tankWaterBlocks.add(waterBlock4.getRelative(BlockFace.NORTH_WEST));
-			SQTechPumps.tankWaterBlocks.add(waterBlock4.getRelative(BlockFace.SOUTH_EAST));
-			SQTechPumps.tankWaterBlocks.add(waterBlock4.getRelative(BlockFace.SOUTH_WEST));
+		if (!waterBlocks.contains(waterBlock.getRelative(BlockFace.EAST))) {
+			waterBlocks.add(waterBlock.getRelative(BlockFace.EAST));
 		}
+		if (!waterBlocks.contains(waterBlock.getRelative(BlockFace.WEST))) {
+			waterBlocks.add(waterBlock.getRelative(BlockFace.WEST));
+		}
+		if (!waterBlocks.contains(waterBlock.getRelative(BlockFace.SOUTH))) {
+			waterBlocks.add(waterBlock.getRelative(BlockFace.SOUTH));
+		}
+		if (!waterBlocks.contains(waterBlock.getRelative(BlockFace.NORTH_EAST))) {
+			waterBlocks.add(waterBlock.getRelative(BlockFace.NORTH_EAST));
+		}
+		if (!waterBlocks.contains(waterBlock.getRelative(BlockFace.NORTH_WEST))) {
+			waterBlocks.add(waterBlock.getRelative(BlockFace.NORTH_WEST));
+		}
+		if (!waterBlocks.contains(waterBlock.getRelative(BlockFace.SOUTH_EAST))) {
+			waterBlocks.add(waterBlock.getRelative(BlockFace.SOUTH_EAST));
+		}
+		if (!waterBlocks.contains(waterBlock.getRelative(BlockFace.SOUTH_WEST))) {
+			waterBlocks.add(waterBlock.getRelative(BlockFace.SOUTH_WEST));
+		}
+			
+		//INBETWEEN
+		
+		if (!waterBlocks.contains(waterBlock2))  {
+			waterBlocks.add(waterBlock2);
+		}
+		if (!waterBlocks.contains(waterBlock2.getRelative(BlockFace.NORTH))) {
+			waterBlocks.add(waterBlock2.getRelative(BlockFace.NORTH));
+		}
+		if (!waterBlocks.contains(waterBlock2.getRelative(BlockFace.EAST))) {
+			waterBlocks.add(waterBlock2.getRelative(BlockFace.EAST));
+		}
+		if (!waterBlocks.contains(waterBlock2.getRelative(BlockFace.WEST))) {
+			waterBlocks.add(waterBlock2.getRelative(BlockFace.WEST));
+		}
+		if (!waterBlocks.contains(waterBlock2.getRelative(BlockFace.SOUTH))) {
+			waterBlocks.add(waterBlock2.getRelative(BlockFace.SOUTH));
+		}
+		if (!waterBlocks.contains(waterBlock2.getRelative(BlockFace.NORTH_EAST))) {
+			waterBlocks.add(waterBlock2.getRelative(BlockFace.NORTH_EAST));
+		}
+		if (!waterBlocks.contains(waterBlock2.getRelative(BlockFace.NORTH_WEST))) {
+			waterBlocks.add(waterBlock2.getRelative(BlockFace.NORTH_WEST));
+		}
+		if (!waterBlocks.contains(waterBlock2.getRelative(BlockFace.SOUTH_EAST))) {
+			waterBlocks.add(waterBlock2.getRelative(BlockFace.SOUTH_EAST));
+		}
+		if (!waterBlocks.contains(waterBlock2.getRelative(BlockFace.SOUTH_WEST))) {
+			waterBlocks.add(waterBlock2.getRelative(BlockFace.SOUTH_WEST));
+		}
+			
+		//INBETWEEN
+		
+		if (!waterBlocks.contains(waterBlock3))  {
+			waterBlocks.add(waterBlock3);
+		}
+		if (!waterBlocks.contains(waterBlock3.getRelative(BlockFace.NORTH))) {
+			waterBlocks.add(waterBlock3.getRelative(BlockFace.NORTH));
+		}
+		if (!waterBlocks.contains(waterBlock3.getRelative(BlockFace.EAST))) {
+			waterBlocks.add(waterBlock3.getRelative(BlockFace.EAST));
+		}
+		if (!waterBlocks.contains(waterBlock3.getRelative(BlockFace.WEST))) {
+			waterBlocks.add(waterBlock3.getRelative(BlockFace.WEST));
+		}
+		if (!waterBlocks.contains(waterBlock3.getRelative(BlockFace.SOUTH))) {
+			waterBlocks.add(waterBlock3.getRelative(BlockFace.SOUTH));
+		}
+		if (!waterBlocks.contains(waterBlock3.getRelative(BlockFace.NORTH_EAST))) {
+			waterBlocks.add(waterBlock3.getRelative(BlockFace.NORTH_EAST));
+		}
+		if (!waterBlocks.contains(waterBlock3.getRelative(BlockFace.NORTH_WEST))) {
+			waterBlocks.add(waterBlock3.getRelative(BlockFace.NORTH_WEST));
+		}
+		if (!waterBlocks.contains(waterBlock3.getRelative(BlockFace.SOUTH_EAST))) {
+			waterBlocks.add(waterBlock3.getRelative(BlockFace.SOUTH_EAST));
+		}
+		if (!waterBlocks.contains(waterBlock3.getRelative(BlockFace.SOUTH_WEST))) {
+			waterBlocks.add(waterBlock3.getRelative(BlockFace.SOUTH_WEST));
+		}
+			
+		//INBETWEEN
+		
+		if (!waterBlocks.contains(waterBlock4))  {
+			waterBlocks.add(waterBlock4);
+		}
+		if (!waterBlocks.contains(waterBlock4.getRelative(BlockFace.NORTH))) {
+			waterBlocks.add(waterBlock4.getRelative(BlockFace.NORTH));
+		}
+		if (!waterBlocks.contains(waterBlock4.getRelative(BlockFace.EAST))) {
+			waterBlocks.add(waterBlock4.getRelative(BlockFace.EAST));
+		}
+		if (!waterBlocks.contains(waterBlock4.getRelative(BlockFace.WEST))) {
+			waterBlocks.add(waterBlock4.getRelative(BlockFace.WEST));
+		}
+		if (!waterBlocks.contains(waterBlock4.getRelative(BlockFace.SOUTH))) {
+			waterBlocks.add(waterBlock4.getRelative(BlockFace.SOUTH));
+		}
+		if (!waterBlocks.contains(waterBlock4.getRelative(BlockFace.NORTH_EAST))) {
+			waterBlocks.add(waterBlock4.getRelative(BlockFace.NORTH_EAST));
+		}
+		if (!waterBlocks.contains(waterBlock4.getRelative(BlockFace.NORTH_WEST))) {
+			waterBlocks.add(waterBlock4.getRelative(BlockFace.NORTH_WEST));
+		}
+		if (!waterBlocks.contains(waterBlock4.getRelative(BlockFace.SOUTH_EAST))) {
+			waterBlocks.add(waterBlock4.getRelative(BlockFace.SOUTH_EAST));
+		}
+		if (!waterBlocks.contains(waterBlock4.getRelative(BlockFace.SOUTH_WEST))) {
+			waterBlocks.add(waterBlock4.getRelative(BlockFace.SOUTH_WEST));
+		}
+			
+		SQTechPumps.tankWaterBlocks.put(machine, waterBlocks);
 
 		for (Fluid f : SQTechBase.fluids) {
 
@@ -1105,50 +1210,130 @@ public class MediumTank extends MachineType{
 							Block waterBlock3 = getMiddleBlock(machine.getGUIBlock()).getRelative(BlockFace.UP).getRelative(BlockFace.UP);
 							Block waterBlock4 = getMiddleBlock(machine.getGUIBlock()).getRelative(BlockFace.UP).getRelative(BlockFace.UP).getRelative(BlockFace.UP);
 
-							if (!SQTechPumps.tankWaterBlocks.contains(waterBlock))  {
-								SQTechPumps.tankWaterBlocks.add(waterBlock);
-								SQTechPumps.tankWaterBlocks.add(waterBlock.getRelative(BlockFace.NORTH));
-								SQTechPumps.tankWaterBlocks.add(waterBlock.getRelative(BlockFace.EAST));
-								SQTechPumps.tankWaterBlocks.add(waterBlock.getRelative(BlockFace.WEST));
-								SQTechPumps.tankWaterBlocks.add(waterBlock.getRelative(BlockFace.SOUTH));
-								SQTechPumps.tankWaterBlocks.add(waterBlock.getRelative(BlockFace.NORTH_EAST));
-								SQTechPumps.tankWaterBlocks.add(waterBlock.getRelative(BlockFace.NORTH_WEST));
-								SQTechPumps.tankWaterBlocks.add(waterBlock.getRelative(BlockFace.SOUTH_EAST));
-								SQTechPumps.tankWaterBlocks.add(waterBlock.getRelative(BlockFace.SOUTH_WEST));
+							List<Block> waterBlocks = new ArrayList<Block>();
+							if (SQTechPumps.tankWaterBlocks.get(machine) != null) {
+								waterBlocks = SQTechPumps.tankWaterBlocks.get(machine);
 							}
-							if (!SQTechPumps.tankWaterBlocks.contains(waterBlock2)) {
-								SQTechPumps.tankWaterBlocks.add(waterBlock2);
-								SQTechPumps.tankWaterBlocks.add(waterBlock2.getRelative(BlockFace.NORTH));
-								SQTechPumps.tankWaterBlocks.add(waterBlock2.getRelative(BlockFace.EAST));
-								SQTechPumps.tankWaterBlocks.add(waterBlock2.getRelative(BlockFace.WEST));
-								SQTechPumps.tankWaterBlocks.add(waterBlock2.getRelative(BlockFace.SOUTH));
-								SQTechPumps.tankWaterBlocks.add(waterBlock2.getRelative(BlockFace.NORTH_EAST));
-								SQTechPumps.tankWaterBlocks.add(waterBlock2.getRelative(BlockFace.NORTH_WEST));
-								SQTechPumps.tankWaterBlocks.add(waterBlock2.getRelative(BlockFace.SOUTH_EAST));
-								SQTechPumps.tankWaterBlocks.add(waterBlock2.getRelative(BlockFace.SOUTH_WEST));
+							
+							if (!waterBlocks.contains(waterBlock))  {
+								waterBlocks.add(waterBlock);
 							}
-							if (!SQTechPumps.tankWaterBlocks.contains(waterBlock3)) {
-								SQTechPumps.tankWaterBlocks.add(waterBlock3);
-								SQTechPumps.tankWaterBlocks.add(waterBlock3.getRelative(BlockFace.NORTH));
-								SQTechPumps.tankWaterBlocks.add(waterBlock3.getRelative(BlockFace.EAST));
-								SQTechPumps.tankWaterBlocks.add(waterBlock3.getRelative(BlockFace.WEST));
-								SQTechPumps.tankWaterBlocks.add(waterBlock3.getRelative(BlockFace.SOUTH));
-								SQTechPumps.tankWaterBlocks.add(waterBlock3.getRelative(BlockFace.NORTH_EAST));
-								SQTechPumps.tankWaterBlocks.add(waterBlock3.getRelative(BlockFace.NORTH_WEST));
-								SQTechPumps.tankWaterBlocks.add(waterBlock3.getRelative(BlockFace.SOUTH_EAST));
-								SQTechPumps.tankWaterBlocks.add(waterBlock3.getRelative(BlockFace.SOUTH_WEST));
+							if (!waterBlocks.contains(waterBlock.getRelative(BlockFace.NORTH))) {
+								waterBlocks.add(waterBlock.getRelative(BlockFace.NORTH));
 							}
-							if (!SQTechPumps.tankWaterBlocks.contains(waterBlock4)) {
-								SQTechPumps.tankWaterBlocks.add(waterBlock4);
-								SQTechPumps.tankWaterBlocks.add(waterBlock4.getRelative(BlockFace.NORTH));
-								SQTechPumps.tankWaterBlocks.add(waterBlock4.getRelative(BlockFace.EAST));
-								SQTechPumps.tankWaterBlocks.add(waterBlock4.getRelative(BlockFace.WEST));
-								SQTechPumps.tankWaterBlocks.add(waterBlock4.getRelative(BlockFace.SOUTH));
-								SQTechPumps.tankWaterBlocks.add(waterBlock4.getRelative(BlockFace.NORTH_EAST));
-								SQTechPumps.tankWaterBlocks.add(waterBlock4.getRelative(BlockFace.NORTH_WEST));
-								SQTechPumps.tankWaterBlocks.add(waterBlock4.getRelative(BlockFace.SOUTH_EAST));
-								SQTechPumps.tankWaterBlocks.add(waterBlock4.getRelative(BlockFace.SOUTH_WEST));
+							if (!waterBlocks.contains(waterBlock.getRelative(BlockFace.EAST))) {
+								waterBlocks.add(waterBlock.getRelative(BlockFace.EAST));
 							}
+							if (!waterBlocks.contains(waterBlock.getRelative(BlockFace.WEST))) {
+								waterBlocks.add(waterBlock.getRelative(BlockFace.WEST));
+							}
+							if (!waterBlocks.contains(waterBlock.getRelative(BlockFace.SOUTH))) {
+								waterBlocks.add(waterBlock.getRelative(BlockFace.SOUTH));
+							}
+							if (!waterBlocks.contains(waterBlock.getRelative(BlockFace.NORTH_EAST))) {
+								waterBlocks.add(waterBlock.getRelative(BlockFace.NORTH_EAST));
+							}
+							if (!waterBlocks.contains(waterBlock.getRelative(BlockFace.NORTH_WEST))) {
+								waterBlocks.add(waterBlock.getRelative(BlockFace.NORTH_WEST));
+							}
+							if (!waterBlocks.contains(waterBlock.getRelative(BlockFace.SOUTH_EAST))) {
+								waterBlocks.add(waterBlock.getRelative(BlockFace.SOUTH_EAST));
+							}
+							if (!waterBlocks.contains(waterBlock.getRelative(BlockFace.SOUTH_WEST))) {
+								waterBlocks.add(waterBlock.getRelative(BlockFace.SOUTH_WEST));
+							}
+								
+							//INBETWEEN
+							
+							if (!waterBlocks.contains(waterBlock2))  {
+								waterBlocks.add(waterBlock2);
+							}
+							if (!waterBlocks.contains(waterBlock2.getRelative(BlockFace.NORTH))) {
+								waterBlocks.add(waterBlock2.getRelative(BlockFace.NORTH));
+							}
+							if (!waterBlocks.contains(waterBlock2.getRelative(BlockFace.EAST))) {
+								waterBlocks.add(waterBlock2.getRelative(BlockFace.EAST));
+							}
+							if (!waterBlocks.contains(waterBlock2.getRelative(BlockFace.WEST))) {
+								waterBlocks.add(waterBlock2.getRelative(BlockFace.WEST));
+							}
+							if (!waterBlocks.contains(waterBlock2.getRelative(BlockFace.SOUTH))) {
+								waterBlocks.add(waterBlock2.getRelative(BlockFace.SOUTH));
+							}
+							if (!waterBlocks.contains(waterBlock2.getRelative(BlockFace.NORTH_EAST))) {
+								waterBlocks.add(waterBlock2.getRelative(BlockFace.NORTH_EAST));
+							}
+							if (!waterBlocks.contains(waterBlock2.getRelative(BlockFace.NORTH_WEST))) {
+								waterBlocks.add(waterBlock2.getRelative(BlockFace.NORTH_WEST));
+							}
+							if (!waterBlocks.contains(waterBlock2.getRelative(BlockFace.SOUTH_EAST))) {
+								waterBlocks.add(waterBlock2.getRelative(BlockFace.SOUTH_EAST));
+							}
+							if (!waterBlocks.contains(waterBlock2.getRelative(BlockFace.SOUTH_WEST))) {
+								waterBlocks.add(waterBlock2.getRelative(BlockFace.SOUTH_WEST));
+							}
+								
+							//INBETWEEN
+							
+							if (!waterBlocks.contains(waterBlock3))  {
+								waterBlocks.add(waterBlock3);
+							}
+							if (!waterBlocks.contains(waterBlock3.getRelative(BlockFace.NORTH))) {
+								waterBlocks.add(waterBlock3.getRelative(BlockFace.NORTH));
+							}
+							if (!waterBlocks.contains(waterBlock3.getRelative(BlockFace.EAST))) {
+								waterBlocks.add(waterBlock3.getRelative(BlockFace.EAST));
+							}
+							if (!waterBlocks.contains(waterBlock3.getRelative(BlockFace.WEST))) {
+								waterBlocks.add(waterBlock3.getRelative(BlockFace.WEST));
+							}
+							if (!waterBlocks.contains(waterBlock3.getRelative(BlockFace.SOUTH))) {
+								waterBlocks.add(waterBlock3.getRelative(BlockFace.SOUTH));
+							}
+							if (!waterBlocks.contains(waterBlock3.getRelative(BlockFace.NORTH_EAST))) {
+								waterBlocks.add(waterBlock3.getRelative(BlockFace.NORTH_EAST));
+							}
+							if (!waterBlocks.contains(waterBlock3.getRelative(BlockFace.NORTH_WEST))) {
+								waterBlocks.add(waterBlock3.getRelative(BlockFace.NORTH_WEST));
+							}
+							if (!waterBlocks.contains(waterBlock3.getRelative(BlockFace.SOUTH_EAST))) {
+								waterBlocks.add(waterBlock3.getRelative(BlockFace.SOUTH_EAST));
+							}
+							if (!waterBlocks.contains(waterBlock3.getRelative(BlockFace.SOUTH_WEST))) {
+								waterBlocks.add(waterBlock3.getRelative(BlockFace.SOUTH_WEST));
+							}
+								
+							//INBETWEEN
+							
+							if (!waterBlocks.contains(waterBlock4))  {
+								waterBlocks.add(waterBlock4);
+							}
+							if (!waterBlocks.contains(waterBlock4.getRelative(BlockFace.NORTH))) {
+								waterBlocks.add(waterBlock4.getRelative(BlockFace.NORTH));
+							}
+							if (!waterBlocks.contains(waterBlock4.getRelative(BlockFace.EAST))) {
+								waterBlocks.add(waterBlock4.getRelative(BlockFace.EAST));
+							}
+							if (!waterBlocks.contains(waterBlock4.getRelative(BlockFace.WEST))) {
+								waterBlocks.add(waterBlock4.getRelative(BlockFace.WEST));
+							}
+							if (!waterBlocks.contains(waterBlock4.getRelative(BlockFace.SOUTH))) {
+								waterBlocks.add(waterBlock4.getRelative(BlockFace.SOUTH));
+							}
+							if (!waterBlocks.contains(waterBlock4.getRelative(BlockFace.NORTH_EAST))) {
+								waterBlocks.add(waterBlock4.getRelative(BlockFace.NORTH_EAST));
+							}
+							if (!waterBlocks.contains(waterBlock4.getRelative(BlockFace.NORTH_WEST))) {
+								waterBlocks.add(waterBlock4.getRelative(BlockFace.NORTH_WEST));
+							}
+							if (!waterBlocks.contains(waterBlock4.getRelative(BlockFace.SOUTH_EAST))) {
+								waterBlocks.add(waterBlock4.getRelative(BlockFace.SOUTH_EAST));
+							}
+							if (!waterBlocks.contains(waterBlock4.getRelative(BlockFace.SOUTH_WEST))) {
+								waterBlocks.add(waterBlock4.getRelative(BlockFace.SOUTH_WEST));
+							}
+								
+							SQTechPumps.tankWaterBlocks.put(machine, waterBlocks);
 
 							for (Fluid f : SQTechBase.fluids) {
 

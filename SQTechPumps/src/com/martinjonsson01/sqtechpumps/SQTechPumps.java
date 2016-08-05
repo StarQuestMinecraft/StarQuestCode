@@ -4,10 +4,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.logging.Level;
-
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
@@ -32,21 +29,21 @@ public class SQTechPumps extends JavaPlugin {
 	
 	public static HashMap<Machine, List<Block>> waterBlocks = new HashMap<Machine, List<Block>>();
 	
-	public static List<Block> tankWaterBlocks = new ArrayList<Block>();
-	
-	//public static HashMap<Machine, ArrayList<Block>> resumeWaterBlocks = new HashMap<Machine, ArrayList<Block>>();
+	public static HashMap<Machine, List<Block>> tankWaterBlocks = new HashMap<Machine, List<Block>>();
 	
 	public static List<Machine> smallTanks = new ArrayList<Machine>();
-	
-	public static HashMap<List<Block>, Machine> smallTankLapisBlocks = new HashMap<List<Block>, Machine>();
 	
 	public static HashMap<Machine, Player> machinePlayerMap = new HashMap<Machine, Player>();
 	
 	public static HashMap<Machine, Integer> machineLiquidTypeIdMap = new HashMap<Machine, Integer>();
 	
+	public static HashMap<Machine, Boolean> machineExtendingMap = new HashMap<Machine, Boolean>();
+	
 	public static HashMap<Inventory, Machine> inventoryMap = new HashMap<Inventory, Machine>();
 	
-	public static HashMap<Player, Long> lastClick = new HashMap<Player, Long>();
+	public static HashMap<Machine, Long> lastClick = new HashMap<Machine, Long>();
+	
+	public static HashMap<Machine, Block> waterBlockMap = new HashMap<Machine, Block>();
 	
 	@Override
 	public void onEnable() {
@@ -69,7 +66,7 @@ public class SQTechPumps extends JavaPlugin {
 		SQTechBase.addMachineType(new MediumTank(0));
 		SQTechBase.addMachineType(new LargeTank(0));
 		
-		for (Machine m : SQTechBase.machines) {
+		/*for (Machine m : SQTechBase.machines) {
 			
 			if (m.getMachineType().getName().equals("Small Tank")) {
 				
@@ -82,31 +79,35 @@ public class SQTechPumps extends JavaPlugin {
 				
 			} else if (m.getMachineType().getName().equals("Large Tank")) {
 				
-				//LargeTank.updatePhysicalLiquid(m);
+				LargeTank.updatePhysicalLiquid(m);
 				
 			}
 			
-		}
+		}*/
 		
 	}
 	
 	@Override
 	public void onDisable() {
 		
-		for (Block b : SQTechPumps.tankWaterBlocks) {
+		/*for (Machine m : SQTechPumps.tankWaterBlocks.keySet()) {
 			
-			if (b != null) {
+			for (Block b : SQTechPumps.tankWaterBlocks.get(m)) {
 				
-				if (b.getType() != Material.AIR) {
+				if (b != null) {
 					
-					Bukkit.getLogger().log(Level.INFO, "[SQTechPumps] Removed liquid in tank at location: " + b.getLocation());
-					b.setType(Material.AIR);
+					if (b.getType() != Material.AIR) {
+						
+						Bukkit.getLogger().log(Level.INFO, "[SQTechPumps] Removed liquid in tank at location: " + b.getLocation());
+						b.setType(Material.AIR);
+						
+					}
 					
 				}
 				
 			}
 			
-		}
+		}*/
 		
 		for (Machine m : SQTechPumps.pumpingList) {
 			

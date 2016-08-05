@@ -1,7 +1,7 @@
 name: SQTechPumps
 main: com.martinjonsson01.sqtechpumps.SQTechPumps
-version: 1.0.2
-description: Pumps that pump liquids!
+version: 1.0.9
+description: Pumps that pump liquids and tanks that store liquids!
 depend: [SQTechBase]
 commands:
       

@@ -1,12 +1,12 @@
 package com.martinjonsson01.sqtechpumps.tasks;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.logging.Level;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -33,7 +33,7 @@ public class DetectionTask extends BukkitRunnable{
 	public void run() {
 
 		ArrayList<Block> found = new ArrayList<Block>();
-		ArrayList<Block> aboveFound = new ArrayList<Block>();
+		//ArrayList<Block> aboveFound = new ArrayList<Block>();
 		ArrayList<Block> search_blocks = new ArrayList<Block>();
 
 		found.add(waterBlock);
@@ -62,35 +62,35 @@ public class DetectionTask extends BukkitRunnable{
 					ArrayList<Block> to_search = new ArrayList<Block>();
 
 					/*if (to_search.size() >= 200 || found.size() >= 200 || search_blocks.size() >= 200) {
-					
+
 						break;
-					
+
 					}*/
 
 					for (Block b2 : search_blocks) {
-						
+
 						if (Math.abs(b2.getLocation().getX() - machine.getGUIBlock().getLocation().getX()) > 10 ||
 								Math.abs(b2.getLocation().getZ() - machine.getGUIBlock().getLocation().getZ()) > 10) {
-							
+
 							continue;
-							
+
 						}
-						
+
 						/*if (b2.getLocation().distance(machine.getGUIBlock().getLocation()) > 10) {
-							
+
 							continue;
-							
+
 						}*/
-						
-						if (b2.getRelative(BlockFace.UP).getType() == Material.WATER ||
+
+						/*if (b2.getRelative(BlockFace.UP).getType() == Material.WATER ||
 								b2.getRelative(BlockFace.UP).getType() == Material.STATIONARY_WATER ||
 								b2.getRelative(BlockFace.UP).getType() == Material.LAVA ||
 								b2.getRelative(BlockFace.UP).getType() == Material.STATIONARY_LAVA) {
 
 							aboveFound.add(b2.getRelative(BlockFace.UP));
 
-						}
-						
+						}*/
+
 						found.add(b2);
 						ArrayList<Block> fetched = Pump.getSurrounding(b2);
 						for (Block b3 : fetched) {
@@ -118,31 +118,48 @@ public class DetectionTask extends BukkitRunnable{
 
 				}
 
-				/*for (Block b3 : found) {
+				Iterator<Block> it = found.iterator();
 
-					int i = 256;
-					while (i > 0) {
+				while (it.hasNext()) {
 
-						if (b3.getWorld().getBlockAt(b3.getX(), i, b3.getZ()).getType() == b3.getType()) {
+					Block b3 = it.next();
 
-							new DetectionTask(b3.getWorld().getBlockAt(b3.getX(), i, b3.getZ()), machine, owner);
-							return;
+					if (!(b3.getType() == Material.WATER || b3.getType() == Material.STATIONARY_WATER ||
+							b3.getType() == Material.LAVA || b3.getType() == Material.STATIONARY_LAVA)) {
 
-						}
+						it.remove();
 
-
-						i--;
 					}
 
-				}*/
+				}
+				
+				int liquidAmount = 0;
+				
+				for (Block b4 : found) {
 
-				if (!aboveFound.isEmpty()) {
+					if (b4.getType() == Material.WATER || b4.getType() == Material.STATIONARY_WATER ||
+							b4.getType() == Material.LAVA || b4.getType() == Material.STATIONARY_LAVA) {
+						
+						liquidAmount++;
+						
+					}
+
+				}
+				
+				if (liquidAmount < 1) {
+					
+					Pump.startPumping(machine, owner);
+					return;
+					
+				}
+				
+				/*if (!aboveFound.isEmpty()) {
 
 					Pump.pump(aboveFound, machine, owner);
 					Bukkit.getLogger().log(Level.INFO, "[SQTechPump] Found: " + (aboveFound.size()-1) + " water blocks from origin: " + waterBlock);
 					return;
 
-				}
+				}*/
 
 				Pump.pump(found, machine, owner);
 				Bukkit.getLogger().log(Level.INFO, "[SQTechPump] Found: " + (found.size()-1) + " water blocks from origin: " + waterBlock);

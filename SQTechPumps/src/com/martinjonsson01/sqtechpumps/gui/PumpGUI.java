@@ -183,14 +183,25 @@ public class PumpGUI extends GUI{
 				Machine machine = ObjectUtils.getMachineFromMachineGUI(this);
 				if (event.getSlot() == 0) {
 					
-					if (SQTechPumps.lastClick.containsKey(owner)) {
+					if (SQTechPumps.lastClick.containsKey(machine)) {
 						if (System.currentTimeMillis() - SQTechPumps.lastClick.get(owner) < 3000) {
 							owner.sendMessage(ChatColor.RED + "Don't spam the button. Please wait at least 3 seconds.");
 							return;
 						}
 					}
 					
-					SQTechPumps.lastClick.put(owner, System.currentTimeMillis());
+					if (SQTechPumps.machineExtendingMap.get(machine) != null) {
+						
+						if (SQTechPumps.machineExtendingMap.get(machine) == true) {
+							
+							owner.sendMessage(ChatColor.RED + "The tube of the pump is currently extending, please wait.");
+							return;
+							
+						}
+						
+					}
+					
+					SQTechPumps.lastClick.put(machine, System.currentTimeMillis());
 					
 					if (SQTechPumps.pumpingList.contains(machine)) {
 
@@ -217,6 +228,8 @@ public class PumpGUI extends GUI{
 							SQTechPumps.pumpingList.add(machine);
 							Pump.startPumping(machine, owner);
 							machine.setEnergy(machine.getEnergy() - SQTechPumps.config.getInt("activate energy consumption"));
+						} else {
+							owner.sendMessage(ChatColor.RED + "The pump needs at least " + SQTechPumps.config.getInt("activate energy consumption") + " energy to start pumping.");
 						}
 
 					}

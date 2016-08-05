@@ -1,19 +1,12 @@
 package com.martinjonsson01.sqtechpumps;
 
-import java.util.List;
-
 import org.bukkit.Material;
-import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockFromToEvent;
 import org.bukkit.event.block.BlockPhysicsEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.inventory.EquipmentSlot;
-
 import com.starquestminecraft.sqtechbase.SQTechBase;
 import com.starquestminecraft.sqtechbase.objects.Fluid;
 import com.starquestminecraft.sqtechbase.objects.Machine;
@@ -45,36 +38,15 @@ public class Events implements Listener{
 	@EventHandler
 	public void onTankWaterDisappear(BlockPhysicsEvent e) {
 		
-		if (SQTechPumps.tankWaterBlocks != null) {
+		if (e.getChangedType() == Material.SAND) return;
+		
+		if (e.getChangedType() == Material.GRAVEL) return;
+		
+		for (Machine m : SQTechPumps.tankWaterBlocks.keySet()) {
 			
-			if (SQTechPumps.tankWaterBlocks.contains(e.getBlock())) {
+			if (SQTechPumps.tankWaterBlocks.get(m).contains(e.getBlock())) {
 				
 				e.setCancelled(true);
-				
-			}
-			
-		}
-		
-	}
-	
-	@EventHandler
-	public void onPlayerInteract(PlayerInteractEvent e) {
-		
-		if (e.getAction() != Action.RIGHT_CLICK_BLOCK) return;
-		
-		if (e.getHand() == EquipmentSlot.OFF_HAND) return;
-		
-		if (e.getClickedBlock().getType() != Material.LAPIS_BLOCK) return;
-		
-		for (List<Block> list : SQTechPumps.smallTankLapisBlocks.keySet()) {
-			
-			if (list.contains(e.getClickedBlock())) {
-				
-				Machine m = SQTechPumps.smallTankLapisBlocks.get(list);
-				
-				if (m.enabled) {
-					//m.getGUI().open(e.getPlayer());
-				}
 				
 			}
 			

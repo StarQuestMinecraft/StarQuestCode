@@ -1,10 +1,13 @@
 package com.martinjonsson01.sqtechpumps.gui;
 
+import java.util.Iterator;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.World;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -180,6 +183,23 @@ public class LargeTankGUI extends GUI{
 							w.playSound(machine.getGUIBlock().getLocation(), Sound.BLOCK_FIRE_EXTINGUISH, 1, 1);
 							w.spawnParticle(Particle.SMOKE_LARGE, machine.getGUIBlock().getLocation(), 100, 1, 1, 1);
 							machine.setLiquid(f, 0);
+							
+							if (SQTechPumps.tankWaterBlocks.get(machine) != null) {
+								
+								Iterator<Block> it = SQTechPumps.tankWaterBlocks.get(machine).iterator();
+								while (it.hasNext()) {
+									
+									Block b = it.next();
+									
+									b.setType(Material.AIR);
+									
+									it.remove();
+									
+								}
+								
+							}
+							
+							event.getWhoClicked().closeInventory();
 
 						}
 

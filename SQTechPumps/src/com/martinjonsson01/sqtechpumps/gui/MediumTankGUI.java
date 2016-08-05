@@ -1,12 +1,13 @@
 package com.martinjonsson01.sqtechpumps.gui;
 
+import java.util.Iterator;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -14,7 +15,6 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 import com.martinjonsson01.sqtechpumps.SQTechPumps;
-import com.martinjonsson01.sqtechpumps.objects.MediumTank;
 import com.starquestminecraft.sqtechbase.SQTechBase;
 import com.starquestminecraft.sqtechbase.gui.GUI;
 import com.starquestminecraft.sqtechbase.objects.Fluid;
@@ -25,48 +25,48 @@ import com.starquestminecraft.sqtechbase.util.ObjectUtils;
 import net.md_5.bungee.api.ChatColor;
 
 public class MediumTankGUI extends GUI{
-	
-	
+
+
 	public MediumTankGUI(Player player, int id) {
 		super(player, id);
 	}
 
 	@Override
 	public void open() {
-		
+
 		Inventory gui = Bukkit.createInventory(owner, 27, ChatColor.BLUE + "SQTech - Medium Tank");
 
 		Machine machine = ObjectUtils.getMachineFromMachineGUI(this);
 
 		//Needed for SQTechPumps.java @ line 61
 		SQTechPumps.machinePlayerMap.put(machine, owner);
-		
+
 		Boolean firstOpen = true;
-		
+
 		Fluid fluid = null;
-		
+
 		for (Fluid f : SQTechBase.fluids) {
 			if (machine.getMaxLiquid(f) > 0) {
 				firstOpen = false;
 				fluid = f;
 			}
 		}
-		
+
 		if (firstOpen) {
 			MediumTankTypeGUI tankTypeGUI = new MediumTankTypeGUI(machine, owner);
 			tankTypeGUI.open();
 			return;
 		}
-		
+
 		//Energy button
 		int amount = 0;
 		String name = "none";
-		
+
 		if (fluid != null) {
 			amount = machine.getLiquid(fluid);
 			name = fluid.name;
 		}
-		
+
 		String[] energyLore = new String[] {
 				ChatColor.DARK_PURPLE + "Energy: Tanks do not require energy.",
 				ChatColor.RED + "" + ChatColor.MAGIC + "Contraband"
@@ -177,57 +177,28 @@ public class MediumTankGUI extends GUI{
 					for (Fluid f : SQTechBase.fluids) {
 
 						if (machine.getLiquid(f) > 0) {
-							
-							Block waterBlock = MediumTank.getMiddleBlock(machine.getGUIBlock());
-							Block waterBlock2 = waterBlock.getRelative(BlockFace.UP);
-							Block waterBlock3 = waterBlock2.getRelative(BlockFace.UP);
-							Block waterBlock4 = waterBlock3.getRelative(BlockFace.UP);
+
 							World w = machine.getGUIBlock().getLocation().getWorld();
-							
+
 							w.playSound(machine.getGUIBlock().getLocation(), Sound.BLOCK_FIRE_EXTINGUISH, 1, 1);
 							w.spawnParticle(Particle.SMOKE_LARGE, machine.getGUIBlock().getLocation(), 100, 1, 1, 1);
 							machine.setLiquid(f, 0);
-							
-							waterBlock.setType(Material.AIR);
-							waterBlock.getRelative(BlockFace.NORTH).setType(Material.AIR);
-							waterBlock.getRelative(BlockFace.EAST).setType(Material.AIR);
-							waterBlock.getRelative(BlockFace.WEST).setType(Material.AIR);
-							waterBlock.getRelative(BlockFace.SOUTH).setType(Material.AIR);
-							waterBlock.getRelative(BlockFace.NORTH_EAST).setType(Material.AIR);
-							waterBlock.getRelative(BlockFace.NORTH_WEST).setType(Material.AIR);
-							waterBlock.getRelative(BlockFace.SOUTH_EAST).setType(Material.AIR);
-							waterBlock.getRelative(BlockFace.SOUTH_WEST).setType(Material.AIR);
-							
-							waterBlock2.setType(Material.AIR);
-							waterBlock2.getRelative(BlockFace.NORTH).setType(Material.AIR);
-							waterBlock2.getRelative(BlockFace.EAST).setType(Material.AIR);
-							waterBlock2.getRelative(BlockFace.WEST).setType(Material.AIR);
-							waterBlock2.getRelative(BlockFace.SOUTH).setType(Material.AIR);
-							waterBlock2.getRelative(BlockFace.NORTH_EAST).setType(Material.AIR);
-							waterBlock2.getRelative(BlockFace.NORTH_WEST).setType(Material.AIR);
-							waterBlock2.getRelative(BlockFace.SOUTH_EAST).setType(Material.AIR);
-							waterBlock2.getRelative(BlockFace.SOUTH_WEST).setType(Material.AIR);
-							
-							waterBlock3.setType(Material.AIR);
-							waterBlock3.getRelative(BlockFace.NORTH).setType(Material.AIR);
-							waterBlock3.getRelative(BlockFace.EAST).setType(Material.AIR);
-							waterBlock3.getRelative(BlockFace.WEST).setType(Material.AIR);
-							waterBlock3.getRelative(BlockFace.SOUTH).setType(Material.AIR);
-							waterBlock3.getRelative(BlockFace.NORTH_EAST).setType(Material.AIR);
-							waterBlock3.getRelative(BlockFace.NORTH_WEST).setType(Material.AIR);
-							waterBlock3.getRelative(BlockFace.SOUTH_EAST).setType(Material.AIR);
-							waterBlock3.getRelative(BlockFace.SOUTH_WEST).setType(Material.AIR);
-							
-							waterBlock4.setType(Material.AIR);
-							waterBlock4.getRelative(BlockFace.NORTH).setType(Material.AIR);
-							waterBlock4.getRelative(BlockFace.EAST).setType(Material.AIR);
-							waterBlock4.getRelative(BlockFace.WEST).setType(Material.AIR);
-							waterBlock4.getRelative(BlockFace.SOUTH).setType(Material.AIR);
-							waterBlock4.getRelative(BlockFace.NORTH_EAST).setType(Material.AIR);
-							waterBlock4.getRelative(BlockFace.NORTH_WEST).setType(Material.AIR);
-							waterBlock4.getRelative(BlockFace.SOUTH_EAST).setType(Material.AIR);
-							waterBlock4.getRelative(BlockFace.SOUTH_WEST).setType(Material.AIR);
-							
+
+							if (SQTechPumps.tankWaterBlocks.get(machine) != null) {
+
+								Iterator<Block> it = SQTechPumps.tankWaterBlocks.get(machine).iterator();
+								while (it.hasNext()) {
+
+									Block b = it.next();
+
+									b.setType(Material.AIR);
+
+									it.remove();
+
+								}
+
+							}
+
 							event.getWhoClicked().closeInventory();
 
 						}
@@ -235,68 +206,68 @@ public class MediumTankGUI extends GUI{
 					}
 
 				} else if (event.getSlot() == 13) {
-					
+
 					if (event.getClickedInventory().getItem(event.getSlot()) == null) return;
 
 					//Check if the item is a bucket
 					if (event.getClickedInventory().getItem(event.getSlot()).getType().equals(Material.BUCKET)) {
-						
+
 						for (Fluid f : SQTechBase.fluids) {
-							
+
 							//If there is 1000 of a liquid in the tank
 							if (machine.getLiquid(f) >= 1000) {
-								
+
 								//Fill up the bucket
 								event.getClickedInventory().getItem(event.getSlot()).setType(f.material);
 								//Take out one buckets worth of liquid
 								machine.setLiquid(f, machine.getLiquid(f) - 1000);
-								
+
 							}
-							
+
 						}
 
 					} else if (event.getClickedInventory().getItem(event.getSlot()).getType().equals(Material.WATER_BUCKET)) {
-						
+
 						for (Fluid f : SQTechBase.fluids) {
 							//If f is the fluid 'Water'
 							if (f.name.equals("Water")) {
 								//Check if machine can store 'Water'
 								if (machine.getMaxLiquid(f) > 0) {
-									
+
 									//Empty bucket
 									event.getClickedInventory().getItem(event.getSlot()).setType(Material.BUCKET);
 									//Put bucket contents into tank
 									machine.setLiquid(f, machine.getLiquid(f) + 1000);
-									
+
 								}
-								
+
 							}
-							
+
 						}
-						
+
 					} else if (event.getClickedInventory().getItem(event.getSlot()).getType().equals(Material.LAVA_BUCKET)) {
-						
+
 						for (Fluid f : SQTechBase.fluids) {
 							//If f is the fluid 'Lava'
 							if (f.name.equals("Lava")) {
 								//Check if machine can store 'Lava'
 								if (machine.getMaxLiquid(f) > 0) {
-									
+
 									//Empty bucket
 									event.getClickedInventory().getItem(event.getSlot()).setType(Material.BUCKET);
 									//Put bucket contents into tank
 									machine.setLiquid(f, machine.getLiquid(f) + 1000);
-									
+
 								}
-								
+
 							}
-							
+
 						}
-						
+
 					}
-					
+
 				} else if (event.getSlot() == 26) {
-					
+
 					machine.getGUIBlock().getGUI(owner).open();
 
 				}
@@ -304,7 +275,7 @@ public class MediumTankGUI extends GUI{
 			}  else {
 
 				if (event.getAction().equals(InventoryAction.MOVE_TO_OTHER_INVENTORY)) {
-					
+
 					event.setCancelled(true);
 
 				}
@@ -314,5 +285,5 @@ public class MediumTankGUI extends GUI{
 		}
 
 	}
-	
+
 }
