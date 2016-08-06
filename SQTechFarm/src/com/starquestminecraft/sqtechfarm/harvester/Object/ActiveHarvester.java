@@ -168,6 +168,7 @@ public class ActiveHarvester
 			@Override
 			public void run()
 			{
+				machine.data.put("blocked", true);
 				Integer headPos = harvester.getHarvesterHeadLocation(farmHead.getBlock(), forward, farmHeadSupport);
 
 				if (headPos == null || headPos == 1)
@@ -187,7 +188,7 @@ public class ActiveHarvester
 
 				Location newLoc = farmHead.getBlock().getRelative(right).getLocation();
 				farmHead.changeLoc(newLoc);
-				machine.data.put("blocked", false);
+				stop();
 			}
 			
 			@Override
@@ -227,6 +228,7 @@ public class ActiveHarvester
 				
 				if(manager.moveRow(direction, anchorSupports, guiBlock, forward) == false)
 				{
+					stop();
 					cancel();
 					return;
 				}

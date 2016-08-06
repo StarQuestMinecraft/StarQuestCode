@@ -62,6 +62,16 @@ public class HarvesterManagerTask extends BukkitRunnable
 						|| (rowPosition % 2 == 0 && headPosition == activeHarvester.farmHeadSupport.size())) // detect if head is at end
 					headAtEnd = true;
 				
+				if(!activeHarvester.toPlant())
+				{
+					if (!plugin.isActive(machine))
+					{
+						activeHarvester.stop();
+						continue;
+					}
+					activeHarvester.farm();
+				}
+				
 				if (rowPosition == activeHarvester.anchorSupports.size() && headAtEnd) // row is at end, move back to start then stop machine
 				{
 					if (!plugin.isActive(machine))
@@ -73,16 +83,6 @@ public class HarvesterManagerTask extends BukkitRunnable
 					this.queueInactive.add(machine);
 					plugin.setInactive(machine);
 					continue;
-				}
-				
-				if(!activeHarvester.toPlant())
-				{
-					if (!plugin.isActive(machine))
-					{
-						activeHarvester.stop();
-						continue;
-					}
-					activeHarvester.farm();
 				}
 				
 				if(!machine.detectStructure() || !plugin.isActive(machine))
