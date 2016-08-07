@@ -72,6 +72,7 @@ public class ActiveHarvester
 
 		if (farmableBlock.isEmpty()) // its air
 		{
+			boolean planted = false;
 			Block soilBlock = farmableBlock.getRelative(BlockFace.DOWN);
 			
 			if (soilBlock.getType() == Material.SOUL_SAND) // for nether warts
@@ -80,6 +81,7 @@ public class ActiveHarvester
 				{
 					farmableBlock.setType(Material.NETHER_WARTS, false);
 					chest.getInventory().removeItem(new ItemStack(Material.NETHER_STALK, 1));
+					planted = true;
 				}
 			}
 			else if(soilBlock.getType() == Material.SOIL)
@@ -93,9 +95,21 @@ public class ActiveHarvester
 					{
 						farmableBlock.setType(farmable.material(), false);
 						chest.getInventory().removeItem(new ItemStack(farmable.seed(), 1));
+						planted = true;
 						break;
 					}
 				}
+			}
+			
+			if(planted == true)
+			{
+				if(machine.getEnergy() < plugin.getSettings().getHarvesterPlantingEnergy())
+				{
+					plugin.setInactive(machine);
+					return false;
+				}
+			
+				machine.setEnergy(machine.getEnergy() - plugin.getSettings().getHarvesterPlantingEnergy());
 			}
 			
 			return true;
@@ -120,6 +134,14 @@ public class ActiveHarvester
 
 		if (farmBlock == true)
 		{
+			if(machine.getEnergy() < plugin.getSettings().getHarvesterHarvestingEnergy())
+			{
+				plugin.setInactive(machine);
+				return;
+			}
+		
+			machine.setEnergy(machine.getEnergy() - plugin.getSettings().getHarvesterHarvestingEnergy());
+			
 			new BukkitRunnable()
 			{
 				@Override
@@ -168,6 +190,7 @@ public class ActiveHarvester
 			@Override
 			public void run()
 			{
+				machine.data.put("blocked", true);
 				Integer headPos = harvester.getHarvesterHeadLocation(farmHead.getBlock(), forward, farmHeadSupport);
 
 				if (headPos == null || headPos == 1)
@@ -187,7 +210,7 @@ public class ActiveHarvester
 
 				Location newLoc = farmHead.getBlock().getRelative(right).getLocation();
 				farmHead.changeLoc(newLoc);
-				machine.data.put("blocked", false);
+				stop();
 			}
 			
 			@Override
@@ -227,6 +250,7 @@ public class ActiveHarvester
 				
 				if(manager.moveRow(direction, anchorSupports, guiBlock, forward) == false)
 				{
+					stop();
 					cancel();
 					return;
 				}

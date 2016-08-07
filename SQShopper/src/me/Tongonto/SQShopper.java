@@ -214,7 +214,7 @@ public class SQShopper extends JavaPlugin {
 			SQNetEvents.getInstance().send(packet, "s1");
 			*/
 			Player player = this.getServer().getPlayer(sender.getName());
-			ItemStack itemInHand = player.getItemInHand();
+			ItemStack itemInHand = player.getInventory().getItemInMainHand();
 			boolean isCharcoal = false;
 			boolean isDye = false;
 			if(itemInHand != null){
@@ -227,22 +227,22 @@ public class SQShopper extends JavaPlugin {
 				if(itemInHand.getType().equals(Material.INK_SACK) && itemInHand.getDurability() == 3) {
 					isDye = false;
 				}
-			if(!isDye) {
-				if(shopItemList.containsKey(itemInHand.getType())) {
-					if(itemInHand.getType().equals(Material.INK_SACK) && itemInHand.getDurability() == 4) {
-						player.sendMessage("Value of Lapis Lazuli : " + shopItemList.get(itemInHand.getType()).getCurrentPrice());
-						return true;
-					}
-					else if(itemInHand.getType().equals(Material.INK_SACK) && itemInHand.getDurability() == 3) {
-						player.sendMessage("Value of Cocoa Beans : " + shopItemList.get(Material.BOAT_SPRUCE).getCurrentPrice());
-						return true;
-					}
-					else {
-						player.sendMessage("Value of " + itemInHand.getType().toString() + " : " + shopItemList.get(itemInHand.getType()).getCurrentPrice());
-						return true;
+				if(!isDye) {
+					if(shopItemList.containsKey(itemInHand.getType())) {
+						if(itemInHand.getType().equals(Material.INK_SACK) && itemInHand.getDurability() == 4) {
+							player.sendMessage("Value of Lapis Lazuli : " + shopItemList.get(itemInHand.getType()).getCurrentPrice());
+							return true;
+						}
+						else if(itemInHand.getType().equals(Material.INK_SACK) && itemInHand.getDurability() == 3) {
+							player.sendMessage("Value of Cocoa Beans : " + shopItemList.get(Material.BOAT_SPRUCE).getCurrentPrice());
+							return true;
+						}
+						else {
+							player.sendMessage("Value of " + itemInHand.getType().toString() + " : " + shopItemList.get(itemInHand.getType()).getCurrentPrice());
+							return true;
+						}
 					}
 				}
-			}
 				player.sendMessage("That item is not sellable!");
 			}
 			
