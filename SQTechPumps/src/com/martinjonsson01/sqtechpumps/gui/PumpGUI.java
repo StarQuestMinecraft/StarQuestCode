@@ -184,7 +184,7 @@ public class PumpGUI extends GUI{
 				if (event.getSlot() == 0) {
 					
 					if (SQTechPumps.lastClick.containsKey(machine)) {
-						if (System.currentTimeMillis() - SQTechPumps.lastClick.get(owner) < 3000) {
+						if (System.currentTimeMillis() - SQTechPumps.lastClick.get(machine) < 3000) {
 							owner.sendMessage(ChatColor.RED + "Don't spam the button. Please wait at least 3 seconds.");
 							return;
 						}
@@ -228,6 +228,8 @@ public class PumpGUI extends GUI{
 							SQTechPumps.pumpingList.add(machine);
 							Pump.startPumping(machine, owner);
 							machine.setEnergy(machine.getEnergy() - SQTechPumps.config.getInt("activate energy consumption"));
+							event.getWhoClicked().sendMessage(ChatColor.GREEN + "Successfully enabled pump.");
+							event.getWhoClicked().closeInventory();
 						} else {
 							owner.sendMessage(ChatColor.RED + "The pump needs at least " + SQTechPumps.config.getInt("activate energy consumption") + " energy to start pumping.");
 						}

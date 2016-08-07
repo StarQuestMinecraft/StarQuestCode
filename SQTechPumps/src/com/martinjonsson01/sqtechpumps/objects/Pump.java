@@ -200,10 +200,10 @@ public class Pump extends MachineType {
 
 				}
 
-				if (next.getType() == Material.WATER ||
+				/*if (next.getType() == Material.WATER ||
 						next.getType() == Material.STATIONARY_WATER ||
 						next.getType() == Material.STATIONARY_LAVA ||
-						next.getType() == Material.LAVA) {
+						next.getType() == Material.LAVA) {*/
 
 					//waterBlock = next.getRelative(BlockFace.DOWN);
 
@@ -244,7 +244,7 @@ public class Pump extends MachineType {
 
 					}
 
-				}
+				//}
 
 			}
 			

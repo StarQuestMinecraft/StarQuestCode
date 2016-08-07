@@ -200,6 +200,7 @@ public class PumpTask extends BukkitRunnable{
 						if (f.name == type) {
 
 							machine.maxLiquid.put(f, SQTechPumps.config.getInt("max liquid"));
+							machine.liquidExports.add(f);
 							machine.liquid.put(f, 0);
 
 							if (machine.getLiquid(f) >= SQTechPumps.config.getInt("max liquid")) {

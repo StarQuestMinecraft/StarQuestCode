@@ -68,6 +68,7 @@ public class Events implements Listener{
 				for (Fluid f : SQTechBase.fluids) {
 					if (f.name.equals("Lava")) {
 						machine.maxLiquid.put(f, SQTechPumps.config.getInt("small tank max liquid"));
+						machine.liquidImports.add(f);
 						e.getWhoClicked().closeInventory();
 						machine.getGUI((Player) e.getWhoClicked()).open();
 					}
@@ -78,6 +79,7 @@ public class Events implements Listener{
 				for (Fluid f : SQTechBase.fluids) {
 					if (f.name.equals("Water")) {
 						machine.maxLiquid.put(f, SQTechPumps.config.getInt("small tank max liquid"));
+						machine.liquidImports.add(f);
 						e.getWhoClicked().closeInventory();
 						machine.getGUI((Player) e.getWhoClicked()).open();
 					}
@@ -96,6 +98,7 @@ public class Events implements Listener{
 				for (Fluid f : SQTechBase.fluids) {
 					if (f.name.equals("Lava")) {
 						machine.maxLiquid.put(f, SQTechPumps.config.getInt("medium tank max liquid"));
+						machine.liquidImports.add(f);
 						e.getWhoClicked().closeInventory();
 						machine.getGUI((Player) e.getWhoClicked()).open();
 					}
@@ -106,6 +109,7 @@ public class Events implements Listener{
 				for (Fluid f : SQTechBase.fluids) {
 					if (f.name.equals("Water")) {
 						machine.maxLiquid.put(f, SQTechPumps.config.getInt("medium tank max liquid"));
+						machine.liquidImports.add(f);
 						e.getWhoClicked().closeInventory();
 						machine.getGUI((Player) e.getWhoClicked()).open();
 					}
@@ -124,6 +128,7 @@ public class Events implements Listener{
 				for (Fluid f : SQTechBase.fluids) {
 					if (f.name.equals("Lava")) {
 						machine.maxLiquid.put(f, SQTechPumps.config.getInt("large tank max liquid"));
+						machine.liquidImports.add(f);
 						e.getWhoClicked().closeInventory();
 						machine.getGUI((Player) e.getWhoClicked()).open();
 					}
@@ -134,6 +139,7 @@ public class Events implements Listener{
 				for (Fluid f : SQTechBase.fluids) {
 					if (f.name.equals("Water")) {
 						machine.maxLiquid.put(f, SQTechPumps.config.getInt("large tank max liquid"));
+						machine.liquidImports.add(f);
 						e.getWhoClicked().closeInventory();
 						machine.getGUI((Player) e.getWhoClicked()).open();
 					}
