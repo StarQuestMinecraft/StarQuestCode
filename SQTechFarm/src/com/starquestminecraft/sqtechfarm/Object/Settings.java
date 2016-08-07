@@ -19,6 +19,16 @@ public class Settings
 		return config.getInt("harvester.max energy");
 	}
 	
+	public int getHarvesterPlantingEnergy()
+	{
+		return config.getInt("harvester.energy usage.energy consumption.planting");
+	}
+	
+	public int getHarvesterHarvestingEnergy()
+	{
+		return config.getInt("harvester.energy usage.energy consumption.harvesting");
+	}
+	
 	public int getHarvesterSizeSmall()
 	{
 		return config.getInt("harvester.size.small");

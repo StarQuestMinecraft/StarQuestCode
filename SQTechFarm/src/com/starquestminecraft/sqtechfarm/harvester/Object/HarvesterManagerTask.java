@@ -35,7 +35,7 @@ public class HarvesterManagerTask extends BukkitRunnable
 	{
 		for(Machine machine : queueInactive)
 		{
-			this.activeHarvesters.remove(machine);
+			plugin.stopHarvester(machine);
 		}
 		queueInactive.clear();
 		
@@ -66,10 +66,15 @@ public class HarvesterManagerTask extends BukkitRunnable
 				{
 					if (!plugin.isActive(machine))
 					{
-						activeHarvester.stop();
+						this.queueInactive.add(machine);
 						continue;
 					}
 					activeHarvester.farm();
+					if (!plugin.isActive(machine))
+					{
+						this.queueInactive.add(machine);
+						continue;
+					}
 				}
 				
 				if (rowPosition == activeHarvester.anchorSupports.size() && headAtEnd) // row is at end, move back to start then stop machine
