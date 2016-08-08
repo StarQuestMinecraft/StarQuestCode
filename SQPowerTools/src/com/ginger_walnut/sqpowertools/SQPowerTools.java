@@ -159,7 +159,6 @@ public class SQPowerTools extends JavaPlugin {
 
 							}
 							
-							
 							if (config.contains("power tools." + powerTool + ".blaster.projectileType")) {
 								
 								blasterStats.projectileType = ProjectileType.getById(config.getInt("power tools." + powerTool + ".blaster.projectileType"));
@@ -169,6 +168,12 @@ public class SQPowerTools extends JavaPlugin {
 							if (config.contains("power tools." + powerTool + ".blaster.explosionSize")) {
 								
 								blasterStats.explosionSize = (float) config.getDouble("power tools." + powerTool + ".blaster.explosionSize");
+								
+							}
+							
+							if (config.contains("power tools." + powerTool + ".blaster.shotCount")) {
+								
+								blasterStats.shotCount = config.getInt("power tools." + powerTool + ".blaster.shotCount");
 								
 							}
 							
@@ -260,6 +265,12 @@ public class SQPowerTools extends JavaPlugin {
 								
 								modifier.name = config.getString("power tools." + powerTool + ".mods." + mod + ".name");
 								
+								if (config.contains("power tools." + powerTool + ".mods." + mod + ".energy per use")) {
+
+									modifier.energyPerUse = config.getInt("power tools." + powerTool + ".mods." + mod + ".energy per use");
+									
+								}	
+								
 								if (config.contains("power tools." + powerTool + ".mods." + mod + ".data")) {
 									
 									modifier.material = Material.getMaterial(config.getInt("power tools." + powerTool + ".mods." + mod + ".item"));
@@ -320,6 +331,38 @@ public class SQPowerTools extends JavaPlugin {
 										
 									}
 									
+									if (config.contains("power tools." + powerTool + ".mods." + mod + ".blaster.ammoType")) {
+										
+										blasterStats.ammoType = AmmoType.getById(config.getInt("power tools." + powerTool + ".mods." + mod + ".blaster.ammoType"));
+
+									}
+
+									if (config.contains("power tools." + powerTool + ".mods." + mod + ".blaster.projectileType")) {
+										
+										blasterStats.projectileType = ProjectileType.getById(config.getInt("power tools." + powerTool + ".mods." + mod + ".blaster.projectileType"));
+										
+									}
+									
+									if (config.contains("power tools." + powerTool + ".mods." + mod + ".blaster.explosionSize")) {
+										
+										blasterStats.explosionSize = (float) config.getDouble("power tools." + powerTool + ".mods." + mod + ".blaster.explosionSize");
+										
+									} else {
+										
+										blasterStats.explosionSize = 0;
+										
+									}
+									
+									if (config.contains("power tools." + powerTool + ".mods." + mod + ".blaster.shotCount")) {
+										
+										blasterStats.shotCount = config.getInt("power tools." + powerTool + ".mods." + mod + ".blaster.shotCount");
+										
+									} else {
+										
+										blasterStats.shotCount = 0;
+										
+									}
+
 									modifier.blasterStats = blasterStats;
 									
 								}
@@ -455,6 +498,64 @@ public class SQPowerTools extends JavaPlugin {
 							getServer().addRecipe(recipe);
 							
 							powerToolType.hasRecipe = true;
+
+							if (config.getString("power tools." + powerTool + ".recipe.line1").length() == 2) {
+								
+								powerToolType.recipe.add(config.getString("power tools." + powerTool + ".recipe.line1") + " ");
+								
+							} else if (config.getString("power tools." + powerTool + ".recipe.line1").length() == 1) {
+								
+								powerToolType.recipe.add(config.getString("power tools." + powerTool + ".recipe.line1") + "  ");
+								
+							} else {
+								
+								powerToolType.recipe.add(config.getString("power tools." + powerTool + ".recipe.line1"));
+								
+							}
+							
+							if (config.contains("power tools." + powerTool + ".recipe.line2")) {
+								
+								if (config.getString("power tools." + powerTool + ".recipe.line2").length() == 2) {
+									
+									powerToolType.recipe.add(config.getString("power tools." + powerTool + ".recipe.line2") + " ");
+									
+								} else if (config.getString("power tools." + powerTool + ".recipe.line2").length() == 1) {
+									
+									powerToolType.recipe.add(config.getString("power tools." + powerTool + ".recipe.line2") + "  ");
+									
+								} else {
+									
+									powerToolType.recipe.add(config.getString("power tools." + powerTool + ".recipe.line2"));
+									
+								}
+								
+								if (config.contains("power tools." + powerTool + ".recipe.line3")) {
+									
+									if (config.getString("power tools." + powerTool + ".recipe.line3").length() == 2) {
+										
+										powerToolType.recipe.add(config.getString("power tools." + powerTool + ".recipe.line3") + " ");
+										
+									} else if (config.getString("power tools." + powerTool + ".recipe.line3").length() == 1) {
+										
+										powerToolType.recipe.add(config.getString("power tools." + powerTool + ".recipe.line3") + "  ");
+										
+									} else {
+										
+										powerToolType.recipe.add(config.getString("power tools." + powerTool + ".recipe.line3"));
+										
+									}
+									
+								}
+								
+							}
+							
+							for (String ingredient : config.getConfigurationSection("power tools." + powerTool + ".recipe.ingredients").getKeys(false)) {
+								
+								powerToolType.ingredients.add(Material.getMaterial(config.getInt("power tools." + powerTool + ".recipe.ingredients." + ingredient)));
+								
+							}
+							
+							powerToolType.ingredientNames.addAll(config.getConfigurationSection("power tools." + powerTool + ".recipe.ingredients").getKeys(false));
 							
 						} else {
 							

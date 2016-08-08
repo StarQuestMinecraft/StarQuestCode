@@ -19,6 +19,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitScheduler;
 
+import com.dibujaron.cardboardbox.CardboardBox;
 import com.starquestminecraft.sqtechbase.SQTechBase;
 import com.starquestminecraft.sqtechbase.objects.GUIBlock;
 import com.starquestminecraft.sqtechbase.objects.Machine;
@@ -367,7 +368,8 @@ public class GUIBlockEvents implements Listener {
 						
 						GUIBlock guiBlock = ObjectUtils.getGUIBlockFromGUI(SQTechBase.currentGui.get(event.getPlayer()));
 						
-						ItemStack newItemStack = InventoryUtils.createSpecialItem(itemStack.getType(), itemStack.getDurability(), "", new String[] {ChatColor.RED + "" + ChatColor.MAGIC + "Contraband"});
+						ItemStack newItemStack = (new CardboardBox(itemStack)).unbox();
+						newItemStack.setAmount(1);
 						
 						if (!guiBlock.getImports().contains(newItemStack)) {
 							
@@ -379,7 +381,8 @@ public class GUIBlockEvents implements Listener {
 						
 						GUIBlock guiBlock = ObjectUtils.getGUIBlockFromGUI(SQTechBase.currentGui.get(event.getPlayer()));
 						
-						ItemStack newItemStack = InventoryUtils.createSpecialItem(itemStack.getType(), itemStack.getDurability(), "", new String[] {ChatColor.RED + "" + ChatColor.MAGIC + "Contraband"});
+						ItemStack newItemStack = (new CardboardBox(itemStack)).unbox();
+						newItemStack.setAmount(1);
 						
 						if (!guiBlock.getExports().contains(newItemStack)) {
 							

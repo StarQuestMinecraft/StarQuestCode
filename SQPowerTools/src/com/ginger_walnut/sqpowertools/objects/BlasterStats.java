@@ -13,6 +13,7 @@ public class BlasterStats {
 	public AmmoType ammoType = AmmoType.ARROWS;
 	public ProjectileType projectileType = ProjectileType.ARROW;
 	public float explosionSize = 1.0f;
+	public int shotCount = 5;
 	
 	public BlasterStats() {
 		

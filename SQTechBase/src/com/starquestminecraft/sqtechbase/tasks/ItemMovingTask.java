@@ -14,6 +14,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitScheduler;
 
+import com.dibujaron.cardboardbox.CardboardBox;
 import com.starquestminecraft.sqtechbase.SQTechBase;
 import com.starquestminecraft.sqtechbase.objects.GUIBlock;
 import com.starquestminecraft.sqtechbase.objects.Machine;
@@ -100,9 +101,12 @@ public class ItemMovingTask extends Thread {
 													
 													boolean contains = false;
 													
+													ItemStack newItemStack = (new CardboardBox(itemStack)).unbox();
+													newItemStack.setAmount(1);
+													
 													for (ItemStack item : items) {
-														
-														if (item.getType().equals(itemStack.getType()) && item.getDurability() == itemStack.getDurability()) {
+
+														if (item.equals(newItemStack)) {
 															
 															contains = true;
 															
@@ -112,7 +116,7 @@ public class ItemMovingTask extends Thread {
 													
 													if (!contains) {
 														
-														items.add(InventoryUtils.createSpecialItem(itemStack.getType(), itemStack.getDurability(), "", new String[] {ChatColor.RED + "" + ChatColor.MAGIC + "Contraband"}));
+														items.add(newItemStack);
 														
 													}
 													
@@ -156,9 +160,12 @@ public class ItemMovingTask extends Thread {
 													
 													boolean contains = false;
 													
+													ItemStack newItemStack = (new CardboardBox(itemStack)).unbox();
+													newItemStack.setAmount(1);
+													
 													for (ItemStack item : items) {
 														
-														if (item.getType().equals(itemStack.getType()) && item.getDurability() == itemStack.getDurability()) {
+														if (newItemStack.equals(item)) {
 															
 															contains = true;
 															
@@ -168,7 +175,7 @@ public class ItemMovingTask extends Thread {
 													
 													if (!contains) {
 														
-														items.add(InventoryUtils.createSpecialItem(itemStack.getType(), itemStack.getDurability(), "", new String[] {ChatColor.RED + "" + ChatColor.MAGIC + "Contraband"}));
+														items.add(newItemStack);
 														
 													}
 													
@@ -206,9 +213,12 @@ public class ItemMovingTask extends Thread {
 											
 											boolean contains = false;
 											
+											ItemStack newItemStack = (new CardboardBox(itemStack)).unbox();
+											newItemStack.setAmount(1);
+											
 											for (ItemStack item : items) {
 												
-												if (item.getType().equals(itemStack.getType()) && item.getDurability() == itemStack.getDurability()) {
+												if (item.equals(newItemStack)) {
 													
 													contains = true;
 													
@@ -218,7 +228,7 @@ public class ItemMovingTask extends Thread {
 											
 											if (!contains) {
 												
-												items.add(InventoryUtils.createSpecialItem(itemStack.getType(), itemStack.getDurability(), "", new String[] {ChatColor.RED + "" + ChatColor.MAGIC + "Contraband"}));
+												items.add(newItemStack);
 												
 											}
 											
@@ -398,19 +408,27 @@ public class ItemMovingTask extends Thread {
 															
 														}
 														
-													} else if (itemStack.getType().equals(export.getType()) && itemStack.getDurability() == export.getDurability()) {
+													} else {
 														
-														spaceLeft = spaceLeft + (itemStack.getMaxStackSize() - itemStack.getAmount());
+														ItemStack newItemStack = (new CardboardBox(itemStack)).unbox();
+														newItemStack.setAmount(export.getAmount());
+														
+														if (newItemStack.equals(export)) {
+													
+															spaceLeft = spaceLeft + (itemStack.getMaxStackSize() - itemStack.getAmount());
 															
-														if (itemStack.getMaxStackSize() != itemStack.getAmount()) {
-															
-															if (!inventories.contains(inventory)) {
+															if (itemStack.getMaxStackSize() != itemStack.getAmount()) {
 																
-																inventories.add(inventory);
+																if (!inventories.contains(inventory)) {
+																	
+																	inventories.add(inventory);
+																	
+																}
 																
 															}
 															
 														}
+														
 
 													}
 													
@@ -434,20 +452,27 @@ public class ItemMovingTask extends Thread {
 																		
 																	}
 																	
-																} else if (itemStack.getType().equals(export.getType()) && itemStack.getDurability() == export.getDurability()) {
+																} else {
 																	
-																	spaceLeft = spaceLeft + (itemStack.getMaxStackSize() - itemStack.getAmount());
+																	ItemStack newItemStack = (new CardboardBox(itemStack)).unbox();
+																	newItemStack.setAmount(export.getAmount());
 																	
-																	if ((itemStack.getMaxStackSize() - itemStack.getAmount()) > 1) {
+																	if (newItemStack.equals(export)) {
 																		
-																		if (!inventories.contains(secondInventory)) {
+																		spaceLeft = spaceLeft + (itemStack.getMaxStackSize() - itemStack.getAmount());
+																		
+																		if ((itemStack.getMaxStackSize() - itemStack.getAmount()) > 1) {
 																			
-																			inventories.add(secondInventory);
+																			if (!inventories.contains(secondInventory)) {
+																				
+																				inventories.add(secondInventory);
+																				
+																			}
 																			
 																		}
-																		
+																	
 																	}
-	
+
 																}
 																
 															}
@@ -551,7 +576,10 @@ public class ItemMovingTask extends Thread {
 													
 													if (itemStack != null) {
 														
-														if (itemStack.getType().equals(export.getType()) && itemStack.getDurability() == export.getDurability()) {
+														ItemStack newItemStack = (new CardboardBox(itemStack)).unbox();
+														newItemStack.setAmount(export.getAmount());
+														
+														if (newItemStack.equals(export)) {
 															
 															if (spaceLeft >= itemsLeft) {
 																
@@ -670,7 +698,10 @@ public class ItemMovingTask extends Thread {
 														
 														if (itemStack != null) {
 															
-															if (itemStack.getType().equals(export.getType()) && itemStack.getDurability() == export.getDurability()) {
+															ItemStack newItemStack = (new CardboardBox(itemStack)).unbox();
+															newItemStack.setAmount(export.getAmount());
+															
+															if (newItemStack.equals(export)) {
 																
 																if (spaceLeft >= itemsLeft) {
 																	
@@ -797,10 +828,17 @@ public class ItemMovingTask extends Thread {
 												
 												currentSpaceLeft = currentSpaceLeft + 64;
 												
-											} else if (itemStack.getType().equals(export.getType()) && itemStack.getDurability() == export.getDurability()) {
+											} else {
 												
-												currentSpaceLeft = currentSpaceLeft + (itemStack.getMaxStackSize() - itemStack.getAmount());
+												ItemStack newItemStack = (new CardboardBox(itemStack)).unbox();
+												newItemStack.setAmount(export.getAmount());
 												
+												if (newItemStack.equals(export)) {
+													
+													currentSpaceLeft = currentSpaceLeft + (itemStack.getMaxStackSize() - itemStack.getAmount());
+													
+												}
+
 											}
 											
 										}

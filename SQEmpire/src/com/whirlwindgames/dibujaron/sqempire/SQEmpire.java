@@ -89,7 +89,17 @@ public class SQEmpire extends JavaPlugin{
 		}
 		
 		if (first) {
-			
+	        	
+			worldGuardPlugin = WGBukkit.getPlugin();
+	        dynmapAPI = (DynmapAPI) Bukkit.getServer().getPluginManager().getPlugin("dynmap");
+	        markerAPI = dynmapAPI.getMarkerAPI();
+	        markerSet = markerAPI.getMarkerSet("empires.markerset");
+	        if (markerSet == null) {
+	            	
+	          	markerSet = markerAPI.createMarkerSet("empires.markerset", "Empires", null, false);
+	            	
+	        }
+
 			instance = this;
 			EmpireCommand e = new EmpireCommand();
 			getCommand("empire").setExecutor(e);
@@ -275,20 +285,6 @@ public class SQEmpire extends JavaPlugin{
         	
         }
 
-        if (first) {
-        	
-            worldGuardPlugin = WGBukkit.getPlugin();
-            dynmapAPI = (DynmapAPI) Bukkit.getServer().getPluginManager().getPlugin("dynmap");
-            markerAPI = dynmapAPI.getMarkerAPI();
-            markerSet = markerAPI.getMarkerSet("empires.markerset");
-            if (markerSet == null) {
-            	
-            	markerSet = markerAPI.createMarkerSet("empires.markerset", "Empires", null, false);
-            	
-            }
-        	
-        }
-
         for (String id : worldGuardPlugin.getRegionManager(Bukkit.getWorlds().get(0)).getRegions().keySet()) {
         	
         	if (id.startsWith("sqempire")) {
@@ -409,7 +405,7 @@ public class SQEmpire extends JavaPlugin{
             	
             	if (marker == null) {
             		
-            		marker = markerSet.createMarker(territory.name.replace('_', ' ') + "-" + (i + 1), territory.name.replace('_', ' ') + "-" + (i + 1), Bukkit.getWorlds().get(0).getName(), (double) capturePoint.x * 16 + (xMultiplier * 7.5), (double) capturePoint.y, (double) capturePoint.z * 16 + (zMultiplier * 7.5), markerAPI.getMarkerIcon("temple"), false);
+            		marker = markerSet.createMarker(territory.name.replace('_', ' ') + "-" + (i + 1), territory.name.replace('_', ' ') + "-" + (i + 1), Bukkit.getWorlds().get(0).getName(), (double) capturePoint.x * 16 + (xMultiplier * 7.5), (double) capturePoint.y, (double) capturePoint.z * 16 + (zMultiplier * 7.5), capturePoint.owner.pointIcon, false);
             		
             	}
                 territory.name.replace(' ', '_');

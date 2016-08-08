@@ -86,6 +86,16 @@ public class ModifiersGUI extends GUI{
 				
 			}
 			
+			if (modifier.energyPerUse > 0) {
+				
+				modLore.add(ChatColor.RED + "+ " + modifier.energyPerUse + " Energy Per Use");
+				
+			} else if (modifier.energyPerUse < 0) {
+				
+				modLore.add(ChatColor.RED + "- " + modifier.energyPerUse + " Energy Per Use");
+				
+			}
+			
 			for (int j = 0; j < modifier.attributes.size(); j ++) {
 				
 				String attributeName = "";
@@ -271,6 +281,18 @@ public class ModifiersGUI extends GUI{
 				
 				}
 				
+				if (blasterStats.ammoType != toolType.blasterStats.ammoType) {
+						
+					modLore.add(ChatColor.GOLD + "Ammo Type: " + blasterStats.ammoType.getName());
+					
+				}
+				
+				if (blasterStats.projectileType != toolType.blasterStats.projectileType) {
+					
+					modLore.add(ChatColor.GOLD + "Projectile Type: " + blasterStats.projectileType.getName());
+					
+				}
+				
 				if (blasterStats.explosionSize != 0) {
 					
 					if (blasterStats.explosionSize > 0) {
@@ -281,6 +303,21 @@ public class ModifiersGUI extends GUI{
 					} else if (blasterStats.explosionSize < 0) {
 						
 						modLore.add(ChatColor.GOLD + "- " + Math.abs(blasterStats.explosionSize) + " Explosion Size");
+						
+					}
+					
+				}
+				
+				if (blasterStats.shotCount != 0) {
+					
+					if (blasterStats.shotCount > 0) {
+						
+						modLore.add(ChatColor.GOLD + "+ " + blasterStats.shotCount + " Shot Count");
+						
+						
+					} else if (blasterStats.shotCount < 0) {
+						
+						modLore.add(ChatColor.GOLD + "- " + Math.abs(blasterStats.shotCount) + "Shot Count");
 						
 					}
 					

@@ -157,6 +157,8 @@ public class CaptureTask extends Thread {
 										
 						            	marker.setDescription("Owner: " + point.owner.getName());
 										
+						            	marker.setMarkerIcon(point.owner.getPointIcon());
+						            	
 									}
 									
 								}

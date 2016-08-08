@@ -1,5 +1,8 @@
 package com.starquestminecraft.sqtechbase.gui.guiblock;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -7,7 +10,9 @@ import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
+import com.dibujaron.cardboardbox.CardboardBox;
 import com.starquestminecraft.sqtechbase.SQTechBase;
 import com.starquestminecraft.sqtechbase.gui.GUI;
 import com.starquestminecraft.sqtechbase.objects.GUIBlock;
@@ -33,7 +38,21 @@ public class ImportGUI extends GUI {
 		
 		for (ItemStack itemStack : guiBlock.getImports()) {
 			
-			gui.addItem(itemStack);
+			ItemStack newItemStack = itemStack.clone();
+			ItemMeta itemMeta = newItemStack.getItemMeta();
+			List<String> lore = new ArrayList<String>();
+			
+			if (itemMeta.hasLore()) {
+				
+				lore = itemMeta.getLore();
+				
+			}
+			
+			lore.add(ChatColor.RED + "" + ChatColor.MAGIC + "Contraband");
+			itemMeta.setLore(lore);
+			newItemStack.setItemMeta(itemMeta);
+			
+			gui.addItem(newItemStack);
 			
 		}
 		
@@ -79,13 +98,28 @@ public class ImportGUI extends GUI {
 							
 							GUIBlock guiBlock = ObjectUtils.getGUIBlockFromGUI(this);
 							
-							ItemStack itemStack = InventoryUtils.createSpecialItem(event.getCursor().getType(), event.getCursor().getDurability(), "", new String[] {ChatColor.RED + "" + ChatColor.MAGIC + "Contraband"});
+							ItemStack itemStack = (new CardboardBox(event.getCursor())).unbox();
+							itemStack.setAmount(1);
 							
 							if (!guiBlock.getImports().contains(itemStack)) {
 								
 								guiBlock.addImport(itemStack);
 								
-								event.getClickedInventory().addItem(itemStack);
+								ItemStack newItemStack = itemStack.clone();
+								ItemMeta itemMeta = newItemStack.getItemMeta();
+								List<String> lore = new ArrayList<String>();
+								
+								if (itemMeta.hasLore()) {
+									
+									lore = itemMeta.getLore();
+									
+								}
+								
+								lore.add(ChatColor.RED + "" + ChatColor.MAGIC + "Contraband");
+								itemMeta.setLore(lore);
+								newItemStack.setItemMeta(itemMeta);
+								
+								event.getClickedInventory().addItem(newItemStack);
 								
 							}
 							
@@ -95,7 +129,28 @@ public class ImportGUI extends GUI {
 						
 						GUIBlock guiBlock = ObjectUtils.getGUIBlockFromGUI(this);
 						
-						ItemStack itemStack = event.getClickedInventory().getItem(event.getSlot());
+						ItemStack itemStack = (new CardboardBox(event.getClickedInventory().getItem(event.getSlot()))).unbox();
+						itemStack.setAmount(1);
+						
+						if (itemStack.hasItemMeta()) {
+							
+							if (itemStack.getItemMeta().hasLore()) {
+								
+								if (itemStack.getItemMeta().getLore().get(itemStack.getItemMeta().getLore().size() - 1).equals(ChatColor.RED + "" + ChatColor.MAGIC + "Contraband")) {
+									
+									List<String> lore = itemStack.getItemMeta().getLore();
+									lore.remove(lore.size() - 1);
+									
+									ItemMeta itemMeta = itemStack.getItemMeta();
+									itemMeta.setLore(lore);
+									
+									itemStack.setItemMeta(itemMeta);
+									
+								}
+								
+							}
+							
+						}
 						
 						if (guiBlock.getImports().contains(itemStack)) {
 							
