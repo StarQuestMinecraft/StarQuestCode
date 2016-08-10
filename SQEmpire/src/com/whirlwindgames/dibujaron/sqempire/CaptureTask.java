@@ -157,6 +157,8 @@ public class CaptureTask extends Thread {
 										
 						            	marker.setDescription("Owner: " + point.owner.getName());
 										
+						            	marker.setMarkerIcon(point.owner.getPointIcon());
+						            	
 									}
 									
 								}
@@ -286,9 +288,9 @@ public class CaptureTask extends Thread {
 
 					        			ps.setString(1, Bukkit.getServerName());
 					        			ps.setInt(1, count[0]);
-					        			ps.setInt(1, count[1]);
-					        			ps.setInt(1, count[2]);
-					        			ps.setInt(1, count[3]);
+					        			ps.setInt(2, count[1]);
+					        			ps.setInt(3, count[2]);
+					        			ps.setInt(4, count[3]);
 					        			
 					        			ps.executeAndClose();
 					        			

@@ -100,7 +100,7 @@ public class ToolUseEvents implements Listener {
 								player.getInventory().setItemInMainHand(handItem);
 								
 								int energy = SQPowerTools.getEnergy(handItem);
-								int energyPerUse = SQPowerTools.getType(handItem).energyPerUse;
+								int energyPerUse = (new PowerTool(handItem)).getEnergyPerUse();
 								
 								if (energy == 0) {
 									
@@ -238,7 +238,7 @@ public class ToolUseEvents implements Listener {
 								player.getInventory().setItemInMainHand(handItem);
 								
 								int energy = SQPowerTools.getEnergy(handItem);
-								int energyPerUse = SQPowerTools.getType(handItem).energyPerUse;
+								int energyPerUse = (new PowerTool(handItem)).getEnergyPerUse();
 								
 								if (energy == 0) {
 									
@@ -343,7 +343,7 @@ public class ToolUseEvents implements Listener {
 							PowerToolType type = SQPowerTools.getType(handItem);
 							
 							int energy = SQPowerTools.getEnergy(handItem);
-							int energyPerUse = type.energyPerUse;
+							int energyPerUse = (new PowerTool(handItem)).getEnergyPerUse();
 							
 							if (energy == 0) {
 								
@@ -624,7 +624,7 @@ public class ToolUseEvents implements Listener {
 								PowerToolType type = SQPowerTools.getType(armor);
 								
 								int energy = SQPowerTools.getEnergy(armor);
-								int energyPerUse = type.energyPerUse;
+								int energyPerUse = (new PowerTool(armor)).getEnergyPerUse();
 								
 								if (energy == 0) {
 									
@@ -906,7 +906,7 @@ public class ToolUseEvents implements Listener {
 								
 								PowerToolType type = SQPowerTools.getType(handItem);
 								
-								int energyPerUse = type.energyPerUse;
+								int energyPerUse = (new PowerTool(handItem)).getEnergyPerUse();
 								int energy = SQPowerTools.getEnergy(handItem);
 								
 								if (energy == 0) {

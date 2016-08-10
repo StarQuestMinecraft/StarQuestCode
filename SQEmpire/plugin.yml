@@ -22,3 +22,6 @@ permissions:
    SQEmpire.manageControlPoints:
       description: permission node for managing control points
       default: op
+   SQEmpire.reloadEmpire:
+      description: permission node for reloading empires
+      default: op

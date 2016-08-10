@@ -1,14 +1,21 @@
 package com.ginger_walnut.sqpowertools.events;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Random;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Color;
 import org.bukkit.GameMode;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Arrow;
-import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Fireball;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.entity.SpectralArrow;
@@ -27,15 +34,21 @@ import org.bukkit.metadata.MetadataValue;
 import org.bukkit.potion.PotionData;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import org.inventivetalent.particle.ParticleEffect;
 
 import com.ginger_walnut.sqpowertools.SQPowerTools;
 import com.ginger_walnut.sqpowertools.enums.AmmoType;
 import com.ginger_walnut.sqpowertools.enums.ProjectileType;
 import com.ginger_walnut.sqpowertools.objects.BlasterStats;
+import com.ginger_walnut.sqpowertools.objects.Effect;
+import com.ginger_walnut.sqpowertools.objects.Modifier;
 import com.ginger_walnut.sqpowertools.objects.PowerTool;
 import com.ginger_walnut.sqpowertools.objects.PowerToolType;
 import com.ginger_walnut.sqpowertools.tasks.BlasterTask;
 import com.ginger_walnut.sqpowertools.tasks.CooldownTask;
+import com.ginger_walnut.sqpowertools.utils.EffectUtils;
+import com.whirlwindgames.dibujaron.sqempire.Empire;
+import com.whirlwindgames.dibujaron.sqempire.database.object.EmpirePlayer;
 
 public class BlasterEvents implements Listener {
 
@@ -123,7 +136,7 @@ public class BlasterEvents implements Listener {
 					if (!onCooldown) {
 
 						int energy = SQPowerTools.getEnergy(handItem);
-						int energyPerUse = SQPowerTools.getType(handItem).energyPerUse;
+						int energyPerUse = (new PowerTool(handItem)).getEnergyPerUse();
 							
 						if (energy == 0) {
 								
@@ -184,10 +197,343 @@ public class BlasterEvents implements Listener {
 										
 										fireball.setYield(blasterStats.explosionSize);
 										
+									} else if (blasterStats.projectileType.equals(ProjectileType.BEAM)) {
+										
+										double pitch = player.getLocation().getPitch();
+										
+										double yaw = player.getLocation().getYaw();
+										
+										double x = Math.sin(Math.toRadians(yaw)) * -.25 * Math.cos(Math.toRadians(pitch));
+										double y = Math.sin(Math.toRadians(pitch)) * -.25;
+										double z = Math.cos(Math.toRadians(yaw)) * .25 * Math.cos(Math.toRadians(pitch));
+										
+										Location startLocation = player.getLocation().add(player.getLocation().getDirection());
+										startLocation.add(0, 1.5, 0);
+										
+										double currentX = startLocation.getX();
+										double currentY = startLocation.getY();
+										double currentZ = startLocation.getZ();
+		
+										player.getWorld().playSound(player.getLocation(), Sound.ENTITY_ARROW_SHOOT, 2.0F, 1.0F);
+										
+										for (int i = 0; i < 400; i ++) {
+											
+											final Location location = new Location(player.getWorld(), currentX, currentY, currentZ);
+											
+											List<Entity> entites = new ArrayList<Entity>();
+											entites.addAll(location.getWorld().getNearbyEntities(location, .25, 1, .25));
+											
+											for (Entity entity : location.getWorld().getNearbyEntities(location, .25, 1, .25)) {
+													
+												if (entity instanceof LivingEntity) {
+														
+													if (entity != player) {
+														
+														i = 400;
+														
+														((LivingEntity) entity).damage(blasterStats.damage, player);
+														
+														List<PotionEffect> selfEffects = new ArrayList<PotionEffect>();
+														List<PotionEffect> otherEffects = new ArrayList<PotionEffect>();
+														
+														HashMap<Modifier, Integer> modifiers = SQPowerTools.getModifiers(handItem);
+														
+														for (Modifier modifier : type.modifiers) {
+															
+															if (modifiers.containsKey(modifier)) {
+																
+																for (Effect effect : modifier.effects) {
+																	
+																	if (effect != null) {
+																		
+																		if (effect.effectCase == 1) {
+																			
+																			selfEffects.add(new PotionEffect(EffectUtils.getEffectFromId(effect.effect), effect.duration * 20, effect.level * modifiers.get(modifier)));
+																			
+																		} else if (effect.effectCase == 2) {
+																			
+																			otherEffects.add(new PotionEffect(EffectUtils.getEffectFromId(effect.effect), effect.duration * 20, effect.level * modifiers.get(modifier)));
+																			
+																		}
+																		
+																	}
+																	
+																}
+																
+															}
+															
+														}
+														
+														for (Effect effect : type.effects) {
+															
+															if (effect != null) {
+																
+																if (effect.effectCase == 1) {
+																	
+																	selfEffects.add(new PotionEffect(EffectUtils.getEffectFromId(effect.effect), effect.duration * 20, effect.level));
+																	
+																} else if (effect.effectCase == 2) {
+																	
+																	otherEffects.add(new PotionEffect(EffectUtils.getEffectFromId(effect.effect), effect.duration * 20, effect.level));
+																	
+																}
+																
+															}
+															
+														}
+														
+														for (PotionEffect effect : selfEffects) {
+															
+															if (player.hasPotionEffect(effect.getType())) {
+																
+																player.removePotionEffect(effect.getType());
+																
+															}
+															
+														}
+														
+														player.addPotionEffects(selfEffects);
+														
+														LivingEntity enemy = (LivingEntity) entity;
+														
+														for (PotionEffect effect : otherEffects) {
+															
+															if (!EffectUtils.isBadEffect(effect.getType().getId())) {
+																
+																if (enemy.hasPotionEffect(effect.getType())) {
+																	
+																	enemy.removePotionEffect(effect.getType());
+																	
+																}
+																
+																enemy.addPotionEffect(effect);
+																
+															}
+															
+														}
+														
+														location.getWorld().playSound(location, Sound.ENTITY_ARROW_HIT, 2.0F, 1.0F);
+														
+													}
+	
+												}
+													
+											}
+												
+											if (location.getBlock().getType().equals(Material.AIR)) {
+												
+												EmpirePlayer ep = EmpirePlayer.getOnlinePlayer(player);
+												
+												if (ep.getEmpire().equals(Empire.ARATOR)) {
+													
+													ParticleEffect.REDSTONE.sendColor(Bukkit.getOnlinePlayers(),location.getX(), location.getY(),location.getZ(), Color.BLUE);
+													
+												} else if (ep.getEmpire().equals(Empire.REQUIEM)) {
+													
+													ParticleEffect.REDSTONE.sendColor(Bukkit.getOnlinePlayers(),location.getX(), location.getY(),location.getZ(), Color.RED);
+													
+												} else if (ep.getEmpire().equals(Empire.YAVARI)) {
+													
+													ParticleEffect.REDSTONE.sendColor(Bukkit.getOnlinePlayers(),location.getX(), location.getY(),location.getZ(), Color.PURPLE);
+													
+												} else {
+													
+													ParticleEffect.REDSTONE.sendColor(Bukkit.getOnlinePlayers(),location.getX(), location.getY(),location.getZ(), Color.WHITE);
+													
+												}
+						
+												currentX = currentX + x;
+												currentY = currentY + y;
+												currentZ = currentZ + z;
+												
+											} else {
+												
+												i = 400;
+		
+											}
+											
+										}
+										
+									} else if (blasterStats.projectileType.equals(ProjectileType.SHOTGUN)) {
+										
+										player.getWorld().playSound(player.getLocation(), Sound.ENTITY_ARROW_SHOOT, 1, 1);
+										
+										Random random = new Random();
+										
+										HashMap<Entity, Integer> damaged = new HashMap<Entity, Integer>();
+										
+										for (int i = 0; i < blasterStats.shotCount; i ++) {
+											
+											double pitch = player.getLocation().getPitch() + (random.nextDouble() * 10.0) - 5.0;
+											double yaw = player.getLocation().getYaw() + (random.nextDouble() * 10.0) - 5.0;
+											
+											double x = Math.sin(Math.toRadians(yaw)) * Math.cos(Math.toRadians(pitch)) * -1;
+											double y = Math.sin(Math.toRadians(pitch)) * -1;
+											double z = Math.cos(Math.toRadians(yaw)) * Math.cos(Math.toRadians(pitch));
+											
+											Location startLocation = player.getLocation().add(player.getLocation().getDirection());
+											startLocation.add(0, 1.5, 0);
+											
+											double currentX = startLocation.getX();
+											double currentY = startLocation.getY();
+											double currentZ = startLocation.getZ();
+											
+											for (int j = 0; j < 100; j ++) {
+												
+												final Location location = new Location(player.getWorld(), currentX, currentY, currentZ);
+												
+												List<Entity> entites = new ArrayList<Entity>();
+												entites.addAll(location.getWorld().getNearbyEntities(location, .25, 1, .25));
+												
+												for (Entity entity : location.getWorld().getNearbyEntities(location, .25, 1, .25)) {
+														
+													if (entity instanceof LivingEntity) {
+															
+														if (entity != player) {
+															
+															j = 100;
+															
+															if (damaged.containsKey(entity)) {
+																
+																damaged.replace(entity, damaged.get(entity) + 1);
+																
+															} else {
+																
+																damaged.put(entity, 1);
+																
+															}
+															
+														}
+		
+													}
+														
+												}
+													
+												if (location.getBlock().getType().equals(Material.AIR)) {
+													
+													EmpirePlayer ep = EmpirePlayer.getOnlinePlayer(player);
+													
+													if (ep.getEmpire().equals(Empire.ARATOR)) {
+														
+														ParticleEffect.REDSTONE.sendColor(Bukkit.getOnlinePlayers(),location.getX(), location.getY(),location.getZ(), Color.BLUE);
+														
+													} else if (ep.getEmpire().equals(Empire.REQUIEM)) {
+														
+														ParticleEffect.REDSTONE.sendColor(Bukkit.getOnlinePlayers(),location.getX(), location.getY(),location.getZ(), Color.RED);
+														
+													} else if (ep.getEmpire().equals(Empire.YAVARI)) {
+														
+														ParticleEffect.REDSTONE.sendColor(Bukkit.getOnlinePlayers(),location.getX(), location.getY(),location.getZ(), Color.PURPLE);
+														
+													} else {
+														
+														ParticleEffect.REDSTONE.sendColor(Bukkit.getOnlinePlayers(),location.getX(), location.getY(),location.getZ(), Color.WHITE);
+														
+													}
+							
+													currentX = currentX + x;
+													currentY = currentY + y;
+													currentZ = currentZ + z;
+													
+												} else {
+													
+													j = 100;
+			
+												}
+												
+											}
+											
+										}
+										
+										for (Entity entity : damaged.keySet()) {
+											
+											((LivingEntity) entity).damage(blasterStats.damage * damaged.get(entity), player);
+											
+											List<PotionEffect> selfEffects = new ArrayList<PotionEffect>();
+											List<PotionEffect> otherEffects = new ArrayList<PotionEffect>();
+											
+											HashMap<Modifier, Integer> modifiers = SQPowerTools.getModifiers(handItem);
+											
+											for (Modifier modifier : type.modifiers) {
+												
+												if (modifiers.containsKey(modifier)) {
+													
+													for (Effect effect : modifier.effects) {
+														
+														if (effect != null) {
+															
+															if (effect.effectCase == 1) {
+																
+																selfEffects.add(new PotionEffect(EffectUtils.getEffectFromId(effect.effect), effect.duration * 20, effect.level * modifiers.get(modifier)));
+																
+															} else if (effect.effectCase == 2) {
+																
+																otherEffects.add(new PotionEffect(EffectUtils.getEffectFromId(effect.effect), effect.duration * 20 * damaged.get(entity), effect.level * modifiers.get(modifier)));
+																
+															}
+															
+														}
+														
+													}
+													
+												}
+												
+											}
+											
+											for (Effect effect : type.effects) {
+												
+												if (effect != null) {
+													
+													if (effect.effectCase == 1) {
+														
+														selfEffects.add(new PotionEffect(EffectUtils.getEffectFromId(effect.effect), effect.duration * 20, effect.level));
+														
+													} else if (effect.effectCase == 2) {
+														
+														otherEffects.add(new PotionEffect(EffectUtils.getEffectFromId(effect.effect), effect.duration * 20 * damaged.get(entity), effect.level));
+														
+													}
+													
+												}
+												
+											}
+											
+											for (PotionEffect effect : selfEffects) {
+												
+												if (player.hasPotionEffect(effect.getType())) {
+													
+													player.removePotionEffect(effect.getType());
+													
+												}
+												
+											}
+											
+											player.addPotionEffects(selfEffects);
+											
+											LivingEntity enemy = (LivingEntity) entity;
+											
+											for (PotionEffect effect : otherEffects) {
+												
+												if (!EffectUtils.isBadEffect(effect.getType().getId())) {
+													
+													if (enemy.hasPotionEffect(effect.getType())) {
+														
+														enemy.removePotionEffect(effect.getType());
+														
+													}
+													
+													enemy.addPotionEffect(effect);
+													
+												}
+												
+											}
+											
+											entity.getWorld().playSound(entity.getLocation(), Sound.ENTITY_ARROW_HIT, 2.0F, 1.0F);
+											
+										}
+										
 									}
-									
 
-									
 								} else {
 									
 									if (blasterStats.ammo == 0) {
@@ -515,6 +861,341 @@ public class BlasterEvents implements Listener {
 												fireball.setShooter(player);
 												
 												fireball.setYield(blasterStats.explosionSize);
+												
+											} else if (blasterStats.projectileType.equals(ProjectileType.BEAM)) {
+												
+												double pitch = player.getLocation().getPitch();
+												
+												double yaw = player.getLocation().getYaw();
+												
+												double x = Math.sin(Math.toRadians(yaw)) * -.25 * Math.cos(Math.toRadians(pitch));
+												double y = Math.sin(Math.toRadians(pitch)) * -.25;
+												double z = Math.cos(Math.toRadians(yaw)) * .25 * Math.cos(Math.toRadians(pitch));
+												
+												Location startLocation = player.getLocation().add(player.getLocation().getDirection());
+												startLocation.add(0, 1.5, 0);
+												
+												double currentX = startLocation.getX();
+												double currentY = startLocation.getY();
+												double currentZ = startLocation.getZ();
+				
+												player.getWorld().playSound(player.getLocation(), Sound.ENTITY_ARROW_SHOOT, 2.0F, 1.0F);
+												
+												for (int i = 0; i < 400; i ++) {
+													
+													final Location location = new Location(player.getWorld(), currentX, currentY, currentZ);
+													
+													List<Entity> entites = new ArrayList<Entity>();
+													entites.addAll(location.getWorld().getNearbyEntities(location, .25, 1, .25));
+													
+													for (Entity entity : location.getWorld().getNearbyEntities(location, .25, 1, .25)) {
+															
+														if (entity instanceof LivingEntity) {
+																
+															if (entity != player) {
+																
+																i = 400;
+																
+																((LivingEntity) entity).damage(blasterStats.damage, player);
+																
+																List<PotionEffect> selfEffects = new ArrayList<PotionEffect>();
+																List<PotionEffect> otherEffects = new ArrayList<PotionEffect>();
+																
+																HashMap<Modifier, Integer> modifiers = SQPowerTools.getModifiers(handItem);
+																
+																for (Modifier modifier : type.modifiers) {
+																	
+																	if (modifiers.containsKey(modifier)) {
+																		
+																		for (Effect effect : modifier.effects) {
+																			
+																			if (effect != null) {
+																				
+																				if (effect.effectCase == 1) {
+																					
+																					selfEffects.add(new PotionEffect(EffectUtils.getEffectFromId(effect.effect), effect.duration * 20, effect.level * modifiers.get(modifier)));
+																					
+																				} else if (effect.effectCase == 2) {
+																					
+																					otherEffects.add(new PotionEffect(EffectUtils.getEffectFromId(effect.effect), effect.duration * 20, effect.level * modifiers.get(modifier)));
+																					
+																				}
+																				
+																			}
+																			
+																		}
+																		
+																	}
+																	
+																}
+																
+																for (Effect effect : type.effects) {
+																	
+																	if (effect != null) {
+																		
+																		if (effect.effectCase == 1) {
+																			
+																			selfEffects.add(new PotionEffect(EffectUtils.getEffectFromId(effect.effect), effect.duration * 20, effect.level));
+																			
+																		} else if (effect.effectCase == 2) {
+																			
+																			otherEffects.add(new PotionEffect(EffectUtils.getEffectFromId(effect.effect), effect.duration * 20, effect.level));
+																			
+																		}
+																		
+																	}
+																	
+																}
+																
+																for (PotionEffect effect : selfEffects) {
+																	
+																	if (player.hasPotionEffect(effect.getType())) {
+																		
+																		player.removePotionEffect(effect.getType());
+																		
+																	}
+																	
+																}
+																
+																player.addPotionEffects(selfEffects);
+																
+																LivingEntity enemy = (LivingEntity) entity;
+																
+																for (PotionEffect effect : otherEffects) {
+																	
+																	if (!EffectUtils.isBadEffect(effect.getType().getId())) {
+																		
+																		if (enemy.hasPotionEffect(effect.getType())) {
+																			
+																			enemy.removePotionEffect(effect.getType());
+																			
+																		}
+																		
+																		enemy.addPotionEffect(effect);
+																		
+																	}
+																	
+																}
+																
+																location.getWorld().playSound(location, Sound.ENTITY_ARROW_HIT, 2.0F, 1.0F);
+																
+															}
+			
+														}
+															
+													}
+														
+													if (location.getBlock().getType().equals(Material.AIR)) {
+														
+														EmpirePlayer ep = EmpirePlayer.getOnlinePlayer(player);
+														
+														if (ep.getEmpire().equals(Empire.ARATOR)) {
+															
+															ParticleEffect.REDSTONE.sendColor(Bukkit.getOnlinePlayers(),location.getX(), location.getY(),location.getZ(), Color.BLUE);
+															
+														} else if (ep.getEmpire().equals(Empire.REQUIEM)) {
+															
+															ParticleEffect.REDSTONE.sendColor(Bukkit.getOnlinePlayers(),location.getX(), location.getY(),location.getZ(), Color.RED);
+															
+														} else if (ep.getEmpire().equals(Empire.YAVARI)) {
+															
+															ParticleEffect.REDSTONE.sendColor(Bukkit.getOnlinePlayers(),location.getX(), location.getY(),location.getZ(), Color.PURPLE);
+															
+														} else {
+															
+															ParticleEffect.REDSTONE.sendColor(Bukkit.getOnlinePlayers(),location.getX(), location.getY(),location.getZ(), Color.WHITE);
+															
+														}
+								
+														currentX = currentX + x;
+														currentY = currentY + y;
+														currentZ = currentZ + z;
+														
+													} else {
+														
+														i = 400;
+				
+													}
+													
+												}
+												
+											} else if (blasterStats.projectileType.equals(ProjectileType.SHOTGUN)) {
+												
+												player.getWorld().playSound(player.getLocation(), Sound.ENTITY_ARROW_SHOOT, 1, 1);
+												
+												Random random = new Random();
+												
+												HashMap<Entity, Integer> damaged = new HashMap<Entity, Integer>();
+												
+												for (int i = 0; i < blasterStats.shotCount; i ++) {
+													
+													double pitch = player.getLocation().getPitch() + (random.nextDouble() * 10.0) - 5.0;
+													double yaw = player.getLocation().getYaw() + (random.nextDouble() * 10.0) - 5.0;
+													
+													double x = Math.sin(Math.toRadians(yaw)) * Math.cos(Math.toRadians(pitch)) * -1;
+													double y = Math.sin(Math.toRadians(pitch)) * -1;
+													double z = Math.cos(Math.toRadians(yaw)) * Math.cos(Math.toRadians(pitch));
+													
+													Location startLocation = player.getLocation().add(player.getLocation().getDirection());
+													startLocation.add(0, 1.5, 0);
+													
+													double currentX = startLocation.getX();
+													double currentY = startLocation.getY();
+													double currentZ = startLocation.getZ();
+													
+													for (int j = 0; j < 100; j ++) {
+														
+														final Location location = new Location(player.getWorld(), currentX, currentY, currentZ);
+														
+														List<Entity> entites = new ArrayList<Entity>();
+														entites.addAll(location.getWorld().getNearbyEntities(location, .25, 1, .25));
+														
+														for (Entity entity : location.getWorld().getNearbyEntities(location, .25, 1, .25)) {
+																
+															if (entity instanceof LivingEntity) {
+																	
+																if (entity != player) {
+																	
+																	j = 100;
+																	
+																	if (damaged.containsKey(entity)) {
+																		
+																		damaged.replace(entity, damaged.get(entity) + 1);
+																		
+																	} else {
+																		
+																		damaged.put(entity, 1);
+																		
+																	}
+																	
+																}
+				
+															}
+																
+														}
+															
+														if (location.getBlock().getType().equals(Material.AIR)) {
+															
+															EmpirePlayer ep = EmpirePlayer.getOnlinePlayer(player);
+															
+															if (ep.getEmpire().equals(Empire.ARATOR)) {
+																
+																ParticleEffect.REDSTONE.sendColor(Bukkit.getOnlinePlayers(),location.getX(), location.getY(),location.getZ(), Color.BLUE);
+																
+															} else if (ep.getEmpire().equals(Empire.REQUIEM)) {
+																
+																ParticleEffect.REDSTONE.sendColor(Bukkit.getOnlinePlayers(),location.getX(), location.getY(),location.getZ(), Color.RED);
+																
+															} else if (ep.getEmpire().equals(Empire.YAVARI)) {
+																
+																ParticleEffect.REDSTONE.sendColor(Bukkit.getOnlinePlayers(),location.getX(), location.getY(),location.getZ(), Color.PURPLE);
+																
+															} else {
+																
+																ParticleEffect.REDSTONE.sendColor(Bukkit.getOnlinePlayers(),location.getX(), location.getY(),location.getZ(), Color.WHITE);
+																
+															}
+									
+															currentX = currentX + x;
+															currentY = currentY + y;
+															currentZ = currentZ + z;
+															
+														} else {
+															
+															j = 100;
+					
+														}
+														
+													}
+													
+												}
+												
+												for (Entity entity : damaged.keySet()) {
+													
+													((LivingEntity) entity).damage(blasterStats.damage * damaged.get(entity), player);
+													
+													List<PotionEffect> selfEffects = new ArrayList<PotionEffect>();
+													List<PotionEffect> otherEffects = new ArrayList<PotionEffect>();
+													
+													HashMap<Modifier, Integer> modifiers = SQPowerTools.getModifiers(handItem);
+													
+													for (Modifier modifier : type.modifiers) {
+														
+														if (modifiers.containsKey(modifier)) {
+															
+															for (Effect effect : modifier.effects) {
+																
+																if (effect != null) {
+																	
+																	if (effect.effectCase == 1) {
+																		
+																		selfEffects.add(new PotionEffect(EffectUtils.getEffectFromId(effect.effect), effect.duration * 20, effect.level * modifiers.get(modifier)));
+																		
+																	} else if (effect.effectCase == 2) {
+																		
+																		otherEffects.add(new PotionEffect(EffectUtils.getEffectFromId(effect.effect), effect.duration * 20 * damaged.get(entity), effect.level * modifiers.get(modifier)));
+																		
+																	}
+																	
+																}
+																
+															}
+															
+														}
+														
+													}
+													
+													for (Effect effect : type.effects) {
+														
+														if (effect != null) {
+															
+															if (effect.effectCase == 1) {
+																
+																selfEffects.add(new PotionEffect(EffectUtils.getEffectFromId(effect.effect), effect.duration * 20, effect.level));
+																
+															} else if (effect.effectCase == 2) {
+																
+																otherEffects.add(new PotionEffect(EffectUtils.getEffectFromId(effect.effect), effect.duration * 20 * damaged.get(entity), effect.level));
+																
+															}
+															
+														}
+														
+													}
+													
+													for (PotionEffect effect : selfEffects) {
+														
+														if (player.hasPotionEffect(effect.getType())) {
+															
+															player.removePotionEffect(effect.getType());
+															
+														}
+														
+													}
+													
+													player.addPotionEffects(selfEffects);
+													
+													LivingEntity enemy = (LivingEntity) entity;
+													
+													for (PotionEffect effect : otherEffects) {
+														
+														if (!EffectUtils.isBadEffect(effect.getType().getId())) {
+															
+															if (enemy.hasPotionEffect(effect.getType())) {
+																
+																enemy.removePotionEffect(effect.getType());
+																
+															}
+															
+															enemy.addPotionEffect(effect);
+															
+														}
+														
+													}
+													
+													entity.getWorld().playSound(entity.getLocation(), Sound.ENTITY_ARROW_HIT, 2.0F, 1.0F);
+													
+												}
 												
 											}
 											

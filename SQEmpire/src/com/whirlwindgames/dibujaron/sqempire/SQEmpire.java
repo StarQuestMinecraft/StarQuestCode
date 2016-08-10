@@ -65,7 +65,7 @@ public class SQEmpire extends JavaPlugin{
 	public static Territory RequiemBeachead = new Territory();
 	public static Territory YavariBeachead = new Territory();
 	
-	public static boolean automaticRestart = true;
+	public static boolean automaticRestart = false;
 	
 	public static HashMap<String, Territory> territory1 = new HashMap<String, Territory>(); 
 	public static HashMap<String, Integer> territoryX = new HashMap<String, Integer>(); 
@@ -81,15 +81,26 @@ public class SQEmpire extends JavaPlugin{
 	@Override
 	public void onEnable(){
 
-		if (!new File(this.getDataFolder(), "config.yml").exists()) {
-			
-			saveDefaultConfig();
-			saveConfig();
-			
-		}
-		
 		if (first) {
+	        	
+			if (!new File(this.getDataFolder(), "config.yml").exists()) {
+				
+				saveDefaultConfig();
+				saveConfig();
+				
+			}
 			
+			
+			worldGuardPlugin = WGBukkit.getPlugin();
+	        dynmapAPI = (DynmapAPI) Bukkit.getServer().getPluginManager().getPlugin("dynmap");
+	        markerAPI = dynmapAPI.getMarkerAPI();
+	        markerSet = markerAPI.getMarkerSet("empires.markerset");
+	        if (markerSet == null) {
+	            	
+	          	markerSet = markerAPI.createMarkerSet("empires.markerset", "Empires", null, false);
+	            	
+	        }
+
 			instance = this;
 			EmpireCommand e = new EmpireCommand();
 			getCommand("empire").setExecutor(e);
@@ -269,22 +280,16 @@ public class SQEmpire extends JavaPlugin{
             	battleConnection.x2 = config.getDouble("connections." + connection + ".x2");
             	battleConnection.z2 = config.getDouble("connections." + connection + ".z2");
             	
-            	connections.add(battleConnection);
-            	
-            }
-        	
-        }
+            	if (battleConnection.territory1 == null || battleConnection.territory2 == null) {
+            		
+            		System.out.print(connection + " had a null territory");
+            		
+            	} else {
+            		
+                	connections.add(battleConnection);
+            		
+            	}
 
-        if (first) {
-        	
-            worldGuardPlugin = WGBukkit.getPlugin();
-            dynmapAPI = (DynmapAPI) Bukkit.getServer().getPluginManager().getPlugin("dynmap");
-            markerAPI = dynmapAPI.getMarkerAPI();
-            markerSet = markerAPI.getMarkerSet("empires.markerset");
-            if (markerSet == null) {
-            	
-            	markerSet = markerAPI.createMarkerSet("empires.markerset", "Empires", null, false);
-            	
             }
         	
         }
@@ -371,6 +376,8 @@ public class SQEmpire extends JavaPlugin{
             	
             }
             
+            System.out.print(areaMarker);
+            
             territory.name = territory.name.replace('_', ' ');
             areaMarker.setLabel(territory.name, true);
             areaMarker.setDescription("Name: " + territory.name + "<br/> Owner: " + territory.owner.getName());
@@ -409,7 +416,7 @@ public class SQEmpire extends JavaPlugin{
             	
             	if (marker == null) {
             		
-            		marker = markerSet.createMarker(territory.name.replace('_', ' ') + "-" + (i + 1), territory.name.replace('_', ' ') + "-" + (i + 1), Bukkit.getWorlds().get(0).getName(), (double) capturePoint.x * 16 + (xMultiplier * 7.5), (double) capturePoint.y, (double) capturePoint.z * 16 + (zMultiplier * 7.5), markerAPI.getMarkerIcon("temple"), false);
+            		marker = markerSet.createMarker(territory.name.replace('_', ' ') + "-" + (i + 1), territory.name.replace('_', ' ') + "-" + (i + 1), Bukkit.getWorlds().get(0).getName(), (double) capturePoint.x * 16 + (xMultiplier * 7.5), (double) capturePoint.y, (double) capturePoint.z * 16 + (zMultiplier * 7.5), capturePoint.owner.pointIcon, false);
             		
             	}
                 territory.name.replace(' ', '_');
@@ -538,6 +545,9 @@ public class SQEmpire extends JavaPlugin{
 	
 	@Override
 	public void onDisable(){
+		
+		reloadConfig();
+		config = this.getConfig();
 		
 		if (automaticRestart) {
 			
