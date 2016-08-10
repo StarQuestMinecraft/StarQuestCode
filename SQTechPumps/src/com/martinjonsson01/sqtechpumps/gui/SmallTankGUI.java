@@ -182,7 +182,10 @@ public class SmallTankGUI extends GUI{
 							w.playSound(machine.getGUIBlock().getLocation(), Sound.BLOCK_FIRE_EXTINGUISH, 1, 1);
 							w.spawnParticle(Particle.SMOKE_LARGE, machine.getGUIBlock().getLocation(), 100, 1, 1, 1);
 							machine.setLiquid(f, 0);
-							waterBlock.setType(Material.AIR);
+							if (waterBlock.getType() == Material.STATIONARY_LAVA ||
+									waterBlock.getType() == Material.STATIONARY_WATER) {
+								waterBlock.setType(Material.AIR);
+							}
 							
 							if (SQTechPumps.tankWaterBlocks.get(machine) != null) {
 								

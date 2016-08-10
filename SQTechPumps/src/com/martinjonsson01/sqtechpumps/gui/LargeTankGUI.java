@@ -191,7 +191,12 @@ public class LargeTankGUI extends GUI{
 									
 									Block b = it.next();
 									
-									b.setType(Material.AIR);
+									if (b.getType() == Material.STATIONARY_LAVA ||
+											b.getType() == Material.STATIONARY_WATER ||
+											b.getType() == Material.LAVA ||
+											b.getType() == Material.WATER) {
+										b.setType(Material.AIR);
+									}
 									
 									it.remove();
 									
