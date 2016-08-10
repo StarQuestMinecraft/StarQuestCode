@@ -10,8 +10,8 @@ public class BlasterStats {
 	public int scope = 0;
 	public int ammo = 0;
 	public int reload = 0;
-	public AmmoType ammoType = AmmoType.ARROWS;
-	public ProjectileType projectileType = ProjectileType.ARROW;
+	public AmmoType ammoType = null;
+	public ProjectileType projectileType = null;
 	public float explosionSize = 1.0f;
 	public int shotCount = 5;
 	

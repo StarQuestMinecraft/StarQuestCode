@@ -157,11 +157,19 @@ public class SQPowerTools extends JavaPlugin {
 								
 								blasterStats.ammoType = AmmoType.getById(config.getInt("power tools." + powerTool + ".blaster.ammoType"));
 
+							} else {
+								
+								blasterStats.ammoType = AmmoType.ENERGY;
+								
 							}
 							
 							if (config.contains("power tools." + powerTool + ".blaster.projectileType")) {
 								
 								blasterStats.projectileType = ProjectileType.getById(config.getInt("power tools." + powerTool + ".blaster.projectileType"));
+								
+							} else {
+								
+								blasterStats.projectileType = ProjectileType.ARROW;
 								
 							}
 							
@@ -309,7 +317,7 @@ public class SQPowerTools extends JavaPlugin {
 									
 									if (config.contains("power tools." + powerTool + ".mods." + mod + ".blaster.damage")) {
 										
-										blasterStats.damage = config.getInt("power tools." + powerTool + ".mods." + mod + ".blaster.damage");
+										blasterStats.damage = config.getDouble("power tools." + powerTool + ".mods." + mod + ".blaster.damage");
 										
 									}
 									
