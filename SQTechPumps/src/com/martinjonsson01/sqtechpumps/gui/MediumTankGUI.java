@@ -191,7 +191,10 @@ public class MediumTankGUI extends GUI{
 
 									Block b = it.next();
 
-									b.setType(Material.AIR);
+									if (b.getType() == Material.STATIONARY_LAVA ||
+											b.getType() == Material.STATIONARY_WATER) {
+										b.setType(Material.AIR);
+									}
 
 									it.remove();
 

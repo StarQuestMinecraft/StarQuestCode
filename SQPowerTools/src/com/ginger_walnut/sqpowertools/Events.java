@@ -1002,7 +1002,7 @@ public class Events implements Listener {
 																
 																for (String cannotCombine : toolType.modifiers.get(k).cannotCombines) {
 																	
-																	if (cannotCombine.equals(modifierObjects.get(i))) {
+																	if (cannotCombine.equals(modifierObjects.get(i).name)) {
 																		
 																		error = true;
 																		
@@ -1182,6 +1182,36 @@ public class Events implements Listener {
 													
 													oldModifierObjects.addAll(SQPowerTools.getModifiers(powerTool).keySet());
 													
+													/*Modifier newModifier = null;
+													
+													for (Modifier modifier : toolType.modifiers) {
+														
+														if (modifier.material.equals(modifiers.get(i)) && modifier.durability == datas.get(i)) {
+															
+															newModifier = modifier;
+															
+														}
+														
+													}
+													
+													for (Modifier modifier : oldModifierObjects) {
+														
+														for (String cannotCombine : modifier.cannotCombines) {
+															
+															if (newModifier.name.equals(cannotCombine)) {
+																
+																error = true;
+																
+																errorLore.add(ChatColor.RED + "This modifier conflicts with a");
+																errorLore.add(ChatColor.RED + "modifier that is on this power tool.");
+																errorLore.add(ChatColor.RED + "" + ChatColor.MAGIC + "Contraband");
+																
+															}
+															
+														}
+														
+													}*/
+													
 													for (int j = 0; j < oldModifierObjects.size(); j ++) {
 														
 														for (int k = 0; k < toolType.modifiers.size(); k ++) {
@@ -1190,7 +1220,7 @@ public class Events implements Listener {
 																
 																for (String cannotCombine : toolType.modifiers.get(k).cannotCombines) {
 																	
-																	if (cannotCombine.equals(oldModifierObjects.get(j))) {
+																	if (cannotCombine.equals(oldModifierObjects.get(j).name)) {
 																		
 																		error = true;
 																		

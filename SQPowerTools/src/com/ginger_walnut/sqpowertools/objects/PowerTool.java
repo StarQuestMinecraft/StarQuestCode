@@ -783,8 +783,19 @@ public class PowerTool {
 				blasterStats.scope = blasterStats.scope + (modifier.blasterStats.scope * modifierMap.get(modifier));
 				blasterStats.ammo = blasterStats.ammo + (modifier.blasterStats.ammo * modifierMap.get(modifier));
 				blasterStats.reload = blasterStats.reload + (modifier.blasterStats.reload * modifierMap.get(modifier)); 
-				blasterStats.ammoType = modifier.blasterStats.ammoType;
-				blasterStats.projectileType = modifier.blasterStats.projectileType;
+				
+				if (modifier.blasterStats.ammoType != null) {
+					
+					blasterStats.ammoType = modifier.blasterStats.ammoType;
+					
+				}
+				
+				if (modifier.blasterStats.projectileType != null) {
+					
+					blasterStats.projectileType = modifier.blasterStats.projectileType;
+					
+				}
+				
 				blasterStats.explosionSize = blasterStats.explosionSize + (modifier.blasterStats.explosionSize * modifierMap.get(modifier)); 
 				blasterStats.shotCount = blasterStats.shotCount + (modifier.blasterStats.shotCount * modifierMap.get(modifier));
 				
