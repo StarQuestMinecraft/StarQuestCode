@@ -68,7 +68,7 @@ public class ActiveHarvester
 	
 	public boolean toPlant()
 	{
-		Block farmableBlock = harvesterHead.getRelative(BlockFace.DOWN, 2);
+		Block farmableBlock = harvesterHead.getRelative(BlockFace.DOWN);
 
 		if (farmableBlock.isEmpty()) // its air
 		{
@@ -120,7 +120,7 @@ public class ActiveHarvester
 	@SuppressWarnings("deprecation")
 	public void farm()
 	{
-		Block farmableBlock = harvesterHead.getRelative(BlockFace.DOWN, 2);
+		Block farmableBlock = harvesterHead.getRelative(BlockFace.DOWN);
 		boolean farmBlock = false;
 		
 		for (Farmables farmable : Farmables.values())
@@ -174,7 +174,7 @@ public class ActiveHarvester
 	
 	public void moveHeadToStart(int headPosition)
 	{
-		final Block head = this.guiBlock.getRelative(BlockFace.UP, 2).getRelative(com.starquestminecraft.sqtechbase.util.DirectionUtils.getLeft(forward), headPosition);
+		final Block head = this.guiBlock.getRelative(BlockFace.UP, 1).getRelative(com.starquestminecraft.sqtechbase.util.DirectionUtils.getLeft(forward), headPosition);
 		update();
 		Integer headPos = harvester.getHarvesterHeadLocation(head, forward, farmHeadSupport);
 		
@@ -260,7 +260,7 @@ public class ActiveHarvester
 	
 	public void stop()
 	{
-		plugin.stopHarvester(machine);
+		//plugin.stopHarvester(machine);
 		manager.queueInactive.add(machine);
 	}
 }
