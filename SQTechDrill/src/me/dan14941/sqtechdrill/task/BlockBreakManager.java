@@ -51,10 +51,16 @@ public class BlockBreakManager extends BukkitRunnable
 		for (ActiveDrill activeDrill : queueToRemoveFast.keySet())
 		{
 			if(queueToRemoveFast.get(activeDrill).isEmpty())
+			{
+				queueRemoveFromDrilling.add(activeDrill);
 				continue;
+			}
 			
 			if((boolean) activeDrill.getMachine().data.get("isActive") == false)
+			{
 				queueRemoveFromDrilling.add(activeDrill);
+				continue;
+			}
 			
 			List<Block> blocks = queueToRemoveFast.get(activeDrill);
 			if(this.drill(activeDrill, blocks) == false)
@@ -78,10 +84,16 @@ public class BlockBreakManager extends BukkitRunnable
 			for (ActiveDrill activeDrill : queueToRemoveSlow.keySet())
 			{
 				if(queueToRemoveSlow.get(activeDrill).isEmpty())
+				{
+					queueRemoveFromDrilling.add(activeDrill);
 					continue;
+				}
 				
 				if((boolean) activeDrill.getMachine().data.get("isActive") == false)
+				{
 					queueRemoveFromDrilling.add(activeDrill);
+					continue;
+				}
 				
 				List<Block> blocks = queueToRemoveSlow.get(activeDrill);
 				if(this.drill(activeDrill, blocks) == false)
