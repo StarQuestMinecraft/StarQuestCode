@@ -1010,12 +1010,12 @@ public class EmpireCommand implements CommandExecutor{
 					
 					if (ep.getEmpire() != Empire.NONE) {
 						
-						Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "ee pp user " + p.getUniqueId().toString() + " removegroup " + ep.getEmpire().getName() + "0");
-						Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "ee pp user " + p.getUniqueId().toString() + " removegroup " + ep.getEmpire().getName() + "1");
-						Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "ee pp user " + p.getUniqueId().toString() + " removegroup " + ep.getEmpire().getName() + "2");
-						Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "ee pp user " + p.getUniqueId().toString() + " removegroup " + ep.getEmpire().getName() + "3");
-						Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "ee pp user " + p.getUniqueId().toString() + " removegroup " + ep.getEmpire().getName() + "4");
-						Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "ee pp user " + p.getUniqueId().toString() + " removegroup " + ep.getEmpire().getName() + "5");
+						Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "pp user " + p.getUniqueId().toString() + " removegroup " + ep.getEmpire().getName() + "0");
+						Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "pp user " + p.getUniqueId().toString() + " removegroup " + ep.getEmpire().getName() + "1");
+						Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "pp user " + p.getUniqueId().toString() + " removegroup " + ep.getEmpire().getName() + "2");
+						Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "pp user " + p.getUniqueId().toString() + " removegroup " + ep.getEmpire().getName() + "3");
+						Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "pp user " + p.getUniqueId().toString() + " removegroup " + ep.getEmpire().getName() + "4");
+						Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "pp user " + p.getUniqueId().toString() + " removegroup " + ep.getEmpire().getName() + "5");
 						
 						SQEmpire.economy.withdrawPlayer(p, SQEmpire.economy.getBalance(p));
 						BungeePlayerHandler.wipePlayerInventory(p);

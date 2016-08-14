@@ -51,7 +51,7 @@ public class Territory {
 		for(Point p : points){
 			double nx = (rtlx + p.x) * sx;
 			double ny = (rtly + p.y) * sy;
-			out.println("    - -" + nx + "," + ny);
+			out.println("    - " + nx + "," + ny);
 		}
 	}
 }

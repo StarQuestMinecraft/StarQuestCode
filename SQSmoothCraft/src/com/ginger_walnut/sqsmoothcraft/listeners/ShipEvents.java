@@ -518,7 +518,7 @@ public class ShipEvents implements Listener {
 	@EventHandler
 	public void onShipExit(ShipExitEvent event) {
 		
-		if (event.player.getBukkitEntity() instanceof Player) {
+		/*if (event.player.getBukkitEntity() instanceof Player) {
 			
 			Player player = (Player) event.player.getBukkitEntity();
 			
@@ -527,7 +527,7 @@ public class ShipEvents implements Listener {
 
 			}
 			
-		}
+		}*/
 		
 	}
 	

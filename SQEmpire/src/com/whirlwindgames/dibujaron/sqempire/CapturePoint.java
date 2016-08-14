@@ -60,7 +60,7 @@ public class CapturePoint {
 				
 		}
 			
-		if (captures >= 5) {
+		if (captures >= 8) {
 			
 			return false;
 			
@@ -80,7 +80,7 @@ public class CapturePoint {
 						
 						beingCaptured = true;
 						
-						timeLeft = 2700;
+						timeLeft = 900;
 						
 						Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "eb janesudo " + ep.getEmpire().getName() + " is capturing " + owner.getDarkColor() + name.replace("_", " " + owner.getDarkColor()));
 						

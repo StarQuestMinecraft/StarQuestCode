@@ -288,6 +288,28 @@ public class EnergyTask extends Thread {
 						
 					}
 					
+					List<Machine> sameMachines = new ArrayList<Machine>();
+					
+					for (Machine machine : energyLeftMap.keySet()) {
+						
+						for (Machine bothMachine : bothMachines.keySet()) {
+							
+							if (machine == bothMachine) {
+								
+								sameMachines.add(machine);
+								
+							}
+							
+						}
+						
+					}
+
+					for (Machine machine : sameMachines) {
+							
+						energyLeftMap.remove(machine);
+					
+					}
+					
 					if (justImportMap.size() == 0 && energyLeftMap.size() > 0) {
 						
 						i = 0;

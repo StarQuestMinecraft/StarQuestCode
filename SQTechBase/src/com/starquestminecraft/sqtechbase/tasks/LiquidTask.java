@@ -291,6 +291,28 @@ public class LiquidTask extends Thread {
 							
 						}
 						
+						List<Machine> sameMachines = new ArrayList<Machine>();
+						
+						for (Machine machine : liquidLeftMap.keySet()) {
+							
+							for (Machine bothMachine : bothMachines.keySet()) {
+								
+								if (machine == bothMachine) {
+									
+									sameMachines.add(machine);
+									
+								}
+								
+							}
+							
+						}
+						
+						for (Machine machine : sameMachines) {
+								
+							liquidLeftMap.remove(machine);
+							
+						}
+						
 						if (justImportMap.size() == 0 && liquidLeftMap.size() > 0) {
 							
 							i = 0;

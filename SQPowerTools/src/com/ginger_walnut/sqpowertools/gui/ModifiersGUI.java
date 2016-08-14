@@ -281,13 +281,13 @@ public class ModifiersGUI extends GUI{
 				
 				}
 				
-				if (blasterStats.ammoType != toolType.blasterStats.ammoType) {
+				if (blasterStats.ammoType != null) {
 						
 					modLore.add(ChatColor.GOLD + "Ammo Type: " + blasterStats.ammoType.getName());
 					
 				}
 				
-				if (blasterStats.projectileType != toolType.blasterStats.projectileType) {
+				if (blasterStats.projectileType != null) {
 					
 					modLore.add(ChatColor.GOLD + "Projectile Type: " + blasterStats.projectileType.getName());
 					
