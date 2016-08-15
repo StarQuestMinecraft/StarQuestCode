@@ -12,7 +12,7 @@ import org.bukkit.inventory.ItemStack;
 import com.ginger_walnut.sqsmoothcraft.SQSmoothCraft;
 import com.ginger_walnut.sqsmoothcraft.gui.Gui;
 import com.ginger_walnut.sqsmoothcraft.gui.MainGui;
-import com.ginger_walnut.sqsmoothcraft.ship.ShipUtils;
+import com.ginger_walnut.sqsmoothcraft.utils.ShipUtils;
 
 import net.md_5.bungee.api.ChatColor;
 

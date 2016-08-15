@@ -1,0 +1,6 @@
+server name: default
+database:
+  host: localhost
+  port: 0
+  username: nope
+  password: nope

@@ -1,5 +1,6 @@
 package com.ginger_walnut.sqpowertools.objects;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -29,6 +30,12 @@ public class PowerToolType {
 	public List<String> extraLore;
 	
 	public Map<Enchantment, Integer> enchants;
+	
+	public BlasterStats blasterStats;
+	
+	public List<String> recipe = new ArrayList<String>();
+	public List<Material> ingredients = new ArrayList<Material>();
+	public List<String> ingredientNames = new ArrayList<String>();
 	
 	public PowerToolType() {
 		

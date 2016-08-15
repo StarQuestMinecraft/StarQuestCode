@@ -432,41 +432,41 @@ public class SQBoosters extends JavaPlugin {
 					
 					int amount = 0;
 					
-					if (!databasePurchasers.contains(args[0])) {
+					if (!cc3.getAccountManager().exist(player.getName())) {
 						
-						player.sendMessage(ChatColor.RED + "That person must have an active booster");
+						player.sendMessage(ChatColor.RED + "That person does not exsist");
 						
-					}
-					
-					try {
-						
-						amount = Integer.parseInt(args[1]);
-						
-					} catch (NumberFormatException e) {
-						
-						player.sendMessage(ChatColor.RED + "You must input a number");
-						
-						return false;
-						
-					}
-					
-					if (amount < 0) {
-						
-						amount = amount * -1;
-						
-					}
-					
-					if (SQBoosters.cc3.getAccountManager().getAccount(player.getName()).hasEnough(amount, player.getWorld().getName(), "credit")) {
-							
-						SQBoosters.cc3.getAccountManager().getAccount(player.getName()).withdraw(amount, player.getWorld().getName(), "credit");
-						SQBoosters.cc3.getAccountManager().getAccount(args[0]).deposit(amount, player.getWorld().getName(), "credit");
-						
-						Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "ee sudojane " + ChatColor.GOLD + player.getName() + " has thanked " + args[0] + " with " + args[1] + " credits");
-								
 					} else {
 						
-						player.sendMessage(ChatColor.RED + "You do not have enough money");
-						
+						try {
+							
+							amount = Integer.parseInt(args[1]);
+							
+							if (amount < 0) {
+								
+								amount = amount * -1;
+								
+							}
+							
+							if (SQBoosters.cc3.getAccountManager().getAccount(player.getName()).hasEnough(amount, player.getWorld().getName(), "credit")) {
+								
+								SQBoosters.cc3.getAccountManager().getAccount(player.getName()).withdraw(amount, player.getWorld().getName(), "credit");
+								SQBoosters.cc3.getAccountManager().getAccount(args[0]).deposit(amount, player.getWorld().getName(), "credit");
+								
+								Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "eb janesudo " + ChatColor.GOLD + player.getName() + " has thanked " + args[0] + " with " + amount + " credits");
+										
+							} else {
+								
+								player.sendMessage(ChatColor.RED + "You do not have enough money");
+								
+								
+							}
+							
+						} catch (NumberFormatException e) {
+							
+							player.sendMessage(ChatColor.RED + "You must input a number");
+							
+						}
 						
 					}
 					
@@ -510,7 +510,7 @@ public class SQBoosters extends JavaPlugin {
 			
 		} else {
 			
-			return 1 + Math.abs(square(.5, (booster - 1)) - 2);
+			return Math.abs(square(.5, (booster - 1)) - 2);
 			
 		}
 		

@@ -1,0 +1,7 @@
+name: SQBeamTransporter
+main: com.martinjonsson01.sqbeamtransporter.SQBeamTransporter
+version: 1.0.3
+description: A plugin that adds beam transporters
+commands:
+      
+permissions:

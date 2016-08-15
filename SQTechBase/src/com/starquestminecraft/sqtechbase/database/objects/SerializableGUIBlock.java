@@ -9,8 +9,11 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
-import com.starquestminecraft.sqtechbase.GUIBlock;
-import com.starquestminecraft.sqtechbase.gui.GUIBlockGUI;
+import com.dibujaron.cardboardbox.CardboardBox;
+import com.starquestminecraft.sqtechbase.objects.GUIBlock;
+import com.starquestminecraft.sqtechbase.util.InventoryUtils;
+
+import net.md_5.bungee.api.ChatColor;
 
 public class SerializableGUIBlock implements Serializable{
 	
@@ -21,12 +24,12 @@ public class SerializableGUIBlock implements Serializable{
 	int z;
 	String world;
 	
-	List<Integer> importIDs = new ArrayList<Integer>();
-	List<Short> importDatas = new ArrayList<Short>();
+	List<CardboardBox> imports = new ArrayList<CardboardBox>();
+	List<CardboardBox> exports = new ArrayList<CardboardBox>();
 	
-	List<Integer> exportIDs = new ArrayList<Integer>();
-	List<Short> exportDatas = new ArrayList<Short>();
+	boolean exportAll;
 	
+	@SuppressWarnings("deprecation")
 	public SerializableGUIBlock (GUIBlock guiBlock) {
 		
 		x = guiBlock.getLocation().getBlockX();
@@ -36,40 +39,49 @@ public class SerializableGUIBlock implements Serializable{
 		
 		for (ItemStack importItem : guiBlock.getImports()) {
 			
-			importIDs.add(importItem.getTypeId());
-			importDatas.add(importItem.getDurability());
+			imports.add(new CardboardBox(importItem));
 			
 		}
 		
 		for (ItemStack export : guiBlock.getExports()) {
 			
-			exportIDs.add(export.getTypeId());
-			exportDatas.add(export.getDurability());
+			exports.add(new CardboardBox(export));
 			
 		}
 		
+		exportAll = guiBlock.exportAll;
+		
 	}	
 	
+	@SuppressWarnings("deprecation")
 	public GUIBlock getGUIBlock() {
 
 		if (Bukkit.getWorld(world) != null) {
 			
-			GUIBlock guiBlock = new GUIBlock(new GUIBlockGUI(), new Location(Bukkit.getWorld(world), x, y, z));
+			Location location = new Location(Bukkit.getWorld(world), x, y, z);
 			
-			for (int i = 0; i < importIDs.size(); i ++) {
+			if (location.getBlock().getType().equals(Material.LAPIS_BLOCK)) {
 				
-				guiBlock.addImport(new ItemStack(Material.getMaterial(importIDs.get(i)), 1, importDatas.get(i)));
+				GUIBlock guiBlock = new GUIBlock(location, false);
+				
+				for (CardboardBox box : imports) {
+					
+					guiBlock.addImport(box.unbox());
+
+				}
+				
+				for (CardboardBox box : exports) {
+					
+					guiBlock.addExport(box.unbox());
+					
+				}
+				
+				guiBlock.exportAll = exportAll;
+				
+				return guiBlock;
 				
 			}
-			
-			for (int i = 0; i < exportIDs.size(); i ++) {
-				
-				guiBlock.addExport(new ItemStack(Material.getMaterial(exportIDs.get(i)), 1, exportDatas.get(i)));
-				
-			}
-			
-			return guiBlock;
-			
+
 		}
 		
 		return null;

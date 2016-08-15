@@ -2,6 +2,7 @@ package com.whirlwindgames.dibujaron.sqempire.util;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.sql.Date;
 
 public class SuperPS {
 
@@ -66,6 +67,14 @@ public class SuperPS {
 			e.printStackTrace();
 		}
 	}
+	public void setDuplicate(int firstIndex, Date value){
+		try {
+			ps.setDate(firstIndex, value);
+			ps.setDate(firstIndex + numArgs, value);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
 	
 	public void executeAndClose(){
 		try{
@@ -75,6 +84,5 @@ public class SuperPS {
 			e.printStackTrace();
 		}
 	}
-
 
 }

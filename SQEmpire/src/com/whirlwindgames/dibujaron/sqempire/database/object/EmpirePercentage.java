@@ -1,8 +1,8 @@
 package com.whirlwindgames.dibujaron.sqempire.database.object;
 
-import com.whirlwindgames.dibujaron.sqempire.database.EmpireDB;
+import java.util.List;
+
 import com.whirlwindgames.dibujaron.sqempire.util.AsyncUtil;
-import com.whirlwindgames.dibujaron.sqempire.util.RSReader;
 
 public class EmpirePercentage {
 
@@ -10,14 +10,19 @@ public class EmpirePercentage {
 		//gets the percentage of the server population in the given empire.
 		AsyncUtil.crashIfNotAsync();
 		int[] retvals = new int[3];
-		for(int i = 0; i < retvals.length; i++){
-			String query = "SELECT count(*) AS count from minecraft.empire_player WHERE empire=" + (i+1);
-			RSReader rs = new RSReader(EmpireDB.requestData(query));
 	
-			if(rs.next()){
-				retvals[i] = rs.getInt("count");
+		List<EmpirePlayer> players = EmpirePlayer.getPlayersOnlineRecently(1209600000L);
+		
+		for (EmpirePlayer player : players) {
+			
+			if (player.getEmpire().getID() != 0) {
+				
+				retvals[player.getEmpire().getID() - 1] ++;
+				
 			}
+	
 		}
+		
 		return retvals;
 	}
 }

@@ -11,18 +11,24 @@ public class EventPacket implements Packet {
 	private static final long serialVersionUID = 1L;
 	private final UUID uid;
     private final SerializableReceivedDataEvent sendEvent;
+    private final String packetDestination;
 
-    public EventPacket(UUID uid, ReceivedDataEvent sendEvent) {
+    public EventPacket(UUID uid, ReceivedDataEvent sendEvent, String destination) {
         this.uid = uid;
         this.sendEvent = new SerializableReceivedDataEvent(sendEvent);
+        this.packetDestination = destination;
     }
     //Called externally
-    public EventPacket(ReceivedDataEvent sendEvent) {
-        this(UUID.randomUUID(), sendEvent);
+    public EventPacket(ReceivedDataEvent sendEvent, String destination) {
+        this(UUID.randomUUID(), sendEvent, destination);
     }
     //returns the uid of this eventpacket
     public UUID getUid() {
         return uid;
+    }
+    //returns the destination server of this eventpacket
+    public String getPacketDestination() {
+    	return packetDestination;
     }
     //gets the event
     public ReceivedDataEvent getSendEvent() {

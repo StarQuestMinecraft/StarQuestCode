@@ -1,30 +1,31 @@
 package com.whirlwindgames.dibujaron.sqempire;
 
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.DyeColor;
 import org.bukkit.block.Banner;
 import org.bukkit.block.Block;
 import org.bukkit.block.banner.Pattern;
 import org.bukkit.block.banner.PatternType;
-import org.bukkit.scheduler.BukkitScheduler;
+import org.dynmap.markers.MarkerIcon;
 
 public enum Empire {
-	NONE(0, ChatColor.DARK_GRAY, ChatColor.GRAY, "None"),
-	ARATOR(1, ChatColor.DARK_BLUE, ChatColor.BLUE, "Arator"),
-	REQUIEM(2, ChatColor.DARK_RED, ChatColor.RED, "Requiem"),
-	YAVARI(3, ChatColor.DARK_PURPLE, ChatColor.LIGHT_PURPLE, "Yavari");
+	NONE(0, ChatColor.DARK_GRAY, ChatColor.GRAY, "None", SQEmpire.markerAPI.getMarkerIcon("temple")),
+	ARATOR(1, ChatColor.DARK_BLUE, ChatColor.BLUE, "Arator", SQEmpire.markerAPI.getMarkerIcon("blueflag")),
+	REQUIEM(2, ChatColor.DARK_RED, ChatColor.RED, "Requiem", SQEmpire.markerAPI.getMarkerIcon("redflag")),
+	YAVARI(3, ChatColor.DARK_PURPLE, ChatColor.LIGHT_PURPLE, "Yavari", SQEmpire.markerAPI.getMarkerIcon("purpleflag"));
 	
 	int id;
 	ChatColor dark;
 	ChatColor light;
 	String name;
+	MarkerIcon pointIcon;
 	
-	Empire(int id, ChatColor dark, ChatColor light, String name){
+	Empire(int id, ChatColor dark, ChatColor light, String name, MarkerIcon pointIcon){
 		this.dark = dark;
 		this.light = light;
 		this.id = id;
 		this.name = name;
+		this.pointIcon = pointIcon;
 	}
 	
 	public ChatColor getDarkColor(){
@@ -43,6 +44,12 @@ public enum Empire {
 		return id;
 	}
 	
+	public MarkerIcon getPointIcon() {
+		
+		return pointIcon;
+		
+	}
+	
 	public void setBanner(final Block block) {
 				
 		if (id == 1) {
@@ -58,7 +65,7 @@ public enum Empire {
 			
 		} else if (id == 2) {
 			
-			Banner banner = (Banner) block;
+			Banner banner = (Banner) block.getState();
 			banner.addPattern(new Pattern(DyeColor.RED, PatternType.GRADIENT_UP));
 			banner.addPattern(new Pattern(DyeColor.RED, PatternType.GRADIENT));
 			banner.addPattern(new Pattern(DyeColor.BLACK, PatternType.CROSS));
@@ -69,7 +76,7 @@ public enum Empire {
 			
 		} else if (id == 3) {
 			
-			Banner banner = (Banner) block;
+			Banner banner = (Banner) block.getState();
 			banner.addPattern(new Pattern(DyeColor.SILVER, PatternType.TRIANGLE_TOP));
 			banner.addPattern(new Pattern(DyeColor.SILVER, PatternType.TRIANGLE_BOTTOM));
 			banner.addPattern(new Pattern(DyeColor.BLACK, PatternType.GRADIENT_UP));
@@ -80,7 +87,7 @@ public enum Empire {
 			
 		} else {
 			
-			Banner banner = (Banner) block;
+			Banner banner = (Banner) block.getState();
 			banner.update();
 			
 		}

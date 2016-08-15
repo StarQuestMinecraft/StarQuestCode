@@ -14,4 +14,10 @@ public class BattleConnection {
 		
 	}
 	
+	public String getName() {
+		
+		return territory1.name.replace('_', ' ') + "-" + territory2.name.replace('_', ' ');
+		
+	}
+	
 }

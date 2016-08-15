@@ -21,15 +21,18 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import com.comphenix.protocol.ProtocolLibrary;
+import com.comphenix.protocol.ProtocolManager;
 import com.dibujaron.cardboardbox.Knapsack;
+import com.ginger_walnut.sqsmoothcraft.entites.CustomEntityType;
+import com.ginger_walnut.sqsmoothcraft.enums.BlockType;
 import com.ginger_walnut.sqsmoothcraft.gui.Gui;
 import com.ginger_walnut.sqsmoothcraft.gui.MainGui;
-import com.ginger_walnut.sqsmoothcraft.ship.BlockType;
-import com.ginger_walnut.sqsmoothcraft.ship.Ship;
-import com.ginger_walnut.sqsmoothcraft.ship.ShipBlock;
-import com.ginger_walnut.sqsmoothcraft.ship.ShipEvents;
-import com.ginger_walnut.sqsmoothcraft.ship.ShipMovement;
-import com.ginger_walnut.sqsmoothcraft.ship.ShipTasks;
+import com.ginger_walnut.sqsmoothcraft.listeners.ShipEvents;
+import com.ginger_walnut.sqsmoothcraft.objects.Ship;
+import com.ginger_walnut.sqsmoothcraft.objects.ShipBlock;
+import com.ginger_walnut.sqsmoothcraft.tasks.ShipMovement;
+import com.ginger_walnut.sqsmoothcraft.tasks.ShipTasks;
 import com.martinjonsson01.sqsmoothcraft.missile.Missile;
 import com.martinjonsson01.sqsmoothcraft.missile.MissileListener;
 
@@ -68,54 +71,7 @@ public class SQSmoothCraft extends JavaPlugin{
 	
 	public static boolean useEmpires = false;
 	
-	@Override
-	public void onDisable() {
-		
-		plugin = null;
-		
-		for (Ship ship : shipMap.values()) {
-			
-			boolean succesful = ship.blockify(false);
-			ship.exit(false);
-			
-			if (!succesful) {
-				
-				for (ShipBlock shipBlock : ship.blockList) {
-					
-					shipBlock.getLocation().getWorld().dropItem(shipBlock.getLocation(), shipBlock.getArmorStand().getHelmet());
-					
-					shipBlock.getArmorStand().remove();
-					
-				}
-				
-			}
-			
-		}
-		
-		for (Ship ship : stoppedShipMap) {
-			
-			boolean succesful = ship.blockify(false);
-			
-			if (!succesful) {
-				
-				for (ShipBlock shipBlock : ship.blockList) {
-					
-					shipBlock.getLocation().getWorld().dropItem(shipBlock.getLocation(), shipBlock.getArmorStand().getHelmet());
-					
-					shipBlock.getArmorStand().remove();
-					
-				}
-				
-			}
-			
-		}
-		
-		PluginDescriptionFile pdfFile = this.getDescription();
-		this.logger.info(pdfFile.getName() + " has been disabled!");
-		
-		saveDefaultConfig();
-		
-	}
+	public ProtocolManager protocolManager;
 	
 	@Override
 	public void onEnable() {
@@ -169,10 +125,111 @@ public class SQSmoothCraft extends JavaPlugin{
 			shipBlockAdjustments.add(BlockType.getBlockType(config.getString("blocks." + detectableBlock + ".type")));
 			
 		}
+		
+		CustomEntityType.registerEntities();
 
 		(new ShipMovement()).run();
 		(new ShipTasks()).run();
 
+		protocolManager = ProtocolLibrary.getProtocolManager();
+		
+		/*protocolManager.addPacketListener(
+			new PacketAdapter(this, ListenerPriority.NORMAL, PacketType.Play.Server.MOUNT) {
+				
+				@Override
+				public void onPacketSending(PacketEvent event) {
+
+					for (UUID uuid : shipMap.keySet()) {
+						
+						if (shipMap.get(uuid).mainBlock.stand.getEntityId() == event.getPacket().getIntegers().read(0)) {
+							
+							boolean contains = false;
+							
+							for (int id : event.getPacket().getIntegerArrays().read(0)) {
+								
+								if (id == shipMap.get(uuid).captain.getEntityId()) {
+									
+									contains = true;
+									
+								}
+								
+							}
+							
+							if (!contains) {
+								
+								event.setCancelled(true);
+								
+							}
+							
+						}
+						
+					}
+					
+				}
+				
+			});*/
+		
+		/*protocolManager.addPacketListener(
+				new PacketAdapter(this, ListenerPriority.NORMAL) {
+					
+					@Override
+					public void onPacketSending(PacketEvent event) {
+						
+						System.out.print(event.getPacketType());
+						
+					}
+					
+				});*/
+		
+	}
+	
+	@Override
+	public void onDisable() {
+		
+		plugin = null;
+		
+		for (Ship ship : shipMap.values()) {
+			
+			boolean succesful = ship.blockify(false);
+			ship.exit(false);
+			
+			if (!succesful) {
+				
+				for (ShipBlock shipBlock : ship.blockList) {
+					
+					shipBlock.getLocation().getWorld().dropItem(shipBlock.getLocation(), shipBlock.getArmorStand().getHelmet());
+					
+					shipBlock.getArmorStand().remove();
+					
+				}
+				
+			}
+			
+		}
+		
+		for (Ship ship : stoppedShipMap) {
+			
+			boolean succesful = ship.blockify(false);
+			
+			if (!succesful) {
+				
+				for (ShipBlock shipBlock : ship.blockList) {
+					
+					shipBlock.getLocation().getWorld().dropItem(shipBlock.getLocation(), shipBlock.getArmorStand().getHelmet());
+					
+					shipBlock.getArmorStand().remove();
+					
+				}
+				
+			}
+			
+		}
+		
+		PluginDescriptionFile pdfFile = this.getDescription();
+		this.logger.info(pdfFile.getName() + " has been disabled!");
+		
+		saveDefaultConfig();
+		
 	}
 	
 	public static Plugin getPluginMain() {

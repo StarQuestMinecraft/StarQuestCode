@@ -1,0 +1,12 @@
+harvester:
+  max energy: 10000
+  speed: 20
+  energy usage:
+    energy consumption:
+      harvesting: 4
+      planting: 4
+  size:
+    default: MEDIUM
+    small: 5
+    medium: 10
+    large: 25

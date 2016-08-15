@@ -1,0 +1,5 @@
+name: SQTechFarm
+version: 1.1
+description: Farm plugin for SQTechBase
+main: com.starquestminecraft.sqtechfarm.SQTechFarm
+depend: [SQTechBase]

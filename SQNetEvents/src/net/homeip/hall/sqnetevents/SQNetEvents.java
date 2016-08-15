@@ -21,18 +21,18 @@ public class SQNetEvents extends JavaPlugin {
 	
 	private UUID uuid;
 	
-	private HashMap<String, Sender> senders;
+	private HashMap<String, Sender> clients;
 	
 	private boolean isHub;
+	
+	private Sender hub;
 	
 	@Override
 	public void onEnable() {
 		setInstance(this);
 		saveDefaultConfig();
 		String hubString = getConfig().getString("IsHub");
-		boolean hub = Boolean.parseBoolean(hubString);
-		setIsHub(hub);
-		senders = new HashMap<String, Sender>();
+		clients = new HashMap<String, Sender>();
 		//server name and receiver address, separated by an @
 		String nameAndListenAddress = getConfig().getString("ListenAt");
 		String[] nala = nameAndListenAddress.split("@");
@@ -41,18 +41,28 @@ public class SQNetEvents extends JavaPlugin {
 		setServerName(sName);
 		setUUID(new UUID(Long.parseLong(getConfig().getString("ServerID")), Long.parseLong(getConfig().getString("ServerID"))));
 		setReceiver(new Receiver(listenAddress));
-		//client name and address, separated by an @
-		List<String> namesAndAddresses = getConfig().getStringList("SendTo");
-		//splits the name and address
-		for(String nameAndAddress : namesAndAddresses) {
-			String[] naa = nameAndAddress.split("@");
-			String name = naa[0];
-			System.out.println(name);
-			String address = naa[1];
-			System.out.println("[NetEvents] Connect address: " + address);
-			Sender sender = new Sender(address);
-			//puts sender in hashmap with name as key
-			addSender(sender, name);
+		boolean hubBoolean = Boolean.parseBoolean(hubString);
+		setIsHub(hubBoolean);
+		if(!isHub()) {
+			String hubLocation = getConfig().getString("Hub");
+			String[] nameAndAddress= hubLocation.split("@");
+			System.out.println(nameAndAddress[1]);
+			setHub(new Sender(nameAndAddress[1]));
+		}
+		else {
+			//client name and address, separated by an @
+			List<String> namesAndAddresses = getConfig().getStringList("Clients");
+			//splits the name and address
+			for(String nameAndAddress : namesAndAddresses) {
+				String[] naa = nameAndAddress.split("@");
+				String name = naa[0];
+				System.out.println(name);
+				String address = naa[1];
+				System.out.println("[NetEvents] Connect address: " + address);
+				Sender client = new Sender(address);
+				//puts sender in hashmap with name as key
+				addClient(client, name);
+			}
 		}
 	}
 	//closes all connections
@@ -60,10 +70,11 @@ public class SQNetEvents extends JavaPlugin {
 	public void onDisable() {
 		try {
 			getReceiver().close();
+			getHub().close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		for(Sender sender: getSenders().values()) {
+		for(Sender sender: getClients().values()) {
 			try {
 				sender.close();
 			} catch (IOException e) {
@@ -73,14 +84,15 @@ public class SQNetEvents extends JavaPlugin {
 	}
 	//sends packet to all client servers, not recommended
 	public void send(Packet packet) {
-		for(Sender sender : getSenders().values()) {
+		for(Sender sender : getClients().values()) {
 			sender.send(packet);
 		}
 	}
 	//sends packet to a specific client server, or handles the packet if it's local
-	public void send(Packet packet, String serverName) {
+	public void send(Packet packet, String destination) {
 		//if local
-		if(serverName.equals(getServerName())) {
+		System.out.println("Packet is null: " + packet == null);
+		if(destination.equals(getServerName())) {
 			try {
 				packet.handle();
 			} catch (IOException e) {
@@ -88,11 +100,15 @@ public class SQNetEvents extends JavaPlugin {
 			}
 			return;
 		}
-		System.out.println(serverName);
-		System.out.println(getServerName());
-		System.out.println(getSenders().get(serverName));
-		System.out.println(packet);
-		getSenders().get(serverName).send(packet);
+		else if(isHub()) {
+			System.out.println("Destination name: " + destination);
+			System.out.println("Server name: " + getServerName());
+			System.out.println("getClients().get(destination): " + getClients().get(destination));
+			getClients().get(destination).send(packet);
+		}
+		else {
+			getHub().send(packet);
+		}
 	}
 	//address to bind and listen on
 	public Receiver getReceiver() {
@@ -102,11 +118,11 @@ public class SQNetEvents extends JavaPlugin {
 		receiver = aReceiver;
 	}
 	//addresses to send data to
-	public HashMap<String, Sender> getSenders() {
-		return senders;
+	public HashMap<String, Sender> getClients() {
+		return clients;
 	}
-	public void addSender(Sender sender, String name) {
-		senders.put(name, sender);
+	public void addClient(Sender client, String name) {
+		clients.put(name, client);
 	}
 	//gets the identifier for this server
 	public String getServerName() {
@@ -132,5 +148,11 @@ public class SQNetEvents extends JavaPlugin {
 	}
 	public void setIsHub(boolean hub) {
 		isHub = hub;
+	}
+	public Sender getHub() {
+		return hub;
+	}
+	public void setHub(Sender hub) {
+		this.hub = hub;
 	}
 }

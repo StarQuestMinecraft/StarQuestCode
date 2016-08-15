@@ -98,7 +98,6 @@ public class Settings {
 		return null;
 	}
 	
-	//TODO Doesn't work
 	/**
 	 * 
 	 * @param planet name

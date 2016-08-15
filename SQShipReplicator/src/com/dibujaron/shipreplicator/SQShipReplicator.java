@@ -24,6 +24,8 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import com.gmail.nossr50.mcMMO;
+
 public class SQShipReplicator extends JavaPlugin implements Listener{
 
 	private static final String KEY_LINE = ChatColor.AQUA + "Replicator";
@@ -131,6 +133,7 @@ public class SQShipReplicator extends JavaPlugin implements Listener{
 	 * @param chest the Inventory you want the the item taken from
 	 * @since 21-June-16
 	 */
+	@SuppressWarnings("deprecation")
 	private static void copy(Block scan, Block print, Chest chest) {
 		Material type = scan.getType();
 		byte data = scan.getData();
@@ -157,6 +160,11 @@ public class SQShipReplicator extends JavaPlugin implements Listener{
 
 		print.setType(type);
 		print.setData(data);
+		
+		if (com.gmail.nossr50.util.BlockUtils.shouldBeWatched(print.getState()) && print.getState().getType() != Material.CHORUS_FLOWER) {
+			mcMMO.getPlaceStore().setTrue(print.getState());			
+		}
+		
 	}
 
 	private static byte rotateData180(int type, byte data){

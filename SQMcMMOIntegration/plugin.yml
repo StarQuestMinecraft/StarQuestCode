@@ -1,0 +1,4 @@
+name: SQMcMMOIntegration
+version: 1.0
+description: McMMO Integration
+main: me.ginger_walnut.mcmmointegration.McMMOIntegration

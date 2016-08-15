@@ -1,0 +1,4 @@
+name: SQAsteroidBays
+version: 1.0
+description: Copies & pastes 1 of 3 randomly selected schematics in a location, for creating prison-server-esque asteroid mines in spawns
+main: com.starquestminecraft.sqasteroidbays.SQAsteroidBays

@@ -5,6 +5,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 
 public class DirectionUtils {
+	@SuppressWarnings("deprecation")
 	public static BlockFace getSignDirection(Block sign) {
 		if (sign.getType().equals(Material.WALL_SIGN)){
 			switch (sign.getData()) {

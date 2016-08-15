@@ -12,6 +12,7 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.scheduler.BukkitScheduler;
 
 import com.ginger_walnut.sqpowertools.SQPowerTools;
+import com.ginger_walnut.sqpowertools.objects.Modifier;
 import com.ginger_walnut.sqpowertools.objects.PowerToolType;
 import com.ginger_walnut.sqpowertools.utils.EffectUtils;
 
@@ -50,11 +51,11 @@ public class HoldingTask extends Thread{
 											
 											List<PotionEffect> effects = new ArrayList<PotionEffect>();
 											
-											HashMap<String, Integer> modifiers = SQPowerTools.getModifiers(handItem);
+											HashMap<Modifier, Integer> modifiers = SQPowerTools.getModifiers(handItem);
 											
 											for (int j = 0; j < type.modifiers.size(); j ++) {
 												
-												if (modifiers.containsKey(type.modifiers.get(j).name)) {
+												if (modifiers.containsKey(type.modifiers.get(j))) {
 													
 													for (int k = 0; k < type.modifiers.get(j).effects.size(); k ++) {
 														
@@ -62,7 +63,7 @@ public class HoldingTask extends Thread{
 															
 															if (type.modifiers.get(j).effects.get(k).effectCase == 5) {
 
-																effects.add(new PotionEffect(EffectUtils.getEffectFromId(type.modifiers.get(j).effects.get(k).effect), type.modifiers.get(j).effects.get(k).duration * 20, type.modifiers.get(j).effects.get(k).level));
+																effects.add(new PotionEffect(EffectUtils.getEffectFromId(type.modifiers.get(j).effects.get(k).effect), type.modifiers.get(j).effects.get(k).duration * 20, type.modifiers.get(j).effects.get(k).level * modifiers.get(type.modifiers.get(j))));
 																
 															}
 															
@@ -132,11 +133,11 @@ public class HoldingTask extends Thread{
 										
 										List<PotionEffect> effects = new ArrayList<PotionEffect>();
 										
-										HashMap<String, Integer> modifiers = SQPowerTools.getModifiers(handItem);
+										HashMap<Modifier, Integer> modifiers = SQPowerTools.getModifiers(handItem);
 										
 										for (int j = 0; j < type.modifiers.size(); j ++) {
 											
-											if (modifiers.containsKey(type.modifiers.get(j).name)) {
+											if (modifiers.containsKey(type.modifiers.get(j))) {
 												
 												for (int k = 0; k < type.modifiers.get(j).effects.size(); k ++) {
 													
@@ -144,7 +145,7 @@ public class HoldingTask extends Thread{
 														
 														if (type.modifiers.get(j).effects.get(k).effectCase == 5) {
 
-															effects.add(new PotionEffect(EffectUtils.getEffectFromId(type.modifiers.get(j).effects.get(k).effect), type.modifiers.get(j).effects.get(k).duration * 20, type.modifiers.get(j).effects.get(k).level));
+															effects.add(new PotionEffect(EffectUtils.getEffectFromId(type.modifiers.get(j).effects.get(k).effect), type.modifiers.get(j).effects.get(k).duration * 20, type.modifiers.get(j).effects.get(k).level * modifiers.get(type.modifiers.get(j))));
 															
 														}
 														
@@ -214,11 +215,11 @@ public class HoldingTask extends Thread{
 											
 											List<PotionEffect> effects = new ArrayList<PotionEffect>();
 											
-											HashMap<String, Integer> modifiers = SQPowerTools.getModifiers(armor);
+											HashMap<Modifier, Integer> modifiers = SQPowerTools.getModifiers(armor);
 											
 											for (int j = 0; j < type.modifiers.size(); j ++) {
 												
-												if (modifiers.containsKey(type.modifiers.get(j).name)) {
+												if (modifiers.containsKey(type.modifiers.get(j))) {
 													
 													for (int k = 0; k < type.modifiers.get(j).effects.size(); k ++) {
 														
@@ -226,7 +227,7 @@ public class HoldingTask extends Thread{
 															
 															if (type.modifiers.get(j).effects.get(k).effectCase == 5) {
 
-																effects.add(new PotionEffect(EffectUtils.getEffectFromId(type.modifiers.get(j).effects.get(k).effect), type.modifiers.get(j).effects.get(k).duration * 20, type.modifiers.get(j).effects.get(k).level));
+																effects.add(new PotionEffect(EffectUtils.getEffectFromId(type.modifiers.get(j).effects.get(k).effect), type.modifiers.get(j).effects.get(k).duration * 20, type.modifiers.get(j).effects.get(k).level * modifiers.get(type.modifiers.get(j))));
 																
 															}
 															

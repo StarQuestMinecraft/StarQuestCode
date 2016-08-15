@@ -8,11 +8,6 @@ import java.util.Map;
 import java.util.logging.Logger;
 
 import net.md_5.bungee.api.ChatColor;
-import net.minecraft.server.v1_10_R1.NBTTagCompound;
-import net.minecraft.server.v1_10_R1.NBTTagFloat;
-import net.minecraft.server.v1_10_R1.NBTTagInt;
-import net.minecraft.server.v1_10_R1.NBTTagList;
-import net.minecraft.server.v1_10_R1.NBTTagString;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -21,7 +16,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.craftbukkit.v1_10_R1.inventory.CraftItemStack;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
@@ -32,12 +27,20 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import com.ginger_walnut.sqpowertools.enums.AmmoType;
+import com.ginger_walnut.sqpowertools.enums.ProjectileType;
+import com.ginger_walnut.sqpowertools.events.BlasterEvents;
+import com.ginger_walnut.sqpowertools.events.ToolUseEvents;
+import com.ginger_walnut.sqpowertools.gui.GUI;
+import com.ginger_walnut.sqpowertools.gui.ModifierListGUI;
 import com.ginger_walnut.sqpowertools.objects.Attribute;
+import com.ginger_walnut.sqpowertools.objects.BlasterStats;
 import com.ginger_walnut.sqpowertools.objects.Effect;
 import com.ginger_walnut.sqpowertools.objects.Modifier;
 import com.ginger_walnut.sqpowertools.objects.PowerTool;
 import com.ginger_walnut.sqpowertools.objects.PowerToolType;
-import com.ginger_walnut.sqpowertools.tasks.ChargerTask;
+import com.ginger_walnut.sqpowertools.tasks.BlasterTask;
+import com.ginger_walnut.sqpowertools.tasks.CooldownTask;
 import com.ginger_walnut.sqpowertools.tasks.HoldingTask;
 import com.ginger_walnut.sqpowertools.utils.EffectUtils;
 
@@ -50,19 +53,11 @@ public class SQPowerTools extends JavaPlugin {
 	
 	public static List<Location> chargerLocations = new ArrayList<Location>();
 	
+    public static HashMap<Player, GUI> currentGui = new HashMap<Player, GUI>();
+	
 	public static FileConfiguration config = null;
 	
 	boolean enabled = false;
-	
-	@Override
-	public void onDisable() {
-		
-		PluginDescriptionFile pdfFile = this.getDescription();
-		this.logger.info(pdfFile.getName() + " has been disabled!");
-		
-		saveDefaultConfig();
-		
-	}
 	
 	@SuppressWarnings("deprecation")
 	@Override
@@ -70,12 +65,15 @@ public class SQPowerTools extends JavaPlugin {
 		
 		plugin = this;
 		
-		PluginDescriptionFile pdfFile = this.getDescription();
-		this.logger.info(pdfFile.getName() + " has been enabled!");
-		
 		if (!enabled) {
 			
 			this.getServer().getPluginManager().registerEvents(new Events(), this);
+			this.getServer().getPluginManager().registerEvents(new ToolUseEvents(), this);
+			this.getServer().getPluginManager().registerEvents(new BlasterEvents(), this);
+
+			(new HoldingTask()).run();
+			(new CooldownTask()).run();
+			(new BlasterTask()).run();
 			
 		}
 		
@@ -90,255 +88,515 @@ public class SQPowerTools extends JavaPlugin {
 			
 		}
 
-		(new ChargerTask()).run();
-		(new HoldingTask()).run();
-		
 		config = getConfig();
 		
-		for (String powerTool : config.getConfigurationSection("power tools").getKeys(false)) {
+		List<File> configFiles = new ArrayList<File>();
+		
+		configFiles.addAll(getAllConfigFiles(this.getDataFolder()));
+		
+		for (File configFile : configFiles) {
 			
-			PowerToolType powerToolType = new PowerToolType();
+			FileConfiguration config = YamlConfiguration.loadConfiguration(configFile);
 			
-			powerToolType.configName = powerTool;
-			
-			powerToolType.material = Material.getMaterial(config.getInt("power tools." + powerTool + ".item"));
-			powerToolType.durability = (short) config.getInt("power tools." + powerTool + ".durability");
-			powerToolType.name = config.getString("power tools." + powerTool + ".name");
-
-			powerToolType.energy = config.getInt("power tools." + powerTool + ".max energy");
-			powerToolType.energyPerUse = config.getInt("power tools." + powerTool + ".energy per use");
-			
-			HashMap<Enchantment, Integer> enchants = new HashMap<Enchantment, Integer>();
-			
-			if (config.contains("power tools." + powerTool + ".enchants")) {
-
-				for (String enchantment : config.getConfigurationSection("power tools." + powerTool + ".enchants").getKeys(false)) {
-					
-					enchants.put(Enchantment.getById(config.getInt("power tools." + powerTool + ".enchants." + enchantment + ".enchant")), config.getInt("power tools." + powerTool + ".enchants." + enchantment + ".level"));
-					
-				}
+			if (config.contains("power tools")) {
 				
-			}
-			
-			powerToolType.enchants = enchants;
-			
-			List<Attribute> attributes = new ArrayList<Attribute>();
-			
-			if (config.contains("power tools." + powerTool + ".attributes")) {
-
-				for (String configAttribute : config.getConfigurationSection("power tools." + powerTool + ".attributes").getKeys(false)) {
+				for (String powerTool : config.getConfigurationSection("power tools").getKeys(false)) {
 					
-					Attribute attribute = new Attribute();
+					try {
 					
-					attribute.attribute = config.getString("power tools." + powerTool + ".attributes." + configAttribute + ".attribute");
-					attribute.amount = (float) config.getDouble("power tools." + powerTool + ".attributes." + configAttribute + ".amount");
-					attribute.slot = config.getString("power tools." + powerTool + ".attributes." + configAttribute + ".slot");
-					attribute.operation = config.getInt("power tools." + powerTool + ".attributes." + configAttribute + ".operation");
-
-					if (config.contains("power tools." + powerTool + ".attributes." + configAttribute + ".uuid")) {
+						PowerToolType powerToolType = new PowerToolType();
 						
-						attribute.uuid = config.getInt("power tools." + powerTool + ".attributes." + configAttribute + ".uuid");
+						powerToolType.configName = powerTool;
 						
-					} else {
-						
-						attribute.uuid = 0;
-						
-					}
-					
-					attributes.add(attribute);
-					
-				}
-				
-			}
-			
-			powerToolType.attributes = attributes;
-			
-			List<Effect> effects = new ArrayList<Effect>();
-			
-			if (config.contains("power tools." + powerTool + ".potion")) {
-				
-				for (String configEffect : config.getConfigurationSection("power tools." + powerTool + ".potion").getKeys(false)) {
-					
-					Effect effect = new Effect();
-					
-					effect.effect = config.getInt("power tools." + powerTool + ".potion." + configEffect + ".effect");
-					effect.level = config.getInt("power tools." + powerTool + ".potion." + configEffect + ".level");
-					effect.duration = config.getInt("power tools." + powerTool + ".potion." + configEffect + ".duration");
-					effect.effectCase = config.getInt("power tools." + powerTool + ".potion." + configEffect + ".case");
-					
-					effects.add(effect);
-					
-				}
-				
-			}
-			
-			powerToolType.effects = effects;
-			
-			if (config.contains("power tools." + powerTool + ".lore")) {
-				
-				powerToolType.extraLore = config.getStringList("power tools." + powerTool + ".lore");
-				
-			} else {
-				
-				powerToolType.extraLore = new ArrayList<String>();
-				
-			}
-			
-			List<Modifier> modifiers = new ArrayList<Modifier>();
-			
-			if (config.contains("power tools." + powerTool + ".mods")) {
-				
-				for (String mod : config.getConfigurationSection("power tools." + powerTool + ".mods").getKeys(false)) {
-					
-					Modifier modifier = new Modifier();
-					
-					modifier.name = config.getString("power tools." + powerTool + ".mods." + mod + ".name");
-					modifier.data = config.getInt("power tools." + powerTool + ".mods." + mod + ".data");
-					modifier.material = Material.getMaterial(config.getInt("power tools." + powerTool + ".mods." + mod + ".item"));
-					modifier.number = config.getInt("power tools." + powerTool + ".mods." + mod + ".amount");
-					modifier.levels = config.getInt("power tools." + powerTool + ".mods." + mod + ".levels");
-					
-					List<Attribute> modAttributes = new ArrayList<Attribute>();
-					
-					if (config.contains("power tools." + powerTool + ".mods." + mod + ".effects.attributes")) {
-						
-						for (String configAttribute : config.getConfigurationSection("power tools." + powerTool + ".mods." + mod + ".effects.attributes").getKeys(false)) {
+						if (config.contains("power tools." + powerTool + ".durability")) {
 							
-							Attribute attribute = new Attribute();
+							powerToolType.material = Material.getMaterial(config.getInt("power tools." + powerTool + ".item"));
+							powerToolType.durability = (short) config.getInt("power tools." + powerTool + ".durability");
 							
-							attribute.attribute = config.getString("power tools." + powerTool + ".mods." + mod + ".effects.attributes." + configAttribute + ".attribute");
-							attribute.amount = (float) config.getDouble("power tools." + powerTool + ".mods." + mod + ".effects.attributes." + configAttribute + ".amount");
-							attribute.operation = config.getInt("power tools." + powerTool + ".mods." + mod + ".effects.attributes." + configAttribute + ".operation");
-							attribute.slot = config.getString("power tools." + powerTool + ".mods." + mod + ".effects.attributes." + configAttribute + ".slot");
+						} else {
 							
-							if (config.contains("power tools." + powerTool + ".mods." + mod + ".effects.attributes." + configAttribute + ".uuid")) {
+							String[] split = config.getString("power tools." + powerTool + ".item").split(":");
+							
+							if (split.length == 1) {
 								
-								attribute.uuid = config.getInt("power tools." + powerTool + ".mods." + mod + ".effects.attributes." + configAttribute + ".uuid");
+								powerToolType.material = Material.getMaterial(config.getInt("power tools." + powerTool + ".item"));
+								powerToolType.durability = 0;
 								
 							} else {
 								
-								attribute.uuid = 0;
+								powerToolType.material = Material.getMaterial(Integer.parseInt(split[0]));
+								powerToolType.durability = Short.parseShort(split[1]);
 								
 							}
+							
+						}
 
-							modAttributes.add(attribute);
+						powerToolType.name = config.getString("power tools." + powerTool + ".name");
+			
+						powerToolType.energy = config.getInt("power tools." + powerTool + ".max energy");
+						powerToolType.energyPerUse = config.getInt("power tools." + powerTool + ".energy per use");
+						
+						HashMap<Enchantment, Integer> enchants = new HashMap<Enchantment, Integer>();
+						
+						if (config.contains("power tools." + powerTool + ".blaster")) {
+							
+							BlasterStats blasterStats = new BlasterStats();
+							
+							blasterStats.cooldown = config.getInt("power tools." + powerTool + ".blaster.cooldown");
+							blasterStats.damage = config.getDouble("power tools." + powerTool + ".blaster.damage");
+							blasterStats.scope = config.getInt("power tools." + powerTool + ".blaster.scope") - 1;
+							
+							if (config.contains("power tools." + powerTool + ".blaster.ammo")) {
+								
+								blasterStats.ammo = config.getInt("power tools." + powerTool + ".blaster.ammo");
+								blasterStats.reload = config.getInt("power tools." + powerTool + ".blaster.reload");
+								
+							}
+							
+							if (config.contains("power tools." + powerTool + ".blaster.ammoType")) {
+								
+								blasterStats.ammoType = AmmoType.getById(config.getInt("power tools." + powerTool + ".blaster.ammoType"));
+
+							} else {
+								
+								blasterStats.ammoType = AmmoType.ENERGY;
+								
+							}
+							
+							if (config.contains("power tools." + powerTool + ".blaster.projectileType")) {
+								
+								blasterStats.projectileType = ProjectileType.getById(config.getInt("power tools." + powerTool + ".blaster.projectileType"));
+								
+							} else {
+								
+								blasterStats.projectileType = ProjectileType.ARROW;
+								
+							}
+							
+							if (config.contains("power tools." + powerTool + ".blaster.explosionSize")) {
+								
+								blasterStats.explosionSize = (float) config.getDouble("power tools." + powerTool + ".blaster.explosionSize");
+								
+							}
+							
+							if (config.contains("power tools." + powerTool + ".blaster.shotCount")) {
+								
+								blasterStats.shotCount = config.getInt("power tools." + powerTool + ".blaster.shotCount");
+								
+							}
+							
+							powerToolType.blasterStats = blasterStats;
 							
 						}
 						
-					}
-					
-					modifier.attributes = modAttributes;
-					
-					List<Effect> modEffects = new ArrayList<Effect>();
-					
-					if (config.contains("power tools." + powerTool + ".mods." + mod + ".effects.potion")) {
-						
-						Effect effect = new Effect();
-
-						for (String configEffect : config.getConfigurationSection("power tools." + powerTool + ".mods." + mod + ".effects.potion").getKeys(false)) {
-							
-							effect.effect = config.getInt("power tools." + powerTool + ".mods." + mod + ".effects.potion." + configEffect + ".effect");
-							effect.level = config.getInt("power tools." + powerTool + ".mods." + mod + ".effects.potion." + configEffect + ".level");
-							effect.duration = config.getInt("power tools." + powerTool + ".mods." + mod + ".effects.potion." + configEffect + ".duration");
-							effect.effectCase = config.getInt("power tools." + powerTool + ".mods." + mod + ".effects.potion." + configEffect + ".case");
-							
-							modEffects.add(effect);
+						if (config.contains("power tools." + powerTool + ".enchants")) {
+			
+							for (String enchantment : config.getConfigurationSection("power tools." + powerTool + ".enchants").getKeys(false)) {
+								
+								enchants.put(Enchantment.getById(config.getInt("power tools." + powerTool + ".enchants." + enchantment + ".enchant")), config.getInt("power tools." + powerTool + ".enchants." + enchantment + ".level"));
+								
+							}
 							
 						}
 						
-					}
-					
-					modifier.effects = modEffects;
-					
-					Map<Enchantment, Integer> modEnchants = new HashMap<Enchantment, Integer>();
-
-					if (config.contains("power tools." + powerTool + ".mods." + mod + ".effects.enchants")) {
+						powerToolType.enchants = enchants;
 						
-						for (String enchant : config.getConfigurationSection("power tools." + powerTool + ".mods." + mod + ".effects.enchants").getKeys(false)) {
-							
-							modEnchants.put(Enchantment.getById(config.getInt("power tools." + powerTool + ".mods." + mod + ".effects.enchants." + enchant + ".enchant")), config.getInt("power tools." + powerTool + ".mods." + mod + ".effects.enchants." + enchant + ".level"));
+						List<Attribute> attributes = new ArrayList<Attribute>();
+						
+						if (config.contains("power tools." + powerTool + ".attributes")) {
+			
+							for (String configAttribute : config.getConfigurationSection("power tools." + powerTool + ".attributes").getKeys(false)) {
+								
+								Attribute attribute = new Attribute();
+								
+								attribute.attribute = config.getString("power tools." + powerTool + ".attributes." + configAttribute + ".attribute");
+								attribute.amount = (float) config.getDouble("power tools." + powerTool + ".attributes." + configAttribute + ".amount");
+								attribute.slot = config.getString("power tools." + powerTool + ".attributes." + configAttribute + ".slot");
+								attribute.operation = config.getInt("power tools." + powerTool + ".attributes." + configAttribute + ".operation");
+			
+								if (config.contains("power tools." + powerTool + ".attributes." + configAttribute + ".uuid")) {
+									
+									attribute.uuid = config.getInt("power tools." + powerTool + ".attributes." + configAttribute + ".uuid");
+									
+								} else {
+									
+									attribute.uuid = 0;
+									
+								}
+								
+								attributes.add(attribute);
+								
+							}
 							
 						}
 						
-					}
-					
-					modifier.enchants = modEnchants;
-					
-					int modEnergy = 0;
-					
-					if (config.contains("power tools." + powerTool + ".mods." + mod + ".effects.energy")) {
+						powerToolType.attributes = attributes;
 						
-						modEnergy = config.getInt("power tools." + powerTool + ".mods." + mod + ".effects.energy");
+						List<Effect> effects = new ArrayList<Effect>();
 						
-					}
-					
-					modifier.energy = modEnergy;
-					
-					List<String> modCannotCombines = new ArrayList<String>();
-					
-					if (config.contains("power tools." + powerTool + ".mods." + mod + ".cannot combine with")) {
+						if (config.contains("power tools." + powerTool + ".potion")) {
+							
+							for (String configEffect : config.getConfigurationSection("power tools." + powerTool + ".potion").getKeys(false)) {
+								
+								Effect effect = new Effect();
+								
+								effect.effect = config.getInt("power tools." + powerTool + ".potion." + configEffect + ".effect");
+								effect.level = config.getInt("power tools." + powerTool + ".potion." + configEffect + ".level");
+								effect.duration = config.getInt("power tools." + powerTool + ".potion." + configEffect + ".duration");
+								effect.effectCase = config.getInt("power tools." + powerTool + ".potion." + configEffect + ".case");
+								
+								effects.add(effect);
+								
+							}
+							
+						}
 						
-						modCannotCombines = config.getStringList("power tools." + powerTool + ".mods." + mod + ".cannot combine with");
+						powerToolType.effects = effects;
+						
+						if (config.contains("power tools." + powerTool + ".lore")) {
+							
+							powerToolType.extraLore = config.getStringList("power tools." + powerTool + ".lore");
+							
+						} else {
+							
+							powerToolType.extraLore = new ArrayList<String>();
+							
+						}
+						
+						List<Modifier> modifiers = new ArrayList<Modifier>();
+						
+						if (config.contains("power tools." + powerTool + ".mods")) {
+							
+							for (String mod : config.getConfigurationSection("power tools." + powerTool + ".mods").getKeys(false)) {
+								
+								Modifier modifier = new Modifier();
+								
+								modifier.name = config.getString("power tools." + powerTool + ".mods." + mod + ".name");
+								
+								if (config.contains("power tools." + powerTool + ".mods." + mod + ".energy per use")) {
+
+									modifier.energyPerUse = config.getInt("power tools." + powerTool + ".mods." + mod + ".energy per use");
+									
+								}	
+								
+								if (config.contains("power tools." + powerTool + ".mods." + mod + ".data")) {
+									
+									modifier.material = Material.getMaterial(config.getInt("power tools." + powerTool + ".mods." + mod + ".item"));
+									modifier.durability = (short) config.getInt("power tools." + powerTool + ".mods." + mod + ".data");
+									
+								} else {
+									
+									String[] split = config.getString("power tools." + powerTool + ".mods." + mod + ".item").split(":");
+									
+									if (split.length == 1) {
+										
+										modifier.material = Material.getMaterial(config.getInt("power tools." + powerTool + ".mods." + mod + ".item"));
+										modifier.durability = 0;
+										
+									} else {
+										
+										modifier.material = Material.getMaterial(Integer.parseInt(split[0]));
+										modifier.durability = Short.parseShort(split[1]);
+										
+									}
+									
+								}
+
+								modifier.number = config.getInt("power tools." + powerTool + ".mods." + mod + ".amount");
+								modifier.levels = config.getInt("power tools." + powerTool + ".mods." + mod + ".levels");
+								
+								if (config.contains("power tools." + powerTool + ".mods." + mod + ".blaster")) {
+									
+									BlasterStats blasterStats = new BlasterStats();
+									
+									if (config.contains("power tools." + powerTool + ".mods." + mod + ".blaster.cooldown")) {
+										
+										blasterStats.cooldown = config.getInt("power tools." + powerTool + ".mods." + mod + ".blaster.cooldown");
+										
+									}
+									
+									if (config.contains("power tools." + powerTool + ".mods." + mod + ".blaster.damage")) {
+										
+										blasterStats.damage = config.getDouble("power tools." + powerTool + ".mods." + mod + ".blaster.damage");
+										
+									}
+									
+									if (config.contains("power tools." + powerTool + ".mods." + mod + ".blaster.scope")) {
+										
+										blasterStats.scope = config.getInt("power tools." + powerTool + ".mods." + mod + ".blaster.scope");
+										
+									}
+									
+									if (config.contains("power tools." + powerTool + ".mods." + mod + ".blaster.ammo")) {
+										
+										blasterStats.ammo = config.getInt("power tools." + powerTool + ".mods." + mod + ".blaster.ammo");
+										
+									}
+									
+									if (config.contains("power tools." + powerTool + ".mods." + mod + ".blaster.reload")) {
+										
+										blasterStats.reload = config.getInt("power tools." + powerTool + ".mods." + mod + ".blaster.reload");
+										
+									}
+									
+									if (config.contains("power tools." + powerTool + ".mods." + mod + ".blaster.ammoType")) {
+										
+										blasterStats.ammoType = AmmoType.getById(config.getInt("power tools." + powerTool + ".mods." + mod + ".blaster.ammoType"));
+
+									}
+									
+									if (config.contains("power tools." + powerTool + ".mods." + mod + ".blaster.projectileType")) {
+										
+										blasterStats.projectileType = ProjectileType.getById(config.getInt("power tools." + powerTool + ".mods." + mod + ".blaster.projectileType"));
+										
+									}
+									
+									if (config.contains("power tools." + powerTool + ".mods." + mod + ".blaster.explosionSize")) {
+										
+										blasterStats.explosionSize = (float) config.getDouble("power tools." + powerTool + ".mods." + mod + ".blaster.explosionSize");
+										
+									} else {
+										
+										blasterStats.explosionSize = 0;
+										
+									}
+									
+									if (config.contains("power tools." + powerTool + ".mods." + mod + ".blaster.shotCount")) {
+										
+										blasterStats.shotCount = config.getInt("power tools." + powerTool + ".mods." + mod + ".blaster.shotCount");
+										
+									} else {
+										
+										blasterStats.shotCount = 0;
+										
+									}
+
+									modifier.blasterStats = blasterStats;
+									
+								}
+								
+								List<Attribute> modAttributes = new ArrayList<Attribute>();
+								
+								if (config.contains("power tools." + powerTool + ".mods." + mod + ".effects.attributes")) {
+									
+									for (String configAttribute : config.getConfigurationSection("power tools." + powerTool + ".mods." + mod + ".effects.attributes").getKeys(false)) {
+										
+										Attribute attribute = new Attribute();
+										
+										attribute.attribute = config.getString("power tools." + powerTool + ".mods." + mod + ".effects.attributes." + configAttribute + ".attribute");
+										attribute.amount = (float) config.getDouble("power tools." + powerTool + ".mods." + mod + ".effects.attributes." + configAttribute + ".amount");
+										attribute.operation = config.getInt("power tools." + powerTool + ".mods." + mod + ".effects.attributes." + configAttribute + ".operation");
+										attribute.slot = config.getString("power tools." + powerTool + ".mods." + mod + ".effects.attributes." + configAttribute + ".slot");
+										
+										if (config.contains("power tools." + powerTool + ".mods." + mod + ".effects.attributes." + configAttribute + ".uuid")) {
+											
+											attribute.uuid = config.getInt("power tools." + powerTool + ".mods." + mod + ".effects.attributes." + configAttribute + ".uuid");
+											
+										} else {
+											
+											attribute.uuid = 0;
+											
+										}
+			
+										modAttributes.add(attribute);
+										
+									}
+									
+								}
+								
+								modifier.attributes = modAttributes;
+								
+								List<Effect> modEffects = new ArrayList<Effect>();
+								
+								if (config.contains("power tools." + powerTool + ".mods." + mod + ".effects.potion")) {
+									
+									Effect effect = new Effect();
+			
+									for (String configEffect : config.getConfigurationSection("power tools." + powerTool + ".mods." + mod + ".effects.potion").getKeys(false)) {
+										
+										effect.effect = config.getInt("power tools." + powerTool + ".mods." + mod + ".effects.potion." + configEffect + ".effect");
+										effect.level = config.getInt("power tools." + powerTool + ".mods." + mod + ".effects.potion." + configEffect + ".level");
+										effect.duration = config.getInt("power tools." + powerTool + ".mods." + mod + ".effects.potion." + configEffect + ".duration");
+										effect.effectCase = config.getInt("power tools." + powerTool + ".mods." + mod + ".effects.potion." + configEffect + ".case");
+										
+										modEffects.add(effect);
+										
+									}
+									
+								}
+								
+								modifier.effects = modEffects;
+								
+								Map<Enchantment, Integer> modEnchants = new HashMap<Enchantment, Integer>();
+			
+								if (config.contains("power tools." + powerTool + ".mods." + mod + ".effects.enchants")) {
+									
+									for (String enchant : config.getConfigurationSection("power tools." + powerTool + ".mods." + mod + ".effects.enchants").getKeys(false)) {
+										
+										modEnchants.put(Enchantment.getById(config.getInt("power tools." + powerTool + ".mods." + mod + ".effects.enchants." + enchant + ".enchant")), config.getInt("power tools." + powerTool + ".mods." + mod + ".effects.enchants." + enchant + ".level"));
+										
+									}
+									
+								}
+								
+								modifier.enchants = modEnchants;
+								
+								int modEnergy = 0;
+								
+								if (config.contains("power tools." + powerTool + ".mods." + mod + ".effects.energy")) {
+									
+									modEnergy = config.getInt("power tools." + powerTool + ".mods." + mod + ".effects.energy");
+									
+								}
+								
+								modifier.energy = modEnergy;
+								
+								List<String> modCannotCombines = new ArrayList<String>();
+								
+								if (config.contains("power tools." + powerTool + ".mods." + mod + ".cannot combine with")) {
+									
+									modCannotCombines = config.getStringList("power tools." + powerTool + ".mods." + mod + ".cannot combine with");
+									
+								}
+			
+								modifier.cannotCombines = modCannotCombines;
+			
+								modifiers.add(modifier);
+								
+							}
+							
+						}
+						
+						powerToolType.modifiers = modifiers;
+						
+						powerToolType.maxMods = config.getInt("power tools." + powerTool + ".max modifiers");
+						
+						if (config.contains("power tools." + powerTool + ".recipe")) {
+							
+							ShapedRecipe recipe = new ShapedRecipe((new PowerTool(powerToolType)).getItem());
+							
+							if (config.contains("power tools." + powerTool + ".recipe.line2")) {
+								
+								if (config.contains("power tools." + powerTool + ".recipe.line3")) {
+									
+									recipe.shape(config.getString("power tools." + powerTool + ".recipe.line1"), config.getString("power tools." + powerTool + ".recipe.line2"), config.getString("power tools." + powerTool + ".recipe.line3"));
+									
+								} else {
+									
+									recipe.shape(config.getString("power tools." + powerTool + ".recipe.line1"), config.getString("power tools." + powerTool + ".recipe.line2"));
+									
+								}
+								
+							} else {
+								
+								recipe.shape(config.getString("power tools." + powerTool + ".recipe.line1"));
+								
+							}
+							
+							List<String> ingredients = new ArrayList<String>();
+							
+							ingredients.addAll(config.getConfigurationSection("power tools." + powerTool + ".recipe.ingredients").getKeys(false));
+							
+							for (int i = 0; i < ingredients.size(); i ++) {
+								
+								recipe.setIngredient(ingredients.get(i).toCharArray()[0], Material.getMaterial(config.getInt("power tools." + powerTool + ".recipe.ingredients." + ingredients.get(i))));
+								
+							}
+							
+							getServer().addRecipe(recipe);
+							
+							powerToolType.hasRecipe = true;
+
+							if (config.getString("power tools." + powerTool + ".recipe.line1").length() == 2) {
+								
+								powerToolType.recipe.add(config.getString("power tools." + powerTool + ".recipe.line1") + " ");
+								
+							} else if (config.getString("power tools." + powerTool + ".recipe.line1").length() == 1) {
+								
+								powerToolType.recipe.add(config.getString("power tools." + powerTool + ".recipe.line1") + "  ");
+								
+							} else {
+								
+								powerToolType.recipe.add(config.getString("power tools." + powerTool + ".recipe.line1"));
+								
+							}
+							
+							if (config.contains("power tools." + powerTool + ".recipe.line2")) {
+								
+								if (config.getString("power tools." + powerTool + ".recipe.line2").length() == 2) {
+									
+									powerToolType.recipe.add(config.getString("power tools." + powerTool + ".recipe.line2") + " ");
+									
+								} else if (config.getString("power tools." + powerTool + ".recipe.line2").length() == 1) {
+									
+									powerToolType.recipe.add(config.getString("power tools." + powerTool + ".recipe.line2") + "  ");
+									
+								} else {
+									
+									powerToolType.recipe.add(config.getString("power tools." + powerTool + ".recipe.line2"));
+									
+								}
+								
+								if (config.contains("power tools." + powerTool + ".recipe.line3")) {
+									
+									if (config.getString("power tools." + powerTool + ".recipe.line3").length() == 2) {
+										
+										powerToolType.recipe.add(config.getString("power tools." + powerTool + ".recipe.line3") + " ");
+										
+									} else if (config.getString("power tools." + powerTool + ".recipe.line3").length() == 1) {
+										
+										powerToolType.recipe.add(config.getString("power tools." + powerTool + ".recipe.line3") + "  ");
+										
+									} else {
+										
+										powerToolType.recipe.add(config.getString("power tools." + powerTool + ".recipe.line3"));
+										
+									}
+									
+								}
+								
+							}
+							
+							for (String ingredient : config.getConfigurationSection("power tools." + powerTool + ".recipe.ingredients").getKeys(false)) {
+								
+								powerToolType.ingredients.add(Material.getMaterial(config.getInt("power tools." + powerTool + ".recipe.ingredients." + ingredient)));
+								
+							}
+							
+							powerToolType.ingredientNames.addAll(config.getConfigurationSection("power tools." + powerTool + ".recipe.ingredients").getKeys(false));
+							
+						} else {
+							
+							powerToolType.hasRecipe = false;
+							
+						}
+						
+						powerTools.add(powerToolType);
+					
+					} catch (Exception exception) {
+						
+						exception.printStackTrace();
 						
 					}
 
-					modifier.cannotCombines = modCannotCombines;
-
-					modifiers.add(modifier);
-					
 				}
 				
 			}
-			
-			powerToolType.modifiers = modifiers;
-			
-			powerToolType.maxMods = config.getInt("power tools." + powerTool + ".max modifiers");
-			
-			if (config.contains("power tools." + powerTool + ".recipe")) {
-				
-				ShapedRecipe recipe = new ShapedRecipe((new PowerTool(powerToolType)).item);
-				
-				if (config.contains("power tools." + powerTool + ".recipe.line2")) {
-					
-					if (config.contains("power tools." + powerTool + ".recipe.line3")) {
-						
-						recipe.shape(config.getString("power tools." + powerTool + ".recipe.line1"), config.getString("power tools." + powerTool + ".recipe.line2"), config.getString("power tools." + powerTool + ".recipe.line3"));
-						
-					} else {
-						
-						recipe.shape(config.getString("power tools." + powerTool + ".recipe.line1"), config.getString("power tools." + powerTool + ".recipe.line2"));
-						
-					}
-					
-				} else {
-					
-					recipe.shape(config.getString("power tools." + powerTool + ".recipe.line1"));
-					
-				}
-				
-				List<String> ingredients = new ArrayList<String>();
-				
-				ingredients.addAll(config.getConfigurationSection("power tools." + powerTool + ".recipe.ingredients").getKeys(false));
-				
-				for (int i = 0; i < ingredients.size(); i ++) {
-					
-					recipe.setIngredient(ingredients.get(i).toCharArray()[0], Material.getMaterial(config.getInt("power tools." + powerTool + ".recipe.ingredients." + ingredients.get(i))));
-					
-				}
-				
-				getServer().addRecipe(recipe);
-				
-				powerToolType.hasRecipe = true;
-				
-			} else {
-				
-				powerToolType.hasRecipe = false;
-				
-			}
-			
-			powerTools.add(powerToolType);
 
 		}
+		
+		PluginDescriptionFile pdfFile = this.getDescription();
+		this.logger.info(pdfFile.getName() + " has been enabled!");
+
+	}
+	
+	@Override
+	public void onDisable() {
+		
+		saveDefaultConfig();
+		
+		PluginDescriptionFile pdfFile = this.getDescription();
+		this.logger.info(pdfFile.getName() + " has been disabled!");
 		
 	}
 	
@@ -418,7 +676,7 @@ public class SQPowerTools extends JavaPlugin {
 							
 							if (powerTools.get(i).hasRecipe) {
 								
-								ItemStack powerTool = (new PowerTool(powerTools.get(i))).item;
+								ItemStack powerTool = (new PowerTool(powerTools.get(i))).getItem();
 								
 								ItemMeta itemMeta = powerTool.getItemMeta();
 								
@@ -480,11 +738,11 @@ public class SQPowerTools extends JavaPlugin {
 						
 						Player player = (Player) sender;
 						
-						Inventory inventory = Bukkit.createInventory(player, 54, "Power Tool Mods");
+						/*Inventory inventory = Bukkit.createInventory(player, 54, "Power Tool Mods");
 								
 						for (int i = 0; i < powerTools.size(); i ++) {
 								
-							ItemStack powerTool = (new PowerTool(powerTools.get(i))).item;
+							ItemStack powerTool = (new PowerTool(powerTools.get(i))).getItem();
 								
 							ItemMeta itemMeta = powerTool.getItemMeta();
 								
@@ -500,7 +758,10 @@ public class SQPowerTools extends JavaPlugin {
 							
 							player.openInventory(inventory);
 
-						}
+						}*/
+						
+						ModifierListGUI gui = new ModifierListGUI();
+						gui.open(player);
 						
 					} else {
 						
@@ -520,7 +781,7 @@ public class SQPowerTools extends JavaPlugin {
 									
 							for (int i = 0; i < powerTools.size(); i ++) {
 									
-								ItemStack powerTool = (new PowerTool(powerTools.get(i))).item;
+								ItemStack powerTool = (new PowerTool(powerTools.get(i))).getItem();
 									
 								ItemMeta itemMeta = powerTool.getItemMeta();
 									
@@ -589,7 +850,7 @@ public class SQPowerTools extends JavaPlugin {
 											
 											mod.addUnsafeEnchantments(toolType.modifiers.get(i).enchants);
 											
-											mod.setDurability(Short.parseShort(Integer.toString(toolType.modifiers.get(i).data))); 
+											mod.setDurability(Short.parseShort(Integer.toString(toolType.modifiers.get(i).durability))); 
 											
 											ItemMeta modItemMeta = mod.getItemMeta();
 											
@@ -861,11 +1122,14 @@ public class SQPowerTools extends JavaPlugin {
 		
 		if (type != null) {	
 			
-			HashMap<String, Integer> modifiers = getModifiers(powerTool);
+			HashMap<Modifier, Integer> modifiers = getModifiers(powerTool);
 			
-			powerTool = getPowerTool(type, modifiers);
-			powerTool = setEnergy(powerTool, currentEnergy);
-			powerTool = addModifiers(powerTool, modifiers);
+			PowerTool powerToolObject = new PowerTool(type, modifiers);
+			powerToolObject.setEnergy(currentEnergy);
+
+			powerToolObject.setDisplayName(powerTool.getItemMeta().getDisplayName());
+			powerTool = powerToolObject.getItem();
+		
 			
 		} else {
 			
@@ -917,19 +1181,19 @@ public class SQPowerTools extends JavaPlugin {
 	
 	public static int getMaxEnergy(PowerToolType type, ItemStack powerTool) {
 		
-		HashMap<String, Integer> modifierMap = getModifiers(powerTool);
+		HashMap<Modifier, Integer> modifierMap = getModifiers(powerTool);
 		
 		List<String> modNames = new ArrayList<String>();
 		
-		modNames.addAll(modifierMap.keySet());
-		
 		List<Integer> modLevels = new ArrayList<Integer>();
-		
-		for (int i = 0; i < modNames.size(); i ++) {
+
+		for (Modifier modifier : modifierMap.keySet()) {
 			
-			modLevels.add(modifierMap.get(modNames.get(i)));
+			modNames.add(modifier.name);
+			modLevels.add(modifierMap.get(modifier));
+			
 		}
-		
+
 		int energy = type.energy;
 		
 		for (int i = 0; i < type.modifiers.size(); i ++) {
@@ -938,7 +1202,11 @@ public class SQPowerTools extends JavaPlugin {
 				
 				if (modNames.get(j).equals(type.modifiers.get(i).name)) {
 				
-					energy = energy + (type.modifiers.get(i).energy * modLevels.get(j));
+					if (type.modifiers.get(i).energy != 0) {
+						
+						energy = energy + (type.modifiers.get(i).energy * modLevels.get(j));
+						
+					}
 						
 				}
 				
@@ -947,31 +1215,6 @@ public class SQPowerTools extends JavaPlugin {
 		}
 		
 		return energy;
-		
-	}
-	
-	
-	public static ItemStack setEnergy(ItemStack powerTool, int energy) {
-		
-		List<String> lore = powerTool.getItemMeta().getLore();
-		
-		for (int i = 0; i < lore.size(); i ++) {
-			
-			if (lore.get(i).startsWith(ChatColor.RED + "Energy:")) {
-				
-				lore.set(i, ChatColor.RED + "Energy: " + formatEnergy(energy) + "/" + formatEnergy(getMaxEnergy(getType(powerTool), powerTool)));
-				
-			}
-			
-		}
-		
-		ItemMeta itemMeta = powerTool.getItemMeta();
-		
-		itemMeta.setLore(lore);
-		
-		powerTool.setItemMeta(itemMeta);
-		
-		return powerTool;
 		
 	}
 	
@@ -997,9 +1240,9 @@ public class SQPowerTools extends JavaPlugin {
 		
 	}
 	
-	public static HashMap<String, Integer> getModifiers(ItemStack powerTool) {
+	public static HashMap<Modifier, Integer> getModifiers(ItemStack powerTool) {
 		
-		HashMap<String, Integer> modifiers = new HashMap<String, Integer>();
+		HashMap<Modifier, Integer> modifiers = new HashMap<Modifier, Integer>();
 		
 		boolean reading = false;
 		
@@ -1055,6 +1298,8 @@ public class SQPowerTools extends JavaPlugin {
 								
 								level = Integer.parseInt(line.substring(i));
 								
+								i = line.length();
+								
 							}
 							
 						}
@@ -1077,8 +1322,24 @@ public class SQPowerTools extends JavaPlugin {
 						
 					}
 					
-					modifiers.put(modifierName, level);
+					Modifier modifier = null;
 					
+					for (Modifier typeModifier : getType(powerTool).modifiers) {
+						
+						if (typeModifier.name.equals(modifierName)) {
+							
+							modifier = typeModifier;
+							
+						}
+						
+					}
+					
+					if (modifier != null) {
+						
+						modifiers.put(modifier, level);
+						
+					}
+
 				}
 				
 			}
@@ -1089,405 +1350,28 @@ public class SQPowerTools extends JavaPlugin {
 		
 	}
 	
-	/**public static ItemStack addLore(ItemStack powerTool, PowerToolType type, Map<String, Integer> modifierMap, boolean contraband) {
+	public List<File> getAllConfigFiles(File directory) {
 		
-		ItemMeta itemMeta = powerTool.getItemMeta();
+		List<File> configFiles = new ArrayList<File>();
 		
-		itemMeta.setLore(new ArrayList<String>());
-		
-		List<String> lore = new ArrayList<String>();
-		
-		for (String line : type.extraLore) {
+		for (File file : directory.listFiles()) {
 			
-			lore.add(ChatColor.GRAY + line);
-			
-		}
-		
-		List<String> modNames = new ArrayList<String>();
-		List<Integer> modLevels = new ArrayList<Integer>();
-		
-		modNames.addAll(modifierMap.keySet());
-		
-		for (int j = 0; j < modifierMap.size(); j ++) {
-			
-			modLevels.add(modifierMap.get(modNames.get(j)));
-			
-		}
-		
-		lore.add(ChatColor.DARK_PURPLE + "Power Tool");
-		lore.add(ChatColor.DARK_PURPLE + type.name);
-
-		int energy = type.energy;
-		
-		for (int i = 0; i < type.modifiers.size(); i ++) {
-			
-			for (int j = 0; j < modNames.size(); j ++) {
+			if (file.getName().endsWith(".yml")) {
 				
-				if (modNames.get(j).equals(type.modifiers.get(i).name)) {
+				configFiles.add(file);
 				
-					energy = energy + (type.modifiers.get(i).energy * modLevels.get(j));
-						
-				}
+			}
+			
+			if (file.isDirectory()) {
+				
+				configFiles.addAll(getAllConfigFiles(file));
 				
 			}
 			
 		}
 		
-		lore.add(ChatColor.RED + "Energy: " + formatEnergy(energy) + "/" + formatEnergy(energy));
+		return configFiles;
 		
-		if (modNames.size() > 0) {
-			
-			lore.add(ChatColor.BLUE + "----------");
-			lore.add(ChatColor.GOLD + "Mods");
-			
-			for (int i = 0; i < modNames.size(); i ++) {
-				
-				lore.add(ChatColor.GOLD + modNames.get(i) + " Level " + modLevels.get(i));
-				
-			}
-			
-		}
-		
-		lore.add(ChatColor.BLUE + "----------");
-		
-		for (int j = 0; j < type.attributes.size(); j ++) {
-			
-			String attributeName = "";
-			
-			float adjustment = 0;
-			
-			if (type.attributes.get(j).attribute.equals("generic.attackSpeed")) {
-			
-				attributeName = "Attack Speed";
-				
-				adjustment = 4;
-				
-				for (int k = 0; k < type.attributes.size(); k ++) {
-					
-					for (int l = 0; l < modNames.size(); l ++) {
-							
-						if (modNames.get(l).equals(type.modifiers.get(k).name)) {
-						
-							for (int m = 0; m < type.modifiers.get(k).attributes.size(); m ++) {
-							
-								if (type.modifiers.get(k).attributes.get(m).attribute.equals("generic.attackSpeed")) {
-								
-									adjustment = adjustment + (type.modifiers.get(k).attributes.get(m).amount * modLevels.get(l));
-									
-								}
-								
-							}
-							
-						}
-						
-					}
-					
-				}
-				
-			} else if (type.attributes.get(j).attribute.equals("generic.attackDamage")) {
-				
-				attributeName = "Damage";
-				
-				if (powerTool.containsEnchantment(Enchantment.DAMAGE_ALL)) {
-					
-					adjustment = (float) ((powerTool.getEnchantmentLevel(Enchantment.DAMAGE_ALL) * .5) + 1.5);
-					
-				} else {
-					
-					adjustment = 1;
-					
-				}
-				
-				for (int k = 0; k < type.modifiers.size(); k ++) {
-					
-					for (int l = 0; l < modNames.size(); l ++) {
-							
-						if (modNames.get(l).equals(type.modifiers.get(k).name)) {
-						
-							for (int m = 0; m < type.modifiers.get(k).attributes.size(); m ++) {
-							
-								if (type.modifiers.get(k).attributes.get(m).attribute.equals("generic.attackDamage")) {
-								
-									adjustment = adjustment + (type.modifiers.get(k).attributes.get(m).amount * modLevels.get(l));
-									
-								}
-								
-							}
-							
-						}
-						
-					}
-					
-				}
-				
-			} else if (type.attributes.get(j).attribute.equals("generic.movementSpeed")) {
-			
-				attributeName = "Movement Speed";
-				
-				for (int k = 0; k < type.attributes.size(); k ++) {
-					
-					for (int l = 0; l < modNames.size(); l ++) {
-							
-						if (modNames.get(l).equals(type.modifiers.get(k).name)) {
-						
-							for (int m = 0; m < type.modifiers.get(k).attributes.size(); m ++) {
-							
-								if (type.modifiers.get(k).attributes.get(m).attribute.equals("generic.movementSpeed")) {
-								
-									adjustment = adjustment + (type.modifiers.get(k).attributes.get(m).amount * modLevels.get(l));
-									
-								}
-								
-							}
-							
-						}
-						
-					}
-					
-				}
-				
-			} else if (type.attributes.get(j).attribute.equals("generic.armor")) {
-			
-				attributeName = "Armor";
-				
-				for (int k = 0; k < type.attributes.size(); k ++) {
-					
-					for (int l = 0; l < modNames.size(); l ++) {
-							
-						if (modNames.get(l).equals(type.modifiers.get(k).name)) {
-						
-							for (int m = 0; m < type.modifiers.get(k).attributes.size(); m ++) {
-							
-								if (type.modifiers.get(k).attributes.get(m).attribute.equals("generic.armor")) {
-								
-									adjustment = adjustment + (type.modifiers.get(k).attributes.get(m).amount * modLevels.get(l));
-									
-								}
-								
-							}
-							
-						}
-						
-					}
-					
-				}
-				
-			} else if (type.attributes.get(j).attribute.equals("generic.knockbackResistance")) {
-					
-					attributeName = "Knockback Resistance";
-					
-					for (int k = 0; k < type.attributes.size(); k ++) {
-						
-						for (int l = 0; l < modNames.size(); l ++) {
-								
-							if (modNames.get(l).equals(type.modifiers.get(k).name)) {
-							
-								for (int m = 0; m < type.modifiers.get(k).attributes.size(); m ++) {
-								
-									if (type.modifiers.get(k).attributes.get(m).attribute.equals("generic.knockbackResistance")) {
-									
-										adjustment = adjustment + (type.modifiers.get(k).attributes.get(m).amount * modLevels.get(l));
-										
-									}
-									
-								}
-								
-							}
-							
-						}
-						
-					}
-					
-			} else if (type.attributes.get(j).attribute.equals("generic.luck")) {
-				
-				attributeName = "Luck";
-				
-				for (int k = 0; k < type.attributes.size(); k ++) {
-					
-					for (int l = 0; l < modNames.size(); l ++) {
-							
-						if (modNames.get(l).equals(type.modifiers.get(k).name)) {
-						
-							for (int m = 0; m < type.modifiers.get(k).attributes.size(); m ++) {
-							
-								if (type.modifiers.get(k).attributes.get(m).attribute.equals("generic.luck")) {
-								
-									adjustment = adjustment + (type.modifiers.get(k).attributes.get(m).amount * modLevels.get(l));
-									
-								}
-								
-							}
-							
-						}
-						
-					}
-					
-				}
-				
-			} else if (type.attributes.get(j).attribute.equals("generic.maxHealth")) {
-				
-				attributeName = "Health";
-				
-				for (int k = 0; k < type.attributes.size(); k ++) {
-					
-					for (int l = 0; l < modNames.size(); l ++) {
-							
-						if (modNames.get(l).equals(type.modifiers.get(k).name)) {
-						
-							for (int m = 0; m < type.modifiers.get(k).attributes.size(); m ++) {
-							
-								if (type.modifiers.get(k).attributes.get(m).attribute.equals("generic.maxHealth")) {
-								
-									adjustment = adjustment + (type.modifiers.get(k).attributes.get(m).amount * modLevels.get(l));
-									
-								}
-								
-							}
-							
-						}
-						
-					}
-					
-				}
-				
-			} else if (type.attributes.get(j).attribute.equals("generic.armorToughness")) {
-				
-				attributeName = "Armor Toughness";
-				
-				for (int k = 0; k < type.attributes.size(); k ++) {
-					
-					for (int l = 0; l < modNames.size(); l ++) {
-							
-						if (modNames.get(l).equals(type.modifiers.get(k).name)) {
-						
-							for (int m = 0; m < type.modifiers.get(k).attributes.size(); m ++) {
-							
-								if (type.modifiers.get(k).attributes.get(m).attribute.equals("generic.armorToughness")) {
-								
-									adjustment = adjustment + (type.modifiers.get(k).attributes.get(m).amount * modLevels.get(l));
-									
-								}
-								
-							}
-							
-						}
-						
-					}
-					
-				}
-				
-			} else {
-				
-				attributeName = type.attributes.get(j).attribute;
-			}
-			
-			if (type.attributes.get(j).operation == 0) {
-				
-				lore.add(ChatColor.GOLD + attributeName + ": " + String.format("%.1f", type.attributes.get(j).amount + adjustment));
-				
-			} else {
-				
-				if (type.attributes.get(j).amount + adjustment >= 0) {
-					
-					lore.add(ChatColor.GOLD + attributeName + ": +" + String.format("%.1f", ((type.attributes.get(j).amount + adjustment) * 100)) + "%");
-					
-				} else {
-					
-					lore.add(ChatColor.GOLD + attributeName + ": " + String.format("%.1f", ((type.attributes.get(j).amount + adjustment) * 100)) + "%");
-					
-				}
-
-			}
-			
-		}
-		
-		if (contraband) {
-			
-			lore.add(ChatColor.RED + "" + ChatColor.MAGIC + "Contraband");
-			
-		}
-		
-		itemMeta.setLore(lore);
-		
-		powerTool.setItemMeta(itemMeta);
-		
-		return powerTool;
-		
-	}**/
-	
-	public static ItemStack addModifiers(ItemStack powerTool, HashMap<String, Integer> modifiers) {
-		
-		List<String> modifierNames = new ArrayList<String>();
-				
-		modifierNames.addAll(modifiers.keySet());
-		
-		List<Integer> modifierLevels = new ArrayList<Integer>();
-		
-		for (int i = 0; i < modifierNames.size(); i ++) {
-			
-			modifierLevels.add(modifiers.get(modifierNames.get(i)));
-			
-		}
-		
-		List<Attribute> attributes = new ArrayList<Attribute>();
-		
-		PowerToolType type = getType(powerTool);
-		
-		for (int j = 0; j < type.modifiers.size(); j ++) {
-					
-			for (int k = 0; k < modifierNames.size(); k ++) {
-						
-				if (type.modifiers.get(j).name.equals(modifierNames.get(k))) {
-							
-					List<Enchantment> enchants = new ArrayList<Enchantment>();
-							
-					enchants.addAll(type.modifiers.get(j).enchants.keySet());
-							
-					for (int l = 0; l < enchants.size(); l ++) {
-							
-						if (powerTool.containsEnchantment(enchants.get(l))) {
-									
-							int currentLevel = powerTool.getEnchantmentLevel(enchants.get(l));
-									
-							powerTool.removeEnchantment(enchants.get(l));
-									
-							powerTool.addUnsafeEnchantment(enchants.get(l), currentLevel + (type.modifiers.get(j).enchants.get(enchants.get(l)) * modifierLevels.get(k)));
-									
-						} else {
-									
-							powerTool.addUnsafeEnchantment(enchants.get(l), type.modifiers.get(j).enchants.get(enchants.get(l)) * modifierLevels.get(k));
-									
-						}
-								
-					}
-							
-					for (int l = 0; l < type.modifiers.get(j).attributes.size(); l ++) {
-								
-						for (int m = 0; m < modifierLevels.get(k); m ++) {
-							
-							attributes.add(type.modifiers.get(j).attributes.get(l));
-							
-						}
-								
-					}
-							
-				}
-						
-			}
-
-		}
-				
-		for (int j = 0; j < type.attributes.size(); j ++) {
-					
-			attributes.add(type.attributes.get(j));
-				
-		}
-
-		
-		powerTool = addAttributes(powerTool, attributes);
-			
-		return powerTool;
-			
 	}
 	
 }

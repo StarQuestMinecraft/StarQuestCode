@@ -1,0 +1,5 @@
+name: SQTutorial
+version: 1.0
+description: Tutorial Plugin for Starquest
+main: com.ginger_walnut.sqtutorial.SQTutorial
+commands:

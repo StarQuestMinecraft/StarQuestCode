@@ -4,16 +4,18 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitScheduler;
+import org.dynmap.markers.Marker;
 
 import com.whirlwindgames.dibujaron.sqempire.database.object.EmpirePlayer;
 
@@ -33,13 +35,36 @@ public class CapturePoint {
 	
 	public Map<EmpirePlayer, Integer> health = new HashMap<EmpirePlayer, Integer>();
 	
+	public List<UUID> captures = new ArrayList<UUID>();
+	public List<UUID> newCaptures = new ArrayList<UUID>();
+	
 	public CapturePoint() {
 	
 	}
 	
 	public boolean capture(final Player player) {
 		
-		if (!health.containsKey(player)) {
+		int captures = 0;
+			
+		for (Territory territory : SQEmpire.territories) {
+				
+			for (CapturePoint point : territory.capturePoints) {
+					
+				if (point.captures.contains(player.getName())) {
+						
+					captures ++;
+						
+				}
+					
+			}
+				
+		}
+			
+		if (captures >= 8) {
+			
+			return false;
+			
+		} else {
 			
 			BukkitScheduler scheduler = Bukkit.getScheduler();
 			
@@ -49,15 +74,15 @@ public class CapturePoint {
 			
 					EmpirePlayer ep = EmpirePlayer.getOnlinePlayer(player);
 					
-					health.put(ep, 10);
+					health.put(ep, 30);
 					
 					if (health.size() == 1) {
 						
 						beingCaptured = true;
 						
-						timeLeft = 10;
+						timeLeft = 900;
 						
-						Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "ee sudojane " + ep.getEmpire().getName() + " is capturing " + name);
+						Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "eb janesudo " + ep.getEmpire().getName() + " is capturing " + owner.getDarkColor() + name.replace("_", " " + owner.getDarkColor()));
 						
 					}
 					
@@ -65,6 +90,7 @@ public class CapturePoint {
 		        	int zMultiplier = z / z;
 					
 		        	Block banner = player.getWorld().getBlockAt(x * 16 + (xMultiplier * 7), y + 2, z * 16 + (zMultiplier * 7));
+		        	banner.setType(Material.AIR);
 		        	banner.setType(Material.STANDING_BANNER);
 		        	
 		        	ep.getEmpire().setBanner(banner);
@@ -82,6 +108,23 @@ public class CapturePoint {
 		        	
 		        	if (text == null) {
 		        		
+						List<Entity> entities = new ArrayList<Entity>();
+						entities.addAll(player.getWorld().getNearbyEntities(new Location(player.getWorld(), x * 16 + (xMultiplier * 7.5), y + 2, z * 16 + (zMultiplier * 7.5)), 1, 1, 1));
+						
+						for (Entity entity : entities) {
+							
+							if (entity instanceof ArmorStand) {
+								
+								if (entity.getCustomName().startsWith("Health")) {
+
+									entity.remove();
+
+								}
+								
+							}
+							
+						}
+		        		
 		        		text = (ArmorStand) player.getWorld().spawnEntity(new Location(player.getWorld(), x * 16 + (xMultiplier * 7.5), y + 2, z * 16 + (zMultiplier * 7.5)), EntityType.ARMOR_STAND);
 		        		text.setSmall(true);
 		        		text.setGravity(false);
@@ -91,16 +134,16 @@ public class CapturePoint {
 		        	}
 		        	
 		        	text.setCustomName("Health Left: " + totalHealth);
+		        	
+		        	newCaptures.add(player.getUniqueId());
 	        	
 				}
 				
 			});
-        	
+	    	
 			return true;
 			
 		}
-		
-		return false;
 
 	}
 	
@@ -109,72 +152,67 @@ public class CapturePoint {
 		List<EmpirePlayer> players = new ArrayList<EmpirePlayer>();
 		players.addAll(health.keySet());
 		
-		int healthLeft = health.get(players.get(0));
-		
-		health.remove(players.get(0));
-		
-		healthLeft = healthLeft - 1;
-		
-		if (healthLeft != 0) {
+		if (!EmpirePlayer.getOnlinePlayer(player).getEmpire().equals(players.get(0).getEmpire())) {
 			
-			health.put(players.get(0), healthLeft);
+			int healthLeft = health.get(players.get(0));
 			
-		}
-		
-		if (health.size() == 0) {
+			health.remove(players.get(0));
 			
-    		int xMultiplier = x / x;
-        	int zMultiplier = z / z;
+			healthLeft = healthLeft - 1;
 			
-			/**EmpirePlayer ep = EmpirePlayer.getOnlinePlayer(player);
+			if (healthLeft != 0) {
+				
+				health.put(players.get(0), healthLeft);
+				
+			}
 			
-			owner = ep.getEmpire();
-
-			if (owner.equals(Empire.ARATOR)) {
+			if (health.size() == 0) {
 				
-				SQEmpire.spawnRectangle(x * 16 + (xMultiplier * 6), y + 1, z * 16 + (zMultiplier * 6), 4, 4, Material.STAINED_GLASS, 11);
+	    		int xMultiplier = x / x;
+	        	int zMultiplier = z / z;
+	        	
+				beingCaptured = false;
 				
-			} else if (owner.equals(Empire.YAVARI)) {
+				List<Marker> markers = new ArrayList<Marker>();
+				markers.addAll(SQEmpire.markerSet.getMarkers());
 				
-				SQEmpire.spawnRectangle(x * 16 + (xMultiplier * 6), y + 1, z * 16 + (zMultiplier * 6), 4, 4, Material.STAINED_GLASS, 10);
+				for (Marker marker : markers) {
+					
+					if (marker.getMarkerID().equals(name.replace('_', ' '))) {
+						
+		            	marker.setDescription("Owner: " + owner.getName());
+					
+					}
+					
+				}
 				
-			} else if (owner.equals(Empire.REQUIEM)) {
+				Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "eb janesudo " + owner.getName() + " has successfully prevented the capture of " + name.replace('_', ' '));
 				
-				SQEmpire.spawnRectangle(x * 16 + (xMultiplier * 6), y + 1, z * 16 + (zMultiplier * 6), 4, 4, Material.STAINED_GLASS, 14);
+				player.getWorld().getBlockAt(new Location(player.getWorld(), x * 16 + (xMultiplier * 7), y + 2, z * 16 + (zMultiplier * 7))).setType(Material.AIR);
+				text.remove();
+				text = null;
 				
 			} else {
 				
-				SQEmpire.spawnRectangle(x * 16 + (xMultiplier * 6), y + 1, z * 16 + (zMultiplier * 6), 4, 4, Material.STAINED_GLASS, 0);
+				int xMultiplier = x / x;
+	        	int zMultiplier = z / z;
 				
-			}**/
-			
-			beingCaptured = false;
-			
-			Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "ee sudojane " + owner.getName() + " has successfully prevented the capture of the capture point " + name);
-			
-			player.getWorld().getBlockAt(new Location(player.getWorld(), x * 16 + (xMultiplier * 7), y + 2, z * 16 + (zMultiplier * 7))).setType(Material.AIR);
-			text.remove();
-			text = null;
-			
-		} else {
-			
-			int xMultiplier = x / x;
-        	int zMultiplier = z / z;
-			
-        	Block banner = player.getWorld().getBlockAt(x * 16 + (xMultiplier * 7), y + 2, z * 16 + (zMultiplier * 7));
-        	banner.setType(Material.STANDING_BANNER);
+	        	Block banner = player.getWorld().getBlockAt(x * 16 + (xMultiplier * 7), y + 2, z * 16 + (zMultiplier * 7));
+	        	banner.setType(Material.STANDING_BANNER);
 
-        	players.get(0).getEmpire().setBanner(banner);
-        	
-        	int totalHealth = 0;
-        	
-        	for (int i = 0; i < health.size(); i ++) {
-        		
-        		totalHealth = totalHealth + health.get(players.get(i));
-        		
-        	}
-        	
-        	text.setCustomName("Health Left: " + totalHealth);
+	        	players.get(0).getEmpire().setBanner(banner);
+	        	
+	        	int totalHealth = 0;
+	        	
+	        	for (int i = 0; i < health.size(); i ++) {
+	        		
+	        		totalHealth = totalHealth + health.get(players.get(i));
+	        		
+	        	}
+	        	
+	        	text.setCustomName("Health Left: " + totalHealth);
+				
+			}
 			
 		}
 		

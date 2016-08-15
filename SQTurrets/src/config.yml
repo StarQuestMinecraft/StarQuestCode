@@ -1,23 +1,24 @@
 turrets:
-  shipturret:
+  turret:
     permission: 'turret.shipturret'
     cooldown: 2000
-    ammo:
-      id: 7
-      quantity: 5
     basematerials:
-      - 35
-      - 23
+      - DISPENSER
     topmaterials:
-      - 20   
+      - GLASS  
     ammo:
+      - glowstone
+      - redstone
       - gunpowder
-    projectile: Arrow
-    velocity: 2
+    projectile:  Fireball
+    velocity: 1.0
       
 ammos:
   gunpowder:
-    id: 289
-    fire: true
-    velocity: 3
+    id: SULPHUR
+    fire: false
+    velocity: 0.50
+    quantity: 4
+    yield: 2.5
+    cooldown: 2500
    
