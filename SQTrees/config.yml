@@ -1,0 +1,11 @@
+planets:
+  world: 1
+schematics:
+  KelBirch:
+    treeType: BIRCH
+    offset: 5,0,5
+    dimensions: 3,3,3
+    data:
+      - 1
+    meta:
+      - 1
