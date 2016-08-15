@@ -344,7 +344,7 @@ public class SQPowerTools extends JavaPlugin {
 										blasterStats.ammoType = AmmoType.getById(config.getInt("power tools." + powerTool + ".mods." + mod + ".blaster.ammoType"));
 
 									}
-
+									
 									if (config.contains("power tools." + powerTool + ".mods." + mod + ".blaster.projectileType")) {
 										
 										blasterStats.projectileType = ProjectileType.getById(config.getInt("power tools." + powerTool + ".mods." + mod + ".blaster.projectileType"));

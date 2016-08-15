@@ -68,7 +68,7 @@ public class BurnFuelTask extends BukkitRunnable
 			final int fuelAmount = fuel.getAmount();
 			final int burnTime = fuelItem.getBurnTime();
 			
-			furnace.setBurnTime((short) burnTime); // set the furnace to burn
+			furnace.setBurnTime((short) (burnTime + 1)); // set the furnace to burn
 			furnace.setCookTime((short) 0);
 			
 			fuel.setAmount((fuelAmount)-1); // remove one

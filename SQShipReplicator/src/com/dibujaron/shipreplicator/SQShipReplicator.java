@@ -133,6 +133,7 @@ public class SQShipReplicator extends JavaPlugin implements Listener{
 	 * @param chest the Inventory you want the the item taken from
 	 * @since 21-June-16
 	 */
+	@SuppressWarnings("deprecation")
 	private static void copy(Block scan, Block print, Chest chest) {
 		Material type = scan.getType();
 		byte data = scan.getData();
