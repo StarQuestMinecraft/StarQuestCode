@@ -54,6 +54,8 @@ public class SQTechPumps extends JavaPlugin {
 	
 	public static HashMap<Machine, Block> waterBlockMap = new HashMap<Machine, Block>();
 	
+	public static List<Block> ironBarList = new ArrayList<Block>();
+	
 	@Override
 	public void onEnable() {
 		

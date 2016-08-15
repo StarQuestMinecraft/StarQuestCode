@@ -6,6 +6,7 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockFromToEvent;
 import org.bukkit.event.block.BlockPhysicsEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -310,6 +311,23 @@ public class Events implements Listener{
 		}
 
 
+	}
+	
+	@EventHandler
+	public void onBlockBreak(BlockBreakEvent e) {
+		
+		if (e.getBlock() != null) {
+			
+			if (SQTechPumps.ironBarList.contains(e.getBlock())) {
+				
+				e.setCancelled(true);
+				
+				e.getPlayer().sendMessage(ChatColor.RED + "You are not allowed to break the tube of the pump.");
+				
+			}
+			
+		}
+		
 	}
 
 }

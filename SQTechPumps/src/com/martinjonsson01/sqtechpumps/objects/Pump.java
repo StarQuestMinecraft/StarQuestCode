@@ -251,6 +251,9 @@ public class Pump extends MachineType {
 					SQTechPumps.machineExtendingMap.put(machine, true);
 					
 					b.setType(Material.IRON_FENCE);
+					if (!SQTechPumps.ironBarList.contains(b)) {
+						SQTechPumps.ironBarList.add(b);
+					}
 					b.getLocation().getWorld().playSound(b.getLocation(), Sound.BLOCK_PISTON_EXTEND, 1, 1);
 
 					Bukkit.getScheduler().scheduleSyncDelayedTask(SQTechPumps.plugin, new BukkitRunnable(){
@@ -330,6 +333,9 @@ public class Pump extends MachineType {
 				public void run() {
 
 					if (b.getType() == Material.IRON_FENCE) {
+						if (SQTechPumps.ironBarList.contains(b)) {
+							SQTechPumps.ironBarList.remove(b);
+						}
 						b.setType(Material.AIR);
 					}
 					b.getLocation().getWorld().playSound(b.getLocation(), Sound.BLOCK_PISTON_EXTEND, 1, 1);
@@ -385,6 +391,9 @@ public class Pump extends MachineType {
 		for (Block b : tube) {
 
 			if (b.getType() == Material.IRON_FENCE) {
+				if (SQTechPumps.ironBarList.contains(b)) {
+					SQTechPumps.ironBarList.remove(b);
+				}
 				b.setType(Material.AIR);
 			}
 
