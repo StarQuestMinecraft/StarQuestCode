@@ -11,9 +11,12 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import com.sqtechenergy.objects.AdvancedGenerator;
 import com.sqtechenergy.objects.BasicGenerator;
+import com.sqtechenergy.objects.BioGenerator;
 import com.sqtechenergy.objects.Charger;
 import com.sqtechenergy.objects.Fuel;
 import com.sqtechenergy.objects.PowerCauldron;
+import com.sqtechenergy.objects.RedstoneGenerator;
+import com.sqtechenergy.objects.SolarPanel;
 import com.starquestminecraft.sqtechbase.SQTechBase;
 import com.starquestminecraft.sqtechenergy.tasks.ChargerTask;
 import com.starquestminecraft.sqtechenergy.tasks.GeneratorTask;
@@ -104,8 +107,69 @@ public class SQTechEnergy extends JavaPlugin{
 
 		}
 
+		//Bio Generator fuels
+		for (String fuel : config.getConfigurationSection("bio generator.fuel").getKeys(false)) {
+
+			String path = "bio generator.fuel." + fuel;
+
+			Fuel fuelObject = new Fuel();
+
+			String[] split = config.getString(path + ".id").split(":");
+
+			if (split.length == 1) {
+
+				fuelObject.id = Integer.parseInt(split[0]);
+				fuelObject.data = (short) 0;
+
+			} else {
+
+				fuelObject.id = Integer.parseInt(split[0]);
+				fuelObject.data = Short.parseShort(split[1]);
+
+			}
+
+			fuelObject.energyPerTick = config.getInt(path + ".energy per tick");
+			fuelObject.burnTime = config.getInt(path + ".burn time");
+			fuelObject.generator = "Bio Generator";
+
+			fuels.add(fuelObject);
+
+		}
+
+		//Redstone Generator fuels
+		for (String fuel : config.getConfigurationSection("redstone generator.fuel").getKeys(false)) {
+
+			String path = "redstone generator.fuel." + fuel;
+
+			Fuel fuelObject = new Fuel();
+
+			String[] split = config.getString(path + ".id").split(":");
+
+			if (split.length == 1) {
+
+				fuelObject.id = Integer.parseInt(split[0]);
+				fuelObject.data = (short) 0;
+
+			} else {
+
+				fuelObject.id = Integer.parseInt(split[0]);
+				fuelObject.data = Short.parseShort(split[1]);
+
+			}
+
+			fuelObject.energyPerTick = config.getInt(path + ".energy per tick");
+			fuelObject.burnTime = config.getInt(path + ".burn time");
+			fuelObject.generator = "Redstone Generator";
+
+			fuels.add(fuelObject);
+
+		}
+
 		SQTechBase.addMachineType(new BasicGenerator());
 		SQTechBase.addMachineType(new AdvancedGenerator());
+		SQTechBase.addMachineType(new BioGenerator());
+		SQTechBase.addMachineType(new RedstoneGenerator());
+		SQTechBase.addMachineType(new SolarPanel());
 		SQTechBase.addMachineType(new Charger());
 		SQTechBase.addMachineType(new PowerCauldron());
 

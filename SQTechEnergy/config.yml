@@ -2,8 +2,36 @@ basic generator:
   fuel:
     coal:
       id: 263
+      energy per tick: 3
+      burn time: 500
+    charcoal:
+      id: '263:1'
+      energy per tick: 3
+      burn time: 250
+    redstone:
+      id: 331
       energy per tick: 5
-      burn time: 300
+      burn time: 500
+    gunpowder:
+      id: 289
+      energy per tick: 15
+      burn time: 100
+    glowstone:
+      id: 348
+      energy per tick: 5
+      burn time: 200
+    endereye:
+      id: 381
+      energy per tick: 2500
+      burn time: 1
+    chorus:
+      id: 433
+      energy per tick: 2
+      burn time: 500
+    lapis:
+      id: '351:4'
+      energy per tick: 5
+      burn time: 500
 advanced generator:
   max energy: 50000
   fuel:
@@ -11,12 +39,26 @@ advanced generator:
       id: 263
       energy per tick: 10
       burn time: 400
-bio reactor:
+bio generator:
   max energy: 50000
   fuel:
     seeds:
       id: 295
       energy per tick: 2.5
       burn time: 150
+redstone generator:
+  max energy: 50000
+  fuel:
+    redstone:
+      id: 331
+      energy per tick: 5
+      burn time: 500
+    redstone block:
+      id: 152
+      energy per tick: 45
+      burn time: 4500
+solar panel:
+  max energy: 25000
+  energy per tick: 2.5
 charger:
-  rate: 250
+  rate: 50

@@ -1,5 +1,5 @@
 name: SQTechEnergy
-version: 0.0.2
+version: 0.0.3
 description: Energy extension for SQTech
 main: com.starquestminecraft.sqtechenergy.SQTechEnergy
 depend: [SQTechBase]

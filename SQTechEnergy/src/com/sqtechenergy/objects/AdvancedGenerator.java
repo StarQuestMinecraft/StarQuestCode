@@ -224,7 +224,9 @@ public class AdvancedGenerator extends MachineType {
 								HashMap<Fuel, Integer> currentFuels = (HashMap<Fuel, Integer>) machine.data.get("fuel");
 								List<Fuel> fuels = new ArrayList<Fuel>();
 								fuels.addAll(currentFuels.keySet());
-
+								
+								if (fuels.size() < 1) return;
+								
 								if (fuels.get(0) != null) {
 									
 									Fuel f = fuels.get(0);
