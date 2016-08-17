@@ -335,24 +335,34 @@ public class SQEmpire extends JavaPlugin{
                 
         		DefaultDomain domain = new DefaultDomain();
         		
-        		if (territory.owner.equals(Empire.ARATOR) || isBattleConnected(territory, Empire.ARATOR)) {
+        		if (territory.owner.equals(Empire.NONE)) {
         			
-            		domain.addGroup("arator");
+        			domain.addGroup("arator");
+        			domain.addGroup("yavari");
+        			domain.addGroup("requiem");
+        			
+        		} else {
+        			
+            		if (territory.owner.equals(Empire.ARATOR) || isBattleConnected(territory, Empire.ARATOR)) {
+            			
+                		domain.addGroup("arator");
+            			
+            		}
+            		
+            		if (territory.owner.equals(Empire.YAVARI) || isBattleConnected(territory, Empire.YAVARI)) {
+            			
+                		domain.addGroup("yavari");
+            			
+            		}
+            		
+            		if (territory.owner.equals(Empire.REQUIEM) || isBattleConnected(territory, Empire.REQUIEM)) {
+            			
+                		domain.addGroup("requiem");
+            			
+            		}
         			
         		}
-        		
-        		if (territory.owner.equals(Empire.YAVARI) || isBattleConnected(territory, Empire.YAVARI)) {
-        			
-            		domain.addGroup("yavari");
-        			
-        		}
-        		
-        		if (territory.owner.equals(Empire.REQUIEM) || isBattleConnected(territory, Empire.REQUIEM)) {
-        			
-            		domain.addGroup("requiem");
-        			
-        		}
-                
+
         		region.setMembers(domain);
             	
             }
@@ -508,7 +518,7 @@ public class SQEmpire extends JavaPlugin{
         		
         		public void run () {
         			
-        			int[] count = new int[]{0, 0, 0, 0};
+        			int[] count = new int[]{0, -1, -1, -1};
         			
         			for (Territory territory : territories) {
         				

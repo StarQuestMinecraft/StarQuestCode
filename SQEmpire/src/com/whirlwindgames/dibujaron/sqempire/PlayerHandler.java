@@ -114,22 +114,47 @@ public class PlayerHandler implements Listener{
 					
 					if (("SQEmpire-" + territory.name).equalsIgnoreCase(region.getId())) {
 						
-						Empire empire = EmpirePlayer.getOnlinePlayer(event.getPlayer()).getEmpire(); 
-						
-						if (!territory.owner.equals(empire)) {
+						if (!territory.owner.equals(Empire.NONE)) {
 							
-							if (SQEmpire.isBattleConnected(territory, empire)) {
+							Empire empire = EmpirePlayer.getOnlinePlayer(event.getPlayer()).getEmpire(); 
+							
+							if (!territory.owner.equals(empire)) {
 								
-								slowBreak = true;
+								if (SQEmpire.isBattleConnected(territory, empire)) {
+									
+									slowBreak = true;
+									
+								}
 								
 							}
 							
 						}
-						
+
 					}
 					
 				}
 				
+			}
+			
+			for (Territory territory : SQEmpire.territories) {
+				
+				for (CapturePoint capturePoint : territory.capturePoints) {
+					
+					int xMultiplier = capturePoint.x / capturePoint.x;
+			        int zMultiplier = capturePoint.z / capturePoint.z;
+						
+			        if (event.getClickedBlock().getLocation().equals(new Location(event.getPlayer().getWorld(), capturePoint.x * 16 + (xMultiplier * 7), capturePoint.y + 2, capturePoint.z * 16 + (zMultiplier * 7)))) {
+			        		
+			        	if (event.getClickedBlock().getType().equals(Material.BANNER) || event.getClickedBlock().getType().equals(Material.STANDING_BANNER)) {
+			        		
+			        		slowBreak = false;
+			        			
+			        	}
+			        	
+					}
+		        	
+				}
+					
 			}
 			
 			if (slowBreak) {
