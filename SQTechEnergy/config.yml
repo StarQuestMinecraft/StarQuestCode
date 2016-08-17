@@ -4,5 +4,19 @@ basic generator:
       id: 263
       energy per tick: 5
       burn time: 300
+advanced generator:
+  max energy: 50000
+  fuel:
+    coal:
+      id: 263
+      energy per tick: 10
+      burn time: 400
+bio reactor:
+  max energy: 50000
+  fuel:
+    seeds:
+      id: 295
+      energy per tick: 2.5
+      burn time: 150
 charger:
   rate: 250

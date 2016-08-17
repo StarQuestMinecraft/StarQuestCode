@@ -1,4 +1,4 @@
-package com.starquestminecraft.sqtechenergy;
+package com.sqtechenergy.objects;
 
 import java.util.ArrayList;
 import java.util.List;
