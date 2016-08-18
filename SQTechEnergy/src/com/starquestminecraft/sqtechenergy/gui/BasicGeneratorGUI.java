@@ -35,6 +35,11 @@ public class BasicGeneratorGUI extends GUI{
 				
 		gui.setItem(8, InventoryUtils.createSpecialItem(Material.REDSTONE, (short) 0, "Energy", new String[] {EnergyUtils.formatEnergy(machine.getEnergy()) + "/" + EnergyUtils.formatEnergy(machine.getMachineType().getMaxEnergy()), ChatColor.RED + "" + ChatColor.MAGIC + "Contraband"}));
 		gui.setItem(26, InventoryUtils.createSpecialItem(Material.WOOD_DOOR, (short) 0, "Back", new String[] {ChatColor.RED + "" + ChatColor.MAGIC + "Contraband"}));
+		gui.setItem(17, InventoryUtils.createSpecialItem(Material.CHEST, (short) 0, "Remaining fuel", new String[] {
+				"Fuel Type: None",
+				"Amount left: 0",
+				ChatColor.RED + "" + ChatColor.MAGIC + "Contraband"
+		}));
 		
 		gui.setItem(0, InventoryUtils.createSpecialItem(Material.IRON_FENCE, (short) 0, " ", new String[] {ChatColor.RED + "" + ChatColor.MAGIC + "Contraband"}));
 		gui.setItem(2, InventoryUtils.createSpecialItem(Material.IRON_FENCE, (short) 0, " ", new String[] {ChatColor.RED + "" + ChatColor.MAGIC + "Contraband"}));

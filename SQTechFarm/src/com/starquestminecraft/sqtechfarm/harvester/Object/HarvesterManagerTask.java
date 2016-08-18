@@ -142,6 +142,11 @@ public class HarvesterManagerTask extends BukkitRunnable
 		Block anchorBlock = harvester.detectFarmHeadAnchorBlock(anchorSupports, guiBlock);
 		if(anchorBlock == null)
 			return false;
+		
+		Block anchorSupportBlock = anchorBlock.getRelative(BlockFace.DOWN);
+		if(anchorSupportBlock == null ||
+				!plugin.fenceTypes.contains(anchorSupportBlock.getType()))
+			return false;
 
 		List<Block> harvestingRow = harvester.detectFarmHeadSupports(anchorBlock, machineForward);
 		if(harvestingRow == null)
@@ -149,6 +154,7 @@ public class HarvesterManagerTask extends BukkitRunnable
 
 		List<Block> blocksToMove = new ArrayList<Block>();
 		blocksToMove.add(anchorBlock);
+		blocksToMove.add(anchorSupportBlock);
 		blocksToMove.add(harvester.detectFarmHarvesterHead(harvestingRow));
 		for(Block block : harvestingRow)
 			blocksToMove.add(block);

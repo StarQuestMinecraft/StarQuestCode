@@ -67,7 +67,8 @@ public class DatabaseInterface {
 	
 	public static void readObjects() {
 
-		final List<GUIBlock> guiBlocks = new ArrayList<GUIBlock>();
+		final List<SerializableGUIBlock> guiBlocks = new ArrayList<SerializableGUIBlock>();
+		final List<SerializableMachine> machines = new ArrayList<SerializableMachine>();
 		
 		try {
 			
@@ -82,9 +83,7 @@ public class DatabaseInterface {
 					ByteArrayInputStream baip = new ByteArrayInputStream(bytes);
 					ObjectInputStream ois = new ObjectInputStream(baip);
 					
-					GUIBlock guiBlock = ((SerializableGUIBlock) ois.readObject()).getGUIBlock();
-					
-					guiBlocks.add(guiBlock);
+					guiBlocks.add((SerializableGUIBlock) ois.readObject());
 					
 				} catch (Exception e) {
 					
@@ -108,7 +107,9 @@ public class DatabaseInterface {
 			
 			public void run () {
 				
-				for (GUIBlock guiBlock : guiBlocks) {
+				for (SerializableGUIBlock sGUIBlock : guiBlocks) {
+					
+					GUIBlock guiBlock = sGUIBlock.getGUIBlock();
 					
 					if (guiBlock != null) {
 
@@ -145,13 +146,7 @@ public class DatabaseInterface {
 									ByteArrayInputStream baip = new ByteArrayInputStream(bytes);
 									ObjectInputStream ois = new ObjectInputStream(baip);
 									
-									Machine machine = ((SerializableMachine) ois.readObject()).getMachine();
-									
-									if (machine != null)  {
-										
-										SQTechBase.machines.add(machine);
-										
-									}
+									machines.add((SerializableMachine) ois.readObject());
 									
 								} catch (Exception e) {
 									
@@ -171,15 +166,43 @@ public class DatabaseInterface {
 							
 						}
 						
-						(new DatabaseTask()).run();
-						(new ItemMovingTask()).run();
-						(new StructureTask()).run();
-						(new EnergyTask()).run();		
-						(new LiquidTask()).run();
-						
-						SQTechBase.getPluginMain().getServer().getPluginManager().registerEvents(new PlayerEvents(), SQTechBase.getPluginMain());
-						
-						Bukkit.getServer().getPluginManager().callEvent(new MachinesLoadedEvent());
+						Bukkit.getScheduler().scheduleSyncDelayedTask(SQTechBase.getPluginMain(), new Runnable() {
+							
+							public void run() {
+								
+								try {
+									
+									for (SerializableMachine sMachine : machines) {
+										
+										Machine machine = sMachine.getMachine();
+										
+										if (machine != null) {
+											
+											SQTechBase.machines.add(machine);
+											
+										}
+										
+									}
+									
+								} catch (Exception e) {
+									
+									e.printStackTrace();
+									
+								}
+								
+								(new DatabaseTask()).run();
+								(new ItemMovingTask()).run();
+								(new StructureTask()).run();
+								(new EnergyTask()).run();		
+								(new LiquidTask()).run();
+								
+								SQTechBase.getPluginMain().getServer().getPluginManager().registerEvents(new PlayerEvents(), SQTechBase.getPluginMain());
+								
+								Bukkit.getServer().getPluginManager().callEvent(new MachinesLoadedEvent());
+
+							}
+							
+						});
 
 					}
 					

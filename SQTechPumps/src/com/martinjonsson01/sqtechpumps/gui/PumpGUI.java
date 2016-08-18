@@ -212,6 +212,7 @@ public class PumpGUI extends GUI{
 						event.getClickedInventory().setItem(0, InventoryUtils.createSpecialItem(Material.STAINED_GLASS, (short) 14, ChatColor.RED + "Pump DISABLED", glassLore));
 
 						SQTechPumps.pumpingList.remove(machine);
+						SQTechPumps.pumpingLocationList.remove(machine.getGUIBlock().getLocation());
 						Pump.stopPumping(machine, owner);
 						event.getWhoClicked().sendMessage(ChatColor.GREEN + "Successfully disabled pump.");
 
@@ -226,6 +227,7 @@ public class PumpGUI extends GUI{
 							event.getClickedInventory().setItem(0, InventoryUtils.createSpecialItem(Material.STAINED_GLASS, (short) 13, ChatColor.GREEN + "Pump ENABLED", glassLore));
 
 							SQTechPumps.pumpingList.add(machine);
+							SQTechPumps.pumpingLocationList.add(machine.getGUIBlock().getLocation());
 							Pump.startPumping(machine, owner);
 							machine.setEnergy(machine.getEnergy() - SQTechPumps.config.getInt("activate energy consumption"));
 							event.getWhoClicked().sendMessage(ChatColor.GREEN + "Successfully enabled pump.");

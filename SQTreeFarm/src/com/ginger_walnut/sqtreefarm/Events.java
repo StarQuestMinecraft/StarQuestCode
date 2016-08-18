@@ -38,9 +38,9 @@ public class Events implements Listener{
 			
 			if (withinFarm) {
 
-				if (event.getBlock().getType().equals(Material.LOG) || event.getBlock().getType().equals(Material.LEAVES)) {
+				if (event.getBlock().getType().equals(Material.LOG) || event.getBlock().getType().equals(Material.LEAVES) || event.getBlock().getType().equals(Material.STONE) || event.getBlock().getType().equals(Material.COAL_ORE) || event.getBlock().getType().equals(Material.IRON_ORE)) {
 					
-					event.setCancelled(true);	
+					event.setCancelled(true);
 					
 					final Block block = event.getBlock();
 					

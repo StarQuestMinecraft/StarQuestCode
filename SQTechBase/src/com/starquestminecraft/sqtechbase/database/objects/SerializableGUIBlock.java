@@ -9,6 +9,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
+import com.dibujaron.cardboardbox.CardboardBox;
 import com.starquestminecraft.sqtechbase.objects.GUIBlock;
 import com.starquestminecraft.sqtechbase.util.InventoryUtils;
 
@@ -23,11 +24,8 @@ public class SerializableGUIBlock implements Serializable{
 	int z;
 	String world;
 	
-	List<Integer> importIDs = new ArrayList<Integer>();
-	List<Short> importDatas = new ArrayList<Short>();
-	
-	List<Integer> exportIDs = new ArrayList<Integer>();
-	List<Short> exportDatas = new ArrayList<Short>();
+	List<CardboardBox> imports = new ArrayList<CardboardBox>();
+	List<CardboardBox> exports = new ArrayList<CardboardBox>();
 	
 	boolean exportAll;
 	
@@ -41,15 +39,13 @@ public class SerializableGUIBlock implements Serializable{
 		
 		for (ItemStack importItem : guiBlock.getImports()) {
 			
-			importIDs.add(importItem.getTypeId());
-			importDatas.add(importItem.getDurability());
+			imports.add(new CardboardBox(importItem));
 			
 		}
 		
 		for (ItemStack export : guiBlock.getExports()) {
 			
-			exportIDs.add(export.getTypeId());
-			exportDatas.add(export.getDurability());
+			exports.add(new CardboardBox(export));
 			
 		}
 		
@@ -68,15 +64,15 @@ public class SerializableGUIBlock implements Serializable{
 				
 				GUIBlock guiBlock = new GUIBlock(location, false);
 				
-				for (int i = 0; i < importIDs.size(); i ++) {
+				for (CardboardBox box : imports) {
 					
-					guiBlock.addImport(InventoryUtils.createSpecialItem(Material.getMaterial(importIDs.get(i)), importDatas.get(i), "", new String[] {ChatColor.RED + "" + ChatColor.MAGIC + "Contraband"}));
-					
+					guiBlock.addImport(box.unbox());
+
 				}
 				
-				for (int i = 0; i < exportIDs.size(); i ++) {
+				for (CardboardBox box : exports) {
 					
-					guiBlock.addExport(InventoryUtils.createSpecialItem(Material.getMaterial(exportIDs.get(i)), exportDatas.get(i), "", new String[] {ChatColor.RED + "" + ChatColor.MAGIC + "Contraband"}));
+					guiBlock.addExport(box.unbox());
 					
 				}
 				

@@ -543,58 +543,43 @@ public class Events implements Listener {
 								event.setCancelled(true);
 								
 								if (clicked.getItemMeta().getLore().contains(ChatColor.RED + "" + ChatColor.MAGIC + "Contraband")) {
+									PowerToolType toolType = SQPowerTools.getType(clicked);
 									
-									FileConfiguration config = SQPowerTools.getPluginMain().getConfig();
-									
-									String powerTool = SQPowerTools.getType(clicked).configName;
-									
-									List<String> recipe = new ArrayList<String>();
-									
-									if (config.contains("power tools." + powerTool + ".recipe")) {
+									List<String> recipe = toolType.recipe;
+									List<Material> ingredients = toolType.ingredients;
+									List<String> ingredientNames = toolType.ingredientNames;
+
+									Inventory recipeInventory = Bukkit.createInventory(player, InventoryType.WORKBENCH, "Power Tool Recipe");
 										
-										if (config.getString("power tools." + powerTool + ".recipe.line1").length() == 2) {
+									for (int i = 0; i < (recipe.size() * 3); i ++) {
 											
-											recipe.add(config.getString("power tools." + powerTool + ".recipe.line1") + " ");
+										if (i == 0 || i == 1 || i == 2) {
 											
-										} else if (config.getString("power tools." + powerTool + ".recipe.line1").length() == 1) {
-											
-											recipe.add(config.getString("power tools." + powerTool + ".recipe.line1") + "  ");
-											
-										} else {
-											
-											recipe.add(config.getString("power tools." + powerTool + ".recipe.line1"));
-											
-										}
-										
-										if (config.contains("power tools." + powerTool + ".recipe.line2")) {
-											
-											if (config.getString("power tools." + powerTool + ".recipe.line2").length() == 2) {
+											if (recipe.get(0).toCharArray()[i] == ' ') {
 												
-												recipe.add(config.getString("power tools." + powerTool + ".recipe.line2") + " ");
-												
-											} else if (config.getString("power tools." + powerTool + ".recipe.line2").length() == 1) {
-												
-												recipe.add(config.getString("power tools." + powerTool + ".recipe.line2") + "  ");
+												recipeInventory.setItem(i + 1, new ItemStack(Material.AIR));
 												
 											} else {
 												
-												recipe.add(config.getString("power tools." + powerTool + ".recipe.line2"));
-												
-											}
-											
-											if (config.contains("power tools." + powerTool + ".recipe.line3")) {
-												
-												if (config.getString("power tools." + powerTool + ".recipe.line3").length() == 2) {
+												for (int j = 0; j < ingredients.size(); j ++) {
 													
-													recipe.add(config.getString("power tools." + powerTool + ".recipe.line3") + " ");
-													
-												} else if (config.getString("power tools." + powerTool + ".recipe.line3").length() == 1) {
-													
-													recipe.add(config.getString("power tools." + powerTool + ".recipe.line3") + "  ");
-													
-												} else {
-													
-													recipe.add(config.getString("power tools." + powerTool + ".recipe.line3"));
+													if (recipe.get(0).toCharArray()[i] == ingredientNames.get(j).toCharArray()[0]) {
+														
+														ItemStack ingredient = new ItemStack(ingredients.get(j));
+														
+														ItemMeta itemMeta = ingredient.getItemMeta();
+														
+														List<String> lore = new ArrayList<String>();
+														
+														lore.add(ChatColor.RED + "" + ChatColor.MAGIC + "Contraband");
+														
+														itemMeta.setLore(lore);
+														
+														ingredient.setItemMeta(itemMeta);
+														
+														recipeInventory.setItem(i + 1, ingredient);
+														
+													}
 													
 												}
 												
@@ -602,41 +587,31 @@ public class Events implements Listener {
 											
 										}
 										
-										List<String> ingredients = new ArrayList<String>();
-										
-										ingredients.addAll(config.getConfigurationSection("power tools." + powerTool + ".recipe.ingredients").getKeys(false));
-										
-										Inventory recipeInventory = Bukkit.createInventory(player, InventoryType.WORKBENCH, "Power Tool Recipe");
-										
-										for (int i = 0; i < (recipe.size() * 3); i ++) {
+										if (i == 3 || i == 4 || i == 5) {
 											
-											if (i == 0 || i == 1 || i == 2) {
+											if (recipe.get(1).toCharArray()[i - 3] == ' ') {
 												
-												if (recipe.get(0).toCharArray()[i] == ' ') {
+												recipeInventory.setItem(i + 1, new ItemStack(Material.AIR));
+												
+											} else {
+												
+												for (int j = 0; j < ingredients.size(); j ++) {
 													
-													recipeInventory.setItem(i + 1, new ItemStack(Material.AIR));
-													
-												} else {
-													
-													for (int j = 0; j < ingredients.size(); j ++) {
+													if (recipe.get(1).toCharArray()[i - 3] == ingredientNames.get(j).toCharArray()[0]) {
 														
-														if (recipe.get(0).toCharArray()[i] == ingredients.get(j).toCharArray()[0]) {
-															
-															ItemStack ingredient = new ItemStack(Material.getMaterial(config.getInt("power tools." + powerTool + ".recipe.ingredients." + ingredients.get(j))));
-															
-															ItemMeta itemMeta = ingredient.getItemMeta();
-															
-															List<String> lore = new ArrayList<String>();
-															
-															lore.add(ChatColor.RED + "" + ChatColor.MAGIC + "Contraband");
-															
-															itemMeta.setLore(lore);
-															
-															ingredient.setItemMeta(itemMeta);
-															
-															recipeInventory.setItem(i + 1, ingredient);
-															
-														}
+														ItemStack ingredient = new ItemStack(ingredients.get(j));
+														
+														ItemMeta itemMeta = ingredient.getItemMeta();
+														
+														List<String> lore = new ArrayList<String>();
+														
+														lore.add(ChatColor.RED + "" + ChatColor.MAGIC + "Contraband");
+														
+														itemMeta.setLore(lore);
+														
+														ingredient.setItemMeta(itemMeta);
+														
+														recipeInventory.setItem(i + 1, ingredient);
 														
 													}
 													
@@ -644,67 +619,33 @@ public class Events implements Listener {
 												
 											}
 											
-											if (i == 3 || i == 4 || i == 5) {
-												
-												if (recipe.get(1).toCharArray()[i - 3] == ' ') {
-													
-													recipeInventory.setItem(i + 1, new ItemStack(Material.AIR));
-													
-												} else {
-													
-													for (int j = 0; j < ingredients.size(); j ++) {
-														
-														if (recipe.get(1).toCharArray()[i - 3] == ingredients.get(j).toCharArray()[0]) {
-															
-															ItemStack ingredient = new ItemStack(Material.getMaterial(config.getInt("power tools." + powerTool + ".recipe.ingredients." + ingredients.get(j))));
-															
-															ItemMeta itemMeta = ingredient.getItemMeta();
-															
-															List<String> lore = new ArrayList<String>();
-															
-															lore.add(ChatColor.RED + "" + ChatColor.MAGIC + "Contraband");
-															
-															itemMeta.setLore(lore);
-															
-															ingredient.setItemMeta(itemMeta);
-															
-															recipeInventory.setItem(i + 1, ingredient);
-															
-														}
-														
-													}
-													
-												}
-												
-											}
+										}
+										
+										if (i == 6 || i == 7 || i == 8) {
 											
-											if (i == 6 || i == 7 || i == 8) {
+											if (recipe.get(2).toCharArray()[i - 6] == ' ') {
 												
-												if (recipe.get(2).toCharArray()[i - 6] == ' ') {
+												recipeInventory.setItem(i + 1, new ItemStack(Material.AIR));
+												
+											} else {
+												
+												for (int j = 0; j < ingredients.size(); j ++) {
 													
-													recipeInventory.setItem(i + 1, new ItemStack(Material.AIR));
-													
-												} else {
-													
-													for (int j = 0; j < ingredients.size(); j ++) {
+													if (recipe.get(2).toCharArray()[i - 6] == ingredientNames.get(j).toCharArray()[0]) {
 														
-														if (recipe.get(2).toCharArray()[i - 6] == ingredients.get(j).toCharArray()[0]) {
-															
-															ItemStack ingredient = new ItemStack(Material.getMaterial(config.getInt("power tools." + powerTool + ".recipe.ingredients." + ingredients.get(j))));
-															
-															ItemMeta itemMeta = ingredient.getItemMeta();
-															
-															List<String> lore = new ArrayList<String>();
-															
-															lore.add(ChatColor.RED + "" + ChatColor.MAGIC + "Contraband");
-															
-															itemMeta.setLore(lore);
-															
-															ingredient.setItemMeta(itemMeta);
-															
-															recipeInventory.setItem(i + 1, ingredient);
-															
-														}
+														ItemStack ingredient = new ItemStack(ingredients.get(j));
+														
+														ItemMeta itemMeta = ingredient.getItemMeta();
+														
+														List<String> lore = new ArrayList<String>();
+														
+														lore.add(ChatColor.RED + "" + ChatColor.MAGIC + "Contraband");
+														
+														itemMeta.setLore(lore);
+														
+														ingredient.setItemMeta(itemMeta);
+														
+														recipeInventory.setItem(i + 1, ingredient);
 														
 													}
 													
@@ -1061,7 +1002,7 @@ public class Events implements Listener {
 																
 																for (String cannotCombine : toolType.modifiers.get(k).cannotCombines) {
 																	
-																	if (cannotCombine.equals(modifierObjects.get(i))) {
+																	if (cannotCombine.equals(modifierObjects.get(i).name)) {
 																		
 																		error = true;
 																		
@@ -1241,6 +1182,36 @@ public class Events implements Listener {
 													
 													oldModifierObjects.addAll(SQPowerTools.getModifiers(powerTool).keySet());
 													
+													/*Modifier newModifier = null;
+													
+													for (Modifier modifier : toolType.modifiers) {
+														
+														if (modifier.material.equals(modifiers.get(i)) && modifier.durability == datas.get(i)) {
+															
+															newModifier = modifier;
+															
+														}
+														
+													}
+													
+													for (Modifier modifier : oldModifierObjects) {
+														
+														for (String cannotCombine : modifier.cannotCombines) {
+															
+															if (newModifier.name.equals(cannotCombine)) {
+																
+																error = true;
+																
+																errorLore.add(ChatColor.RED + "This modifier conflicts with a");
+																errorLore.add(ChatColor.RED + "modifier that is on this power tool.");
+																errorLore.add(ChatColor.RED + "" + ChatColor.MAGIC + "Contraband");
+																
+															}
+															
+														}
+														
+													}*/
+													
 													for (int j = 0; j < oldModifierObjects.size(); j ++) {
 														
 														for (int k = 0; k < toolType.modifiers.size(); k ++) {
@@ -1249,7 +1220,7 @@ public class Events implements Listener {
 																
 																for (String cannotCombine : toolType.modifiers.get(k).cannotCombines) {
 																	
-																	if (cannotCombine.equals(oldModifierObjects.get(j))) {
+																	if (cannotCombine.equals(oldModifierObjects.get(j).name)) {
 																		
 																		error = true;
 																		

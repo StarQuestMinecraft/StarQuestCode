@@ -7,11 +7,13 @@ import java.util.Random;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.BlockFace;
+import org.bukkit.entity.Bat;
 import org.bukkit.entity.Creeper;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Ghast;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.PolarBear;
 import org.bukkit.entity.Skeleton;
 import org.bukkit.entity.Zombie;
 import org.bukkit.event.EventHandler;
@@ -140,6 +142,16 @@ public class EntityListener implements Listener {
 				permaVanish(c);
 			} else if ((e.getType() == EntityType.SKELETON) && (n.equals("uru"))) {
 				createRobot((Skeleton) e);
+			} else if ((e.getType() == EntityType.BAT) && specials.contains("space beaver")) {
+				
+				PolarBear polarBear = (PolarBear) e.getWorld().spawnEntity(e.getLocation(), EntityType.POLAR_BEAR);
+				polarBear.setCustomNameVisible(true);
+				polarBear.setCustomName("Space Beaver");
+				
+				Bat bat = (Bat) e;
+				bat.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, 9999999, 1));
+				bat.setPassenger(polarBear);
+				
 			}
 			
 			//System.out.println("Entity: " + event.getEntity().getWorld().getEntities());

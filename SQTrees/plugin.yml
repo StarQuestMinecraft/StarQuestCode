@@ -1,0 +1,13 @@
+name: SQTrees
+main: me.thetimelord.trees.StarQuestTreesAndMobs
+version: 1.0
+commands:
+   readtree:
+      description: Read in a tree for usage by SQTrees; Staff only.
+      usage: /<command> <centerX> <centerY> <centerZ> <schemName> <world>
+   preptree:
+      description: Prepare config for a tree's first reading, or to resize tree. This will overwrite tree data, *DO NOT USE IF YOU DON'T KNOW WHAT THIS DOES!!!*; Staff only.
+      usage: /<command> <treeSizeX> <treeSizeY> <treeSizeZ> <schemName>
+   readtreesconfig:
+      description: Reloads SQTree config and trees; Staff only.
+      usage: /<command>

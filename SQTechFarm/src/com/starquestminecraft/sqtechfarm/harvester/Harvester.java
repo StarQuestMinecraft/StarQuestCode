@@ -68,7 +68,7 @@ public class Harvester extends MachineType
 		Block dropper;
 		Block farmHarvesterHead; // the stained glass pane / end rod
 		List<Block> anchorSupports; // the wood fence
-		List<Block> farmHeadSupports; // the iron bars
+		List<Block> farmHeadSupports; // the stained glass panes
 		
 		this.forward = Harvester.getHarvesterForward(base);
 		if(forward == null)
@@ -157,13 +157,15 @@ public class Harvester extends MachineType
 	 */
 	public Block detectFarmHeadAnchorBlock(List<Block> anchorSupports, Block guiBlock)
 	{
-		if(guiBlock.getRelative(BlockFace.UP).getType() == Material.IRON_BLOCK)
-			return guiBlock.getRelative(BlockFace.UP);
+		if(guiBlock.getRelative(BlockFace.UP, 2).getType() == Material.IRON_BLOCK &&
+				plugin.fenceTypes.contains(guiBlock.getRelative(BlockFace.UP).getType()))
+			return guiBlock.getRelative(BlockFace.UP, 2);
 		
 		for(Block anchorSupport : anchorSupports)
 		{
-			if(anchorSupport.getRelative(BlockFace.UP).getType() == Material.IRON_BLOCK)
-				return anchorSupport.getRelative(BlockFace.UP);
+			if(anchorSupport.getRelative(BlockFace.UP, 2).getType() == Material.IRON_BLOCK &&
+					plugin.fenceTypes.contains(anchorSupport.getRelative(BlockFace.UP).getType()))
+				return anchorSupport.getRelative(BlockFace.UP, 2);
 		}
 		
 		return null;
@@ -179,7 +181,7 @@ public class Harvester extends MachineType
 		Block result = null;
 		for(Block farmHeadSupport : farmHeadSupports)
 		{
-			result = farmHeadSupport.getRelative(BlockFace.UP);
+			result = farmHeadSupport.getRelative(BlockFace.DOWN);
 			if(result.getType() == Material.STAINED_GLASS_PANE || result.getType() == Material.END_ROD)
 			{
 				return result;
@@ -231,7 +233,8 @@ public class Harvester extends MachineType
 	 */
 	public int getHarvesterSize(Block guiBlock, BlockFace forward)
 	{
-		return this.detectAnchorSupports(guiBlock, forward).size();
+		int averageSize = (this.detectAnchorSupports(guiBlock, forward).size() + this.detectFarmHeadSupports(guiBlock.getRelative(BlockFace.UP, 2), forward).size())/2;
+		return averageSize;
 	}
 	
 	/**
@@ -251,7 +254,7 @@ public class Harvester extends MachineType
 		while(running == true)
 		{
 			Block relative = anchor.getRelative(anchorSupportDirection, length);
-			if(relative.getType() == Material.IRON_FENCE) // its a correct block
+			if(relative.getType() == Material.STAINED_GLASS_PANE) // its a correct block
 			{
 				result.add(relative);
 				length++;
@@ -277,9 +280,9 @@ public class Harvester extends MachineType
 		if(farmAnchorSupports.size() == 0)
 			return null;
 		
-		if(guiBlock.getRelative(BlockFace.UP).getType() == Material.IRON_BLOCK)
+		if(guiBlock.getRelative(BlockFace.UP, 2).getType() == Material.IRON_BLOCK)
 		{
-			if(this.detectFarmHeadSupports(guiBlock.getRelative(BlockFace.UP), forward).size() > 0)
+			if(this.detectFarmHeadSupports(guiBlock.getRelative(BlockFace.UP, 2), forward).size() > 0)
 			{
 				return 0;
 			}
@@ -289,9 +292,9 @@ public class Harvester extends MachineType
 		
 		for(Block farmAnchorSupport : farmAnchorSupports)
 		{
-			if(farmAnchorSupport.getRelative(BlockFace.UP).getType() == Material.IRON_BLOCK)
+			if(farmAnchorSupport.getRelative(BlockFace.UP, 2).getType() == Material.IRON_BLOCK)
 			{
-				if(this.detectFarmHeadSupports(farmAnchorSupport.getRelative(BlockFace.UP), forward).size() > 0)
+				if(this.detectFarmHeadSupports(farmAnchorSupport.getRelative(BlockFace.UP, 2), forward).size() > 0)
 				{
 					return count;
 				}
@@ -316,8 +319,8 @@ public class Harvester extends MachineType
 		
 		for(Block support : farmHeadSupport)
 		{
-			if(support.getRelative(BlockFace.UP).getType() == Material.STAINED_GLASS_PANE 
-					|| support.getRelative(BlockFace.UP).getType() == Material.END_ROD)
+			if(support.getRelative(BlockFace.DOWN).getType() == Material.STAINED_GLASS_PANE 
+					|| support.getRelative(BlockFace.DOWN).getType() == Material.END_ROD)
 				return count;
 			else
 				count++;

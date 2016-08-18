@@ -25,6 +25,7 @@ import com.starquestminecraft.sqtechbase.objects.GUIBlock;
 import com.starquestminecraft.sqtechbase.objects.Machine;
 import com.starquestminecraft.sqtechbase.objects.MachineType;
 import com.starquestminecraft.sqtechbase.util.InventoryUtils;
+import com.starquestminecraft.sqtechbase.util.ObjectUtils;
 
 import net.md_5.bungee.api.ChatColor;
 
@@ -46,20 +47,22 @@ public class Pump extends MachineType {
 	public boolean detectStructure(GUIBlock guiBlock) {
 
 		Block block = guiBlock.getLocation().getBlock();
-		
+
+		Machine machine = ObjectUtils.getMachineFromGUIBlock(guiBlock);
+
 		BlockFace[] faces = new BlockFace[]{
 				BlockFace.NORTH,
 				BlockFace.EAST,
 				BlockFace.WEST,
 				BlockFace.SOUTH
 		};
-		
+
 		for (BlockFace f : faces) {
-			
+
 			BlockFace back = BlockFace.SOUTH;
 			BlockFace right = BlockFace.EAST;
 			BlockFace left = BlockFace.WEST;
-			
+
 			if (f.equals(BlockFace.NORTH)) {
 				back = BlockFace.SOUTH;
 				right = BlockFace.EAST;
@@ -77,7 +80,7 @@ public class Pump extends MachineType {
 				right = BlockFace.WEST;
 				left = BlockFace.EAST;
 			}
-			
+
 			if (block.getRelative(f).getType().equals(Material.DROPPER) &&
 					block.getRelative(right).getType().equals(Material.STAINED_GLASS_PANE) &&
 					block.getRelative(left).getType().equals(Material.STAINED_GLASS_PANE) &&
@@ -86,11 +89,15 @@ public class Pump extends MachineType {
 					block.getRelative(BlockFace.DOWN).getRelative(right).getType().equals(Material.STAINED_CLAY) &&
 					block.getRelative(BlockFace.DOWN).getRelative(left).getType().equals(Material.STAINED_CLAY) &&
 					block.getRelative(BlockFace.DOWN).getRelative(back).getType().equals(Material.STAINED_CLAY)) {
-
+				SQTechPumps.locationMachineMap.put(block.getLocation(), machine);
 				return true;
 
 			}	
-			
+
+		}
+
+		if (machine != null) {
+			Pump.stopPumpingImmediately(machine, null);
 		}
 
 		return false;
@@ -183,7 +190,7 @@ public class Pump extends MachineType {
 			public void run() {
 				
 				List<Block> tubeBlocks = new ArrayList<Block>();
-
+				
 				List<BlockFace> faces = new ArrayList<BlockFace>();
 				faces.add(BlockFace.NORTH);
 				faces.add(BlockFace.EAST);
@@ -191,6 +198,25 @@ public class Pump extends MachineType {
 				faces.add(BlockFace.SOUTH);
 
 				//Block waterBlock = null;
+
+				Block checkBlock = machine.getGUIBlock().getLocation().getBlock().getRelative(BlockFace.DOWN);
+				while (checkBlock.getType() == Material.AIR || checkBlock.getType() == Material.IRON_FENCE) {
+					checkBlock = checkBlock.getRelative(BlockFace.DOWN);
+				}
+
+				switch (checkBlock.getType()) {
+				case STATIONARY_LAVA:
+					break;
+				case STATIONARY_WATER:
+					break;
+				case WATER:
+					break;
+				case LAVA:
+					break;
+				default:
+					owner.sendMessage(ChatColor.RED + "Error: There is no water under the pump.");
+					return;
+				}
 
 				Block next = machine.getGUIBlock().getLocation().getBlock().getRelative(BlockFace.DOWN);
 				while (next.getType() == Material.AIR || next.getType() == Material.IRON_FENCE) {
@@ -205,56 +231,63 @@ public class Pump extends MachineType {
 						next.getType() == Material.STATIONARY_LAVA ||
 						next.getType() == Material.LAVA) {*/
 
-					//waterBlock = next.getRelative(BlockFace.DOWN);
+				//waterBlock = next.getRelative(BlockFace.DOWN);
 
-					for (Block b2 : tubeBlocks) {
+				for (Block b2 : tubeBlocks) {
 
-						if (b2.getType() != Material.IRON_FENCE) {
+					if (b2.getType() != Material.IRON_FENCE) {
 
-							SQTechPumps.waterBlockMap.put(machine, b2);
-							break;
+						SQTechPumps.waterBlockMap.put(machine, b2);
+						break;
+
+					}
+
+				}
+
+				if (SQTechPumps.waterBlockMap.get(machine) != null) {
+
+					Block b = SQTechPumps.waterBlockMap.get(machine);
+
+					SQTechPumps.machineExtendingMap.put(machine, true);
+					
+					b.setType(Material.IRON_FENCE);
+					if (!SQTechPumps.ironBarList.contains(b)) {
+						SQTechPumps.ironBarList.add(b);
+					}
+					b.getLocation().getWorld().playSound(b.getLocation(), Sound.BLOCK_PISTON_EXTEND, 1, 1);
+
+					Bukkit.getScheduler().scheduleSyncDelayedTask(SQTechPumps.plugin, new BukkitRunnable(){
+
+						@Override
+						public void run() {
+
+							Long before = System.currentTimeMillis();
+
+							detect(b.getRelative(BlockFace.DOWN), machine, owner);
+							
+							if (System.currentTimeMillis() - before != 0) {
+								Bukkit.getLogger().log(Level.INFO, "[SQTechPump] Detection took " + (System.currentTimeMillis() - before) + " ms");
+							}
 
 						}
 
-					}
+					}, 7);
 
-					if (SQTechPumps.waterBlockMap.get(machine) != null) {
-						
-						Block b = SQTechPumps.waterBlockMap.get(machine);
-						
-						SQTechPumps.machineExtendingMap.put(machine, true);
-						
-						b.setType(Material.IRON_FENCE);
-						b.getLocation().getWorld().playSound(b.getLocation(), Sound.BLOCK_PISTON_EXTEND, 1, 1);
-
-						Bukkit.getScheduler().scheduleSyncDelayedTask(SQTechPumps.plugin, new BukkitRunnable(){
-
-							@Override
-							public void run() {
-
-								Long before = System.currentTimeMillis();
-
-								detect(b.getRelative(BlockFace.DOWN), machine, owner);
-
-								Bukkit.getLogger().log(Level.INFO, "[SQTechPump] Detection took " + (System.currentTimeMillis() - before) + " ms");
-
-							}
-
-						}, 7);
-
-					}
+				}
 
 				//}
 
 			}
-			
+
 		});
 	}
 
 	@SuppressWarnings("deprecation")
 	public static void stopPumping(Machine machine, Player owner) {
 
-		Bukkit.getScheduler().cancelTask(taskId.get(machine));
+		if (taskId.get(machine) != null) {
+			Bukkit.getScheduler().cancelTask(taskId.get(machine));
+		}
 
 		if (SQTechPumps.waterBlocks.get(machine) != null) {
 			SQTechPumps.waterBlocks.get(machine).clear();
@@ -264,7 +297,13 @@ public class Pump extends MachineType {
 			SQTechPumps.pumpingList.remove(machine);
 		}
 
-		machine.getGUI(owner).close();
+		if (SQTechPumps.pumpingLocationList.contains(machine.getGUIBlock().getLocation())) {
+			SQTechPumps.pumpingLocationList.remove(machine.getGUIBlock().getLocation());
+		}
+
+		if (owner != null) {
+			machine.getGUI(owner).close();
+		}
 
 		Block lapis = machine.getGUIBlock().getLocation().getBlock();
 
@@ -277,9 +316,9 @@ public class Pump extends MachineType {
 			i++;
 
 		}
-		
+
 		SQTechPumps.machineExtendingMap.put(machine, true);
-		
+
 		i = 0;
 
 		Collections.reverse(tube);
@@ -293,13 +332,18 @@ public class Pump extends MachineType {
 				@Override
 				public void run() {
 
-					b.setType(Material.AIR);
+					if (b.getType() == Material.IRON_FENCE) {
+						if (SQTechPumps.ironBarList.contains(b)) {
+							SQTechPumps.ironBarList.remove(b);
+						}
+						b.setType(Material.AIR);
+					}
 					b.getLocation().getWorld().playSound(b.getLocation(), Sound.BLOCK_PISTON_EXTEND, 1, 1);
-					
+
 					if (b.getRelative(BlockFace.UP).getType() == Material.LAPIS_BLOCK) {
 						SQTechPumps.machineExtendingMap.put(machine, false);
 					}
-					
+
 				}
 
 			}, i*10);
@@ -307,20 +351,30 @@ public class Pump extends MachineType {
 			i++;
 
 		}
-		
+
 	}
 
 	public static void stopPumpingImmediately(Machine machine, Player owner) {
 
-		Bukkit.getScheduler().cancelTask(taskId.get(machine));
+		if (taskId.get(machine) != null) {
+			Bukkit.getScheduler().cancelTask(taskId.get(machine));
+		}
 
-		SQTechPumps.waterBlocks.get(machine).clear();
+		if (SQTechPumps.waterBlocks.get(machine) != null) {
+			SQTechPumps.waterBlocks.get(machine).clear();
+		}
 
 		if (SQTechPumps.pumpingList.contains(machine)) {
 			SQTechPumps.pumpingList.remove(machine);
 		}
 
-		machine.getGUI(owner).close();
+		if (SQTechPumps.pumpingLocationList.contains(machine.getGUIBlock().getLocation())) {
+			SQTechPumps.pumpingLocationList.remove(machine.getGUIBlock().getLocation());
+		}
+
+		if (owner != null) {
+			machine.getGUI(owner).close();
+		}
 
 		Block lapis = machine.getGUIBlock().getLocation().getBlock();
 
@@ -336,7 +390,12 @@ public class Pump extends MachineType {
 
 		for (Block b : tube) {
 
-			b.setType(Material.AIR);
+			if (b.getType() == Material.IRON_FENCE) {
+				if (SQTechPumps.ironBarList.contains(b)) {
+					SQTechPumps.ironBarList.remove(b);
+				}
+				b.setType(Material.AIR);
+			}
 
 		}
 

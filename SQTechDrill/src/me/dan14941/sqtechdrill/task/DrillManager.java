@@ -73,14 +73,6 @@ public class DrillManager extends BukkitRunnable
 					liquidPresent = (Boolean) value;
 			}
 			
-			if(this.breakManager == null)
-			{
-				this.breakManager = new BlockBreakManager(plugin);
-				this.breakManager.runTaskTimer(plugin, plugin.getFastDrillSpeed(), plugin.getFastDrillSpeed());
-			}
-			if(breakManager.isBreakingBlock(activeDrill))
-				continue;
-			
 			if (air == activeDrill.frontBlocks.size() && !liquidPresent) // checks if all block in front of the drill are air
 			{
 				//MovingDrill.moveDrill(activeDrill.getDrillForward(), machine); // move the drill one block forward
@@ -94,71 +86,19 @@ public class DrillManager extends BukkitRunnable
 			else if(!liquidPresent) // or if liquid is not present and not all block in front are air
 			{
 				List<Block> blocksToRemove = new ArrayList<Block>(); // List to store blocks to set to air
+			
+				if(this.breakManager == null)
+				{
+					this.breakManager = new BlockBreakManager(plugin);
+					this.breakManager.runTaskTimer(plugin, plugin.getFastDrillSpeed(), plugin.getFastDrillSpeed());
+				}
+				if(breakManager.isBreakingBlock(activeDrill))
+					continue;
 				
-				for(Block frontBlock : activeDrill.frontBlocks) // Enumerate through the front block
+				for(Block frontBlock : activeDrill.frontBlocks) // Enumerate through the front blocks
 					if(!frontBlock.isEmpty() && !frontBlock.isLiquid()) // Make sure its not air and not liquid
 						blocksToRemove.add(frontBlock); // add it to the List
 				
-				/*
-				BukkitRunnable blockBreak = new BukkitRunnable() // new runnable to remove the blocks
-				{
-					int count = 1; // blocks removed
-					
-					@Override
-					public void run()
-					{
-						if((Boolean) machine.data.get("isActive") == false)
-						{
-							activeDrill.stop();
-							return;
-						}
-						
-						if(blocksToRemove.size() == 0 || machine.detectStructure() == false)
-							cancel();
-						else if(count > blocksToRemove.size())
-						{
-							return;
-						}
-						
-						Block b = blocksToRemove.get(count-1);
-						if(b.getType() == Material.BEDROCK)
-						{
-							// player.sendMessage(ChatColor.RED + "A drill has hit bedrock.");
-							activeDrill.stop(); // turn the drill off
-							return;
-						}
-						else if(machine.getEnergy() < energyPerBlock)
-						{
-							// player.sendMessage(ChatColor.RED + "A drill has run out of energy.");
-							activeDrill.stop(); // turn the drill off
-							return;
-						}
-						
-						final Collection<ItemStack> drops = b.getDrops();
-						b.setType(Material.AIR);
-						count++;
-						machine.setEnergy(machine.getEnergy() - energyPerBlock); // remove the energy
-						
-						Chest chest = (Chest) Drill.detectChest(machine.getGUIBlock().getLocation().getBlock()).getState();
-						for(ItemStack item : drops)
-						{
-							HashMap<Integer, ItemStack> notAdded = chest.getInventory().addItem(item);
-							if(notAdded.values().size() >= 1)
-							{
-								for(ItemStack itemNotAdded : notAdded.values())
-								{
-									chest.getBlock().getWorld().dropItemNaturally(chest.getLocation(), itemNotAdded);
-								}
-								// player.sendMessage(ChatColor.RED + "The drills chest is full! Deactivating."); 
-								activeDrill.stop(); // turn the drill off
-								cancel();
-							}
-						}
-					}
-				};
-				
-				blockBreak.runTaskTimer(SQTechDrill.getMain(), 0, plugin.drill.getDrillSpeed(machine));
-				*/
 				boolean slowDrill = true;
 				if(plugin.drill.getDrillSpeed(machine) == plugin.getFastDrillSpeed())
 					slowDrill = false;

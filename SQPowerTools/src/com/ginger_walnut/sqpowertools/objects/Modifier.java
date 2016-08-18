@@ -16,6 +16,7 @@ public class Modifier {
 	public int levels;
 	
 	public int energy = 0;
+	public int energyPerUse = 0;
 	
 	public List<Attribute> attributes;
 	public List<Effect> effects;

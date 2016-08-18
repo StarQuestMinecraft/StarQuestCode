@@ -12,7 +12,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import com.ginger_walnut.sqpowertools.SQPowerTools;
-import com.ginger_walnut.sqpowertools.enums.AmmoType;
 import com.ginger_walnut.sqpowertools.enums.ProjectileType;
 import com.ginger_walnut.sqpowertools.utils.AttributeUtils;
 import com.ginger_walnut.sqpowertools.utils.EffectUtils;
@@ -430,6 +429,7 @@ public class PowerTool {
 		}
 		
 		lore.add(ChatColor.RED + "Energy: " + SQPowerTools.formatEnergy(energy) + "/" + SQPowerTools.formatEnergy(maxEnergy));
+		lore.add(ChatColor.RED + "Energy Per Use: " + SQPowerTools.formatEnergy(getEnergyPerUse()));
 		
 		if (modifiers.size() > 0) {
 			
@@ -507,10 +507,17 @@ public class PowerTool {
 			}
 			
 			lore.add(ChatColor.GOLD + "Ranged Ammo: " + blasterStats.ammoType.getName());
+			lore.add(ChatColor.GOLD + "Ranged Projectile: " + blasterStats.projectileType.getName());
 			
 			if (blasterStats.projectileType.equals(ProjectileType.FIREBALL)) {
 				
 				lore.add(ChatColor.GOLD + "Explosion Size: " + blasterStats.explosionSize);
+				
+			}
+			
+			if (blasterStats.projectileType.equals(ProjectileType.SHOTGUN)) {
+				
+				lore.add(ChatColor.GOLD + "Shot Count: " + blasterStats.shotCount);
 				
 			}
 			
@@ -763,6 +770,7 @@ public class PowerTool {
 			blasterStats.ammoType = type.blasterStats.ammoType;
 			blasterStats.projectileType = type.blasterStats.projectileType;
 			blasterStats.explosionSize = type.blasterStats.explosionSize;
+			blasterStats.shotCount = type.blasterStats.shotCount;
 			
 		}
 		
@@ -775,7 +783,21 @@ public class PowerTool {
 				blasterStats.scope = blasterStats.scope + (modifier.blasterStats.scope * modifierMap.get(modifier));
 				blasterStats.ammo = blasterStats.ammo + (modifier.blasterStats.ammo * modifierMap.get(modifier));
 				blasterStats.reload = blasterStats.reload + (modifier.blasterStats.reload * modifierMap.get(modifier)); 
+				
+				if (modifier.blasterStats.ammoType != null) {
+					
+					blasterStats.ammoType = modifier.blasterStats.ammoType;
+					
+				}
+				
+				if (modifier.blasterStats.projectileType != null) {
+					
+					blasterStats.projectileType = modifier.blasterStats.projectileType;
+					
+				}
+				
 				blasterStats.explosionSize = blasterStats.explosionSize + (modifier.blasterStats.explosionSize * modifierMap.get(modifier)); 
+				blasterStats.shotCount = blasterStats.shotCount + (modifier.blasterStats.shotCount * modifierMap.get(modifier));
 				
 			}
 			
@@ -836,6 +858,20 @@ public class PowerTool {
 		ItemMeta itemMeta = item.getItemMeta();
 		itemMeta.setDisplayName(name);
 		item.setItemMeta(itemMeta);
+		
+	}
+	
+	public int getEnergyPerUse() {
+		
+		int energyPerUse = type.energyPerUse;
+		
+		for (Modifier modifier : modifierMap.keySet()) {
+			
+			energyPerUse = energyPerUse + (modifier.energyPerUse * modifierMap.get(modifier));
+			
+		}
+		
+		return energyPerUse;
 		
 	}
 	

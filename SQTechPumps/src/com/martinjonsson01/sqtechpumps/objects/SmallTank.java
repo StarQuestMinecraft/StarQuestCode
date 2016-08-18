@@ -75,6 +75,7 @@ public class SmallTank extends MachineType{
 																				if (middleStainedGlass.getRelative(f).getRelative(f).getRelative(up).getType() == Material.STAINED_CLAY) {
 																					if (middleStainedGlass.getRelative(f).getRelative(f).getRelative(down).getType() == Material.STAINED_CLAY) {
 																						SmallTank.updatePhysicalLiquid(machine);
+																						SQTechPumps.locationMachineMap.put(block.getLocation(), machine);
 																						return true;
 																					}
 																				}
@@ -105,7 +106,9 @@ public class SmallTank extends MachineType{
 
 				Block b = it.next();
 
-				b.setType(Material.AIR);
+				if (b.getType() == Material.STATIONARY_LAVA || b.getType() == Material.STATIONARY_WATER) {
+					b.setType(Material.AIR);
+				}
 
 				it.remove();
 

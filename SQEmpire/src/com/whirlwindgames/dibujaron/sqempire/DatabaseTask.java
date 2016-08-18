@@ -21,7 +21,7 @@ public class DatabaseTask extends Thread {
 				String query = "SELECT * from minecraft.empire_territories";
 				RSReader rs = new RSReader(EmpireDB.requestData(query));
 
-				if(rs.next()){
+				while (rs.next()) {
 					
 					double empire0 = rs.getInt("empire0");
 					double empire1 = rs.getInt("empire1");

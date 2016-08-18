@@ -7,6 +7,7 @@ import java.util.logging.Level;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -132,27 +133,35 @@ public class DetectionTask extends BukkitRunnable{
 					}
 
 				}
-				
+
 				int liquidAmount = 0;
-				
+
 				for (Block b4 : found) {
 
 					if (b4.getType() == Material.WATER || b4.getType() == Material.STATIONARY_WATER ||
 							b4.getType() == Material.LAVA || b4.getType() == Material.STATIONARY_LAVA) {
-						
+
 						liquidAmount++;
-						
+
 					}
 
 				}
-				
+
 				if (liquidAmount < 1) {
-					
-					Pump.startPumping(machine, owner);
-					return;
-					
+
+					/*if (waterBlock.getRelative(BlockFace.DOWN).getType() == Material.STATIONARY_LAVA ||
+							waterBlock.getRelative(BlockFace.DOWN).getType() == Material.STATIONARY_LAVA 
+							|| waterBlock.getRelative(BlockFace.DOWN).getType() == Material.LAVA 
+							|| waterBlock.getRelative(BlockFace.DOWN).getType() == Material.WATER 
+							|| waterBlock.getRelative(BlockFace.DOWN).getType() == Material.AIR) {*/
+
+						Pump.startPumping(machine, owner);
+						return;
+
+					//}
+
 				}
-				
+
 				/*if (!aboveFound.isEmpty()) {
 
 					Pump.pump(aboveFound, machine, owner);

@@ -14,10 +14,13 @@ import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Wither;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.dynmap.markers.Marker;
 
 import com.whirlwindgames.dibujaron.sqempire.database.object.EmpirePlayer;
+
+import net.md_5.bungee.api.ChatColor;
 
 public class CapturePoint {
 
@@ -60,7 +63,7 @@ public class CapturePoint {
 				
 		}
 			
-		if (captures >= 5) {
+		if (captures >= 8) {
 			
 			return false;
 			
@@ -72,6 +75,24 @@ public class CapturePoint {
 				
 				public void run() {
 			
+					try {
+						
+						if (owner != Empire.NONE) {
+							
+							int xMultiplier = x / x;
+				        	int zMultiplier = z / z;
+							
+							Wither wither = (Wither) player.getWorld().spawnEntity(new Location(player.getWorld(), x * 16 + (xMultiplier * 7), y + 6, z * 16 + (zMultiplier * 7)), EntityType.WITHER);
+							wither.setGravity(false);
+							
+						}
+
+					} catch (Exception e) {
+						
+						e.printStackTrace();
+						
+					}
+					
 					EmpirePlayer ep = EmpirePlayer.getOnlinePlayer(player);
 					
 					health.put(ep, 30);
@@ -80,9 +101,9 @@ public class CapturePoint {
 						
 						beingCaptured = true;
 						
-						timeLeft = 2700;
+						timeLeft = 900;
 						
-						Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "eb janesudo " + ep.getEmpire().getName() + " is capturing " + owner.getDarkColor() + name.replace("_", " " + owner.getDarkColor()));
+						Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "eb janesudo " + ep.getEmpire().getName() + " is capturing " + owner.getDarkColor() + name.replace("_", " " + owner.getDarkColor()) + " on " + Bukkit.getWorlds().get(0));
 						
 					}
 					
@@ -186,7 +207,7 @@ public class CapturePoint {
 					
 				}
 				
-				Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "eb janesudo " + owner.getName() + " has successfully prevented the capture of " + name.replace('_', ' '));
+				Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "eb janesudo " + EmpirePlayer.getOnlinePlayer(player).getEmpire().getName() + " has successfully prevented the capture of " + name.replace('_', ' ') + " on " + player.getWorld().getName());
 				
 				player.getWorld().getBlockAt(new Location(player.getWorld(), x * 16 + (xMultiplier * 7), y + 2, z * 16 + (zMultiplier * 7))).setType(Material.AIR);
 				text.remove();
@@ -209,6 +230,8 @@ public class CapturePoint {
 	        		totalHealth = totalHealth + health.get(players.get(i));
 	        		
 	        	}
+	        	
+	        	player.sendMessage(ChatColor.GOLD + "Flag health is " + totalHealth);
 	        	
 	        	text.setCustomName("Health Left: " + totalHealth);
 				

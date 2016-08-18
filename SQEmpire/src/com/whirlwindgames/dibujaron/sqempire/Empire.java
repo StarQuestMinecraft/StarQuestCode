@@ -6,23 +6,26 @@ import org.bukkit.block.Banner;
 import org.bukkit.block.Block;
 import org.bukkit.block.banner.Pattern;
 import org.bukkit.block.banner.PatternType;
+import org.dynmap.markers.MarkerIcon;
 
 public enum Empire {
-	NONE(0, ChatColor.DARK_GRAY, ChatColor.GRAY, "None"),
-	ARATOR(1, ChatColor.DARK_BLUE, ChatColor.BLUE, "Arator"),
-	REQUIEM(2, ChatColor.DARK_RED, ChatColor.RED, "Requiem"),
-	YAVARI(3, ChatColor.DARK_PURPLE, ChatColor.LIGHT_PURPLE, "Yavari");
+	NONE(0, ChatColor.DARK_GRAY, ChatColor.GRAY, "None", SQEmpire.markerAPI.getMarkerIcon("temple")),
+	ARATOR(1, ChatColor.DARK_BLUE, ChatColor.BLUE, "Arator", SQEmpire.markerAPI.getMarkerIcon("blueflag")),
+	REQUIEM(2, ChatColor.DARK_RED, ChatColor.RED, "Requiem", SQEmpire.markerAPI.getMarkerIcon("redflag")),
+	YAVARI(3, ChatColor.DARK_PURPLE, ChatColor.LIGHT_PURPLE, "Yavari", SQEmpire.markerAPI.getMarkerIcon("purpleflag"));
 	
 	int id;
 	ChatColor dark;
 	ChatColor light;
 	String name;
+	MarkerIcon pointIcon;
 	
-	Empire(int id, ChatColor dark, ChatColor light, String name){
+	Empire(int id, ChatColor dark, ChatColor light, String name, MarkerIcon pointIcon){
 		this.dark = dark;
 		this.light = light;
 		this.id = id;
 		this.name = name;
+		this.pointIcon = pointIcon;
 	}
 	
 	public ChatColor getDarkColor(){
@@ -39,6 +42,12 @@ public enum Empire {
 	
 	public int getID(){
 		return id;
+	}
+	
+	public MarkerIcon getPointIcon() {
+		
+		return pointIcon;
+		
 	}
 	
 	public void setBanner(final Block block) {

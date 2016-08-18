@@ -66,7 +66,7 @@ public class CaptureTask extends Thread {
 									List<EmpirePlayer> players = new ArrayList<EmpirePlayer>();
 									players.addAll(point.health.keySet());
 									
-									Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "eb janesudo " + point.owner.getDarkColor() + point.name.replace("_", " " + point.owner.getDarkColor()) + " will be captured in " + (point.timeLeft / 60) + " minutes by " + players.get(0).getEmpire().getName());
+									Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "eb janesudo " + point.owner.getDarkColor() + point.name.replace("_", " " + point.owner.getDarkColor()) + " will be captured in " + (point.timeLeft / 60) + " minutes by " + players.get(0).getEmpire().getName() + " on " + Bukkit.getWorlds().get(0));
 									
 								}
 								
@@ -77,7 +77,7 @@ public class CaptureTask extends Thread {
 								List<EmpirePlayer> players = new ArrayList<EmpirePlayer>();
 								players.addAll(point.health.keySet());
 								
-								Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "eb janesudo " + point.owner.getDarkColor() + point.name.replace("_", " " + point.owner.getDarkColor()) + " will be captured in 1 minute by " + players.get(0).getEmpire().getName());
+								Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "eb janesudo " + point.owner.getDarkColor() + point.name.replace("_", " " + point.owner.getDarkColor()) + " will be captured in 1 minute by " + players.get(0).getEmpire().getName() + " on " + Bukkit.getWorlds().get(0));
 								
 							}
 							
@@ -115,11 +115,11 @@ public class CaptureTask extends Thread {
 								
 								if (!oldOwner.equals(Empire.NONE)) {
 									
-									Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "eb janesudo " + point.owner.getName() + " has captured " + point.name.replace('_', ' ') + " from " + oldOwner.getName());
+									Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "eb janesudo " + point.owner.getName() + " has captured " + point.name.replace('_', ' ') + " from " + oldOwner.getName() + " on " + Bukkit.getWorlds().get(0));
 									
 								} else {
 									
-									Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "eb janesudo " + point.owner.getName() + " has captured " + point.name.replace('_', ' '));
+									Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "eb janesudo " + point.owner.getName() + " has captured " + point.name.replace('_', ' ') + " on " + Bukkit.getWorlds().get(0));
 									
 								}							
 								
@@ -157,6 +157,8 @@ public class CaptureTask extends Thread {
 										
 						            	marker.setDescription("Owner: " + point.owner.getName());
 										
+						            	marker.setMarkerIcon(point.owner.getPointIcon());
+						            	
 									}
 									
 								}
@@ -192,21 +194,31 @@ public class CaptureTask extends Thread {
 							                
 							        		DefaultDomain domain = new DefaultDomain();
 							        		
-							        		if (empireTerritory.owner.equals(Empire.ARATOR) || SQEmpire.isBattleConnected(empireTerritory, Empire.ARATOR)) {
+							        		if (empireTerritory.owner.equals(Empire.NONE)) {
 							        			
-							            		domain.addGroup("arator");
+							        			domain.addGroup("arator");
+							        			domain.addGroup("yavari");
+							        			domain.addGroup("requiem");
 							        			
-							        		}
-							        		
-							        		if (empireTerritory.owner.equals(Empire.YAVARI) || SQEmpire.isBattleConnected(empireTerritory, Empire.YAVARI)) {
+							        		} else {
 							        			
-							            		domain.addGroup("yavari");
-							        			
-							        		}
-							        		
-							        		if (empireTerritory.owner.equals(Empire.REQUIEM) || SQEmpire.isBattleConnected(empireTerritory, Empire.REQUIEM)) {
-							        			
-							            		domain.addGroup("requiem");
+							            		if (empireTerritory.owner.equals(Empire.ARATOR) || SQEmpire.isBattleConnected(empireTerritory, Empire.ARATOR)) {
+							            			
+							                		domain.addGroup("arator");
+							            			
+							            		}
+							            		
+							            		if (empireTerritory.owner.equals(Empire.YAVARI) || SQEmpire.isBattleConnected(empireTerritory, Empire.YAVARI)) {
+							            			
+							                		domain.addGroup("yavari");
+							            			
+							            		}
+							            		
+							            		if (empireTerritory.owner.equals(Empire.REQUIEM) || SQEmpire.isBattleConnected(empireTerritory, Empire.REQUIEM)) {
+							            			
+							                		domain.addGroup("requiem");
+							            			
+							            		}
 							        			
 							        		}
 							                
@@ -256,11 +268,11 @@ public class CaptureTask extends Thread {
 									
 									if (!oldTerritoryOwner.equals(Empire.NONE)) {
 										
-										Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "eb janesudo " + point.owner.getName() + " has captured " + territory.name.replace('_', ' ') + " from " + oldTerritoryOwner.getName());
+										Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "eb janesudo " + point.owner.getName() + " has captured " + territory.name.replace('_', ' ') + " from " + oldTerritoryOwner.getName() + " on " + Bukkit.getWorlds().get(0));
 										
 									} else {
 										
-										Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "eb janesudo " + point.owner.getName() + " has captured " + territory.name.replace('_', ' '));
+										Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "eb janesudo " + point.owner.getName() + " has captured " + territory.name.replace('_', ' ') + " on " + Bukkit.getWorlds().get(0));
 										
 									}
 									
@@ -286,9 +298,9 @@ public class CaptureTask extends Thread {
 
 					        			ps.setString(1, Bukkit.getServerName());
 					        			ps.setInt(1, count[0]);
-					        			ps.setInt(1, count[1]);
-					        			ps.setInt(1, count[2]);
-					        			ps.setInt(1, count[3]);
+					        			ps.setInt(2, count[1]);
+					        			ps.setInt(3, count[2]);
+					        			ps.setInt(4, count[3]);
 					        			
 					        			ps.executeAndClose();
 					        			
