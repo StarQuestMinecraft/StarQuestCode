@@ -67,9 +67,9 @@ public class SteamEngine extends MachineType {
 										if (below.getRelative(f).getRelative(f).getRelative(right).getType() == Material.STAINED_CLAY) {
 											if (below.getRelative(f).getRelative(f).getRelative(left).getType() == Material.STAINED_CLAY) {
 												if (below.getRelative(f).getRelative(f).getRelative(f).getType() == Material.STAINED_CLAY) {
-													if (below.getRelative(f).getRelative(f).getRelative(right).getType() == Material.STEP) {
-														if (below.getRelative(f).getRelative(f).getRelative(left).getType() == Material.STEP) {
-															Bukkit.getServer().broadcastMessage("below");
+													if (below.getRelative(f).getRelative(f).getRelative(f).getRelative(right).getType() == Material.STEP) {
+														if (below.getRelative(f).getRelative(f).getRelative(f).getRelative(left).getType() == Material.STEP) {
+															
 															if (block.getType() == Material.LAPIS_BLOCK) {
 																if (block.getRelative(right).getType() == Material.STAINED_CLAY) {
 																	if (block.getRelative(left).getType() == Material.STAINED_CLAY) {
@@ -82,7 +82,7 @@ public class SteamEngine extends MachineType {
 																								if (block.getRelative(f).getRelative(f).getRelative(f).getType() == Material.IRON_BLOCK) {
 																									if (block.getRelative(f).getRelative(f).getRelative(f).getRelative(right).getType() == Material.STAINED_CLAY) {
 																										if (block.getRelative(f).getRelative(f).getRelative(f).getRelative(left).getType() == Material.STAINED_CLAY) {
-																											Bukkit.getServer().broadcastMessage("block");
+																											
 																											if (above.getType() == Material.STAINED_CLAY) {
 																												if (above.getRelative(right).getType() == Material.STEP) {
 																													if (above.getRelative(left).getType() == Material.STEP) {
@@ -93,9 +93,9 @@ public class SteamEngine extends MachineType {
 																																		if (above.getRelative(f).getRelative(f).getRelative(right).getType() == Material.STAINED_CLAY) {
 																																			if (above.getRelative(f).getRelative(f).getRelative(left).getType() == Material.STAINED_CLAY) {
 																																				if (above.getRelative(f).getRelative(f).getRelative(f).getType() == Material.STAINED_CLAY) {
-																																					if (above.getRelative(f).getRelative(f).getRelative(right).getType() == Material.STEP) {
-																																						if (above.getRelative(f).getRelative(f).getRelative(left).getType() == Material.STEP) {
-																																							Bukkit.getServer().broadcastMessage("above");
+																																					if (above.getRelative(f).getRelative(f).getRelative(f).getRelative(right).getType() == Material.STEP) {
+																																						if (above.getRelative(f).getRelative(f).getRelative(f).getRelative(left).getType() == Material.STEP) {
+																																							
 																																							return true;
 																																							
 																																						}
@@ -173,8 +173,8 @@ public class SteamEngine extends MachineType {
 										if (below.getRelative(f).getRelative(f).getRelative(right).getType() == Material.STAINED_CLAY) {
 											if (below.getRelative(f).getRelative(f).getRelative(left).getType() == Material.STAINED_CLAY) {
 												if (below.getRelative(f).getRelative(f).getRelative(f).getType() == Material.STAINED_CLAY) {
-													if (below.getRelative(f).getRelative(f).getRelative(right).getType() == Material.STEP) {
-														if (below.getRelative(f).getRelative(f).getRelative(left).getType() == Material.STEP) {
+													if (below.getRelative(f).getRelative(f).getRelative(f).getRelative(right).getType() == Material.STEP) {
+														if (below.getRelative(f).getRelative(f).getRelative(f).getRelative(left).getType() == Material.STEP) {
 															
 															if (block.getType() == Material.LAPIS_BLOCK) {
 																if (block.getRelative(right).getType() == Material.STAINED_CLAY) {
@@ -199,8 +199,8 @@ public class SteamEngine extends MachineType {
 																																		if (above.getRelative(f).getRelative(f).getRelative(right).getType() == Material.STAINED_CLAY) {
 																																			if (above.getRelative(f).getRelative(f).getRelative(left).getType() == Material.STAINED_CLAY) {
 																																				if (above.getRelative(f).getRelative(f).getRelative(f).getType() == Material.STAINED_CLAY) {
-																																					if (above.getRelative(f).getRelative(f).getRelative(right).getType() == Material.STEP) {
-																																						if (above.getRelative(f).getRelative(f).getRelative(left).getType() == Material.STEP) {
+																																					if (above.getRelative(f).getRelative(f).getRelative(f).getRelative(right).getType() == Material.STEP) {
+																																						if (above.getRelative(f).getRelative(f).getRelative(f).getRelative(left).getType() == Material.STEP) {
 																																							
 																																							return f;
 																																							

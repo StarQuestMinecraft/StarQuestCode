@@ -71,6 +71,6 @@ steam engine:
     coal(and water):
       id: 263
       energy per tick: 20
-      burn time: 800
+      burn time: 100
 charger:
   rate: 50

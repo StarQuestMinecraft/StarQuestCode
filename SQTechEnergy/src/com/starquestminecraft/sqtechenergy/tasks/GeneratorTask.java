@@ -21,6 +21,7 @@ import org.bukkit.scheduler.BukkitScheduler;
 import com.starquestminecraft.sqtechbase.SQTechBase;
 import com.starquestminecraft.sqtechbase.objects.Fluid;
 import com.starquestminecraft.sqtechbase.objects.Machine;
+import com.starquestminecraft.sqtechbase.util.InventoryUtils;
 import com.starquestminecraft.sqtechbase.util.ObjectUtils;
 import com.sqtechenergy.objects.BioGenerator;
 import com.sqtechenergy.objects.Fuel;
@@ -421,23 +422,26 @@ public class GeneratorTask extends Thread {
 								Fluid f = null;
 								//Get the water Fluid object
 								for (Fluid f2 : SQTechBase.fluids) {
-									if (f.name.equals("Water")) {
+									if (f2.name.equals("Water")) {
 										f = f2;
 									}
 								}
 
 								//Make sure the machine has a liquid maximum set.
 								machine.maxLiquid.put(f, SQTechEnergy.config.getInt("steam engine.max liquid"));
+								machine.liquidImports.add(f);
 
 								//Makes sure that there are fuels to be burned
 								if (fuels.size() > 0 && machine.getLiquid(f) >= SQTechEnergy.config.getInt("steam engine.water usage per tick")) {
 
-									Location loc1 = machine.getGUIBlock().getLocation().getBlock().getRelative(SteamEngine.getFace(machine.getGUIBlock())).getLocation().add(0.5, 0.5, 0.5);
-									Location loc2 = machine.getGUIBlock().getLocation().getBlock().getRelative(SteamEngine.getFace(machine.getGUIBlock())).getRelative(SteamEngine.getFace(machine.getGUIBlock())).getLocation().add(0.5, 0.5, 0.5);
+									if (SteamEngine.getFace(machine.getGUIBlock()) != null) {
+										Location loc1 = machine.getGUIBlock().getLocation().getBlock().getRelative(SteamEngine.getFace(machine.getGUIBlock())).getLocation().add(0.5, 0.5, 0.5);
+										Location loc2 = machine.getGUIBlock().getLocation().getBlock().getRelative(SteamEngine.getFace(machine.getGUIBlock())).getRelative(SteamEngine.getFace(machine.getGUIBlock())).getLocation().add(0.5, 0.5, 0.5);
 
-									ParticleEffect.SMOKE_NORMAL.sendColor(Bukkit.getOnlinePlayers(), loc1, Color.WHITE);
-									ParticleEffect.SMOKE_NORMAL.sendColor(Bukkit.getOnlinePlayers(), loc2, Color.WHITE);
-
+										ParticleEffect.SMOKE_LARGE.send(Bukkit.getOnlinePlayers(), loc1.getX(), loc1.getY(), loc1.getZ(), 0, 0, 0, 1, 1);
+										ParticleEffect.SMOKE_LARGE.send(Bukkit.getOnlinePlayers(), loc2.getX(), loc2.getY(), loc2.getZ(), 0, 0, 0, 1, 1);
+									}
+									
 									//Get the fuel to be burned
 									Fuel fuel = fuels.get(0);
 
@@ -833,6 +837,41 @@ public class GeneratorTask extends Thread {
 
 															}
 
+															if (machine.data.get("fuel") != null) {
+
+																if (machine.data.get("fuel") instanceof HashMap<?, ?>) {
+
+																	HashMap<Fuel, Integer> currentFuels = (HashMap<Fuel, Integer>) machine.data.get("fuel");
+																	List<Fuel> fuels = new ArrayList<Fuel>();
+																	fuels.addAll(currentFuels.keySet());
+
+																	if (fuels.size() < 1) return;
+
+																	if (fuels.get(0) != null) {
+
+																		Fuel f = fuels.get(0);
+
+																		for (String fuel2 : SQTechEnergy.config.getConfigurationSection("steam engine.fuel").getKeys(false)) {
+
+																			String path = "steam engine.fuel." + fuel2;
+																			int burnTime = SQTechEnergy.config.getInt(path + ".burn time");
+
+																			player.getOpenInventory().setItem(17, InventoryUtils.createSpecialItem(Material.getMaterial(f.id), (short) 0, "Remaining fuel", new String[] {
+																					"Fuel type: " + Material.getMaterial(f.id).name(),
+																					"Amount left: " + (currentFuels.get(f)/burnTime),
+																					ChatColor.RED + "" + ChatColor.MAGIC + "Contraband"
+																			}));
+
+																			return;
+
+																		}
+
+																	}
+
+																}
+
+															}
+
 														}
 
 													}
@@ -853,28 +892,29 @@ public class GeneratorTask extends Thread {
 												Fluid f = null;
 												//Get the water Fluid object
 												for (Fluid f2 : SQTechBase.fluids) {
-													if (f.name.equals("Water")) {
+													if (f2.name.equals("Water")) {
 														f = f2;
 													}
 												}
 
 												//Make sure the machine has a liquid maximum set.
 												machine.maxLiquid.put(f, SQTechEnergy.config.getInt("steam engine.max liquid"));
-												
+												machine.liquidImports.add(f);
+
 												//Make sure the item is a water bucket
 												if (item.getType() == Material.WATER_BUCKET) {
-													
+
 													//Check if there is enough room in the machine for another bucket of water
 													if ((machine.getMaxLiquid(f)-1000) >= machine.getLiquid(f)) {
-														
+
 														//Add the water
 														machine.setLiquid(f, machine.getLiquid(f) + 1000);
-														
+
 														//Empty the bucket
 														item.setType(Material.BUCKET);
-														
+
 													}
-													
+
 												}
 
 											}

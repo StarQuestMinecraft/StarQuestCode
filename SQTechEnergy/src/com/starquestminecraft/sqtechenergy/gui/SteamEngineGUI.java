@@ -35,15 +35,28 @@ public class SteamEngineGUI extends GUI {
 
 		Machine machine = ObjectUtils.getMachineFromMachineGUI(this);
 		
+		Fluid f = null;
+		//Get the water Fluid object
+		for (Fluid f2 : SQTechBase.fluids) {
+			if (f2.name.equals("Water")) {
+				f = f2;
+			}
+		}
+
+		//Make sure the machine has a liquid maximum set.
+		machine.maxLiquid.put(f, SQTechEnergy.config.getInt("steam engine.max liquid"));
+		machine.liquidImports.add(f);
+		
 		Fluid fluid = null;
 		int amount = 0;
 		String name = "none";
 
-		for (Fluid f : SQTechBase.fluids) {
-			if (machine.getLiquid(f) > 0) {
-				fluid = f;
+		for (Fluid f3 : SQTechBase.fluids) {
+			if (machine.getLiquid(f3) > 0) {
+				fluid = f3;
 			}
 		}
+		
 		if (fluid != null) {
 			amount = machine.getLiquid(fluid);
 			name = fluid.name;
