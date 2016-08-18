@@ -37,13 +37,21 @@ public class WaterTurbineGUI extends GUI {
 
 		Machine machine = ObjectUtils.getMachineFromMachineGUI(this);
 
+		String water = ChatColor.RED + "false";
+
+		if (WaterTurbine.isSurroundedByWater(machine)) {
+			water = ChatColor.GREEN + "true";
+			gui.setItem(4, InventoryUtils.createSpecialItem(Material.STAINED_GLASS_PANE, (short) 5, "Energy", new String[] {EnergyUtils.formatEnergy(machine.getEnergy()) + "/" + EnergyUtils.formatEnergy(machine.getMachineType().getMaxEnergy()), ChatColor.RED + "" + ChatColor.MAGIC + "Contraband"}));
+		} else {
+			gui.setItem(4, InventoryUtils.createSpecialItem(Material.STAINED_GLASS_PANE, (short) 14, "Energy", new String[] {EnergyUtils.formatEnergy(machine.getEnergy()) + "/" + EnergyUtils.formatEnergy(machine.getMachineType().getMaxEnergy()), ChatColor.RED + "" + ChatColor.MAGIC + "Contraband"}));
+		}
+
 		gui.setItem(8, InventoryUtils.createSpecialItem(Material.WOOD_DOOR, (short) 0, "Back", new String[] {ChatColor.RED + "" + ChatColor.MAGIC + "Contraband"}));
-		gui.setItem(4, InventoryUtils.createSpecialItem(Material.STAINED_GLASS_PANE, (short) 5, "Energy", new String[] {EnergyUtils.formatEnergy(machine.getEnergy()) + "/" + EnergyUtils.formatEnergy(machine.getMachineType().getMaxEnergy()), ChatColor.RED + "" + ChatColor.MAGIC + "Contraband"}));
 		gui.setItem(0, InventoryUtils.createSpecialItem(Material.PAPER, (short) 0, "Info", new String[] {
 				"The water turbine needs",
 				"to be surrounded by water",
 				"to function. ",
-				"Water Status: " + WaterTurbine.isSurroundedByWater(machine),
+				"Water Status: " + water,
 				ChatColor.RED + "" + ChatColor.MAGIC + "Contraband"
 		}));
 
@@ -61,7 +69,7 @@ public class WaterTurbineGUI extends GUI {
 		}
 
 	}
-	
+
 	@Override
 	public void click(final InventoryClickEvent event) {
 
@@ -112,7 +120,7 @@ public class WaterTurbineGUI extends GUI {
 						guiBlock.getGUI(owner).open();
 
 					}
-					
+
 				}
 
 			} else {

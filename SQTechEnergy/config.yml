@@ -63,5 +63,14 @@ solar panel:
 water turbine:
   max energy: 25000
   energy per tick: 2.5
+steam engine:
+  max energy: 100000
+  max liquid: 100000
+  water usage per tick: 50
+  fuel:
+    coal(and water):
+      id: 263
+      energy per tick: 20
+      burn time: 800
 charger:
   rate: 50

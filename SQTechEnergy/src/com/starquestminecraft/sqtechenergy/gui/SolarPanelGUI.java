@@ -36,7 +36,7 @@ public class SolarPanelGUI extends GUI {
 		
 		Machine machine = ObjectUtils.getMachineFromMachineGUI(this);
 		
-		Boolean sunlight = false;
+		String sunlight = ChatColor.RED + "false";
 		
 		Block middlePanel = machine.getGUIBlock().getLocation().getBlock().getRelative(BlockFace.UP).getRelative(SolarPanel.getFace(machine.getGUIBlock()));
 		Block panel1 = middlePanel.getRelative(BlockFace.NORTH);
@@ -60,14 +60,18 @@ public class SolarPanelGUI extends GUI {
 			
 			if (middlePanel.getWorld().getTime() <= 12000 || middlePanel.getWorld().getTime() >= 23500) {
 				
-				sunlight = true;
+				sunlight = ChatColor.GREEN + "true";
+				gui.setItem(4, InventoryUtils.createSpecialItem(Material.STAINED_GLASS_PANE, (short) 5, "Energy", new String[] {EnergyUtils.formatEnergy(machine.getEnergy()) + "/" + EnergyUtils.formatEnergy(machine.getMachineType().getMaxEnergy()), ChatColor.RED + "" + ChatColor.MAGIC + "Contraband"}));
 				
 			}
 			
+		} else {
+
+			gui.setItem(4, InventoryUtils.createSpecialItem(Material.STAINED_GLASS_PANE, (short) 14, "Energy", new String[] {EnergyUtils.formatEnergy(machine.getEnergy()) + "/" + EnergyUtils.formatEnergy(machine.getMachineType().getMaxEnergy()), ChatColor.RED + "" + ChatColor.MAGIC + "Contraband"}));
+
 		}
 		
 		gui.setItem(8, InventoryUtils.createSpecialItem(Material.WOOD_DOOR, (short) 0, "Back", new String[] {ChatColor.RED + "" + ChatColor.MAGIC + "Contraband"}));
-		gui.setItem(4, InventoryUtils.createSpecialItem(Material.STAINED_GLASS_PANE, (short) 5, "Energy", new String[] {EnergyUtils.formatEnergy(machine.getEnergy()) + "/" + EnergyUtils.formatEnergy(machine.getMachineType().getMaxEnergy()), ChatColor.RED + "" + ChatColor.MAGIC + "Contraband"}));
 		gui.setItem(0, InventoryUtils.createSpecialItem(Material.PAPER, (short) 0, "Info", new String[] {
 				"The solar panel needs direct",
 				"access to sunlight to produce energy.",

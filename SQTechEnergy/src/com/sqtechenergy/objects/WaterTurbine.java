@@ -222,13 +222,20 @@ public class WaterTurbine extends MachineType {
 
 					if (player.getOpenInventory().getTitle().equals(ChatColor.BLUE + "SQTech - Water Turbine")) {
 
-						player.getOpenInventory().setItem(4, InventoryUtils.createSpecialItem(Material.STAINED_GLASS_PANE, (short) 5, "Energy", new String[] {EnergyUtils.formatEnergy(machine.getEnergy()) + "/" + EnergyUtils.formatEnergy(machine.getMachineType().getMaxEnergy()), ChatColor.RED + "" + ChatColor.MAGIC + "Contraband"}));
+						String water = ChatColor.RED + "false";
+
+						if (WaterTurbine.isSurroundedByWater(machine)) {
+							water = ChatColor.GREEN + "true";
+							player.getOpenInventory().setItem(4, InventoryUtils.createSpecialItem(Material.STAINED_GLASS_PANE, (short) 5, "Energy", new String[] {EnergyUtils.formatEnergy(machine.getEnergy()) + "/" + EnergyUtils.formatEnergy(machine.getMachineType().getMaxEnergy()), ChatColor.RED + "" + ChatColor.MAGIC + "Contraband"}));
+						} else {
+							player.getOpenInventory().setItem(4, InventoryUtils.createSpecialItem(Material.STAINED_GLASS_PANE, (short) 14, "Energy", new String[] {EnergyUtils.formatEnergy(machine.getEnergy()) + "/" + EnergyUtils.formatEnergy(machine.getMachineType().getMaxEnergy()), ChatColor.RED + "" + ChatColor.MAGIC + "Contraband"}));
+						}
 
 						player.getOpenInventory().setItem(0, InventoryUtils.createSpecialItem(Material.PAPER, (short) 0, "Info", new String[] {
 								"The water turbine needs",
 								"to be surrounded by water",
 								"to function. ",
-								"Water Status: " + WaterTurbine.isSurroundedByWater(machine),
+								"Water Status: " + water,
 								ChatColor.RED + "" + ChatColor.MAGIC + "Contraband"
 						}));
 

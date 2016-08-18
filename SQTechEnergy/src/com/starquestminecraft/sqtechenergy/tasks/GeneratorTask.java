@@ -19,11 +19,13 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitScheduler;
 
 import com.starquestminecraft.sqtechbase.SQTechBase;
+import com.starquestminecraft.sqtechbase.objects.Fluid;
 import com.starquestminecraft.sqtechbase.objects.Machine;
 import com.starquestminecraft.sqtechbase.util.ObjectUtils;
 import com.sqtechenergy.objects.BioGenerator;
 import com.sqtechenergy.objects.Fuel;
 import com.sqtechenergy.objects.SolarPanel;
+import com.sqtechenergy.objects.SteamEngine;
 import com.sqtechenergy.objects.WaterTurbine;
 import com.starquestminecraft.sqtechenergy.SQTechEnergy;
 
@@ -348,7 +350,7 @@ public class GeneratorTask extends Thread {
 
 					//Checks to make sure the machine is enabled
 					if (machine.enabled) {
-						
+
 						Block middlePanel = machine.getGUIBlock().getLocation().getBlock().getRelative(BlockFace.UP).getRelative(SolarPanel.getFace(machine.getGUIBlock()));
 						Block panel1 = middlePanel.getRelative(BlockFace.NORTH);
 						Block panel2 = middlePanel.getRelative(BlockFace.SOUTH);
@@ -358,7 +360,7 @@ public class GeneratorTask extends Thread {
 						Block panel6 = middlePanel.getRelative(BlockFace.NORTH_WEST);
 						Block panel7 = middlePanel.getRelative(BlockFace.SOUTH_EAST);
 						Block panel8 = middlePanel.getRelative(BlockFace.SOUTH_WEST);
-						
+
 						if (middlePanel.getLightFromSky() == 15 &&
 								panel1.getLightFromSky() == 15 &&
 								panel2.getLightFromSky() == 15 &&
@@ -368,33 +370,116 @@ public class GeneratorTask extends Thread {
 								panel6.getLightFromSky() == 15 &&
 								panel7.getLightFromSky() == 15 &&
 								panel8.getLightFromSky() == 15) {
-							
+
 							if (middlePanel.getWorld().getTime() <= 12000 || middlePanel.getWorld().getTime() >= 23500) {
-								
+
 								machine.setEnergy((machine.getEnergy() + SQTechEnergy.config.getInt("solar panel.energy per tick")));
-								
+
 							}
-							
+
 						}
-						
+
 					}
 
 				}
-				
+
 				//Gets all of the water turbines so it can generate energy with them and loops through them
 				for (Machine machine : ObjectUtils.getAllMachinesOfType("Water Turbine")) {
 
 					//Checks to make sure the machine is enabled
 					if (machine.enabled) {
-						
+
 						if (WaterTurbine.isSurroundedByWater(machine)) {
-							
+
 							machine.setEnergy((machine.getEnergy() + SQTechEnergy.config.getInt("water turbine.energy per tick")));
-							
+
 						}
-						
+
 					}
-					
+
+				}
+
+				//Gets all of the steam engines so it can generate energy with them and loops through them
+				for (Machine machine : ObjectUtils.getAllMachinesOfType("Steam Engine")) {
+
+					//Checks to make sure the machine is enabled
+					if (machine.enabled) {
+
+						//Makes sure that the machine has the fuel data
+						if (machine.data.containsKey("fuel")) {
+
+							//Double check that it is a hashmap
+							if (machine.data.get("fuel") instanceof HashMap<?,?>) {
+
+								//pull the currentFuels from the machine
+								HashMap<Fuel, Integer> currentFuels = (HashMap<Fuel, Integer>) machine.data.get("fuel");
+
+								//Get the indivudal fuels
+								List<Fuel> fuels = new ArrayList<Fuel>();
+								fuels.addAll(currentFuels.keySet());
+
+								Fluid f = null;
+								//Get the water Fluid object
+								for (Fluid f2 : SQTechBase.fluids) {
+									if (f.name.equals("Water")) {
+										f = f2;
+									}
+								}
+
+								//Make sure the machine has a liquid maximum set.
+								machine.maxLiquid.put(f, SQTechEnergy.config.getInt("steam engine.max liquid"));
+
+								//Makes sure that there are fuels to be burned
+								if (fuels.size() > 0 && machine.getLiquid(f) >= SQTechEnergy.config.getInt("steam engine.water usage per tick")) {
+
+									Location loc1 = machine.getGUIBlock().getLocation().getBlock().getRelative(SteamEngine.getFace(machine.getGUIBlock())).getLocation().add(0.5, 0.5, 0.5);
+									Location loc2 = machine.getGUIBlock().getLocation().getBlock().getRelative(SteamEngine.getFace(machine.getGUIBlock())).getRelative(SteamEngine.getFace(machine.getGUIBlock())).getLocation().add(0.5, 0.5, 0.5);
+
+									ParticleEffect.SMOKE_NORMAL.sendColor(Bukkit.getOnlinePlayers(), loc1, Color.WHITE);
+									ParticleEffect.SMOKE_NORMAL.sendColor(Bukkit.getOnlinePlayers(), loc2, Color.WHITE);
+
+									//Get the fuel to be burned
+									Fuel fuel = fuels.get(0);
+
+									//Makes sure that theres space left to get energy
+									if (machine.getEnergy() < machine.getMachineType().getMaxEnergy()) {
+
+										//get the energy from the fuel
+										machine.setEnergy(machine.getEnergy() + fuel.energyPerTick);
+
+										//Remove the fuel from the list
+										currentFuels.replace(fuel, currentFuels.get(fuel) - 1);
+										//Remove the water from the machine
+										machine.setLiquid(f, machine.getLiquid(f) - SQTechEnergy.config.getInt("steam engine.water usage per tick"));
+
+										if (currentFuels.get(fuel) <= 0) {
+
+											currentFuels.remove(fuel);
+
+										}
+
+									}
+
+									//There arn't any fuels
+								} else {
+
+									//Check to make sure that the furnace is actually a furnace
+									if (machine.getGUIBlock().getLocation().getBlock().getRelative(BlockFace.UP).getType().equals(Material.FURNACE) || machine.getGUIBlock().getLocation().getBlock().getRelative(BlockFace.UP).getType().equals(Material.BURNING_FURNACE)) {
+
+										//Deactivate the furnace
+										Furnace furnace = (Furnace) machine.getGUIBlock().getLocation().getBlock().getRelative(BlockFace.UP).getState();
+										furnace.setBurnTime((short) 0);
+
+									}
+
+								}
+
+							}
+
+						}
+
+					}
+
 				}
 
 				//For each gui open
@@ -686,7 +771,115 @@ public class GeneratorTask extends Thread {
 
 										}
 
-									}
+									} else //Check to see if its the steam engine screen
+										if (inventory.getTitle().equals(ChatColor.BLUE + "SQTech - Steam Engine")) {
+
+											//Check to see if the fuel slot is not null
+											if (inventory.getItem(10) != null) {
+
+												//Get the item in the fuel slot
+												ItemStack item = inventory.getItem(10);
+
+												//Get the machine
+												Machine machine = ObjectUtils.getMachineFromMachineGUI(SQTechBase.currentGui.get(player));
+
+												//Check through all the fuel types
+												for (Fuel fuel : SQTechEnergy.fuels) {
+
+													//Make sure its for the Steam Engine
+													if (fuel.generator.equals("Steam Engine")) {
+
+														//Makes sure its the same kind of item as the fuel
+														if (item.getTypeId() == fuel.id && item.getDurability() == fuel.data) {
+
+															//Sees if the machine already contains the fuel data
+															if (machine.data.containsKey("fuel")) {
+
+																//Make sure its a hashmap
+																if (machine.data.get("fuel") instanceof HashMap<?,?>) {
+
+																	HashMap<Fuel, Integer> currentFuels = (HashMap<Fuel, Integer>) machine.data.get("fuel");
+
+																	if (currentFuels.containsKey(fuel)) {
+
+																		//Add the fuel if it already contains some of the fuel
+																		currentFuels.replace(fuel, currentFuels.get(fuel) + (item.getAmount() * fuel.burnTime));
+
+																	} else {
+
+																		//Add the fuel if it doesn't contain any of the fuel
+																		currentFuels.put(fuel, item.getAmount() * fuel.burnTime);
+
+																	}
+
+																	//Remove the item
+																	inventory.setItem(10, new ItemStack(Material.AIR));
+
+																}
+
+																//The machine doesn't contain the fuel data
+															} else {
+
+																//add the fuel data
+																machine.data.put("fuel", new HashMap<Fuel, Integer>());
+
+																//pull it
+																HashMap<Fuel, Integer> currentFuels = (HashMap<Fuel, Integer>) machine.data.get("fuel");
+																//Since we already know that its not going to be located in there, add it to the hashmap
+																currentFuels.put(fuel, item.getAmount() * fuel.burnTime);
+
+																//Remove the item
+																inventory.setItem(10, new ItemStack(Material.AIR));
+
+															}
+
+														}
+
+													}
+
+												}
+
+											}
+
+											//Check to see if the fuel slot is not null
+											if (inventory.getItem(13) != null) {
+
+												//Get the item in the fuel slot
+												ItemStack item = inventory.getItem(13);
+
+												//Get the machine
+												Machine machine = ObjectUtils.getMachineFromMachineGUI(SQTechBase.currentGui.get(player));
+
+												Fluid f = null;
+												//Get the water Fluid object
+												for (Fluid f2 : SQTechBase.fluids) {
+													if (f.name.equals("Water")) {
+														f = f2;
+													}
+												}
+
+												//Make sure the machine has a liquid maximum set.
+												machine.maxLiquid.put(f, SQTechEnergy.config.getInt("steam engine.max liquid"));
+												
+												//Make sure the item is a water bucket
+												if (item.getType() == Material.WATER_BUCKET) {
+													
+													//Check if there is enough room in the machine for another bucket of water
+													if ((machine.getMaxLiquid(f)-1000) >= machine.getLiquid(f)) {
+														
+														//Add the water
+														machine.setLiquid(f, machine.getLiquid(f) + 1000);
+														
+														//Empty the bucket
+														item.setType(Material.BUCKET);
+														
+													}
+													
+												}
+
+											}
+
+										}
 
 					}
 

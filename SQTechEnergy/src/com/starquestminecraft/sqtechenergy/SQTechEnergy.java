@@ -18,6 +18,7 @@ import com.sqtechenergy.objects.Fuel;
 import com.sqtechenergy.objects.PowerCauldron;
 import com.sqtechenergy.objects.RedstoneGenerator;
 import com.sqtechenergy.objects.SolarPanel;
+import com.sqtechenergy.objects.SteamEngine;
 import com.sqtechenergy.objects.WaterTurbine;
 import com.starquestminecraft.sqtechbase.SQTechBase;
 import com.starquestminecraft.sqtechenergy.tasks.ChargerTask;
@@ -167,12 +168,42 @@ public class SQTechEnergy extends JavaPlugin{
 
 		}
 
+		//Steam Engine fuels
+		for (String fuel : config.getConfigurationSection("steam engine.fuel").getKeys(false)) {
+
+			String path = "steam engine.fuel." + fuel;
+
+			Fuel fuelObject = new Fuel();
+
+			String[] split = config.getString(path + ".id").split(":");
+
+			if (split.length == 1) {
+
+				fuelObject.id = Integer.parseInt(split[0]);
+				fuelObject.data = (short) 0;
+
+			} else {
+
+				fuelObject.id = Integer.parseInt(split[0]);
+				fuelObject.data = Short.parseShort(split[1]);
+
+			}
+
+			fuelObject.energyPerTick = config.getInt(path + ".energy per tick");
+			fuelObject.burnTime = config.getInt(path + ".burn time");
+			fuelObject.generator = "Steam Engine";
+
+			fuels.add(fuelObject);
+
+		}
+
 		SQTechBase.addMachineType(new BasicGenerator());
 		SQTechBase.addMachineType(new AdvancedGenerator());
 		SQTechBase.addMachineType(new BioGenerator());
 		SQTechBase.addMachineType(new RedstoneGenerator());
 		SQTechBase.addMachineType(new SolarPanel());
 		SQTechBase.addMachineType(new WaterTurbine());
+		SQTechBase.addMachineType(new SteamEngine());
 		SQTechBase.addMachineType(new Charger());
 		SQTechBase.addMachineType(new PowerCauldron());
 
@@ -201,11 +232,11 @@ public class SQTechEnergy extends JavaPlugin{
 
 		switch(blockFace) {
 
-			case NORTH: return BlockFace.SOUTH;
-			case WEST: return BlockFace.EAST;
-			case SOUTH: return BlockFace.NORTH;
-			case EAST: return BlockFace.WEST;
-			default: return BlockFace.NORTH;
+		case NORTH: return BlockFace.SOUTH;
+		case WEST: return BlockFace.EAST;
+		case SOUTH: return BlockFace.NORTH;
+		case EAST: return BlockFace.WEST;
+		default: return BlockFace.NORTH;
 
 		}
 
