@@ -60,5 +60,8 @@ redstone generator:
 solar panel:
   max energy: 25000
   energy per tick: 2.5
+water turbine:
+  max energy: 25000
+  energy per tick: 2.5
 charger:
   rate: 50

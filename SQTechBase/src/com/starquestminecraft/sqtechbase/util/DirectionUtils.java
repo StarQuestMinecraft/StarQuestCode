@@ -32,4 +32,18 @@ public class DirectionUtils {
 		
 	}
 	
+	public static BlockFace getOpposite(BlockFace blockFace) {
+		
+		switch(blockFace) {
+		
+			case NORTH: return BlockFace.SOUTH;
+			case WEST: return BlockFace.EAST;
+			case SOUTH: return BlockFace.NORTH;
+			case EAST: return BlockFace.WEST;
+			default: return BlockFace.NORTH;
+		
+		}
+		
+	}
+	
 }

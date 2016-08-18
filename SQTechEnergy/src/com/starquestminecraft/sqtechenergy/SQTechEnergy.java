@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
+import org.bukkit.block.BlockFace;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -17,6 +18,7 @@ import com.sqtechenergy.objects.Fuel;
 import com.sqtechenergy.objects.PowerCauldron;
 import com.sqtechenergy.objects.RedstoneGenerator;
 import com.sqtechenergy.objects.SolarPanel;
+import com.sqtechenergy.objects.WaterTurbine;
 import com.starquestminecraft.sqtechbase.SQTechBase;
 import com.starquestminecraft.sqtechenergy.tasks.ChargerTask;
 import com.starquestminecraft.sqtechenergy.tasks.GeneratorTask;
@@ -170,6 +172,7 @@ public class SQTechEnergy extends JavaPlugin{
 		SQTechBase.addMachineType(new BioGenerator());
 		SQTechBase.addMachineType(new RedstoneGenerator());
 		SQTechBase.addMachineType(new SolarPanel());
+		SQTechBase.addMachineType(new WaterTurbine());
 		SQTechBase.addMachineType(new Charger());
 		SQTechBase.addMachineType(new PowerCauldron());
 
@@ -191,6 +194,20 @@ public class SQTechEnergy extends JavaPlugin{
 	public static SQTechEnergy getPluginMain() {
 
 		return plugin;
+
+	}
+
+	public static BlockFace getOpposite(BlockFace blockFace) {
+
+		switch(blockFace) {
+
+			case NORTH: return BlockFace.SOUTH;
+			case WEST: return BlockFace.EAST;
+			case SOUTH: return BlockFace.NORTH;
+			case EAST: return BlockFace.WEST;
+			default: return BlockFace.NORTH;
+
+		}
 
 	}
 

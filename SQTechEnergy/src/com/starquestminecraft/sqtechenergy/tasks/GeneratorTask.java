@@ -24,6 +24,7 @@ import com.starquestminecraft.sqtechbase.util.ObjectUtils;
 import com.sqtechenergy.objects.BioGenerator;
 import com.sqtechenergy.objects.Fuel;
 import com.sqtechenergy.objects.SolarPanel;
+import com.sqtechenergy.objects.WaterTurbine;
 import com.starquestminecraft.sqtechenergy.SQTechEnergy;
 
 import org.inventivetalent.particle.ParticleEffect;
@@ -378,6 +379,22 @@ public class GeneratorTask extends Thread {
 						
 					}
 
+				}
+				
+				//Gets all of the water turbines so it can generate energy with them and loops through them
+				for (Machine machine : ObjectUtils.getAllMachinesOfType("Water Turbine")) {
+
+					//Checks to make sure the machine is enabled
+					if (machine.enabled) {
+						
+						if (WaterTurbine.isSurroundedByWater(machine)) {
+							
+							machine.setEnergy((machine.getEnergy() + SQTechEnergy.config.getInt("water turbine.energy per tick")));
+							
+						}
+						
+					}
+					
 				}
 
 				//For each gui open
