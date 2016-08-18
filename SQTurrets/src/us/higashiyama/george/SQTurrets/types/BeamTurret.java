@@ -6,13 +6,15 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 import org.inventivetalent.particle.ParticleEffect;
 
+import com.whirlwindgames.dibujaron.sqempire.database.object.EmpirePlayer;
+
+import net.countercraft.movecraft.craft.CraftManager;
 import us.higashiyama.george.SQTurrets.Ammo;
 import us.higashiyama.george.SQTurrets.SQTurrets;
 
@@ -42,9 +44,18 @@ public class BeamTurret extends Turret {
 		}
 		@Override
 		public void run(){
-			if(!SQTurrets.isInTurret(p)) this.cancel();
+			if(!SQTurrets.isInTurret(p)){
+				if(CraftManager.getInstance().getCraftByPlayer(p) != null){
+					if(!CraftManager.getInstance().getCraftByPlayer(p).hasMovedInLastSecond()){
+						this.cancel();
+					}
+				} else {
+					this.cancel();
+				}
+			}
 			Location loc = p.getEyeLocation();
 			Vector vec = loc.getDirection();
+			loc.add(vec);
 			for(int i = 0; i < (int) getVelocity(); i++){
 				if(!loc.getBlock().getType().equals(Material.AIR) && i > 0) i = (int) getVelocity();
 				ParticleEffect.REDSTONE.sendColor(Bukkit.getOnlinePlayers(), loc, Color.LIME);
@@ -57,14 +68,25 @@ public class BeamTurret extends Turret {
 					if (entity instanceof LivingEntity && entity.getEntityId() != p.getEntityId()) {
 						i = (int) getVelocity();
 						LivingEntity target = (LivingEntity) entity;
-						if(target instanceof HumanEntity && !((HumanEntity) target).isBlocking()){
-							target.setHealth(Math.max(0, target.getHealth() - ammo.getYield()));
-							loc.getWorld().playSound(loc, Sound.ENTITY_GENERIC_HURT, 1.0F, 1.0F);
-						}
-						
-						if(target instanceof Player && counter % 2 == 0){
+						if(target instanceof Player){
 							Player ptarget = (Player) target;
-							ptarget.setFoodLevel(Math.max(0, ptarget.getFoodLevel() - 1));
+							if(EmpirePlayer.getOnlinePlayer(ptarget).getEmpire() != EmpirePlayer.getOnlinePlayer(p).getEmpire()){
+								if(!ptarget.isBlocking()){
+									ptarget.setHealth(Math.max(0, ptarget.getHealth() - ammo.getYield()));
+									p.getWorld().playSound(p.getLocation(), Sound.ENTITY_GENERIC_HURT, 1.0F, 1.0F);
+									ptarget.getWorld().playSound(ptarget.getLocation(), Sound.ENTITY_GENERIC_HURT, 1.0F, 1.0F);
+								}
+								if(counter % 2 == 0){
+									ptarget.setFoodLevel(Math.max(0, ptarget.getFoodLevel() - 1));
+								}
+							} else {
+								p.sendMessage(ptarget.getName() + " is a member of your empire, you cannot damage them.");
+							}
+						}
+						else {
+							target.setHealth(Math.max(0, target.getHealth() - ammo.getYield()));
+							p.getWorld().playSound(p.getLocation(), Sound.ENTITY_GENERIC_HURT, 1.0F, 1.0F);
+							target.getWorld().playSound(target.getLocation(), Sound.ENTITY_GENERIC_HURT, 1.0F, 1.0F);
 						}
 					}	
 				}
