@@ -115,6 +115,9 @@ public class Receiver implements Closeable {
 				setServer(ServerSocketChannel.open());
 				getServer().configureBlocking(true);
 				// binds to the proper port
+				if(getServer().socket().isBound()) {
+					getServer().socket().close();
+				}
 				while (!(getServer().socket().isBound())) {
 					getServer().bind(getBindAddress());
 				}

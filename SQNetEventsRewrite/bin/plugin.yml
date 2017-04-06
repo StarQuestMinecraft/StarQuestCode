@@ -1,0 +1,4 @@
+name: SQNetEvents
+author: evanaesarcaesar
+version: 1.0
+main: net.homeip.hall.sqnetevents.SQNetEvents
