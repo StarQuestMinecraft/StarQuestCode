@@ -62,11 +62,6 @@ public class Sender implements Closeable {
 		// Will attempt to reestablish connection after 10000ms delay
 		else {
 			System.out.println("[NetEvents] Attempting to reestablish connection with address " + getSendAddress());
-			Bukkit.getScheduler().runTaskLaterAsynchronously(SQNetEvents.getInstance(), new Runnable() {
-				public void run() {
-					connect();
-				}
-			}, 10000L);
 			connect();
 		}
 	}
