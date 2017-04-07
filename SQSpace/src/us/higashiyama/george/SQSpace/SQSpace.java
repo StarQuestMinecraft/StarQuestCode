@@ -17,6 +17,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.ItemSpawnEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType.SlotType;
 import org.bukkit.event.player.PlayerMoveEvent;
@@ -210,4 +211,18 @@ public class SQSpace extends JavaPlugin implements Listener {
 			this.checkIfSuffocating(p);
 		}
 	}
+	
+	@EventHandler
+	public void onItemDrop(ItemSpawnEvent event) {
+	
+		String planet = event.getEntity().getWorld().getName().toLowerCase();
+		
+		if (spaceWorlds.contains(planet)) {
+			
+			event.getEntity().setGravity(false);
+			
+		}
+
+	}
+	
 }
